@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常溫編集所｜跨境成本計算器</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons Library -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <!-- 品牌 CIS 設定 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'paper': '#fdfbf7',
+                        'ink': '#4a4a4a',
+                        'sage': {
+                            50: '#f4f7f6',
+                            100: '#eef2f0',
+                            200: '#dbe3e0',
+                            500: '#8da399',
+                            600: '#758a80',
+                            700: '#5e7068',
+                        },
+                        'clay': {
+                            100: '#f7eeec',
+                            500: '#d4a59a',
+                            600: '#bf8c81',
+                        },
+                        'sand': '#e6e2dd',
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(74, 74, 74, 0.08)',
+                        'inner-soft': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.03)',
+                        'selected': '0 0 0 2px #8da399, 0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                    },
+                    spacing: {
+                        'row-sm': '2.75rem',  /* 44px */
+                        'row-md': '3.75rem',  /* 60px */
+                        'row-lg': '4.75rem',  /* 76px */
+                    },
+                    cursor: {
+                        'grab': 'grab',
+                        'grabbing': 'grabbing',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 品牌質感：紙張噪點 */
+        body {
+            background-color: #fdfbf7;
+            color: #4a4a4a;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            font-size: 16px; /* 稍微縮小基礎字體以適應更緊湊的佈局 */
+        }
+        
+        /* 隱藏數字輸入框的箭頭 */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        
+        /* 自定義捲軸 */
+        ::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdfbf7; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #dbe3e0; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8da399; 
+        }
+
+        /* 強制對齊的列高樣式 */
+        .h-row-sm { height: 44px; }
+        .h-row-md { height: 60px; }
+        .h-row-lg { height: 76px; }
+
+        /* 輸入框聚焦特效 */
+        .input-underline {
+            position: relative;
+            width: 100%;
+        }
+        .input-underline::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #8da399;
+            transition: width 0.3s ease;
+        }
+        .input-group:focus-within .input-underline::after {
+            width: 100%;
+        }
+        input:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        /* 修正：卡片寬度調整為響應式，以容納更多內容 */
+        .card-scenario {
+            @apply min-w-[280px] lg:min-w-[200px] flex-1 bg-white rounded-xl shadow-soft border-2 border-white transition-all duration-200 relative overflow-hidden flex flex-col;
+        }
+        .card-scenario:hover {
+            @apply shadow-lg -translate-y-1;
+        }
+
+        .float-btn {
+            @apply flex items-center gap-2 px-6 py-3 rounded-full shadow-lg transition-transform transform active:scale-95 font-serif font-bold tracking-wide;
+        }
+
+        .stamp-btn {
+            @apply flex items-center justify-center gap-2 px-6 py-4 rounded-xl border-2 border-dashed shadow-sm hover:shadow-md transition-all duration-200 font-serif font-bold text-lg cursor-pointer active:scale-95;
+        }
+
+        /* Vue Transitions */
+        .toast-enter-active, .toast-leave-active, .fade-enter-active, .fade-leave-active {
+            transition: all 0.3s ease;
+        }
+        .toast-enter-from, .toast-leave-to, .fade-enter-from, .fade-leave-to {
+            opacity: 0;
+            transform: translate(-50%, 20px);
+        }
+        .fade-enter-from, .fade-leave-to {
+            transform: translateY(20px);
+        }
+    </style>
+</head>
+<body class="antialiased font-sans selection:bg-sage-200 selection:text-ink">
+
+    <div id="app" class="min-h-screen pb-32 relative flex flex-col items-center">
+        
+        <!-- Header -->
+        <header class="w-full max-w-6xl mx-auto px-6 pt-12 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-sand/50">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-sage-500 rounded-full flex items-center justify-center text-paper shadow-soft">
+                    <lucide-icon name="calculator" class="w-7 h-7"></lucide-icon>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-serif font-bold text-ink tracking-wide">跨境成本計算器</h1>
+                    <p class="text-sage-600 text-sm mt-1 font-serif tracking-widest">Ambient Edit Studio</p>
+                </div>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex flex-wrap gap-3 items-center">
+                <!-- 回主頁按鈕 -->
+                <a href="/index.html" class="action-btn group">
+                    <lucide-icon name="home" class="w-4 h-4"></lucide-icon>
+                    <span>回主頁</span>
+                </a>
+
+                <!-- 分隔線 (Divider) -->
+                <div class="hidden md:block w-px h-8 bg-sand mx-1"></div>
+                
+                <!-- 工具連結群組 -->
+                <a href="https://www.bot.com.tw/tw/personal-banking" target="_blank" class="action-btn group">
+                    <lucide-icon name="external-link" class="w-4 h-4"></lucide-icon>
+                    <span>匯率查詢</span>
+                </a>
+                <a href="https://www.post.gov.tw/post/internet/Postal/index.jsp?ID=2010207" target="_blank" class="action-btn group">
+                    <lucide-icon name="truck" class="w-4 h-4"></lucide-icon>
+                    <span>郵資查詢</span>
+                </a>
+                <a href="https://docs.google.com/spreadsheets/d/1w-gSVLrvzz7I8RAujvPosqsO7PA9i0wPqsBKltwoaK4/edit?resourcekey=&gid=928408221#gid=928408221" target="_blank" class="action-btn-primary group">
+                    <lucide-icon name="file-text" class="w-4 h-4"></lucide-icon>
+                    <span>訂單管理</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="w-full max-w-6xl mx-auto px-6 py-8">
+            
+            <!-- Global Settings Panel -->
+            <section class="bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-soft border border-white mb-12">
+                <div class="flex items-center justify-center gap-2 mb-8 text-sage-700">
+                    <lucide-icon name="package" class="w-5 h-5"></lucide-icon>
+                    <h2 class="font-serif font-bold text-xl tracking-wider">基礎參數設定</h2>
+                </div>
+
+                <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-10">
+                    <div class="input-group text-center">
+                        <label>產品數量 (Qty)</label>
+                        <div class="input-underline">
+                            <input type="number" v-model.number="quantity" placeholder="20" class="text-center">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group text-center">
+                        <label>產品單價 (Price/TWD)</label>
+                        <div class="input-underline">
+                            <input type="number" v-model.number="unitPrice" placeholder="400" class="text-center">
+                        </div>
+                    </div>
+
+                    <div class="input-group text-center relative">
+                        <label>Paypal 手續費 (%)</label>
+                        <div class="input-underline">
+                            <input type="number" step="0.1" v-model.number="handlingRate" class="text-center">
+                        </div>
+                    </div>
+
+                    <div class="input-group text-center">
+                        <label>Paypal 固定稅 (Fixed)</label>
+                        <div class="input-underline">
+                            <input type="number" v-model.number="fixedTax" class="text-center">
+                        </div>
+                    </div>
+
+                    <div class="input-group text-center accent-sage">
+                        <label class="text-clay-600">美金匯率 (Exchange Rate)</label>
+                        <div class="input-underline">
+                            <input type="number" step="0.1" v-model.number="exchangeRate" class="!text-clay-600 !bg-clay-100/20 text-center">
+                        </div>
+                    </div>
+
+                    <div class="input-group text-center">
+                        <label class="text-clay-600">即期賣出驗算 (Spot Rate)</label>
+                        <div class="input-underline">
+                            <input type="number" step="0.01" v-model.number="spotBuyRate" class="!text-clay-600 !bg-clay-100/20 text-center">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Comparison Section -->
+            <div class="flex gap-0 md:gap-4 items-start"> <!-- gap-6 -> gap-4 -->
+                
+                <!-- Left Labels (Desktop) -->
+                <div class="hidden lg:block w-36 flex-shrink-0 text-right pt-2"> <!-- w-40 -> w-36 -->
+                    <div class="pt-8 pb-4 px-2">
+                        <div class="h-row-md flex items-center justify-end font-serif text-sage-600 text-base">運送方式</div>
+                        <div class="h-row-md flex items-center justify-end font-serif text-sage-600 text-base">郵寄費用</div>
+                    </div>
+
+                    <div class="p-4 px-2">
+                        <div class="h-row-sm flex items-center justify-end text-sm text-ink/60">商品總價</div>
+                        <div class="h-row-lg flex items-center justify-end font-serif font-bold text-ink text-lg">總成本 (台幣)</div>
+                        <div class="h-row-lg flex items-center justify-end font-serif font-bold text-sage-600 text-lg">換算美金</div>
+                        
+                        <div class="border-t border-dashed border-sand my-4"></div>
+
+                        <div class="h-row-sm flex items-center justify-end text-sm text-clay-600 font-bold">驗算 (買進)</div>
+                        <div class="h-row-sm flex items-center justify-end text-sm text-clay-600/80 font-medium">買進匯差</div>
+                    </div>
+                </div>
+
+                <!-- Cards Container -->
+                <!-- gap-4 -> gap-2, px-2 -> px-0 -->
+                <div 
+                    class="flex-1 flex gap-2 overflow-x-auto pb-8 pt-2 px-0 -mx-2 items-start cursor-grab active:cursor-grabbing select-none"
+                    ref="scrollContainer"
+                    @mousedown="startDrag"
+                    @mouseleave="stopDrag"
+                    @mouseup="stopDrag"
+                    @mousemove="doDrag"
+                >
+                    
+                    <div v-for="scenario in scenarios" :key="scenario.id" 
+                         @click="selectScenario(scenario.id)"
+                         :class="['card-scenario group flex-shrink-0']"
+                         :style="selectedId === scenario.id ? 'border-color: #8da399; box-shadow: 0 0 0 1px #8da399, 0 10px 15px -3px rgba(0, 0, 0, 0.1); background-color: #f4f7f6;' : ''">
+                        
+                        <!-- Card Header -->
+                        <div class="pt-8 pb-4 px-2 text-center border-b border-sand relative bg-gradient-to-b from-paper to-transparent">
+                            <div class="h-row-md flex items-center justify-center">
+                                <input type="text" v-model="scenario.name" 
+                                    @click="selectScenario(scenario.id)"
+                                    class="w-full text-center font-serif font-bold text-lg text-ink bg-transparent border-b border-transparent hover:border-sand focus:border-sage-500 transition-colors placeholder-sand cursor-pointer px-0" 
+                                    placeholder="輸入方式">
+                            </div>
+                            
+                            <div class="h-row-md flex items-center justify-center gap-2">
+                                <span class="lg:hidden text-sm text-sage-500 font-serif whitespace-nowrap">郵資</span>
+                                <div class="relative w-28 mx-auto"> <!-- w-32 -> w-28 -->
+                                    <span class="absolute left-2 top-1/2 -translate-y-1/2 text-ink/30 text-sm">$</span>
+                                    <input type="number" v-model.number="scenario.shippingFee" 
+                                           @click="selectScenario(scenario.id)"
+                                           class="w-full text-center font-sans font-medium text-ink bg-sand/30 rounded py-1 pl-4 pr-2 focus:bg-white focus:ring-1 focus:ring-sage-500 outline-none transition-all cursor-pointer text-lg">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Body (Calculations) -->
+                        <div class="p-4 pb-0"> <!-- p-5 -> p-4 -->
+                            <div class="border-t border-dashed border-sand lg:hidden mb-4"></div>
+
+                            <div class="h-row-sm flex items-center justify-between lg:justify-center">
+                                <span class="lg:hidden text-sm text-ink/60">總價</span>
+                                <span class="font-sans text-ink/80 text-lg">{{ calculate(scenario).totalGoodsPrice.toLocaleString() }}</span>
+                            </div>
+
+                            <div class="h-row-lg flex items-center justify-between lg:justify-center bg-sand/20 lg:bg-transparent -mx-4 px-4 lg:mx-0 lg:px-0 mt-2 lg:mt-0"> <!-- mx-5 -> mx-4 -->
+                                <span class="lg:hidden font-serif font-bold text-ink">台幣成本</span>
+                                <span class="font-serif font-bold text-xl text-ink">{{ calculate(scenario).totalTwd.toLocaleString() }}</span>
+                            </div>
+
+                            <div class="h-row-lg flex items-center justify-between lg:justify-center bg-sage-100/50 lg:bg-transparent -mx-4 px-4 lg:mx-0 lg:px-0 text-sage-700"> <!-- mx-5 -> mx-4 -->
+                                <span class="lg:hidden font-serif font-bold">美金報價</span>
+                                <div class="flex items-center gap-1">
+                                    <lucide-icon name="dollar-sign" class="w-5 h-5"></lucide-icon> <!-- w-6 -> w-5 -->
+                                    <span class="font-serif font-bold text-3xl">{{ calculate(scenario).convertedUsd.toLocaleString() }}</span> <!-- text-4xl -> text-3xl -->
+                                </div>
+                            </div>
+
+                            <div class="border-t border-dashed border-sand my-4"></div>
+
+                            <div class="h-row-sm flex items-center justify-between lg:justify-center">
+                                <span class="lg:hidden text-sm text-clay-600 font-bold">驗算</span>
+                                <span class="font-sans text-base text-clay-600 font-bold">{{ calculate(scenario).verifiedBuyTwd.toLocaleString() }}</span>
+                            </div>
+
+                            <div class="h-row-sm flex items-center justify-between lg:justify-center">
+                                <span class="lg:hidden text-sm text-clay-600/80">匯差</span>
+                                <span class="font-sans text-sm text-clay-600 font-bold">{{ calculate(scenario).diffBuy > 0 ? '+' : '' }}{{ calculate(scenario).diffBuy }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Explicit Remove Button -->
+                        <div class="p-3 pt-2"> <!-- p-4 -> p-3 -->
+                             <button @click.stop="removeScenario(scenario.id)" 
+                                     class="w-full py-1.5 flex items-center justify-center gap-2 text-sand hover:text-clay-600 hover:bg-clay-100 rounded-lg transition-colors text-xs font-bold tracking-wider group-hover:text-sand/80">
+                                <lucide-icon name="trash-2" class="w-3.5 h-3.5"></lucide-icon>
+                                <span>移除</span>
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- Add Button -->
+                    <div class="min-w-[60px] flex items-center justify-center pt-20 flex-shrink-0"> <!-- min-w-80 -> min-w-60 -->
+                        <button @click="addScenario" class="w-12 h-12 rounded-full border-2 border-dashed border-sage-200 text-sage-500 hover:border-sage-500 hover:text-sage-600 hover:bg-white flex items-center justify-center transition-all group">
+                            <lucide-icon name="plus" class="w-6 h-6 group-hover:scale-110 transition-transform"></lucide-icon>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Toast Notification -->
+        <transition name="toast">
+            <div v-if="showToast" class="fixed bottom-28 md:bottom-10 left-1/2 -translate-x-1/2 z-50 bg-ink text-paper px-6 py-3 rounded-full shadow-lg flex items-center gap-3 font-medium border border-sage-500/30 backdrop-blur-md pointer-events-none">
+                <lucide-icon name="check" class="w-4 h-4 text-sage-500"></lucide-icon>
+                <span>{{ toastMsg }}</span>
+            </div>
+        </transition>
+
+        <!-- Floating Actions -->
+        <transition name="fade">
+            <div v-if="selectedId" class="fixed bottom-8 right-8 z-40 flex flex-col md:flex-row gap-4 items-end">
+                
+                <!-- 複製中文報價 (票券風格) -->
+                <button @click="copyQuote('zh')" class="stamp-btn group bg-sage-50 border-sage-500 text-sage-700">
+                    <div class="flex items-center gap-2">
+                        <lucide-icon name="copy" class="w-5 h-5 group-hover:scale-110 transition-transform"></lucide-icon>
+                        <span>複製中文報價</span>
+                    </div>
+                </button>
+
+                <!-- COPY ENGLISH (與中文相同的淺色風格) -->
+                <button @click="copyQuote('en')" class="stamp-btn group bg-sage-50 border-sage-500 text-sage-700 hover:bg-sage-100">
+                    <div class="flex items-center gap-2">
+                        <lucide-icon name="globe" class="w-5 h-5 group-hover:scale-110 transition-transform"></lucide-icon>
+                        <span>COPY ENGLISH</span>
+                    </div>
+                </button>
+            </div>
+        </transition>
+
+    </div>
+
+    <script>
+        const { createApp, ref, computed } = Vue;
+
+        const app = createApp({
+            setup() {
+                const quantity = ref(20);
+                const unitPrice = ref(400);
+                const handlingRate = ref(4.4);
+                const fixedTax = ref(10);
+                const exchangeRate = ref(30.5);
+                const spotBuyRate = ref(30.5);
+                
+                const selectedId = ref(null);
+                const showToast = ref(false);
+                const toastMsg = ref('');
+
+                // Drag Scroll Logic
+                const scrollContainer = ref(null);
+                const isDragging = ref(false);
+                const startX = ref(0);
+                const scrollLeft = ref(0);
+
+                const startDrag = (e) => {
+                    isDragging.value = true;
+                    startX.value = e.pageX - scrollContainer.value.offsetLeft;
+                    scrollLeft.value = scrollContainer.value.scrollLeft;
+                };
+
+                const stopDrag = () => {
+                    isDragging.value = false;
+                };
+
+                const doDrag = (e) => {
+                    if (!isDragging.value) return;
+                    e.preventDefault();
+                    const x = e.pageX - scrollContainer.value.offsetLeft;
+                    const walk = (x - startX.value) * 1.5; // Scroll-fast
+                    scrollContainer.value.scrollLeft = scrollLeft.value - walk;
+                };
+
+                const scenarios = ref([
+                    { id: 1, name: 'EMS (快捷)', shippingFee: 610 },
+                    { id: 2, name: 'Airmail (航空)', shippingFee: 350 },
+                    { id: 3, name: 'SAL (海空)', shippingFee: 340 },
+                    { id: 4, name: 'Surface (水陸)', shippingFee: 250 },
+                ]);
+
+                const safeCeil = (num) => {
+                    const cleanNum = Number(num.toFixed(4));
+                    return Math.ceil(cleanNum);
+                };
+
+                const calculate = (scenario) => {
+                    const totalGoodsPrice = quantity.value * unitPrice.value;
+                    const baseSum = totalGoodsPrice + Number(scenario.shippingFee);
+                    const multiplier = 1 + (handlingRate.value / 100);
+
+                    const rawTwd = (baseSum * multiplier) + Number(fixedTax.value);
+                    const totalTwd = safeCeil(rawTwd);
+
+                    const rawUsd = totalTwd / exchangeRate.value;
+                    const convertedUsd = safeCeil(rawUsd);
+
+                    const verifiedBuyTwd = safeCeil(convertedUsd * spotBuyRate.value);
+                    const diffBuy = verifiedBuyTwd - totalTwd;
+
+                    return { totalGoodsPrice, totalTwd, convertedUsd, verifiedBuyTwd, diffBuy };
+                };
+
+                const addScenario = () => {
+                    const newId = scenarios.value.length > 0 ? Math.max(...scenarios.value.map(s => s.id)) + 1 : 1;
+                    scenarios.value.push({ id: newId, name: 'Custom', shippingFee: 0 });
+                    selectedId.value = newId;
+                };
+
+                const removeScenario = (id) => {
+                    scenarios.value = scenarios.value.filter(s => s.id !== id);
+                    if (selectedId.value === id) selectedId.value = null;
+                };
+
+                const selectScenario = (id) => {
+                    selectedId.value = id;
+                };
+
+                const copyQuote = (lang) => {
+                    if (!selectedId.value) return;
+                    
+                    const scenario = scenarios.value.find(s => s.id === selectedId.value);
+                    if (!scenario) return;
+
+                    const result = calculate(scenario);
+                    let textToCopy = '';
+                    const today = new Date().toISOString().slice(0, 10).replace(/-/g, '/');
+
+                    if (lang === 'en') {
+                        textToCopy = 
+`【 QUOTATION 】
+━━━━━━━━━━━━━━━━━━━━
+Date: ${today}
+Item: Customized Goods
+Qty : ${quantity.value}
+
+[ SHIPPING ]
+Type: ${scenario.name}
+━━━━━━━━━━━━━━━━━━━━
+TOTAL: USD $ ${result.convertedUsd.toLocaleString()}
+━━━━━━━━━━━━━━━━━━━━
+Ambient Edit Studio`;
+                        toastMsg.value = 'Quote Copied!';
+                    } else {
+                        textToCopy = 
+`【 報 價 單 】
+━━━━━━━━━━━━━━━━━━━━
+日期：${today}
+品項：客製化商品
+數量：${quantity.value}
+
+[ 運送方案 ]
+方式：${scenario.name}
+━━━━━━━━━━━━━━━━━━━━
+總計金額：USD $ ${result.convertedUsd.toLocaleString()}
+━━━━━━━━━━━━━━━━━━━━
+常溫編集所｜Ambient Edit Studio`;
+                        toastMsg.value = '報價單已複製！';
+                    }
+
+                    const textArea = document.createElement("textarea");
+                    textArea.value = textToCopy;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-9999px';
+                    textArea.style.top = '0';
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {
+                        const successful = document.execCommand('copy');
+                        if(successful) {
+                            showToast.value = true;
+                            setTimeout(() => showToast.value = false, 3000);
+                        }
+                    } catch (err) {
+                        console.error('Fallback: Oops, unable to copy', err);
+                    }
+                    document.body.removeChild(textArea);
+                };
+
+                return {
+                    quantity, unitPrice, handlingRate, fixedTax, exchangeRate, spotBuyRate,
+                    scenarios, selectedId, showToast, toastMsg,
+                    calculate, addScenario, removeScenario, selectScenario, copyQuote,
+                    // Drag Scroll Refs & Methods
+                    scrollContainer, startDrag, stopDrag, doDrag
+                };
+            }
+        });
+
+        app.component('lucide-icon', {
+            props: ['name', 'class'],
+            setup(props) {
+                const svgHtml = computed(() => {
+                    if (!window.lucide || !window.lucide.icons) return '';
+                    const pascalName = props.name.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+                    const iconDef = window.lucide.icons[pascalName];
+                    if (iconDef && typeof window.lucide.createElement === 'function') {
+                        try {
+                            const element = window.lucide.createElement(iconDef);
+                            const originalClass = element.getAttribute('class') || '';
+                            const combinedClass = (originalClass + ' ' + (props.class || '')).trim();
+                            element.setAttribute('class', combinedClass);
+                            return element.outerHTML;
+                        } catch (e) { return ''; }
+                    }
+                    return '';
+                });
+                return { svgHtml };
+            },
+            template: `<i v-html="svgHtml" style="display: contents;"></i>`
+        });
+
+        app.mount('#app');
+    </script>
+
+    <style>
+        /* CSS Utility Classes & Components */
+        .action-btn {
+            @apply flex items-center gap-2 px-4 py-2 bg-white text-ink rounded-lg shadow-sm border border-sand hover:border-sage-500 hover:text-sage-600 transition-all text-sm font-medium font-serif;
+        }
+        .action-btn-primary {
+            @apply flex items-center gap-2 px-4 py-2 bg-sage-500 text-paper rounded-lg shadow-md hover:bg-sage-600 transition-all text-sm font-medium font-serif;
+        }
+        
+        .input-group {
+            @apply flex flex-col gap-2 relative min-w-0; 
+        }
+        .input-group label {
+            @apply text-sm font-bold uppercase tracking-wider text-sage-600 font-sans truncate; 
+        }
+        .input-group input {
+            @apply w-full p-2 bg-sand/30 border-none rounded-t focus:bg-white outline-none transition-all text-ink font-mono text-xl min-w-0; 
+        }
+
+        /* 修正：卡片寬度調整為響應式，以容納更多內容 */
+        .card-scenario {
+            @apply min-w-[280px] lg:min-w-[200px] flex-1 bg-white rounded-xl shadow-soft border-2 border-white transition-all duration-200 relative overflow-hidden flex flex-col;
+        }
+        .card-scenario:hover {
+            @apply shadow-lg -translate-y-1;
+        }
+
+        .float-btn {
+            @apply flex items-center gap-2 px-6 py-3 rounded-full shadow-lg transition-transform transform active:scale-95 font-serif font-bold tracking-wide;
+        }
+
+        .stamp-btn {
+            @apply flex items-center justify-center gap-2 px-6 py-4 rounded-xl border-2 border-dashed shadow-sm hover:shadow-md transition-all duration-200 font-serif font-bold text-lg cursor-pointer active:scale-95;
+        }
+
+        /* Vue Transitions */
+        .toast-enter-active, .toast-leave-active, .fade-enter-active, .fade-leave-active {
+            transition: all 0.3s ease;
+        }
+        .toast-enter-from, .toast-leave-to, .fade-enter-from, .fade-leave-to {
+            opacity: 0;
+            transform: translate(-50%, 20px);
+        }
+        .fade-enter-from, .fade-leave-to {
+            transform: translateY(20px);
+        }
+    </style>
+</body>
+</html>

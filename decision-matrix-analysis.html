@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>決策矩陣分析｜常溫編集所</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Brand Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                            white: '#ffffff'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'inner-light': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.02)',
+                    },
+                    backgroundImage: {
+                        'noise': "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E\")"
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #fdfbf7;
+            color: #4a4a4a;
+        }
+        /* Custom Scrollbar for matrix table */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #e6e2dd;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #8da399;
+            border-radius: 4px;
+        }
+        input[type="range"] {
+            accent-color: #8da399;
+        }
+        /* Hide number input spinners */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen bg-brand-paper bg-noise flex flex-col">
+
+    <div id="root" class="flex-grow flex flex-col"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // Icons
+        const PlusIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+            </svg>
+        );
+
+        const TrashIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+        );
+
+        const ChevronRightIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+            </svg>
+        );
+
+        const CheckIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+        );
+        
+        const RefreshIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+            </svg>
+        );
+        
+        const DownloadIcon = () => (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+        );
+
+        // UI Components
+        const Button = ({ children, onClick, variant = 'primary', className = '', disabled = false }) => {
+            const baseStyle = "px-6 py-2 rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-sage disabled:opacity-50 disabled:cursor-not-allowed";
+            const variants = {
+                primary: "bg-brand-sage text-white hover:bg-brand-ink shadow-sm hover:shadow-md",
+                secondary: "bg-brand-white text-brand-sage border border-brand-sand hover:border-brand-sage hover:text-brand-ink",
+                text: "text-brand-sage hover:text-brand-ink bg-transparent"
+            };
+            return (
+                <button onClick={onClick} className={`${baseStyle} ${variants[variant]} ${className}`} disabled={disabled}>
+                    {children}
+                </button>
+            );
+        };
+
+        const Card = ({ children, className = '' }) => (
+            <div className={`bg-brand-white rounded-2xl shadow-soft p-6 md:p-8 border border-brand-sand/30 ${className}`}>
+                {children}
+            </div>
+        );
+
+        const Input = ({ value, onChange, placeholder, className = '' }) => (
+            <input
+                type="text"
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                className={`w-full bg-brand-paper border border-brand-sand rounded-lg px-4 py-2 text-brand-ink focus:border-brand-sage focus:ring-1 focus:ring-brand-sage focus:outline-none transition-colors ${className}`}
+            />
+        );
+
+        // --- Main Application ---
+        const DecisionMatrixApp = () => {
+            // Steps: 0: Intro, 1: Options, 2: Criteria, 3: Scoring, 4: Result
+            const [step, setStep] = useState(0);
+            const [showResetModal, setShowResetModal] = useState(false);
+            
+            // State
+            const [options, setOptions] = useState([{ id: 1, name: '' }, { id: 2, name: '' }]);
+            const [criteria, setCriteria] = useState([{ id: 1, name: '成本/薪資', weight: 5 }, { id: 2, name: '時間/距離', weight: 3 }]);
+            const [scores, setScores] = useState({}); // { optionId: { criteriaId: score } }
+
+            // Handlers - Options
+            const addOption = () => setOptions([...options, { id: Date.now(), name: '' }]);
+            const updateOption = (id, name) => setOptions(options.map(o => o.id === id ? { ...o, name } : o));
+            const removeOption = (id) => setOptions(options.filter(o => o.id !== id));
+
+            // Handlers - Criteria
+            const addCriteria = () => setCriteria([...criteria, { id: Date.now(), name: '', weight: 3 }]);
+            const updateCriteria = (id, field, value) => setCriteria(criteria.map(c => c.id === id ? { ...c, [field]: value } : c));
+            const removeCriteria = (id) => setCriteria(criteria.filter(c => c.id !== id));
+
+            // Handlers - Scoring (with Max 10 Validation)
+            const updateScore = (optionId, criteriaId, value) => {
+                let newValue = value;
+                
+                // Allow empty string for clearing input
+                if (value !== '') {
+                    const num = parseInt(value);
+                    if (isNaN(num)) return; // Don't update if not a number
+                    
+                    // Clamping logic: 1 to 10
+                    if (num > 10) newValue = 10;
+                    else if (num < 1) newValue = 1;
+                    else newValue = num;
+                }
+
+                setScores(prev => ({
+                    ...prev,
+                    [optionId]: {
+                        ...(prev[optionId] || {}),
+                        [criteriaId]: newValue
+                    }
+                }));
+            };
+
+            // Calculation
+            const results = useMemo(() => {
+                return options.map(opt => {
+                    let totalScore = 0;
+                    criteria.forEach(crit => {
+                        const rawScore = scores[opt.id]?.[crit.id] || 0;
+                        totalScore += rawScore * crit.weight;
+                    });
+                    return { ...opt, totalScore };
+                }).sort((a, b) => b.totalScore - a.totalScore);
+            }, [options, criteria, scores]);
+
+            // Reset Function - Trigger Modal
+            const handleReset = () => {
+                setShowResetModal(true);
+            };
+
+            // Execute Reset
+            const confirmReset = () => {
+                setOptions([{ id: 1, name: '' }, { id: 2, name: '' }]);
+                setCriteria([{ id: 1, name: '成本/薪資', weight: 5 }, { id: 2, name: '時間/距離', weight: 3 }]);
+                setScores({});
+                setStep(0);
+                setShowResetModal(false);
+            };
+
+            // CSV Export Function
+            const handleExportCSV = () => {
+                // BOM for Excel compatibility with UTF-8
+                const BOM = "\uFEFF";
+                
+                // 1. Headers: First column "Criteria (Weight)", then Option names
+                const headerRow = ["考量因素 (權重)", ...options.map(o => o.name)].join(",");
+                
+                // 2. Data Rows: Each criteria
+                const dataRows = criteria.map(crit => {
+                    const rowData = [`${crit.name} (${crit.weight})`];
+                    options.forEach(opt => {
+                        rowData.push(scores[opt.id]?.[crit.id] || 0);
+                    });
+                    return rowData.join(",");
+                });
+
+                // 3. Total Score Row
+                const totalRow = ["總分", ...options.map(o => {
+                    const res = results.find(r => r.id === o.id);
+                    return res ? res.totalScore : 0;
+                })].join(",");
+
+                // Combine all
+                const csvContent = [headerRow, ...dataRows, totalRow].join("\n");
+                const blob = new Blob([BOM + csvContent], { type: "text/csv;charset=utf-8;" });
+                
+                // Create download link
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.setAttribute("href", url);
+                link.setAttribute("download", `決策分析報告_${new Date().toISOString().slice(0,10)}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            // Navigation Check
+            const canProceedFromOptions = options.filter(o => o.name.trim() !== '').length >= 2;
+            const canProceedFromCriteria = criteria.filter(c => c.name.trim() !== '').length >= 1;
+
+            return (
+                <div className="w-full max-w-4xl mx-auto px-6 py-8 flex flex-col min-h-screen">
+                    
+                    {/* Header Section: Left-aligned Title + Brand Name, Right-aligned Nav */}
+                    <header className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4 border-b border-brand-sand/50 pb-6">
+                        {/* Left Side: Brand & Title */}
+                        <div className="flex flex-col items-start">
+                            <span className="text-xs font-bold tracking-[0.2em] text-brand-sage mb-2 uppercase">
+                                常溫編集所 Ambient Edit Studio
+                            </span>
+                            <h1 className="text-3xl md:text-4xl font-serif font-bold text-brand-ink tracking-wide">
+                                決策矩陣分析
+                            </h1>
+                        </div>
+
+                        {/* Right Side: Nav Button */}
+                        <nav>
+                            <a href="https://weichun0203.github.io/ambientedit/" 
+                               className="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft"
+                               aria-label="返回常溫首頁">
+                                {/* Icon */}
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                    <polyline points="9 22 9 12 15 12 15 22"/>
+                                </svg>
+                                {/* Text */}
+                                <span className="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
+                            </a>
+                        </nav>
+                    </header>
+
+                    {/* Progress Indicator */}
+                    {step > 0 && (
+                        <div className="flex justify-center mb-8 gap-2">
+                            {[1, 2, 3, 4].map(i => (
+                                <div key={i} className={`h-1.5 w-8 rounded-full transition-colors duration-300 ${i <= step ? 'bg-brand-sage' : 'bg-brand-sand'}`}></div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Main Content Area */}
+                    <div className="flex-grow">
+                        {step === 0 && (
+                            <div className="text-center max-w-2xl mx-auto mt-10 animate-fade-in">
+                                <p className="text-brand-ink/80 text-lg leading-relaxed mb-8 font-serif">
+                                    面對人生的十字路口，我們往往被感性與理性拉扯。<br/>
+                                    透過量化權重與邏輯分析，讓模糊的直覺變得清晰。<br/>
+                                    請深呼吸，我們開始梳理這一切。
+                                </p>
+                                <Button onClick={() => setStep(1)} className="mx-auto">
+                                    開始分析 <ChevronRightIcon />
+                                </Button>
+                            </div>
+                        )}
+
+                        {step === 1 && (
+                            <Card className="animate-fade-in">
+                                <h2 className="text-xl font-serif font-bold mb-6 text-brand-ink flex items-center gap-2">
+                                    <span className="text-brand-clay">01.</span> 釐清選項
+                                </h2>
+                                <p className="text-sm text-brand-ink/60 mb-6">您正在猶豫什麼？請輸入至少兩個選項（例：轉職去A公司、留在原職）。</p>
+                                
+                                <div className="space-y-4 mb-8">
+                                    {options.map((option, index) => (
+                                        <div key={option.id} className="flex gap-2 items-center group">
+                                            <span className="text-xs text-brand-sand font-bold w-6">{index + 1}.</span>
+                                            <Input 
+                                                value={option.name} 
+                                                onChange={(e) => updateOption(option.id, e.target.value)}
+                                                placeholder={`選項 ${index + 1}`}
+                                            />
+                                            {options.length > 2 && (
+                                                <button onClick={() => removeOption(option.id)} className="text-brand-sand hover:text-brand-clay transition-colors p-2">
+                                                    <TrashIcon />
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                                
+                                <div className="flex justify-between items-center pt-4 border-t border-brand-sand/50">
+                                    <Button variant="text" onClick={addOption}>
+                                        <PlusIcon /> 新增選項
+                                    </Button>
+                                    <Button onClick={() => setStep(2)} disabled={!canProceedFromOptions}>
+                                        下一步 <ChevronRightIcon />
+                                    </Button>
+                                </div>
+                            </Card>
+                        )}
+
+                        {step === 2 && (
+                            <Card className="animate-fade-in">
+                                <h2 className="text-xl font-serif font-bold mb-6 text-brand-ink flex items-center gap-2">
+                                    <span className="text-brand-clay">02.</span> 設定考量標準與權重
+                                </h2>
+                                <p className="text-sm text-brand-ink/60 mb-6">您最在意什麼？薪水、自由度還是熱情？<br/>權重 1 (輕微) - 5 (極重要)。</p>
+
+                                <div className="space-y-6 mb-8">
+                                    {criteria.map((crit, index) => (
+                                        <div key={crit.id} className="bg-brand-paper p-4 rounded-xl border border-brand-sand/50">
+                                            <div className="flex gap-3 mb-3 items-center">
+                                                <Input 
+                                                    value={crit.name} 
+                                                    onChange={(e) => updateCriteria(crit.id, 'name', e.target.value)}
+                                                    placeholder="考量因素 (例: 薪資)"
+                                                    className="font-medium"
+                                                />
+                                                {criteria.length > 1 && (
+                                                    <button onClick={() => removeCriteria(crit.id)} className="text-brand-sand hover:text-brand-clay transition-colors">
+                                                        <TrashIcon />
+                                                    </button>
+                                                )}
+                                            </div>
+                                            <div className="flex items-center gap-4 px-2">
+                                                <span className="text-xs text-brand-ink/50 whitespace-nowrap">重要性: {crit.weight}</span>
+                                                <input 
+                                                    type="range" 
+                                                    min="1" 
+                                                    max="5" 
+                                                    value={crit.weight} 
+                                                    onChange={(e) => updateCriteria(crit.id, 'weight', parseInt(e.target.value))}
+                                                    className="w-full h-2 bg-brand-sand rounded-lg appearance-none cursor-pointer"
+                                                />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="flex justify-between items-center pt-4 border-t border-brand-sand/50">
+                                    <div className="flex gap-2">
+                                        <Button variant="secondary" onClick={() => setStep(1)}>上一步</Button>
+                                        <Button variant="text" onClick={addCriteria}><PlusIcon /> 因素</Button>
+                                    </div>
+                                    <Button onClick={() => setStep(3)} disabled={!canProceedFromCriteria}>
+                                        下一步 <ChevronRightIcon />
+                                    </Button>
+                                </div>
+                            </Card>
+                        )}
+
+                        {step === 3 && (
+                            <Card className="animate-fade-in">
+                                <h2 className="text-xl font-serif font-bold mb-6 text-brand-ink flex items-center gap-2">
+                                    <span className="text-brand-clay">03.</span> 評分矩陣
+                                </h2>
+                                <p className="text-sm text-brand-ink/60 mb-6">請依據每個標準為選項打分 (1-10分)。<br/>系統會自動限制上限為 10 分。</p>
+
+                                <div className="overflow-x-auto custom-scrollbar pb-4">
+                                    <table className="w-full min-w-[600px] text-left border-collapse">
+                                        <thead>
+                                            <tr>
+                                                <th className="p-3 text-sm font-serif text-brand-ink/50 border-b border-brand-sand">考量因素 (權重)</th>
+                                                {options.map(opt => (
+                                                    <th key={opt.id} className="p-3 text-sm font-bold text-brand-ink border-b border-brand-sand text-center min-w-[120px]">
+                                                        {opt.name || '未命名'}
+                                                    </th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {criteria.map(crit => (
+                                                <tr key={crit.id} className="hover:bg-brand-paper/50 transition-colors">
+                                                    <td className="p-3 border-b border-brand-sand/30">
+                                                        <div className="font-medium text-brand-ink">{crit.name}</div>
+                                                        <div className="text-xs text-brand-sage">Weight: {crit.weight}</div>
+                                                    </td>
+                                                    {options.map(opt => (
+                                                        <td key={`${opt.id}-${crit.id}`} className="p-3 border-b border-brand-sand/30 text-center">
+                                                            <div className="flex flex-col items-center gap-1">
+                                                                <input 
+                                                                    type="number" 
+                                                                    min="1" 
+                                                                    max="10" 
+                                                                    className="w-16 text-center bg-white border border-brand-sand rounded-md py-1 focus:ring-1 focus:ring-brand-sage focus:outline-none"
+                                                                    value={scores[opt.id]?.[crit.id] || ''}
+                                                                    onChange={(e) => updateScore(opt.id, crit.id, e.target.value)}
+                                                                />
+                                                            </div>
+                                                        </td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div className="flex justify-between items-center pt-6">
+                                    <Button variant="secondary" onClick={() => setStep(2)}>上一步</Button>
+                                    <Button onClick={() => setStep(4)}>
+                                        查看分析結果 <CheckIcon />
+                                    </Button>
+                                </div>
+                            </Card>
+                        )}
+
+                        {step === 4 && (
+                            <Card className="animate-fade-in">
+                                <h2 className="text-xl font-serif font-bold mb-6 text-brand-ink flex items-center gap-2">
+                                    <span className="text-brand-clay">04.</span> 分析結果
+                                </h2>
+                                
+                                <div className="space-y-6 mb-10">
+                                    {results.map((result, index) => {
+                                        const isWinner = index === 0;
+                                        const maxScore = results[0].totalScore;
+                                        const percentage = maxScore > 0 ? (result.totalScore / maxScore) * 100 : 0;
+                                        
+                                        return (
+                                            <div key={result.id} className={`relative p-4 rounded-xl transition-all ${isWinner ? 'bg-brand-paper ring-1 ring-brand-clay shadow-sm' : 'opacity-80'}`}>
+                                                {isWinner && (
+                                                    <div className="absolute -top-3 -right-2 bg-brand-clay text-white text-xs px-2 py-1 rounded-full shadow-sm tracking-wider">
+                                                        RECOMMENDED
+                                                    </div>
+                                                )}
+                                                <div className="flex justify-between items-end mb-2">
+                                                    <h3 className={`font-bold text-lg ${isWinner ? 'text-brand-ink' : 'text-brand-ink/70'}`}>
+                                                        {result.name}
+                                                    </h3>
+                                                    <span className={`text-2xl font-serif font-bold ${isWinner ? 'text-brand-clay' : 'text-brand-sage'}`}>
+                                                        {result.totalScore}
+                                                    </span>
+                                                </div>
+                                                {/* Bar Chart */}
+                                                <div className="w-full bg-brand-sand/30 rounded-full h-2.5 overflow-hidden">
+                                                    <div 
+                                                        className={`h-full rounded-full transition-all duration-1000 ease-out ${isWinner ? 'bg-brand-clay' : 'bg-brand-sage'}`} 
+                                                        style={{ width: `${percentage}%` }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+
+                                <div className="bg-brand-paper p-4 rounded-lg border border-brand-sand/50 text-sm text-brand-ink/70 mb-8 font-serif leading-relaxed">
+                                    <p>
+                                        <strong>常溫的建議：</strong><br/>
+                                        數據顯示 <span className="text-brand-clay font-bold">{results[0].name}</span> 是目前最符合您設定條件的選擇。
+                                        然而，數據僅是理性的參考，請閉上眼感受一下這個選項是否也讓您的內心感到踏實？
+                                    </p>
+                                </div>
+
+                                <div className="flex justify-between items-center gap-4 flex-wrap">
+                                    <Button variant="secondary" onClick={() => setStep(3)}>修改評分</Button>
+                                    <div className="flex gap-2">
+                                        <Button variant="secondary" onClick={handleExportCSV}>
+                                            <DownloadIcon /> 匯出 CSV
+                                        </Button>
+                                        <Button onClick={handleReset} variant="primary">
+                                            <RefreshIcon /> 重新分析
+                                        </Button>
+                                    </div>
+                                </div>
+                            </Card>
+                        )}
+                    </div>
+
+                    {/* Custom Reset Modal */}
+                    {showResetModal && (
+                        <div className="fixed inset-0 bg-brand-ink/20 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+                            <div className="bg-brand-white rounded-2xl shadow-xl p-6 max-w-sm w-full border border-brand-sand relative">
+                                <h3 className="text-lg font-serif font-bold text-brand-ink mb-2">確定要重新開始嗎？</h3>
+                                <p className="text-brand-ink/70 text-sm mb-6">目前的分析資料將會清除，這將無法復原。</p>
+                                <div className="flex justify-end gap-2">
+                                    <Button variant="secondary" onClick={() => setShowResetModal(false)} className="px-4 py-1.5 text-sm">
+                                        取消
+                                    </Button>
+                                    <Button variant="primary" onClick={confirmReset} className="px-4 py-1.5 text-sm bg-brand-clay hover:bg-brand-ink border-transparent">
+                                        確定重來
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <footer className="mt-12 text-center text-xs text-brand-ink/30 tracking-widest font-sans">
+                        &copy; {new Date().getFullYear()} AMBIENT EDIT STUDIO
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<DecisionMatrixApp />);
+    </script>
+</body>
+</html>

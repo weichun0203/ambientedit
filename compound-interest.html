@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常溫編集所｜複利股價計算器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #fdfbf7;
+            color: #4a4a4a;
+            /* 模擬紙張纖維質感的微噪點 SVG */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+        h1, h2 {
+            font-family: 'Noto Serif TC', serif;
+        }
+        .table-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background-color: #e6e2dd;
+            border-radius: 10px;
+        }
+        .input-field {
+            border-color: #e6e2dd;
+            background-color: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+        .input-field:focus {
+            border-color: #8da399;
+            ring-color: #8da399;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-12">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header Section with Home Button -->
+        <header class="mb-12 border-b border-brand-sand pb-8">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+                <div class="text-left">
+                    <span class="text-brand-sage tracking-widest text-xs font-bold uppercase mb-2 block">Ambient Financial Tools</span>
+                    <h1 class="text-4xl md:text-5xl font-bold text-brand-ink">複利股價即時計算機</h1>
+                </div>
+                
+                <!-- 常溫首頁按鈕 - 位於標題右側 -->
+                <nav>
+                    <a href="https://weichun0203.github.io/ambientedit/" 
+                       class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft"
+                       aria-label="返回常溫首頁">
+                        <!-- Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        <!-- Text -->
+                        <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
+                    </a>
+                </nav>
+            </div>
+            
+            <p class="text-gray-500 mt-6 leading-relaxed italic max-w-2xl">
+                「複利是將時間變現的藝術。」輸入參數，預見資產隨歲月遞增的軌跡。
+            </p>
+        </header>
+
+        <!-- Input Section -->
+        <div class="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-soft mb-10 border border-brand-sand">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <label for="currentPrice" class="block text-xs font-bold tracking-wider text-brand-ink/60 mb-2 uppercase">目前股價 (FV)</label>
+                    <div class="relative">
+                        <input type="number" id="currentPrice" value="100" min="0.01" step="0.01" oninput="performCalculations()"
+                               class="input-field block w-full rounded-xl border px-4 py-3 text-brand-ink focus:outline-none focus:ring-1 focus:ring-brand-sage">
+                        <span class="absolute right-4 top-3.5 text-brand-sand font-bold">$</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="annualRate" class="block text-xs font-bold tracking-wider text-brand-ink/60 mb-2 uppercase">預期年報酬率 (r)</label>
+                    <div class="relative">
+                        <input type="number" id="annualRate" value="8" min="0.1" step="0.1" oninput="performCalculations()"
+                               class="input-field block w-full rounded-xl border px-4 py-3 text-brand-ink focus:outline-none focus:ring-1 focus:ring-brand-sage">
+                        <span class="absolute right-4 top-3.5 text-brand-sand font-bold">%</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="investedYears" class="block text-xs font-bold tracking-wider text-brand-ink/60 mb-2 uppercase">已投資年數 (N)</label>
+                    <input type="number" id="investedYears" value="0" min="0" max="50" oninput="performCalculations()"
+                           class="input-field block w-full rounded-xl border px-4 py-3 text-brand-ink focus:outline-none focus:ring-1 focus:ring-brand-sage">
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div class="bg-white/90 backdrop-blur-md rounded-2xl shadow-soft border border-brand-sand overflow-hidden">
+            <div class="p-8">
+                <h2 class="text-2xl font-bold text-brand-ink mb-6 flex items-center">
+                    <span class="w-8 h-px bg-brand-sage mr-3"></span>
+                    演算結果分析
+                </h2>
+                
+                <div id="summaryOutput" class="grid grid-cols-1 gap-4 mb-8">
+                    <!-- Dynamic Summary Content -->
+                </div>
+
+                <div class="table-container overflow-x-auto max-h-[500px] border border-brand-sand rounded-xl">
+                    <table id="projectionTable" class="min-w-full divide-y divide-brand-sand">
+                        <thead class="bg-brand-paper sticky top-0 z-10">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-brand-ink/50 uppercase tracking-widest">年份索引</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-brand-ink/50 uppercase tracking-widest">總成長年數</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-brand-ink/50 uppercase tracking-widest">預期股價</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-brand-ink/50 uppercase tracking-widest">累計總報酬</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="bg-white divide-y divide-brand-sand/50">
+                            <!-- JS Inject -->
+                        </tbody>
+                    </table>
+                    <div id="noDataMessage" class="hidden py-20 text-center text-brand-sand font-medium">請輸入數值以開始計算</div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-12 text-center text-brand-sand text-xs tracking-widest uppercase">
+            &copy; 2024 Ambient Edit Studio. All Rights Reserved.
+        </footer>
+    </div>
+
+    <script>
+        const formatCurrency = (v) => '$' + v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        const formatPercentage = (v) => (v * 100).toFixed(2) + '%';
+
+        function getInputs() {
+            const P = parseFloat(document.getElementById('currentPrice').value);
+            const r = parseFloat(document.getElementById('annualRate').value) / 100;
+            const M = parseInt(document.getElementById('investedYears').value);
+
+            if (isNaN(P) || isNaN(r) || P <= 0 || r <= 0) return { error: '請輸入有效的目前股價與報酬率' };
+            if (isNaN(M) || M < 0) return { error: '請輸入有效的投資年數' };
+            return { P, r, M };
+        }
+
+        function performCalculations() {
+            const inputs = getInputs();
+            const tableBody = document.getElementById('tableBody');
+            const summaryOutput = document.getElementById('summaryOutput');
+            const noDataMessage = document.getElementById('noDataMessage');
+
+            if (inputs.error) {
+                summaryOutput.innerHTML = `<div class="p-4 bg-brand-clay/10 text-brand-clay text-sm rounded-lg border border-brand-clay/20">${inputs.error}</div>`;
+                tableBody.innerHTML = '';
+                noDataMessage.classList.remove('hidden');
+                return;
+            }
+
+            const { P: FV, r, M: N } = inputs;
+            let PV = N > 0 ? FV / Math.pow((1 + r), N) : FV;
+            let totalHistReturn = Math.pow((1 + r), N) - 1;
+
+            // Summary HTML
+            summaryOutput.innerHTML = `
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1 p-6 bg-brand-paper rounded-xl border border-brand-sand">
+                        <p class="text-xs font-bold text-brand-sage uppercase tracking-wider mb-1">期初投入價格 (PV)</p>
+                        <p class="text-3xl font-bold text-brand-ink">${formatCurrency(PV)}</p>
+                        ${N > 0 ? `<p class="text-xs mt-2 text-gray-400">歷史累計報酬：${formatPercentage(totalHistReturn)}</p>` : ''}
+                    </div>
+                    <div class="flex-1 p-6 bg-brand-sage/10 rounded-xl border border-brand-sage/20">
+                        <p class="text-xs font-bold text-brand-sage uppercase tracking-wider mb-1">目前市場價格 (FV)</p>
+                        <p class="text-3xl font-bold text-brand-ink">${formatCurrency(FV)}</p>
+                        <p class="text-xs mt-2 text-brand-sage font-medium">基於年化 ${formatPercentage(r)} 的複利計算</p>
+                    </div>
+                </div>
+            `;
+
+            tableBody.innerHTML = '';
+            noDataMessage.classList.add('hidden');
+
+            for (let i = -N; i <= 50; i++) {
+                const n = i + N;
+                if (n < 0) continue;
+
+                const futurePrice = PV * Math.pow((1 + r), n);
+                const cumulativeReturn = Math.pow((1 + r), n) - 1;
+
+                const row = tableBody.insertRow();
+                row.className = "transition-colors duration-200";
+                
+                if (i === 0) {
+                    row.className = "bg-brand-sage/20 font-bold border-y border-brand-sage";
+                } else if (i > 0 && i % 10 === 0) {
+                    row.className = "bg-brand-paper";
+                } else {
+                    row.className = "hover:bg-brand-paper/50";
+                }
+
+                let c1 = row.insertCell();
+                c1.className = "px-6 py-4 text-sm font-medium";
+                c1.innerHTML = i === 0 ? `${i} <span class="ml-2 text-[10px] bg-brand-sage text-white px-2 py-0.5 rounded-full uppercase tracking-tighter">NOW</span>` : i;
+
+                let c2 = row.insertCell();
+                c2.className = "px-6 py-4 text-sm text-gray-400";
+                c2.textContent = n;
+
+                let c3 = row.insertCell();
+                c3.className = "px-6 py-4 text-sm font-bold text-brand-ink";
+                c3.textContent = formatCurrency(futurePrice);
+
+                let c4 = row.insertCell();
+                c4.className = "px-6 py-4 text-sm";
+                let badge = "";
+                if (n > 0 && cumulativeReturn >= 1.0) {
+                    const prevReturn = Math.pow((1 + r), n - 1) - 1;
+                    if (prevReturn < 1.0) badge = `<span class="ml-2 text-[10px] bg-brand-clay text-white px-2 py-0.5 rounded-full uppercase">Double</span>`;
+                }
+                c4.innerHTML = `<span class="${cumulativeReturn >= 0 ? 'text-brand-sage' : 'text-brand-clay'} font-medium">${formatPercentage(cumulativeReturn)}</span>${badge}`;
+            }
+        }
+
+        window.onload = performCalculations;
+    </script>
+</body>
+</html>

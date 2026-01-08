@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>曼陀羅目標規劃｜常溫編集所</title>
+    <!-- Google Fonts: Noto Serif TC & Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- html2canvas for image generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                            sageLight: '#eef2f1', 
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        soft: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #fdfbf7;
+            color: #4a4a4a;
+            /* 模擬紙張纖維質感的微噪點 SVG */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+
+        .font-serif-heading {
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        /* 自定義滾動條 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdfbf7; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e6e2dd; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4a59a; 
+        }
+
+        .input-seamless {
+            background: transparent;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+            color: #4a4a4a;
+            resize: none;
+        }
+        .input-seamless:hover {
+            background-color: rgba(255,255,255, 0.5);
+            border-color: #e6e2dd;
+        }
+        .input-seamless:focus {
+            background-color: #fff;
+            border-color: #8da399;
+            box-shadow: 0 0 0 2px rgba(141, 163, 153, 0.1);
+        }
+
+        #export-canvas {
+            position: absolute;
+            left: -9999px;
+            top: 0;
+        }
+        
+        .grid-cell-wrapper {
+            aspect-ratio: 1/1;
+            position: relative;
+        }
+
+        .spinner {
+            border: 3px solid rgba(141, 163, 153, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #8da399;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="min-h-screen py-12 px-4 sm:px-8 selection:bg-brand-clay selection:text-white">
+
+    <!-- 主標題區 (Header) -->
+    <header class="max-w-5xl mx-auto mb-12 animate-fade-in relative">
+        <!-- 標題容器 -->
+        <div class="flex flex-col items-center">
+            
+            <div class="text-center w-full relative">
+                <!-- Top Label -->
+                <h2 class="text-brand-sage text-sm tracking-[0.2em] font-bold uppercase mb-2">Ambient Edit Studio</h2>
+                
+                <!-- Main Title Wrapper for Alignment -->
+                <!-- 使用 relative 容器來包裝 H1 和 按鈕，確保按鈕對齊 H1 底部 -->
+                <div class="relative w-full max-w-4xl mx-auto flex justify-center items-end">
+                    <!-- 中文標題 -->
+                    <h1 class="text-3xl md:text-4xl font-serif-heading text-brand-ink font-bold tracking-wide leading-tight pb-1">曼陀羅目標規劃</h1>
+                    
+                    <!-- Home Button: Desktop (Absolute Right Bottom of H1) -->
+                    <div class="hidden md:block absolute right-0 bottom-1.5">
+                        <a href="https://weichun0203.github.io/ambientedit/" 
+                           class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+                           aria-label="返回常溫首頁">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                <polyline points="9 22 9 12 15 12 15 22"/>
+                            </svg>
+                            <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 新增英文副標 (位於 H1 下方，不影響按鈕對齊) -->
+                <p class="text-brand-sage/60 text-xs tracking-[0.3em] font-serif-heading font-bold uppercase mt-2">Mandala Chart</p>
+            </div>
+
+            <!-- Home Button: Mobile (Centered below title) -->
+            <div class="md:hidden mt-6">
+                 <a href="https://weichun0203.github.io/ambientedit/" 
+                   class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+                   aria-label="返回常溫首頁">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
+                </a>
+            </div>
+
+        </div>
+
+        <p class="text-center text-brand-ink/70 max-w-xl mx-auto text-sm leading-relaxed mt-6">
+            將遠大夢想拆解為具體行動。由內而外，從核心目標延伸出八個面向，再落實為六十四個行動步驟。
+            <br>透過書寫，讓思緒沉澱，讓路徑清晰。
+        </p>
+    </header>
+
+    <!-- 控制區 -->
+    <div class="max-w-5xl mx-auto mb-8 flex flex-wrap justify-between items-center gap-4 border-b border-brand-sand/50 pb-6">
+        <div class="flex items-center space-x-2 text-xs text-brand-sage">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+            </svg>
+            <span id="save-status">變更將自動儲存於此瀏覽器</span>
+        </div>
+        
+        <div class="flex gap-3">
+            <button type="button" onclick="resetData()" class="px-5 py-2 text-sm text-brand-clay hover:text-white border border-brand-clay/30 rounded-lg hover:bg-brand-clay transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-clay focus:ring-offset-2">
+                重置畫布
+            </button>
+            <button type="button" onclick="downloadImage()" id="download-btn" class="flex items-center px-5 py-2 text-sm bg-brand-sage text-white rounded-lg shadow-soft hover:bg-brand-ink transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-sage focus:ring-offset-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                下載計畫海報
+            </button>
+        </div>
+    </div>
+
+    <!-- 核心互動區 -->
+    <main class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
+        
+        <!-- 左側：核心與八大面向 -->
+        <section class="lg:col-span-1 flex flex-col">
+            <div class="mb-4 flex items-center justify-between">
+                <h3 class="font-serif-heading text-xl text-brand-ink border-b-2 border-brand-sage/20 pb-1 inline-block">核心佈局</h3>
+                <span class="text-xs text-brand-sage bg-brand-sage/10 px-2 py-1 rounded">第一步</span>
+            </div>
+            
+            <div class="bg-white p-4 rounded-xl shadow-soft border border-brand-sand aspect-square grid grid-cols-3 gap-2">
+                <!-- 動態生成的 3x3 grid -->
+                <div id="main-grid-container" class="contents">
+                    <!-- JS will populate this -->
+                </div>
+            </div>
+            <p class="mt-4 text-xs text-brand-ink/60 leading-relaxed text-center">
+                <span class="text-brand-clay font-bold">*</span> 點擊周圍的格子，在右側編輯詳細行動計畫。<br>
+                中央輸入您的終極目標。
+            </p>
+        </section>
+
+        <!-- 右側：行動計畫展開 -->
+        <section class="lg:col-span-2 flex flex-col">
+             <div class="mb-4 flex items-center justify-between">
+                <h3 id="detail-title" class="font-serif-heading text-xl text-brand-ink border-b-2 border-brand-sage/20 pb-1 inline-block">行動細節</h3>
+                <span class="text-xs text-brand-ink/40">請輸入具體的執行步驟</span>
+            </div>
+
+            <div id="detail-panel" class="bg-white p-6 rounded-xl shadow-soft border border-brand-sand flex-grow relative overflow-hidden">
+                <!-- 背景裝飾 -->
+                <div class="absolute top-0 right-0 w-32 h-32 bg-brand-sand/20 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+
+                <div class="flex flex-col h-full">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <span class="text-xs text-brand-sage tracking-widest uppercase mb-1 block">CURRENT FOCUS</span>
+                            <h4 id="current-subgoal-display" class="text-2xl font-serif-heading text-brand-ink font-bold">請先輸入目標</h4>
+                        </div>
+                        <div class="text-4xl text-brand-sand/50 font-serif-heading font-bold italic" id="current-index-display">01</div>
+                    </div>
+
+                    <!-- 8個行動輸入框 Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- JS 生成 8 個 input -->
+                        <div id="action-inputs-container" class="contents">
+                           <!-- Inputs here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 隱藏的 Export Canvas 區域 -->
+    <div id="export-canvas" class="bg-[#fdfbf7] p-12 w-[1200px]">
+        <div class="text-center mb-8">
+             <h2 class="text-brand-sage text-lg tracking-[0.3em] font-bold uppercase mb-2">Ambient Edit Studio</h2>
+             <h1 class="text-5xl font-serif-heading text-brand-ink font-bold mb-2">MANDALA CHART</h1>
+             <p class="text-brand-ink/60 text-lg tracking-widest">VISION PROJECTION</p>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 border-4 border-brand-sand p-4 bg-white rounded-xl">
+             <div id="export-grid-content" class="contents"></div>
+        </div>
+
+        <div class="flex justify-between items-end mt-8">
+            <div class="text-brand-ink/40 text-sm font-serif-heading italic">
+                Designed by Weichun
+            </div>
+            <div class="text-brand-sage text-sm tracking-widest">
+                常溫編集所
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 邏輯 -->
+    <script>
+        // 工廠函數
+        function createInitialData() {
+            return {
+                centerGoal: "",
+                subGoals: Array.from({ length: 8 }, () => ({
+                    title: "",
+                    actions: Array(8).fill("")
+                })),
+                lastEditedIndex: 0
+            };
+        }
+
+        let appData = createInitialData();
+        
+        // Grid Mapping
+        const gridToSubGoalIndex = {
+            0: 0, 1: 1, 2: 2,
+            3: 3,       5: 4,
+            6: 5, 7: 6, 8: 7
+        };
+        const subGoalToGridIndex = [0, 1, 2, 3, 5, 6, 7, 8];
+        const STORAGE_KEY = 'ambient_mandala_v1';
+
+        function init() {
+            loadFromLocal();
+            renderMainGrid(); 
+            updateGridSelectionVisuals();
+            renderDetailPanel(appData.lastEditedIndex);
+            
+            const status = document.getElementById('save-status');
+            setTimeout(() => {
+                status.style.opacity = '0.5';
+            }, 3000);
+        }
+
+        function loadFromLocal() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try {
+                    appData = JSON.parse(stored);
+                } catch (e) {
+                    console.error("Data load failed, resetting", e);
+                    appData = createInitialData();
+                }
+            }
+        }
+
+        function saveToLocal() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+            const status = document.getElementById('save-status');
+            status.innerText = "已儲存...";
+            status.style.opacity = '1';
+            setTimeout(() => {
+                status.innerText = "變更將自動儲存於此瀏覽器";
+                status.style.opacity = '0.5';
+            }, 1000);
+        }
+
+        function resetData() {
+            if(confirm("【警告】這將清空所有目前的進度！\n\n確定要重置畫布嗎？此動作將清除快取與資料，且無法復原。")) {
+                // 1. 清除儲存
+                localStorage.removeItem(STORAGE_KEY);
+                
+                // 2. 徹底重置記憶體中的狀態為初始值 (建立一個全新物件，不共用參照)
+                appData = createInitialData();
+                
+                // 3. 確保最後編輯索引歸零
+                appData.lastEditedIndex = 0;
+
+                // 4. 不使用 reload，改用手動強制重繪
+                // 這樣可以確保不會被瀏覽器的快取或自動填入干擾
+                renderMainGrid(); 
+                updateGridSelectionVisuals();
+                renderDetailPanel(0);
+                
+                // 5. 給予視覺反饋
+                const status = document.getElementById('save-status');
+                status.innerText = "畫布已完全重置";
+                status.style.opacity = '1';
+                setTimeout(() => {
+                    status.innerText = "變更將自動儲存於此瀏覽器";
+                    status.style.opacity = '0.5';
+                }, 2000);
+            }
+        }
+
+        function renderMainGrid() {
+            const container = document.getElementById('main-grid-container');
+            // 清空目前的 DOM，這會銷毀舊的元素，防止快取殘留
+            container.innerHTML = '';
+
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.id = `grid-cell-${i}`;
+                cell.className = `grid-cell-wrapper flex items-center justify-center border transition-all duration-300 relative`;
+                
+                if (i === 4) {
+                    cell.classList.add('bg-brand-sage', 'text-white', 'shadow-inner');
+                } else {
+                    cell.classList.add('bg-brand-paper', 'hover:bg-brand-sand/30', 'cursor-pointer', 'border-brand-sand');
+                    cell.onclick = () => {
+                        const subIndex = gridToSubGoalIndex[i];
+                        if (appData.lastEditedIndex !== subIndex) {
+                            appData.lastEditedIndex = subIndex;
+                            saveToLocal();
+                            updateGridSelectionVisuals();
+                            renderDetailPanel(subIndex);
+                        }
+                    };
+                }
+
+                const textarea = document.createElement('textarea');
+                textarea.setAttribute('autocomplete', 'off'); 
+                textarea.className = `input-seamless resize-none p-2 text-sm font-bold ${i === 4 ? 'text-white placeholder-white/70' : 'text-brand-ink'}`;
+                textarea.style.background = 'transparent';
+                
+                // 確保直接從當前的 appData 讀取 (重置後 appData 為空字串)
+                if (i === 4) {
+                    textarea.value = appData.centerGoal;
+                    textarea.placeholder = "核心目標";
+                    textarea.oninput = (e) => {
+                        appData.centerGoal = e.target.value;
+                        saveToLocal();
+                    };
+                } else {
+                    const subIndex = gridToSubGoalIndex[i];
+                    textarea.value = appData.subGoals[subIndex].title;
+                    textarea.placeholder = `方向 ${subIndex + 1}`;
+                    textarea.oninput = (e) => {
+                        appData.subGoals[subIndex].title = e.target.value;
+                        // 同步右側
+                        if (appData.lastEditedIndex === subIndex) {
+                            document.getElementById('current-subgoal-display').innerText = e.target.value || `方向 ${subIndex + 1}`;
+                        }
+                        saveToLocal();
+                    };
+                }
+
+                cell.appendChild(textarea);
+                container.appendChild(cell);
+            }
+        }
+
+        function updateGridSelectionVisuals() {
+            for (let i = 0; i < 9; i++) {
+                if (i === 4) continue;
+                const cell = document.getElementById(`grid-cell-${i}`);
+                if (!cell) continue;
+
+                const subIndex = gridToSubGoalIndex[i];
+                cell.classList.remove('ring-2', 'ring-brand-clay', 'ring-offset-2');
+                
+                if (subIndex === appData.lastEditedIndex) {
+                    cell.classList.add('ring-2', 'ring-brand-clay', 'ring-offset-2');
+                }
+            }
+        }
+
+        function renderDetailPanel(subGoalIndex) {
+            const subGoal = appData.subGoals[subGoalIndex];
+            
+            const titleDisplay = document.getElementById('current-subgoal-display');
+            titleDisplay.innerText = subGoal.title || `方向 ${subGoalIndex + 1}`;
+            
+            const indexDisplay = document.getElementById('current-index-display');
+            indexDisplay.innerText = `0${subGoalIndex + 1}`;
+
+            const inputsContainer = document.getElementById('action-inputs-container');
+            // 清空舊的輸入框
+            inputsContainer.innerHTML = '';
+
+            subGoal.actions.forEach((actionText, actionIndex) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = "flex flex-col space-y-1";
+
+                const label = document.createElement('label');
+                label.className = "text-xs text-brand-ink/50 font-serif-heading ml-1";
+                label.innerText = `行動 ${actionIndex + 1}`;
+
+                const input = document.createElement('input');
+                input.type = "text";
+                input.setAttribute('autocomplete', 'off');
+                // 確保這裡的值從當前 appData 讀取
+                input.value = actionText;
+                input.className = "w-full bg-brand-paper border border-brand-sand rounded px-3 py-2 text-brand-ink focus:border-brand-sage focus:outline-none transition-colors duration-300 shadow-sm";
+                input.placeholder = "輸入具體行動...";
+                
+                input.oninput = (e) => {
+                    subGoal.actions[actionIndex] = e.target.value;
+                    saveToLocal();
+                };
+
+                wrapper.appendChild(label);
+                wrapper.appendChild(input);
+                inputsContainer.appendChild(wrapper);
+            });
+
+            const panel = document.getElementById('detail-panel');
+            panel.classList.remove('animate-fade-in');
+            void panel.offsetWidth;
+            panel.classList.add('animate-fade-in');
+        }
+
+        function buildExportGrid() {
+            const container = document.getElementById('export-grid-content');
+            container.innerHTML = '';
+
+            for (let blockRow = 0; blockRow < 3; blockRow++) {
+                for (let blockCol = 0; blockCol < 3; blockCol++) {
+                    const blockIndex = blockRow * 3 + blockCol;
+                    const blockDiv = document.createElement('div');
+                    blockDiv.className = "grid grid-cols-3 gap-1 bg-brand-sand/30 p-1";
+
+                    if (blockIndex === 4) {
+                        for (let i = 0; i < 9; i++) {
+                            const cell = document.createElement('div');
+                            cell.className = "flex items-center justify-center text-center p-2 text-sm aspect-square break-words overflow-hidden";
+                            if (i === 4) {
+                                cell.classList.add('bg-brand-ink', 'text-white', 'font-bold', 'text-base');
+                                cell.innerText = appData.centerGoal || "核心";
+                            } else {
+                                const subIdx = gridToSubGoalIndex[i];
+                                cell.classList.add('bg-brand-sage', 'text-white', 'font-bold');
+                                cell.innerText = appData.subGoals[subIdx].title || "";
+                            }
+                            blockDiv.appendChild(cell);
+                        }
+                    } else {
+                        const subGoalIdx = gridToSubGoalIndex[blockIndex];
+                        const subGoalData = appData.subGoals[subGoalIdx];
+                        let actionCounter = 0;
+
+                        for (let i = 0; i < 9; i++) {
+                            const cell = document.createElement('div');
+                            cell.className = "flex items-center justify-center text-center p-1 text-xs aspect-square break-words overflow-hidden leading-tight";
+                            if (i === 4) {
+                                cell.classList.add('bg-brand-sage', 'text-white', 'font-bold');
+                                cell.innerText = subGoalData.title || "";
+                            } else {
+                                cell.classList.add('bg-white', 'text-brand-ink');
+                                if(subGoalData.actions[actionCounter]) {
+                                    cell.innerText = subGoalData.actions[actionCounter];
+                                }
+                                actionCounter++;
+                            }
+                            blockDiv.appendChild(cell);
+                        }
+                    }
+                    container.appendChild(blockDiv);
+                }
+            }
+        }
+
+        function downloadImage() {
+            const btn = document.getElementById('download-btn');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = `<div class="spinner mr-2"></div> 生成中...`;
+            btn.disabled = true;
+
+            buildExportGrid();
+
+            setTimeout(() => {
+                const element = document.getElementById('export-canvas');
+                html2canvas(element, {
+                    scale: 2, 
+                    backgroundColor: '#fdfbf7',
+                    useCORS: true
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `常溫編集所_曼陀羅計畫_${new Date().toISOString().slice(0,10)}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }).catch(err => {
+                    console.error(err);
+                    alert("圖片生成失敗，請稍後再試");
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                });
+            }, 500);
+        }
+
+        window.onload = init;
+
+    </script>
+</body>
+</html>

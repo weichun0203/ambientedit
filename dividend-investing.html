@@ -103,21 +103,27 @@
 <body class="antialiased min-h-screen flex flex-col">
 
     <div id="app" class="flex-grow relative">
-        <!-- Back to Home Button (Icon + Text) -->
-        <a href="https://weichun0203.github.io/ambientedit" class="absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-1.5 text-brand-ink/30 hover:text-brand-clay transition-colors duration-300 group z-20 no-underline">
-            <i data-lucide="home" class="w-5 h-5 transition-transform group-hover:scale-110"></i>
-            <span class="font-serif text-xs md:text-sm tracking-wider">常溫首頁</span>
-        </a>
+        
+        <!-- Header (Layout Updated: Left Aligned Title + Right Button) -->
+        <header class="pt-10 pb-6 px-4 md:px-4 max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
+            
+            <!-- Left: Title Group -->
+            <div class="text-left w-full md:w-auto">
+                <h1 class="font-serif text-3xl md:text-4xl font-bold text-brand-ink tracking-widest mb-1 flex items-center gap-3">
+                    <i data-lucide="sprout" class="text-brand-sage w-8 h-8"></i>
+                    <span>常溫存股</span>
+                </h1>
+                <p class="font-serif text-brand-ink/60 text-sm md:text-base tracking-wider pl-11 md:pl-11">
+                    累積生活的餘裕 · 打造溫柔的現金流
+                </p>
+            </div>
 
-        <!-- Header -->
-        <header class="pt-10 pb-6 px-4 text-center">
-            <h1 class="font-serif text-3xl md:text-4xl font-bold text-brand-ink tracking-widest mb-2 flex justify-center items-center gap-3">
-                <i data-lucide="sprout" class="text-brand-sage w-8 h-8"></i>
-                <span>常溫存股</span>
-            </h1>
-            <p class="font-serif text-brand-ink/60 text-sm md:text-base tracking-wider">
-                累積生活的餘裕 · 打造溫柔的現金流
-            </p>
+            <!-- Right: Home Button (With Outline) -->
+            <a href="https://weichun0203.github.io/ambientedit" class="flex items-center gap-2 px-5 py-2 border border-brand-sand rounded-full text-brand-ink/60 hover:text-brand-clay hover:border-brand-clay transition-all duration-300 group no-underline bg-white/50 backdrop-blur-sm shadow-sm self-start md:self-center">
+                <i data-lucide="home" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
+                <span class="font-serif text-sm tracking-wider font-medium">常溫首頁</span>
+            </a>
+
         </header>
 
         <main class="max-w-5xl mx-auto px-4 pb-20">

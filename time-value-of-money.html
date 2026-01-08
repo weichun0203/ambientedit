@@ -124,6 +124,8 @@
                         <label for="hours" class="block text-sm font-medium text-brand-ink/80 mb-2">月總工時</label>
                         <input type="number" id="hours" placeholder="160" value="160"
                             class="brand-input w-full px-3 py-3 rounded-lg border border-brand-sand text-brand-ink placeholder-brand-ink/30 text-sm md:text-base">
+                        <!-- Restored Helper Text -->
+                        <p class="text-[10px] text-brand-ink/40 mt-1 text-right">*預設為 8小時 × 20天</p>
                     </div>
                 </div>
                 
@@ -182,6 +184,36 @@
                 <p class="font-serif text-brand-ink italic text-sm leading-relaxed">
                     「這筆支出值得您用生命中的這段時間去交換嗎？」
                 </p>
+            </div>
+
+            <!-- TVM Educational Section -->
+            <!-- Updated margin-top to mt-20 to visually match the top spacing of the Result Section (mt-12 + pt-10) -->
+            <div class="mt-20 mx-auto max-w-lg bg-white border border-brand-sand rounded-xl p-6 shadow-sm text-left">
+                <div class="flex items-center mb-3">
+                    <span class="bg-brand-sage/20 text-brand-sage p-1.5 rounded-full mr-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </span>
+                    <h4 class="font-serif font-bold text-brand-ink text-sm md:text-base">五歲也能懂的「時間魔法」</h4>
+                </div>
+                
+                <div class="space-y-3 text-sm text-brand-ink/80 leading-relaxed font-sans">
+                    <p>
+                        <span class="font-bold text-brand-sage">如果錢是種子...</span><br>
+                        你今天的 100 元像是一顆種子。
+                        如果你把它花掉（吃掉種子），它就消失了。
+                    </p>
+                    <p>
+                        但如果你把它存起來或投資（種在土裡），
+                        隨著時間過去，它會長成一棵樹，結出更多蘋果。
+                    </p>
+                    <p class="text-xs text-brand-ink/60 bg-brand-sand/20 p-2 rounded">
+                        這就是 <span class="font-bold">TVM (Time Value of Money)</span>：
+                        今天的錢比未來的錢更值錢，因為今天的錢可以長大！
+                    </p>
+                </div>
             </div>
             
             <button onclick="resetCalculator()" class="text-xs text-brand-sage hover:text-brand-clay underline decoration-brand-sage/50 mt-8 transition-colors">

@@ -35,6 +35,7 @@
                     },
                     boxShadow: {
                         soft: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        modal: '0 10px 40px -10px rgba(0, 0, 0, 0.1)',
                     }
                 }
             }
@@ -116,26 +117,41 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Modal Animation */
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 300ms ease-out, transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-exit {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .modal-exit-active {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 200ms ease-in, transform 200ms ease-in;
+        }
     </style>
 </head>
 <body class="min-h-screen py-12 px-4 sm:px-8 selection:bg-brand-clay selection:text-white">
 
     <!-- 主標題區 (Header) -->
     <header class="max-w-5xl mx-auto mb-12 animate-fade-in relative">
-        <!-- 標題容器 -->
         <div class="flex flex-col items-center">
-            
             <div class="text-center w-full relative">
-                <!-- Top Label -->
                 <h2 class="text-brand-sage text-sm tracking-[0.2em] font-bold uppercase mb-2">Ambient Edit Studio</h2>
                 
-                <!-- Main Title Wrapper for Alignment -->
-                <!-- 使用 relative 容器來包裝 H1 和 按鈕，確保按鈕對齊 H1 底部 -->
-                <div class="relative w-full max-w-4xl mx-auto flex justify-center items-end">
-                    <!-- 中文標題 -->
+                <!-- Main Title Wrapper -->
+                <div class="relative w-full max-w-5xl mx-auto flex justify-center items-end">
                     <h1 class="text-3xl md:text-4xl font-serif-heading text-brand-ink font-bold tracking-wide leading-tight pb-1">曼陀羅目標規劃</h1>
                     
-                    <!-- Home Button: Desktop (Absolute Right Bottom of H1) -->
+                    <!-- Home Button -->
                     <div class="hidden md:block absolute right-0 bottom-1.5">
                         <a href="https://weichun0203.github.io/ambientedit/" 
                            class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
@@ -149,11 +165,9 @@
                     </div>
                 </div>
 
-                <!-- 新增英文副標 (位於 H1 下方，不影響按鈕對齊) -->
                 <p class="text-brand-sage/60 text-xs tracking-[0.3em] font-serif-heading font-bold uppercase mt-2">Mandala Chart</p>
             </div>
 
-            <!-- Home Button: Mobile (Centered below title) -->
             <div class="md:hidden mt-6">
                  <a href="https://weichun0203.github.io/ambientedit/" 
                    class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
@@ -165,7 +179,6 @@
                     <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
                 </a>
             </div>
-
         </div>
 
         <p class="text-center text-brand-ink/70 max-w-xl mx-auto text-sm leading-relaxed mt-6">
@@ -184,7 +197,7 @@
         </div>
         
         <div class="flex gap-3">
-            <button type="button" onclick="resetData()" class="px-5 py-2 text-sm text-brand-clay hover:text-white border border-brand-clay/30 rounded-lg hover:bg-brand-clay transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-clay focus:ring-offset-2">
+            <button type="button" onclick="showResetModal()" class="px-5 py-2 text-sm text-brand-clay hover:text-white border border-brand-clay/30 rounded-lg hover:bg-brand-clay transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-clay focus:ring-offset-2">
                 重置畫布
             </button>
             <button type="button" onclick="downloadImage()" id="download-btn" class="flex items-center px-5 py-2 text-sm bg-brand-sage text-white rounded-lg shadow-soft hover:bg-brand-ink transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-sage focus:ring-offset-2">
@@ -205,10 +218,7 @@
             </div>
             
             <div class="bg-white p-4 rounded-xl shadow-soft border border-brand-sand aspect-square grid grid-cols-3 gap-2">
-                <!-- 動態生成的 3x3 grid -->
-                <div id="main-grid-container" class="contents">
-                    <!-- JS will populate this -->
-                </div>
+                <div id="main-grid-container" class="contents"></div>
             </div>
             <p class="mt-4 text-xs text-brand-ink/60 leading-relaxed text-center">
                 <span class="text-brand-clay font-bold">*</span> 點擊周圍的格子，在右側編輯詳細行動計畫。<br>
@@ -224,7 +234,6 @@
             </div>
 
             <div id="detail-panel" class="bg-white p-6 rounded-xl shadow-soft border border-brand-sand flex-grow relative overflow-hidden">
-                <!-- 背景裝飾 -->
                 <div class="absolute top-0 right-0 w-32 h-32 bg-brand-sand/20 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
 
                 <div class="flex flex-col h-full">
@@ -236,18 +245,43 @@
                         <div class="text-4xl text-brand-sand/50 font-serif-heading font-bold italic" id="current-index-display">01</div>
                     </div>
 
-                    <!-- 8個行動輸入框 Grid -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- JS 生成 8 個 input -->
-                        <div id="action-inputs-container" class="contents">
-                           <!-- Inputs here -->
-                        </div>
+                        <div id="action-inputs-container" class="contents"></div>
                     </div>
                 </div>
             </div>
         </section>
 
     </main>
+
+    <!-- Custom Modal for Reset Confirmation -->
+    <div id="reset-modal" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-brand-ink/20 backdrop-blur-sm transition-opacity duration-300" onclick="hideResetModal()"></div>
+        
+        <!-- Modal Content -->
+        <div class="bg-white p-8 rounded-2xl shadow-modal border border-brand-sand w-full max-w-sm relative transform scale-95 transition-all duration-300 mx-4">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-brand-clay/10 mb-4">
+                    <svg class="h-6 w-6 text-brand-clay" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-serif-heading font-bold text-brand-ink mb-2">確認清空畫布？</h3>
+                <p class="text-sm text-brand-ink/70 leading-relaxed mb-8">
+                    此動作將<span class="text-brand-clay font-bold">永久刪除</span>目前所有的填寫內容與快取紀錄，且無法復原。確定要重新開始嗎？
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button onclick="hideResetModal()" class="w-full sm:w-auto px-5 py-2.5 text-sm font-medium text-brand-ink/70 bg-transparent border border-brand-sand rounded-lg hover:bg-brand-sand/20 hover:text-brand-ink transition-colors duration-200">
+                        取消保留
+                    </button>
+                    <button onclick="executeReset()" class="w-full sm:w-auto px-5 py-2.5 text-sm font-medium text-white bg-brand-clay rounded-lg hover:bg-[#c39185] shadow-sm transition-colors duration-200">
+                        確認重置
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- 隱藏的 Export Canvas 區域 -->
     <div id="export-canvas" class="bg-[#fdfbf7] p-12 w-[1200px]">
@@ -331,24 +365,51 @@
             }, 1000);
         }
 
-        function resetData() {
-            if(confirm("【警告】這將清空所有目前的進度！\n\n確定要重置畫布嗎？此動作將清除快取與資料，且無法復原。")) {
-                // 1. 清除儲存
-                localStorage.removeItem(STORAGE_KEY);
-                
-                // 2. 徹底重置記憶體中的狀態為初始值 (建立一個全新物件，不共用參照)
-                appData = createInitialData();
-                
-                // 3. 確保最後編輯索引歸零
-                appData.lastEditedIndex = 0;
+        // --- Modal Control Functions ---
+        function showResetModal() {
+            const modal = document.getElementById('reset-modal');
+            const content = modal.querySelector('div:nth-child(2)'); // Modal content container
 
-                // 4. 不使用 reload，改用手動強制重繪
-                // 這樣可以確保不會被瀏覽器的快取或自動填入干擾
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            
+            // Wait a tick for opacity to start transition, then animate scale
+            setTimeout(() => {
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function hideResetModal() {
+            const modal = document.getElementById('reset-modal');
+            const content = modal.querySelector('div:nth-child(2)');
+
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+
+            // Wait for scale animation to finish slightly before hiding
+            setTimeout(() => {
+                modal.classList.add('opacity-0', 'pointer-events-none');
+            }, 150);
+        }
+
+        function executeReset() {
+            hideResetModal();
+
+            // 1. 清除儲存
+            localStorage.removeItem(STORAGE_KEY);
+            
+            // 2. 徹底重置記憶體中的狀態為初始值
+            appData = createInitialData();
+            appData.lastEditedIndex = 0;
+
+            // 3. 稍微延遲以配合 Modal 關閉動畫，確保使用者看到變化
+            setTimeout(() => {
+                // 手動強制重繪
                 renderMainGrid(); 
                 updateGridSelectionVisuals();
                 renderDetailPanel(0);
                 
-                // 5. 給予視覺反饋
+                // 視覺反饋
                 const status = document.getElementById('save-status');
                 status.innerText = "畫布已完全重置";
                 status.style.opacity = '1';
@@ -356,12 +417,11 @@
                     status.innerText = "變更將自動儲存於此瀏覽器";
                     status.style.opacity = '0.5';
                 }, 2000);
-            }
+            }, 200);
         }
 
         function renderMainGrid() {
             const container = document.getElementById('main-grid-container');
-            // 清空目前的 DOM，這會銷毀舊的元素，防止快取殘留
             container.innerHTML = '';
 
             for (let i = 0; i < 9; i++) {
@@ -389,7 +449,6 @@
                 textarea.className = `input-seamless resize-none p-2 text-sm font-bold ${i === 4 ? 'text-white placeholder-white/70' : 'text-brand-ink'}`;
                 textarea.style.background = 'transparent';
                 
-                // 確保直接從當前的 appData 讀取 (重置後 appData 為空字串)
                 if (i === 4) {
                     textarea.value = appData.centerGoal;
                     textarea.placeholder = "核心目標";
@@ -403,7 +462,6 @@
                     textarea.placeholder = `方向 ${subIndex + 1}`;
                     textarea.oninput = (e) => {
                         appData.subGoals[subIndex].title = e.target.value;
-                        // 同步右側
                         if (appData.lastEditedIndex === subIndex) {
                             document.getElementById('current-subgoal-display').innerText = e.target.value || `方向 ${subIndex + 1}`;
                         }
@@ -441,7 +499,6 @@
             indexDisplay.innerText = `0${subGoalIndex + 1}`;
 
             const inputsContainer = document.getElementById('action-inputs-container');
-            // 清空舊的輸入框
             inputsContainer.innerHTML = '';
 
             subGoal.actions.forEach((actionText, actionIndex) => {
@@ -455,7 +512,6 @@
                 const input = document.createElement('input');
                 input.type = "text";
                 input.setAttribute('autocomplete', 'off');
-                // 確保這裡的值從當前 appData 讀取
                 input.value = actionText;
                 input.className = "w-full bg-brand-paper border border-brand-sand rounded px-3 py-2 text-brand-ink focus:border-brand-sage focus:outline-none transition-colors duration-300 shadow-sm";
                 input.placeholder = "輸入具體行動...";

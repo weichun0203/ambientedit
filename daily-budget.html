@@ -78,34 +78,35 @@
 </head>
 <body class="min-h-screen font-sans antialiased selection:bg-brand-clay selection:text-white pb-12">
 
-    <!-- Navbar -->
-    <nav class="w-full px-6 py-3 flex justify-between items-center border-b border-brand-sand/50 bg-brand-paper/80 backdrop-blur-sm sticky top-0 z-50">
-        <div class="flex items-center gap-3">
-            <div class="w-9 h-9 bg-brand-ink text-brand-paper flex items-center justify-center rounded-full font-serif font-bold text-lg shadow-sm">常</div>
-            <div class="flex flex-col justify-center">
-                <span class="font-serif font-bold text-brand-ink text-base tracking-[0.15em] leading-tight">常溫生活預算</span>
-                <span class="font-sans text-[10px] text-brand-sage tracking-[0.2em] uppercase leading-none">Ambient Budget</span>
-            </div>
-        </div>
-        
-        <div class="flex items-center gap-4">
-            <a href="https://weichun0203.github.io/ambientedit/" class="text-xs font-medium text-brand-sage hover:text-brand-ink transition-colors flex items-center gap-1 group">
-                <i data-lucide="home" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> 回首頁
-            </a>
-            <div class="w-px h-3 bg-brand-sand/80"></div>
-            <button onclick="exportCSV()" class="text-xs font-medium text-brand-sage hover:text-brand-ink transition-colors flex items-center gap-1 group">
-                <i data-lucide="download" class="w-4 h-4 group-hover:translate-y-0.5 transition-transform"></i> 儲存規劃 (CSV)
-            </button>
-        </div>
-    </nav>
-
     <!-- Main Container -->
-    <main class="max-w-5xl mx-auto mt-8 px-4 md:px-6">
+    <main class="max-w-5xl mx-auto pt-12 md:pt-16 px-4 md:px-6">
+
+        <!-- Brand Header Section -->
+        <header class="flex flex-col md:flex-row justify-between items-center md:items-end gap-6 mb-8">
+            <!-- Brand Info -->
+            <div class="flex items-center gap-5">
+                <div class="w-14 h-14 bg-brand-ink text-brand-paper flex items-center justify-center rounded-full font-serif font-bold text-3xl shadow-soft">常</div>
+                <div class="flex flex-col justify-center">
+                    <span class="font-serif font-bold text-brand-ink text-2xl tracking-[0.15em] leading-tight">常溫生活預算</span>
+                    <span class="font-sans text-xs text-brand-sage tracking-[0.25em] uppercase leading-none mt-1.5">Ambient Budget</span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-4 w-full md:w-auto justify-center md:justify-end">
+                <a href="https://weichun0203.github.io/ambientedit/" class="text-sm font-medium text-brand-sage hover:text-brand-ink transition-colors flex items-center gap-1.5 group px-4 py-2 rounded-full border border-transparent hover:border-brand-sand hover:bg-white/50">
+                    <i data-lucide="home" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> 回首頁
+                </a>
+                <button onclick="exportCSV()" class="text-sm font-medium text-brand-ink bg-white border border-brand-sand hover:border-brand-clay hover:text-brand-clay transition-all duration-300 shadow-sm hover:shadow-md flex items-center gap-2 px-6 py-2.5 rounded-full group">
+                    <i data-lucide="download" class="w-4 h-4 group-hover:translate-y-0.5 transition-transform"></i> 儲存規劃
+                </button>
+            </div>
+        </header>
         
         <!-- Paper Card -->
         <div class="bg-white rounded-2xl shadow-soft border border-brand-sand overflow-hidden relative">
             
-            <!-- Sticky Header Section -->
+            <!-- Sticky Header Section inside Card -->
             <div class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-brand-sand transition-all duration-300" id="headerSection">
                 
                 <!-- Mode Switcher -->

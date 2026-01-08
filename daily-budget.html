@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常溫生活預算 | Ambient Budget</title>
+    
+    <!-- Google Fonts: Noto Serif TC & Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Configure Tailwind with Brand Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',  /* 固定、儲蓄 */
+                            clay: '#d4a59a',  /* 變動、支出 */
+                            sand: '#e6e2dd',
+                            dark: '#2c2c2c'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 品牌質感設定 */
+        body {
+            background-color: #fdfbf7;
+            color: #4a4a4a;
+            /* 模擬紙張纖維質感 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+        /* 自定義滾動條 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdfbf7; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e6e2dd; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4a59a; 
+        }
+
+        .input-underline {
+            background-image: linear-gradient(to right, #d4a59a 0%, #d4a59a 50%, transparent 50%);
+            background-size: 8px 1px;
+            background-repeat: repeat-x;
+            background-position: bottom;
+        }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased selection:bg-brand-clay selection:text-white pb-12">
+
+    <!-- Navbar -->
+    <nav class="w-full px-6 py-3 flex justify-between items-center border-b border-brand-sand/50 bg-brand-paper/80 backdrop-blur-sm sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 bg-brand-ink text-brand-paper flex items-center justify-center rounded-full font-serif font-bold text-lg shadow-sm">常</div>
+            <div class="flex flex-col justify-center">
+                <span class="font-serif font-bold text-brand-ink text-base tracking-[0.15em] leading-tight">常溫生活預算</span>
+                <span class="font-sans text-[10px] text-brand-sage tracking-[0.2em] uppercase leading-none">Ambient Budget</span>
+            </div>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <a href="https://weichun0203.github.io/ambientedit/" class="text-xs font-medium text-brand-sage hover:text-brand-ink transition-colors flex items-center gap-1 group">
+                <i data-lucide="home" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> 回首頁
+            </a>
+            <div class="w-px h-3 bg-brand-sand/80"></div>
+            <button onclick="exportCSV()" class="text-xs font-medium text-brand-sage hover:text-brand-ink transition-colors flex items-center gap-1 group">
+                <i data-lucide="download" class="w-4 h-4 group-hover:translate-y-0.5 transition-transform"></i> 儲存規劃 (CSV)
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto mt-8 px-4 md:px-6">
+        
+        <!-- Paper Card -->
+        <div class="bg-white rounded-2xl shadow-soft border border-brand-sand overflow-hidden relative">
+            
+            <!-- Sticky Header Section -->
+            <div class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-brand-sand transition-all duration-300" id="headerSection">
+                
+                <!-- Mode Switcher -->
+                <div class="px-2 pt-4 pb-2 overflow-x-auto no-scrollbar">
+                    <div class="flex justify-start md:justify-center gap-2 min-w-max px-4" id="modeContainer">
+                        <!-- Modes will be injected here via JS -->
+                    </div>
+                </div>
+
+                <!-- Salary Input Section -->
+                <div class="p-6 md:px-8 bg-gradient-to-b from-brand-paper to-white">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                        
+                        <!-- Left: Title & Legend -->
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-brand-paper border border-brand-sand flex items-center justify-center text-brand-clay shadow-sm shrink-0">
+                                <i data-lucide="calculator" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h1 class="font-serif text-2xl text-brand-ink font-bold tracking-wide leading-tight">薪資分配</h1>
+                                <p class="text-xs text-gray-400 mt-1 font-light tracking-wider mb-2" id="currentModeLabel">正在規劃您的生活</p>
+                                
+                                <!-- Legend Moved Here -->
+                                <div class="flex flex-wrap gap-4 text-[10px] text-gray-400 font-medium tracking-wide">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-brand-clay"></span>
+                                        <span>變動 (依比例)</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-brand-sage"></span>
+                                        <span>固定 (鎖定金額)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Amount Input -->
+                        <div class="w-full md:w-auto flex flex-col items-end pl-16 md:pl-0">
+                            <label class="text-xs text-gray-400 font-medium mb-1 tracking-widest uppercase" id="salaryLabel">本月收入</label>
+                            <div class="flex items-baseline border-b border-brand-sand hover:border-brand-clay transition-colors group pb-1 w-full md:w-auto justify-end">
+                                <span class="text-brand-clay font-serif text-lg mr-2">NT$</span>
+                                <input 
+                                    type="number" 
+                                    id="salaryInput" 
+                                    class="text-3xl font-serif font-bold text-brand-ink bg-transparent outline-none text-right w-full md:w-48 placeholder-gray-200"
+                                    placeholder="0"
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Header (Desktop Only) -->
+                <div class="hidden md:grid grid-cols-12 gap-4 px-8 py-2 bg-brand-paper/50 text-xs font-bold text-gray-400 tracking-widest uppercase border-t border-brand-sand">
+                    <div class="col-span-4 pl-10">項目名稱</div>
+                    <div class="col-span-2 text-center">模式</div>
+                    <div class="col-span-2 text-right">比例 (%)</div>
+                    <div class="col-span-2 text-right">金額 (NT$)</div>
+                    <div class="col-span-2 text-right">剩餘</div>
+                </div>
+            </div>
+
+            <!-- List Container -->
+            <div id="itemsList" class="divide-y divide-brand-sand/40 min-h-[300px]">
+                <!-- Items will be injected here -->
+            </div>
+
+            <!-- Add Button -->
+            <div class="p-6 bg-brand-paper/30 flex justify-center">
+                <button onclick="addNewItem()" class="group flex items-center gap-2 px-6 py-3 rounded-full border border-dashed border-brand-clay/50 text-brand-clay hover:bg-brand-clay hover:text-white transition-all duration-300 shadow-sm hover:shadow-md">
+                    <i data-lucide="plus" class="w-4 h-4 transition-transform group-hover:rotate-90"></i>
+                    <span class="text-sm font-medium tracking-wide">新增預算項目</span>
+                </button>
+            </div>
+
+            <!-- Footer Summary -->
+            <div class="bg-brand-ink text-brand-paper p-6 md:px-8">
+                <div class="flex flex-col md:grid md:grid-cols-12 gap-6 items-center">
+                    <div class="col-span-4 text-brand-sand/60 text-sm font-light">
+                        <i data-lucide="info" class="w-4 h-4 inline mr-1"></i>
+                        <span>妥善分配每一分錢，是為了更自由的生活。</span>
+                    </div>
+                    
+                    <div class="col-span-4 hidden md:block"></div>
+
+                    <div class="col-span-4 w-full flex flex-col gap-2">
+                        <div class="flex justify-between items-center text-brand-sand/60 text-sm">
+                            <span>總支出</span>
+                            <span class="font-mono" id="totalExpenses">NT$ 0</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-brand-paper/10">
+                            <span class="font-serif text-lg tracking-widest">最終結餘</span>
+                            <span class="font-mono text-2xl font-bold text-brand-sage" id="finalBalance">NT$ 0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Alerts -->
+                <div id="alertsContainer" class="mt-4 space-y-2"></div>
+            </div>
+        </div>
+
+        <!-- Footer for Brand -->
+        <footer class="mt-12 text-center text-brand-ink/30 text-xs font-serif">
+            <p>Designed by Ambient Edit Studio | 常溫編集所</p>
+        </footer>
+
+    </main>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- 1. Data Definitions & State ---
+        
+        const PRESETS = {
+            junior: {
+                id: 'junior', label: '國中生', salaryLabel: '本月零用金', icon: 'school',
+                salary: 3000,
+                items: [
+                    { id: 1, name: '什一奉獻', type: 'percent', percent: 10, amount: 300, icon: '🙏' },
+                    { id: 2, name: '儲蓄目標', type: 'fixed', percent: 16.667, amount: 500, icon: '🐷' },
+                    { id: 3, name: '交通儲值', type: 'fixed', percent: 6.667, amount: 200, icon: '🚌' },
+                    { id: 4, name: '文具書籍', type: 'percent', percent: 20, amount: 600, icon: '📚' },
+                    { id: 5, name: '零食飲料', type: 'percent', percent: 26.667, amount: 800, icon: '🍪' }, // Changed to Cookie for better compatibility
+                    { id: 6, name: '遊戲娛樂', type: 'percent', percent: 20, amount: 600, icon: '🎮' },
+                ]
+            },
+            student: {
+                id: 'student', label: '大學生', salaryLabel: '收入+零用金', icon: 'graduation-cap',
+                salary: 18000,
+                items: [
+                    { id: 1, name: '什一奉獻', type: 'percent', percent: 10, amount: 1800, icon: '🙏' },
+                    { id: 2, name: '伙食費', type: 'fixed', percent: 44.444, amount: 8000, icon: '🍱' },
+                    { id: 3, name: '房租/宿費', type: 'fixed', percent: 16.667, amount: 3000, icon: '🏠' },
+                    { id: 4, name: '機車/交通', type: 'fixed', percent: 6.667, amount: 1200, icon: '🛵' },
+                    { id: 5, name: '手機網路', type: 'fixed', percent: 2.772, amount: 499, icon: '📱' },
+                    { id: 7, name: '儲蓄', type: 'percent', percent: 9.45, amount: 1701, icon: '💰' },
+                    { id: 6, name: '社交聚餐', type: 'percent', percent: 10, amount: 1800, icon: '🎤' },
+                ]
+            },
+            worker: {
+                id: 'worker', label: '上班族', salaryLabel: '本月薪資', icon: 'briefcase',
+                salary: 30000,
+                items: [
+                    { id: 1, name: '什一奉獻', type: 'percent', percent: 10, amount: 3000, icon: '🙏' },
+                    { id: 2, name: '房租', type: 'fixed', percent: 0, amount: 0, icon: '🏠' },
+                    { id: 3, name: '生活費', type: 'fixed', percent: 20, amount: 6000, icon: '🍜' },
+                    { id: 4, name: '交通', type: 'fixed', percent: 4, amount: 1200, icon: '🛵' },
+                    { id: 5, name: '手機網路', type: 'fixed', percent: 1.663, amount: 499, icon: '📱' },
+                    { id: 7, name: '儲蓄', type: 'fixed', percent: 33.333, amount: 10000, icon: '💰' },
+                    { id: 8, name: '股票存入', type: 'percent', percent: 16.667, amount: 5000, icon: '📈' },
+                    { id: 6, name: '社交聚餐', type: 'percent', percent: 5, amount: 1500, icon: '🎤' },
+                    { id: 10, name: '娛樂費', type: 'percent', percent: 9.337, amount: 2801, icon: '🎮' },
+                    { id: 9, name: '創業基金', type: 'percent', percent: 0, amount: 0, icon: '🚀' },
+                ]
+            },
+            retiree: {
+                id: 'retiree', label: '退休族', salaryLabel: '本月被動收入', icon: 'coffee',
+                salary: 45000,
+                items: [
+                    { id: 1, name: '生活開銷', type: 'fixed', percent: 33.333, amount: 15000, icon: '🍵' },
+                    { id: 2, name: '醫療保健', type: 'fixed', percent: 11.111, amount: 5000, icon: '💊' },
+                    { id: 3, name: '旅遊基金', type: 'percent', percent: 20, amount: 9000, icon: '✈️' },
+                    { id: 4, name: '孫輩紅包', type: 'percent', percent: 10, amount: 4500, icon: '🧧' },
+                    { id: 5, name: '公益捐款', type: 'percent', percent: 5, amount: 2250, icon: '❤️' },
+                    { id: 6, name: '緊急備用', type: 'percent', percent: 10, amount: 4500, icon: '🏦' },
+                ]
+            }
+        };
+
+        let state = {
+            mode: 'worker',
+            salary: 30000,
+            items: []
+        };
+
+        // --- 2. Helper Functions ---
+        
+        const formatCurrency = (val) => {
+            return new Intl.NumberFormat('zh-TW', {
+                style: 'currency', currency: 'TWD', minimumFractionDigits: 0, maximumFractionDigits: 0
+            }).format(val);
+        };
+
+        const initMode = (modeKey) => {
+            const preset = PRESETS[modeKey];
+            state.mode = modeKey;
+            state.salary = preset.salary;
+            state.items = JSON.parse(JSON.stringify(preset.items));
+            renderAll();
+        };
+
+        // --- 3. Update Logic ---
+
+        const updateSalary = (val) => {
+            const newSalary = Number(val);
+            if (newSalary < 0) return;
+            state.salary = newSalary;
+
+            state.items = state.items.map(item => {
+                if (item.type === 'fixed') {
+                    const newPercent = newSalary > 0 ? parseFloat(((item.amount / newSalary) * 100).toFixed(3)) : 0;
+                    return { ...item, percent: newPercent };
+                } else {
+                    const newAmount = Math.round(newSalary * (item.percent / 100));
+                    return { ...item, amount: newAmount };
+                }
+            });
+            renderAll();
+        };
+
+        const updateItemName = (id, newName) => {
+            const item = state.items.find(i => i.id === id);
+            if(item) item.name = newName;
+        };
+
+        const updateItemPercent = (id, newPercent) => {
+            state.items = state.items.map(item => {
+                if (item.id !== id) return item;
+                const newAmount = Math.round(state.salary * (newPercent / 100));
+                return { ...item, percent: newPercent, amount: newAmount };
+            });
+            renderAll();
+        };
+
+        const updateItemAmount = (id, newAmount) => {
+            state.items = state.items.map(item => {
+                if (item.id !== id) return item;
+                let newPercent = 0;
+                if (state.salary > 0) {
+                    newPercent = parseFloat(((newAmount / state.salary) * 100).toFixed(3));
+                }
+                return { ...item, amount: newAmount, percent: newPercent };
+            });
+            renderAll();
+        };
+
+        const toggleItemType = (id) => {
+            state.items = state.items.map(item => 
+                item.id === id 
+                ? { ...item, type: item.type === 'percent' ? 'fixed' : 'percent' } 
+                : item
+            );
+            renderAll();
+        };
+
+        const deleteItem = (id) => {
+            state.items = state.items.filter(item => item.id !== id);
+            renderAll();
+        };
+
+        const addNewItem = () => {
+            const newId = state.items.length > 0 ? Math.max(...state.items.map(i => i.id)) + 1 : 1;
+            state.items.push({ 
+                id: newId, 
+                name: '新項目', 
+                type: 'percent', 
+                percent: 0, 
+                amount: 0, 
+                icon: '📝' 
+            });
+            renderAll();
+            setTimeout(() => {
+                document.getElementById('itemsList').lastElementChild.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        };
+        
+        const moveItem = (index, direction) => {
+            if (direction === -1 && index > 0) {
+                [state.items[index], state.items[index - 1]] = [state.items[index - 1], state.items[index]];
+            } else if (direction === 1 && index < state.items.length - 1) {
+                [state.items[index], state.items[index + 1]] = [state.items[index + 1], state.items[index]];
+            }
+            renderAll();
+        };
+
+        // --- 4. Render Functions ---
+
+        const renderModes = () => {
+            const container = document.getElementById('modeContainer');
+            container.innerHTML = Object.values(PRESETS).map(preset => {
+                const isActive = state.mode === preset.id;
+                const btnClass = isActive 
+                    ? 'bg-brand-ink text-brand-paper shadow-md scale-105' 
+                    : 'bg-white text-gray-400 border border-brand-sand hover:border-brand-clay hover:text-brand-clay';
+                
+                return `
+                    <button onclick="initMode('${preset.id}')" 
+                        class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 ${btnClass}">
+                        <i data-lucide="${preset.icon}" class="w-4 h-4"></i>
+                        ${preset.label}
+                    </button>
+                `;
+            }).join('');
+        };
+
+        const renderHeader = () => {
+            document.getElementById('currentModeLabel').textContent = `${PRESETS[state.mode].label}模式`;
+            document.getElementById('salaryLabel').textContent = PRESETS[state.mode].salaryLabel;
+            
+            const salaryInput = document.getElementById('salaryInput');
+            if (document.activeElement !== salaryInput) {
+                salaryInput.value = state.salary;
+            }
+        };
+
+        const renderList = () => {
+            const listContainer = document.getElementById('itemsList');
+            let runningSalary = state.salary;
+            
+            const html = state.items.map((item, index) => {
+                runningSalary -= item.amount;
+                
+                const isPercent = item.type === 'percent';
+                const typeColorClass = isPercent ? 'text-brand-clay bg-brand-clay/10 border-brand-clay/20' : 'text-brand-sage bg-brand-sage/10 border-brand-sage/20';
+                const typeIcon = isPercent ? 'percent' : 'lock';
+                const typeLabel = isPercent ? '變動' : '固定';
+                const remainingClass = runningSalary < 0 ? 'text-brand-clay font-bold' : 'text-brand-sage';
+
+                return `
+                    <div class="group relative bg-white transition-all hover:bg-brand-paper/40 p-4 md:px-8 md:py-4">
+                        <div class="flex flex-col md:grid md:grid-cols-12 gap-3 md:gap-4 items-center">
+                            
+                            <!-- Name -->
+                            <div class="col-span-4 w-full flex items-center gap-3">
+                                <div class="flex flex-col md:hidden text-gray-300 gap-1">
+                                    <button onclick="moveItem(${index}, -1)" class="hover:text-brand-ink"><i data-lucide="chevron-up" class="w-4 h-4"></i></button>
+                                    <button onclick="moveItem(${index}, 1)" class="hover:text-brand-ink"><i data-lucide="chevron-down" class="w-4 h-4"></i></button>
+                                </div>
+                                <div class="w-10 h-10 flex items-center justify-center bg-brand-paper rounded-full text-lg shadow-inner border border-brand-sand flex-shrink-0">
+                                    ${item.icon}
+                                </div>
+                                <div class="flex-1 relative">
+                                    <input type="text" value="${item.name}" 
+                                        onchange="updateItemName(${item.id}, this.value)"
+                                        class="w-full bg-transparent border-b border-transparent focus:border-brand-clay outline-none font-medium text-brand-ink transition-colors placeholder-gray-300"
+                                        placeholder="項目名稱">
+                                </div>
+                            </div>
+
+                            <!-- Type -->
+                            <div class="col-span-2 w-full flex justify-end md:justify-center">
+                                <button onclick="toggleItemType(${item.id})" 
+                                    class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-all ${typeColorClass} hover:opacity-80">
+                                    <i data-lucide="${typeIcon}" class="w-3 h-3"></i>
+                                    ${typeLabel}
+                                </button>
+                            </div>
+
+                            <!-- Percent -->
+                            <div class="col-span-2 w-full flex justify-between md:justify-end items-center md:gap-2">
+                                <span class="md:hidden text-xs text-gray-400">比例</span>
+                                <div class="flex items-center">
+                                    <input type="number" step="0.1" value="${item.percent}" 
+                                        onchange="updateItemPercent(${item.id}, Number(this.value))"
+                                        class="w-16 text-right bg-transparent border-b border-brand-sand focus:border-brand-clay outline-none font-mono text-brand-ink/80 focus:text-brand-clay">
+                                    <span class="text-xs text-gray-400 ml-1">%</span>
+                                </div>
+                            </div>
+
+                            <!-- Amount -->
+                            <div class="col-span-2 w-full flex justify-between md:justify-end items-center md:gap-2">
+                                <span class="md:hidden text-xs text-gray-400">金額</span>
+                                <div class="flex items-center">
+                                    <span class="text-xs text-gray-400 mr-1 md:hidden">NT$</span>
+                                    <input type="number" value="${item.amount}" 
+                                        onchange="updateItemAmount(${item.id}, Number(this.value))"
+                                        class="w-24 text-right bg-transparent border-b border-brand-sand focus:border-brand-clay outline-none font-mono font-medium text-brand-ink">
+                                </div>
+                            </div>
+
+                            <!-- Remaining & Actions -->
+                            <div class="col-span-2 w-full flex justify-between md:justify-end items-center md:gap-4 border-t border-brand-sand md:border-0 pt-2 md:pt-0 mt-2 md:mt-0">
+                                <span class="md:hidden text-xs text-gray-400">剩餘</span>
+                                <span class="font-mono text-sm ${remainingClass}">${formatCurrency(runningSalary)}</span>
+                                
+                                <div class="flex items-center gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div class="hidden md:flex flex-col text-gray-300 mr-2">
+                                        <button onclick="moveItem(${index}, -1)" class="hover:text-brand-ink hover:bg-brand-sand rounded"><i data-lucide="chevron-up" class="w-4 h-4"></i></button>
+                                        <button onclick="moveItem(${index}, 1)" class="hover:text-brand-ink hover:bg-brand-sand rounded"><i data-lucide="chevron-down" class="w-4 h-4"></i></button>
+                                    </div>
+                                    <button onclick="deleteItem(${item.id})" class="text-gray-300 hover:text-brand-clay p-1.5 rounded-full hover:bg-brand-clay/10 transition-colors" title="刪除">
+                                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            listContainer.innerHTML = html;
+        };
+
+        const renderSummary = () => {
+            const totalAmount = state.items.reduce((sum, item) => sum + item.amount, 0);
+            const totalPercent = state.items.reduce((sum, item) => sum + item.percent, 0);
+            const finalRemaining = state.salary - totalAmount;
+            
+            document.getElementById('totalExpenses').textContent = formatCurrency(totalAmount);
+            
+            const finalEl = document.getElementById('finalBalance');
+            finalEl.textContent = formatCurrency(finalRemaining);
+            if(finalRemaining < 0) {
+                finalEl.className = "font-mono text-2xl font-bold text-brand-clay";
+            } else {
+                finalEl.className = "font-mono text-2xl font-bold text-brand-sage";
+            }
+
+            const alertsContainer = document.getElementById('alertsContainer');
+            let alertsHtml = '';
+            
+            if (Math.round(totalPercent) > 100) {
+                alertsHtml += `
+                    <div class="flex items-center justify-center gap-2 text-xs font-bold text-brand-paper bg-brand-clay/90 py-2 rounded-lg">
+                        <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                        總分配比例已超過 100% (目前 ${totalPercent.toFixed(1)}%)
+                    </div>
+                `;
+            }
+            if (finalRemaining < 0) {
+                alertsHtml += `
+                    <div class="flex items-center justify-center gap-2 text-xs font-bold text-brand-paper bg-brand-ink py-2 rounded-lg">
+                        <i data-lucide="wallet" class="w-4 h-4"></i>
+                        預算不足，超支 ${formatCurrency(Math.abs(finalRemaining))}
+                    </div>
+                `;
+            }
+            alertsContainer.innerHTML = alertsHtml;
+        };
+
+        const renderAll = () => {
+            renderModes();
+            renderHeader();
+            renderList();
+            renderSummary();
+            lucide.createIcons();
+        };
+
+        // --- 5. Export CSV ---
+        const exportCSV = () => {
+            // Add BOM for Excel Chinese support
+            let csvContent = "\uFEFF";
+            
+            // Header
+            csvContent += "項目名稱,類型,比例(%),金額(NT$)\n";
+
+            // Body
+            state.items.forEach(item => {
+                const typeLabel = item.type === 'percent' ? '變動(依比例)' : '固定(鎖定金額)';
+                // Remove commas from name to prevent CSV breaks, though usually names are simple
+                const cleanName = item.name.replace(/,/g, ' '); 
+                csvContent += `${cleanName},${typeLabel},${item.percent},${item.amount}\n`;
+            });
+
+            // Footer Summary in CSV
+            const totalAmount = state.items.reduce((sum, item) => sum + item.amount, 0);
+            const balance = state.salary - totalAmount;
+            csvContent += `\n,總收入,,${state.salary}\n`;
+            csvContent += `,總支出,,${totalAmount}\n`;
+            csvContent += `,結餘,,${balance}\n`;
+
+            // Create download link
+            const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            const dateStr = new Date().toISOString().slice(0,10);
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", `常溫生活預算_${PRESETS[state.mode].label}_${dateStr}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        // --- Event Listeners ---
+        
+        document.getElementById('salaryInput').addEventListener('change', (e) => {
+            updateSalary(e.target.value);
+        });
+
+        // --- Init ---
+        window.onload = () => {
+            initMode('worker');
+        };
+
+    </script>
+</body>
+</html>

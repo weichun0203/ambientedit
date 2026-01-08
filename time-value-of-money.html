@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>時間價值換算｜常溫編集所</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #fdfbf7; /* brand-paper */
+            color: #4a4a4a; /* brand-ink */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+        
+        /* Custom Input Styles to match brand */
+        .brand-input {
+            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+        .brand-input:focus {
+            outline: none;
+            border-color: #8da399; /* brand-sage */
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(141, 163, 153, 0.1);
+        }
+        
+        /* Fade in animation */
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen font-sans flex flex-col items-center py-10 px-4 sm:px-6">
+
+    <!-- Main Container -->
+    <main class="w-full max-w-2xl bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft p-8 md:p-12 border border-brand-sand/50 fade-in" style="animation-delay: 0.2s;">
+        
+        <!-- Header -->
+        <header class="mb-10">
+            <!-- Brand Name & English (New Addition) -->
+            <div class="text-brand-sage text-xs font-bold tracking-[0.2em] uppercase mb-2">
+                常溫編集所 Ambient Edit Studio
+            </div>
+
+            <!-- Title Row: Flex container to align Title and Button -->
+            <div class="flex justify-between items-center mb-3">
+                <h1 class="font-serif text-3xl md:text-4xl font-bold tracking-wider text-brand-ink">時間價值換算</h1>
+                
+                <!-- Brand Home Button -->
+                <a href="https://weichun0203.github.io/ambientedit/" 
+                   class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft flex-shrink-0 ml-4"
+                   aria-label="返回常溫首頁">
+                    <!-- Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <!-- Text -->
+                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
+                </a>
+            </div>
+
+            <!-- Subtitle -->
+            <p class="text-brand-ink/60 text-sm md:text-base font-serif italic">「每筆支出，都是一段生命的交換。」</p>
+        </header>
+
+        <!-- Calculator Form -->
+        <div id="calculator-section" class="space-y-8">
+            
+            <!-- Step 1: Base Value -->
+            <div class="space-y-4">
+                <div class="flex items-center space-x-2 text-brand-sage font-bold tracking-widest text-xs uppercase border-b border-brand-sand pb-1 mb-4">
+                    <span class="whitespace-nowrap">STEP 01</span>
+                    <span class="w-full h-px bg-brand-sand/50"></span>
+                    <span class="whitespace-nowrap">基礎設定</span>
+                </div>
+                
+                <!-- Grid Layout: Force 2 columns -->
+                <div class="grid grid-cols-2 gap-4 md:gap-6">
+                    <div>
+                        <label for="salary" class="block text-sm font-medium text-brand-ink/80 mb-2">月收入 (TWD)</label>
+                        <input type="number" id="salary" placeholder="45000" 
+                            class="brand-input w-full px-3 py-3 rounded-lg border border-brand-sand text-brand-ink placeholder-brand-ink/30 text-sm md:text-base">
+                    </div>
+                    <div>
+                        <label for="hours" class="block text-sm font-medium text-brand-ink/80 mb-2">月總工時</label>
+                        <input type="number" id="hours" placeholder="160" value="160"
+                            class="brand-input w-full px-3 py-3 rounded-lg border border-brand-sand text-brand-ink placeholder-brand-ink/30 text-sm md:text-base">
+                    </div>
+                </div>
+                
+                <!-- Computed Hourly Wage (Hidden initially) -->
+                <div id="hourly-wage-display" class="hidden text-center py-1">
+                    <p class="text-xs text-brand-clay font-serif">您的時間單價約為 <span id="wage-val" class="font-bold text-lg mx-1">0</span> 元/小時</p>
+                </div>
+            </div>
+
+            <!-- Step 2: Item Value -->
+            <div class="space-y-4 pt-4">
+                <div class="flex items-center space-x-2 text-brand-sage font-bold tracking-widest text-xs uppercase border-b border-brand-sand pb-1 mb-4">
+                    <span class="whitespace-nowrap">STEP 02</span>
+                    <span class="w-full h-px bg-brand-sand/50"></span>
+                    <span class="whitespace-nowrap">慾望轉化</span>
+                </div>
+
+                <!-- Grid Layout: Force 2 columns (Matched with Step 1) -->
+                <div class="grid grid-cols-2 gap-4 md:gap-6">
+                    <div>
+                        <label for="item-name" class="block text-sm font-medium text-brand-ink/80 mb-2">想購買的物品</label>
+                        <input type="text" id="item-name" placeholder="iPhone 16" 
+                            class="brand-input w-full px-3 py-3 rounded-lg border border-brand-sand text-brand-ink placeholder-brand-ink/30 text-sm md:text-base">
+                    </div>
+                    <div>
+                        <label for="item-price" class="block text-sm font-medium text-brand-ink/80 mb-2">價格 (TWD)</label>
+                        <input type="number" id="item-price" placeholder="36900" 
+                            class="brand-input w-full px-3 py-3 rounded-lg border border-brand-sand text-brand-ink placeholder-brand-ink/30 text-sm md:text-base">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action -->
+            <div class="pt-6 text-center">
+                <button onclick="calculateTimeValue()" 
+                    class="group relative inline-flex items-center justify-center px-8 py-3 overflow-hidden font-medium tracking-tighter text-white bg-brand-sage rounded-full hover:bg-brand-ink transition-colors duration-300 shadow-soft">
+                    <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
+                    <span class="relative font-serif tracking-widest">計算生命成本</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Section (Initially Hidden) -->
+        <div id="result-section" class="hidden mt-12 pt-10 border-t border-brand-sand/60 text-center space-y-6">
+            <h3 class="text-brand-sage text-sm font-bold tracking-widest uppercase mb-2">CONVERSION RESULT</h3>
+            
+            <div class="space-y-2">
+                <p class="text-brand-ink/70 text-sm">為了獲得 <span id="res-item-name" class="font-bold text-brand-ink border-b border-brand-clay/50 pb-0.5">物品</span></p>
+                <p class="font-serif text-3xl md:text-5xl text-brand-ink leading-tight">
+                    您需要付出 <span id="res-hours" class="text-brand-clay font-bold">0</span> 小時
+                </p>
+                <p class="text-brand-ink/70 text-sm mt-2">約等於 <span id="res-days" class="font-bold text-brand-ink">0</span> 個工作天</p>
+            </div>
+
+            <div class="bg-brand-sand/30 p-6 rounded-lg mt-8 mx-auto max-w-sm">
+                <p class="font-serif text-brand-ink italic text-sm leading-relaxed">
+                    「這筆支出值得您用生命中的這段時間去交換嗎？」
+                </p>
+            </div>
+            
+            <button onclick="resetCalculator()" class="text-xs text-brand-sage hover:text-brand-clay underline decoration-brand-sage/50 mt-8 transition-colors">
+                重新計算
+            </button>
+        </div>
+
+    </main>
+
+    <footer class="mt-12 text-center text-brand-ink/30 text-xs font-light tracking-wider fade-in" style="animation-delay: 0.3s;">
+        <p>&copy; Ambient Edit Studio. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // Data format for future GAS integration
+        let transactionData = {
+            salary: 0,
+            workHours: 0,
+            hourlyWage: 0,
+            itemName: '',
+            itemPrice: 0,
+            costInHours: 0,
+            timestamp: ''
+        };
+
+        // Real-time wage calculation (Optional feedback)
+        const salaryInput = document.getElementById('salary');
+        const hoursInput = document.getElementById('hours');
+        const wageDisplay = document.getElementById('hourly-wage-display');
+        const wageVal = document.getElementById('wage-val');
+
+        function updateHourlyWage() {
+            const salary = parseFloat(salaryInput.value);
+            const hours = parseFloat(hoursInput.value);
+            
+            if (salary > 0 && hours > 0) {
+                const wage = Math.round(salary / hours);
+                wageVal.innerText = wage.toLocaleString();
+                wageDisplay.classList.remove('hidden');
+                wageDisplay.classList.add('fade-in');
+            }
+        }
+
+        salaryInput.addEventListener('input', updateHourlyWage);
+        hoursInput.addEventListener('input', updateHourlyWage);
+
+        function calculateTimeValue() {
+            const salary = parseFloat(salaryInput.value);
+            const hours = parseFloat(hoursInput.value);
+            const itemName = document.getElementById('item-name').value || '這個物品';
+            const itemPrice = parseFloat(document.getElementById('item-price').value);
+
+            // Simple Validation
+            if (!salary || !hours || !itemPrice) {
+                alert('請完整填寫所有欄位，讓我們一起精算出您的時間價值。');
+                return;
+            }
+
+            // Calculation Logic
+            const hourlyWage = salary / hours;
+            const timeCost = itemPrice / hourlyWage;
+            const daysCost = timeCost / 8; // Assuming 8 hours workday for context
+
+            // Update Data Object (Ready for API)
+            transactionData = {
+                salary: salary,
+                workHours: hours,
+                hourlyWage: hourlyWage,
+                itemName: itemName,
+                itemPrice: itemPrice,
+                costInHours: timeCost.toFixed(1),
+                timestamp: new Date().toISOString()
+            };
+
+            // Update UI
+            document.getElementById('res-item-name').innerText = itemName;
+            document.getElementById('res-hours').innerText = Math.round(timeCost * 10) / 10; // Round to 1 decimal
+            document.getElementById('res-days').innerText = (Math.round(daysCost * 10) / 10).toLocaleString();
+
+            // Show Result with animation
+            const resultSection = document.getElementById('result-section');
+            resultSection.classList.remove('hidden');
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Here you would add the function to send data to GAS
+            // sendToGoogleSheets(transactionData);
+        }
+
+        function resetCalculator() {
+            document.getElementById('item-name').value = '';
+            document.getElementById('item-price').value = '';
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('calculator-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        /* * Future Integration Note:
+         * To connect with Google Sheets via GAS:
+         * 1. Create a GAS Web App tailored to receive JSON POST requests.
+         * 2. Use fetch() in the calculateTimeValue function to send 'transactionData'.
+         */
+    </script>
+</body>
+</html>

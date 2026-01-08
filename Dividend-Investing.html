@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常溫存股｜Ambient Wealth Logic</title>
+    
+    <!-- Google Fonts: 品牌指定字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (快速樣式開發) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 設定品牌色票給 Tailwind -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7', // 背景紙色
+                            ink: '#4a4a4a',   // 主要文字
+                            sage: '#8da399',  // 品牌輔助色 (綠) - 用於正向數據
+                            clay: '#d4a59a',  // 品牌輔助色 (紅/橘) - 用於按鈕/重點
+                            sand: '#e6e2dd',  // 線條/邊框
+                            dark: '#2c2c2c'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'inner-soft': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.03)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Vue 3 (透過 CDN 引入，輕量化解決方案) -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* 品牌質感：紙張紋理與全局設定 */
+        body {
+            background-color: #fdfbf7;
+            color: #4a4a4a;
+            /* 模擬紙張纖維質感的微噪點 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+        /* 隱藏數字輸入框的箭頭 (Chrome, Safari, Edge, Opera) */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* 自定義過渡動畫 */
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 0.3s ease;
+        }
+        .fade-enter-from, .fade-leave-to {
+            opacity: 0;
+        }
+        
+        .list-enter-active,
+        .list-leave-active {
+            transition: all 0.4s ease;
+        }
+        .list-enter-from,
+        .list-leave-to {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        /* Modal 動畫 */
+        .modal-enter-active, .modal-leave-active {
+            transition: opacity 0.3s ease;
+        }
+        .modal-enter-from, .modal-leave-to {
+            opacity: 0;
+        }
+        .modal-enter-active .modal-content, .modal-leave-active .modal-content {
+            transition: transform 0.3s ease;
+        }
+        .modal-enter-from .modal-content, .modal-leave-to .modal-content {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <div id="app" class="flex-grow relative">
+        <!-- Back to Home Button -->
+        <a href="https://weichun0203.github.io/ambientedit" class="absolute top-4 left-4 md:top-6 md:left-6 flex items-center gap-1.5 text-brand-ink/30 hover:text-brand-clay transition-colors duration-300 group z-20 no-underline">
+            <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform"></i>
+            <span class="font-serif text-xs md:text-sm tracking-wider">常溫首頁</span>
+        </a>
+
+        <!-- Header -->
+        <header class="pt-10 pb-6 px-4 text-center">
+            <h1 class="font-serif text-3xl md:text-4xl font-bold text-brand-ink tracking-widest mb-2 flex justify-center items-center gap-3">
+                <i data-lucide="sprout" class="text-brand-sage w-8 h-8"></i>
+                <span>常溫存股</span>
+            </h1>
+            <p class="font-serif text-brand-ink/60 text-sm md:text-base tracking-wider">
+                累積生活的餘裕 · 打造溫柔的現金流
+            </p>
+        </header>
+
+        <main class="max-w-5xl mx-auto px-4 pb-20">
+            
+            <!-- Dashboard: 數據儀表板 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                
+                <!-- Card 1: 每月加薪 (Focus on Growth - Sage Color) -->
+                <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-soft border border-brand-sand relative overflow-hidden group hover:border-brand-sage/30 transition-colors duration-500">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="trending-up" class="w-24 h-24 text-brand-sage"></i>
+                    </div>
+                    
+                    <div class="relative z-10">
+                        <p class="font-serif text-brand-ink/60 mb-2">平均每月加薪</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="font-sans text-4xl md:text-5xl font-bold text-brand-sage tracking-tight">
+                                {{ formatCurrency(stats.monthlyAvg) }}
+                            </span>
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-brand-sand flex justify-between items-center text-sm text-brand-ink/70">
+                            <span class="font-serif">預估年領股息總額</span>
+                            <span class="font-sans font-medium tracking-wide">{{ formatCurrency(stats.totalAnnual) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: 目標進度 (Focus on Warmth/Goal - Clay/Blue mixed) -->
+                <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-soft border border-brand-sand relative overflow-hidden group hover:border-brand-clay/30 transition-colors duration-500">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="target" class="w-24 h-24 text-brand-clay"></i>
+                    </div>
+
+                    <div class="relative z-10 h-full flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <p class="font-serif text-brand-ink/60 mb-2">月領股息目標</p>
+                                <!-- 編輯目標按鈕 -->
+                                <button @click="isEditingGoal = !isEditingGoal" class="text-xs text-brand-ink/40 hover:text-brand-clay transition flex items-center gap-1">
+                                    <i data-lucide="edit-3" class="w-3 h-3"></i> 修改
+                                </button>
+                            </div>
+
+                            <div v-if="isEditingGoal" class="flex items-center gap-2 mb-2 animate-fade-in">
+                                <input 
+                                    type="number" 
+                                    v-model="tempGoal"
+                                    class="w-32 bg-brand-paper border-b-2 border-brand-clay text-2xl font-bold text-brand-ink focus:outline-none font-sans"
+                                    autoFocus
+                                >
+                                <button @click="saveGoal" class="bg-brand-clay text-white p-1.5 rounded-full hover:bg-opacity-90 transition shadow-sm">
+                                    <i data-lucide="check" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <div v-else class="cursor-pointer group/text" @click="isEditingGoal = true">
+                                <span class="font-sans text-4xl md:text-5xl font-bold text-brand-ink/80 group-hover/text:text-brand-clay transition-colors tracking-tight">
+                                    {{ formatCurrency(monthlyGoal) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <div class="flex justify-between text-xs mb-2 text-brand-ink/50 font-sans tracking-wider uppercase">
+                                <span>Progress</span>
+                                <span>{{ stats.progress.toFixed(1) }}%</span>
+                            </div>
+                            <div class="w-full bg-brand-sand/50 rounded-full h-2 overflow-hidden">
+                                <div 
+                                    class="bg-brand-clay h-2 rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(212,165,154,0.4)]" 
+                                    :style="{ width: `${stats.progress}%` }"
+                                ></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content: Form & List -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Left: 輸入區塊 (Sticky) -->
+                <div class="lg:col-span-4">
+                    <div class="bg-white rounded-2xl shadow-soft border border-brand-sand p-6 md:p-8 sticky top-6">
+                        <h3 class="font-serif text-xl font-bold text-brand-ink mb-6 flex items-center gap-2 border-b border-brand-sand pb-4">
+                            <i data-lucide="pen-tool" class="w-5 h-5 text-brand-sage"></i>
+                            紀錄投資標的
+                        </h3>
+
+                        <form @submit.prevent="addStock" class="space-y-5">
+                            <!-- 股票名稱 -->
+                            <div class="space-y-1">
+                                <label class="block text-xs font-bold text-brand-ink/50 uppercase tracking-widest font-sans">Name / Code</label>
+                                <input
+                                    type="text"
+                                    v-model="form.name"
+                                    placeholder="例如：台積電 / 2330"
+                                    class="w-full bg-brand-paper px-4 py-3 rounded-lg border border-brand-sand text-brand-ink focus:border-brand-sage focus:ring-1 focus:ring-brand-sage outline-none transition font-sans placeholder-brand-ink/20"
+                                    required
+                                />
+                            </div>
+
+                            <!-- 股數與配息 -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1">
+                                    <label class="block text-xs font-bold text-brand-ink/50 uppercase tracking-widest font-sans">Shares</label>
+                                    <input
+                                        type="number"
+                                        v-model="form.shares"
+                                        placeholder="持有股數"
+                                        class="w-full bg-brand-paper px-4 py-3 rounded-lg border border-brand-sand text-brand-ink focus:border-brand-sage focus:ring-1 focus:ring-brand-sage outline-none transition font-sans placeholder-brand-ink/20"
+                                        required
+                                        min="0"
+                                    />
+                                    <p class="text-[10px] text-brand-ink/40 text-right pr-1">*1張=1000股</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <label class="block text-xs font-bold text-brand-ink/50 uppercase tracking-widest font-sans">Dividend</label>
+                                    <input
+                                        type="number"
+                                        v-model="form.dividend"
+                                        placeholder="每張配息金額"
+                                        class="w-full bg-brand-paper px-4 py-3 rounded-lg border border-brand-sand text-brand-ink focus:border-brand-sage focus:ring-1 focus:ring-brand-sage outline-none transition font-sans placeholder-brand-ink/20"
+                                        required
+                                        step="0.01"
+                                        min="0"
+                                    />
+                                    <p class="text-[10px] text-brand-ink/40 text-right pr-1">*每張(1000股)配息</p>
+                                </div>
+                            </div>
+
+                            <!-- 頻率選擇 -->
+                            <div class="space-y-2 pt-2">
+                                <label class="block text-xs font-bold text-brand-ink/50 uppercase tracking-widest font-sans">Frequency</label>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <button 
+                                        type="button"
+                                        v-for="opt in frequencyOptions"
+                                        :key="opt.val"
+                                        @click="form.frequency = opt.val"
+                                        :class="[
+                                            'py-2 px-1 rounded-lg text-sm font-medium transition font-serif border',
+                                            form.frequency === opt.val 
+                                                ? 'bg-brand-sage text-white border-brand-sage shadow-md' 
+                                                : 'bg-brand-paper text-brand-ink/60 border-brand-sand hover:bg-brand-sand/50'
+                                        ]"
+                                    >
+                                        {{ opt.label }}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 送出按鈕 -->
+                            <button 
+                                type="submit" 
+                                class="w-full mt-4 bg-brand-ink hover:bg-brand-dark text-brand-paper font-bold py-3.5 rounded-lg shadow-lg transform active:scale-[0.98] transition flex justify-center items-center gap-2 group"
+                            >
+                                <i data-lucide="plus" class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300"></i>
+                                <span class="font-serif tracking-widest">寫入投資組合</span>
+                            </button>
+
+                            <!-- Future Feature: Google Sync Indicator -->
+                            <div class="pt-4 mt-4 border-t border-brand-sand/50 text-center">
+                                <p class="text-[10px] text-brand-ink/30 font-serif">
+                                    支援格式：CSV 匯出 / JSON 格式相容 Google Apps Script
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Right: 清單區塊 -->
+                <div class="lg:col-span-8">
+                    <div class="bg-white rounded-2xl shadow-soft border border-brand-sand overflow-hidden min-h-[500px] flex flex-col">
+                        
+                        <!-- List Header: Flexbox for Title & Actions -->
+                        <div class="p-6 md:p-8 border-b border-brand-sand flex flex-col md:flex-row justify-between items-center gap-4 bg-brand-paper/50">
+                            
+                            <!-- Title -->
+                            <h3 class="font-serif text-xl font-bold text-brand-ink flex items-center gap-2">
+                                <i data-lucide="book-open" class="w-5 h-5 text-brand-clay"></i>
+                                投資明細帳本
+                            </h3>
+
+                            <!-- Right Actions: Count & Import/Export -->
+                            <div class="flex items-center gap-2">
+                                <!-- Count -->
+                                <span class="text-xs font-sans text-brand-ink/50 bg-brand-sand/30 px-3 py-1.5 rounded-full border border-brand-sand/50">
+                                    共 {{ stocks.length }} 筆
+                                </span>
+                                
+                                <!-- Import Button -->
+                                <input 
+                                    type="file" 
+                                    ref="fileInput" 
+                                    @change="handleImport" 
+                                    accept=".csv,.json" 
+                                    class="hidden"
+                                >
+                                <button 
+                                    @click="triggerImport"
+                                    class="flex items-center justify-center gap-1.5 text-xs font-sans text-brand-ink/60 border border-brand-sand px-3 py-1.5 rounded-full hover:bg-brand-sand/30 hover:text-brand-ink transition group"
+                                    title="從 CSV 匯入"
+                                >
+                                    <i data-lucide="upload" class="w-3 h-3 group-hover:scale-110 transition-transform"></i>
+                                    <span>匯入</span>
+                                </button>
+
+                                <!-- Export Button (常駐顯示) -->
+                                <button 
+                                    @click="exportToCSV"
+                                    class="flex items-center justify-center gap-1.5 text-xs font-sans text-brand-clay border border-brand-clay/50 px-3 py-1.5 rounded-full hover:bg-brand-clay hover:text-white transition group"
+                                    title="匯出為 CSV"
+                                >
+                                    <i data-lucide="download" class="w-3 h-3 group-hover:scale-110 transition-transform"></i>
+                                    <span>匯出</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div v-if="stocks.length === 0" class="flex-grow flex flex-col items-center justify-center p-12 text-center text-brand-ink/30">
+                            <div class="w-20 h-20 bg-brand-sand/20 rounded-full flex items-center justify-center mb-6">
+                                <i data-lucide="coffee" class="w-10 h-10 opacity-50"></i>
+                            </div>
+                            <p class="font-serif text-lg mb-2">尚未寫入任何紀錄</p>
+                            <p class="font-sans text-sm font-light">請在左側輸入您的第一筆存股計畫，<br>開始累積您的被動收入。</p>
+                        </div>
+
+                        <!-- Data List -->
+                        <div v-else class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-brand-paper text-brand-ink/50 text-xs font-bold uppercase tracking-widest font-sans">
+                                    <tr>
+                                        <th class="p-5 border-b border-brand-sand">標的名稱</th>
+                                        <th class="p-5 border-b border-brand-sand text-right">持有股數</th>
+                                        <th class="p-5 border-b border-brand-sand">頻率/單張配息</th>
+                                        <th class="p-5 border-b border-brand-sand text-right">年領總額</th>
+                                        <th class="p-5 border-b border-brand-sand text-center w-16">刪除</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-brand-sand/50 font-sans text-sm text-brand-ink">
+                                    <tr v-for="stock in stocks" :key="stock.id" class="hover:bg-brand-paper transition-colors group">
+                                        <!-- 名稱 -->
+                                        <td class="p-5">
+                                            <div class="font-bold text-base font-serif text-brand-ink">{{ stock.name }}</div>
+                                            <a 
+                                                v-if="getStockCode(stock.name)"
+                                                :href="`https://www.wantgoo.com/stock/etf/${getStockCode(stock.name)}/dividend-policy/ex-dividend#dividend`"
+                                                target="_blank"
+                                                class="inline-flex items-center gap-1 text-[10px] text-brand-clay/70 hover:text-brand-clay mt-1 transition"
+                                            >
+                                                <span>查看配息</span>
+                                                <i data-lucide="external-link" class="w-3 h-3"></i>
+                                            </a>
+                                        </td>
+                                        
+                                        <!-- 股數 -->
+                                        <td class="p-5 text-right">
+                                            <div class="font-medium">{{ Number(stock.shares).toLocaleString() }} 股</div>
+                                            <div class="text-[11px] text-brand-ink/40 mt-0.5">
+                                                約 {{ (stock.shares / 1000).toFixed(2) }} 張
+                                            </div>
+                                        </td>
+                                        
+                                        <!-- 頻率/配息 -->
+                                        <td class="p-5">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span 
+                                                    class="inline-block px-2 py-0.5 rounded text-[10px] font-bold border"
+                                                    :class="{
+                                                        'bg-purple-50 text-purple-700 border-purple-100': stock.frequency === 12,
+                                                        'bg-brand-sage/10 text-brand-sage border-brand-sage/20': stock.frequency === 4,
+                                                        'bg-brand-sand/40 text-brand-ink/60 border-brand-sand': stock.frequency === 1
+                                                    }"
+                                                >
+                                                    {{ getFrequencyLabel(stock.frequency) }}
+                                                </span>
+                                            </div>
+                                            <div class="text-brand-ink/70">
+                                                ${{ stock.dividend }} / 次
+                                            </div>
+                                        </td>
+                                        
+                                        <!-- 總額 -->
+                                        <td class="p-5 text-right">
+                                            <div class="font-mono font-bold text-brand-sage text-base">
+                                                {{ formatCurrency((stock.shares / 1000) * stock.dividend * stock.frequency) }}
+                                            </div>
+                                        </td>
+                                        
+                                        <!-- 刪除按鈕 (取消透明度，常駐顯示) -->
+                                        <td class="p-5 text-center">
+                                            <button 
+                                                @click="confirmRemove(stock.id)"
+                                                class="text-brand-ink/50 bg-brand-sand/30 hover:text-red-500 hover:bg-red-50 p-2 rounded-full transition-all duration-200"
+                                                title="移除紀錄"
+                                            >
+                                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Footer Note -->
+                    <div class="mt-6 text-center">
+                        <p class="text-[10px] text-brand-ink/30 font-serif leading-relaxed">
+                            常溫編集所 Ambient Edit Studio · Financial Gardening Tool<br>
+                            * 本工具計算結果僅供參考，實際配息以券商公告為主。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Custom Delete Modal (Brand Style) -->
+        <transition name="modal">
+            <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-ink/20 backdrop-blur-sm">
+                <div class="modal-content bg-brand-paper rounded-2xl shadow-xl max-w-sm w-full p-6 border border-brand-sand relative">
+                    <!-- Decor -->
+                    <div class="absolute top-0 left-0 w-full h-1 bg-brand-clay/30"></div>
+                    
+                    <div class="text-center mb-6">
+                        <div class="w-12 h-12 bg-red-50 text-red-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="trash-2" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-serif text-lg font-bold text-brand-ink mb-2">確定移除此紀錄？</h3>
+                        <p class="text-sm text-brand-ink/60 font-sans">這將會從您的投資組合中移除，<br>此動作無法復原。</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <button 
+                            @click="showDeleteModal = false"
+                            class="px-4 py-2 rounded-lg text-brand-ink/70 bg-brand-sand/20 hover:bg-brand-sand/40 font-sans text-sm font-medium transition"
+                        >
+                            保留
+                        </button>
+                        <button 
+                            @click="executeRemove"
+                            class="px-4 py-2 rounded-lg text-white bg-red-400 hover:bg-red-500 font-sans text-sm font-medium shadow-sm transition"
+                        >
+                            移除
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+    </div>
+
+    <!-- Vue Application Logic -->
+    <script>
+        const { createApp, ref, computed, watch, onMounted, nextTick } = Vue;
+
+        createApp({
+            setup() {
+                // --- State Management ---
+                const stocks = ref([]);
+                const monthlyGoal = ref(10000);
+                const tempGoal = ref(10000);
+                const isEditingGoal = ref(false);
+
+                // Modal State - Reset to false for production
+                const showDeleteModal = ref(false);
+                const itemToDelete = ref(null);
+
+                // File Import
+                const fileInput = ref(null);
+
+                // Form State
+                const form = ref({
+                    name: '',
+                    shares: '',
+                    dividend: '',
+                    frequency: '1' // Default: Yearly
+                });
+
+                const frequencyOptions = [
+                    { val: '1', label: '年配' },
+                    { val: '4', label: '季配' },
+                    { val: '12', label: '月配' }
+                ];
+
+                // --- Persistence (LocalStorage) ---
+                const loadData = () => {
+                    try {
+                        const savedStocks = localStorage.getItem('ambient_dividend_stocks');
+                        if (savedStocks) stocks.value = JSON.parse(savedStocks);
+                        
+                        const savedGoal = localStorage.getItem('ambient_dividend_goal');
+                        if (savedGoal) {
+                            monthlyGoal.value = parseFloat(savedGoal);
+                            tempGoal.value = monthlyGoal.value;
+                        }
+                    } catch (e) {
+                        console.error('Error loading data', e);
+                    }
+                };
+
+                watch(stocks, (newVal) => {
+                    localStorage.setItem('ambient_dividend_stocks', JSON.stringify(newVal));
+                }, { deep: true });
+
+                watch(monthlyGoal, (newVal) => {
+                    localStorage.setItem('ambient_dividend_goal', newVal.toString());
+                });
+
+                // --- Calculations ---
+                const stats = computed(() => {
+                    let totalAnnual = 0;
+                    stocks.value.forEach(stock => {
+                        totalAnnual += (stock.shares / 1000) * stock.dividend * stock.frequency;
+                    });
+                    
+                    const monthlyAvg = totalAnnual / 12;
+                    const progress = monthlyGoal.value > 0 ? Math.min((monthlyAvg / monthlyGoal.value) * 100, 100) : 0;
+
+                    return { totalAnnual, monthlyAvg, progress };
+                });
+
+                // --- Methods ---
+                const formatCurrency = (num) => {
+                    return new Intl.NumberFormat('zh-TW', {
+                        style: 'currency',
+                        currency: 'TWD',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }).format(num);
+                };
+
+                const getFrequencyLabel = (freq) => {
+                    switch(parseInt(freq)) {
+                        case 12: return '月配';
+                        case 4: return '季配';
+                        case 2: return '半年配';
+                        default: return '年配';
+                    }
+                };
+
+                const getStockCode = (name) => {
+                    const match = name.match(/\d{4,}/);
+                    return match ? match[0] : null;
+                };
+
+                const addStock = () => {
+                    if (!form.value.name || !form.value.shares || !form.value.dividend) return;
+
+                    const newStock = {
+                        id: Date.now(),
+                        name: form.value.name,
+                        shares: parseFloat(form.value.shares),
+                        dividend: parseFloat(form.value.dividend),
+                        frequency: parseInt(form.value.frequency)
+                    };
+
+                    stocks.value.push(newStock);
+                    form.value.name = '';
+                    form.value.shares = '';
+                    form.value.dividend = '';
+                };
+
+                // Delete Logic
+                const confirmRemove = (id) => {
+                    itemToDelete.value = id;
+                    showDeleteModal.value = true;
+                };
+
+                const executeRemove = () => {
+                    if (itemToDelete.value) {
+                        stocks.value = stocks.value.filter(s => s.id !== itemToDelete.value);
+                        showDeleteModal.value = false;
+                        itemToDelete.value = null;
+                    }
+                };
+
+                const saveGoal = () => {
+                    monthlyGoal.value = parseFloat(tempGoal.value);
+                    isEditingGoal.value = false;
+                };
+
+                // --- Import / Export Logic ---
+                const triggerImport = () => {
+                    fileInput.value.click();
+                };
+
+                const handleImport = (event) => {
+                    const file = event.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const content = e.target.result;
+                            if (file.name.endsWith('.json')) {
+                                // JSON Import
+                                const data = JSON.parse(content);
+                                if (Array.isArray(data)) {
+                                    stocks.value = data;
+                                    alert('匯入成功！');
+                                }
+                            } else {
+                                // CSV Import (Simple Parser for our specific format)
+                                // Skip preamble, look for header row
+                                const lines = content.split(/\r\n|\n/);
+                                let startIndex = -1;
+                                
+                                // Find header line
+                                for(let i=0; i<lines.length; i++) {
+                                    if(lines[i].includes('股票名稱') && lines[i].includes('持有股數')) {
+                                        startIndex = i + 1;
+                                        break;
+                                    }
+                                }
+
+                                if (startIndex !== -1 && startIndex < lines.length) {
+                                    const newStocks = [];
+                                    for(let i=startIndex; i<lines.length; i++) {
+                                        const line = lines[i].trim();
+                                        if(!line) continue;
+                                        
+                                        // CSV split logic dealing with simple quotes
+                                        // Format: "Name",Shares,Dividend,FreqLabel,Total
+                                        const parts = line.split(',');
+                                        
+                                        if(parts.length >= 4) {
+                                            // Handle name (remove quotes)
+                                            let name = parts[0].replace(/^"|"$/g, '');
+                                            let shares = parseFloat(parts[1]);
+                                            let dividend = parseFloat(parts[2]);
+                                            let freqLabel = parts[3];
+                                            
+                                            // Convert Label back to Frequency
+                                            let frequency = 1;
+                                            if(freqLabel === '月配') frequency = 12;
+                                            else if(freqLabel === '季配') frequency = 4;
+                                            else if(freqLabel === '半年配') frequency = 2;
+
+                                            if(name && !isNaN(shares)) {
+                                                newStocks.push({
+                                                    id: Date.now() + i, // unique id
+                                                    name,
+                                                    shares,
+                                                    dividend,
+                                                    frequency
+                                                });
+                                            }
+                                        }
+                                    }
+                                    
+                                    if(newStocks.length > 0) {
+                                        if(confirm(`找到 ${newStocks.length} 筆資料，是否覆蓋現有清單？(取消則為附加)`)) {
+                                            stocks.value = newStocks;
+                                        } else {
+                                            stocks.value = [...stocks.value, ...newStocks];
+                                        }
+                                    }
+                                } else {
+                                    alert('無法辨識 CSV 格式，請確保是使用本工具匯出的檔案。');
+                                }
+                            }
+                        } catch (err) {
+                            console.error(err);
+                            alert('檔案讀取失敗');
+                        }
+                        // Reset input
+                        event.target.value = '';
+                    };
+                    reader.readAsText(file);
+                };
+
+                const exportToCSV = () => {
+                    const BOM = '\uFEFF'; 
+                    const summary = [
+                        `平均每月加薪,${stats.value.monthlyAvg.toFixed(0)}`,
+                        `月領股息目標,${monthlyGoal.value}`,
+                        `匯出日期,${new Date().toLocaleDateString()}`
+                    ].join('\n');
+
+                    const headers = ['股票名稱', '持有股數', '每張配息(1000股)', '配息頻率', '年領總額'];
+                    const rows = stocks.value.map(stock => {
+                        const freqLabel = getFrequencyLabel(stock.frequency);
+                        const annualTotal = (stock.shares / 1000) * stock.dividend * stock.frequency;
+                        return [
+                            `"${stock.name}"`,
+                            stock.shares,
+                            stock.dividend,
+                            freqLabel,
+                            annualTotal.toFixed(0)
+                        ].join(',');
+                    }).join('\n');
+
+                    const csvContent = BOM + summary + '\n\n' + headers.join(',') + '\n' + rows;
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `常溫存股清單_${new Date().toISOString().split('T')[0]}.csv`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                };
+
+                onMounted(() => {
+                    loadData();
+                    nextTick(() => {
+                        lucide.createIcons();
+                    });
+                });
+
+                // Fixed: Added { deep: true } to ensure icons render on array mutation
+                watch([stocks, isEditingGoal, showDeleteModal], () => {
+                    nextTick(() => {
+                        lucide.createIcons();
+                    });
+                }, { deep: true });
+
+                return {
+                    stocks,
+                    monthlyGoal,
+                    tempGoal,
+                    isEditingGoal,
+                    showDeleteModal,
+                    confirmRemove,
+                    executeRemove,
+                    form,
+                    frequencyOptions,
+                    stats,
+                    formatCurrency,
+                    getFrequencyLabel,
+                    getStockCode,
+                    addStock,
+                    saveGoal,
+                    exportToCSV,
+                    handleImport,
+                    triggerImport,
+                    fileInput
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

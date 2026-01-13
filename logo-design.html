@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常溫編集所｜LOGO 設計流程指南</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #fdfbf7;
+            color: #4a4a4a;
+            font-family: "Noto Sans TC", sans-serif;
+            line-height: 1.8;
+        }
+        
+        .font-serif {
+            font-family: "Noto Serif TC", serif;
+        }
+
+        /* 模擬紙張纖維質感的微噪點 Overlay */
+        .paper-texture {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.6;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+        .section-number {
+            font-family: "Noto Serif TC", serif;
+            font-style: italic;
+        }
+
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom Selection Color */
+        ::selection {
+            background: #e6e2dd; /* brand-sand */
+            color: #4a4a4a;
+        }
+        
+        /* Image Hover Effect */
+        .img-zoom-container {
+            overflow: hidden;
+        }
+        .img-zoom {
+            transition: transform 0.7s ease;
+        }
+        .group:hover .img-zoom {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="antialiased relative min-h-screen pb-20">
+
+    <!-- Texture Overlay -->
+    <div class="paper-texture"></div>
+
+    <!-- Main Container -->
+    <main class="relative z-10 px-6 py-12 md:py-20">
+        
+        <!-- Navigation Code Provided -->
+        <nav class="max-w-4xl mx-auto mb-12 flex justify-end">
+            <a href="https://weichun0203.github.io/ambientedit/" 
+               class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft"
+               aria-label="返回常溫首頁">
+                <!-- Icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <!-- Text -->
+                <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
+            </a>
+        </nav>
+
+        <!-- Header -->
+        <header class="max-w-3xl mx-auto text-center mb-24 animate-fade-in-up">
+            <p class="text-brand-sage tracking-[0.2em] text-sm font-medium mb-4 uppercase">Ambient Edit Studio</p>
+            <h1 class="text-4xl md:text-5xl font-serif font-bold text-brand-ink mb-8 leading-tight">
+                LOGO 設計<br>
+                <span class="text-2xl md:text-3xl font-normal block mt-2 text-brand-ink/80">品牌視覺建構指南</span>
+            </h1>
+            <div class="w-16 h-1 bg-brand-clay mx-auto mb-8 rounded-full"></div>
+            <p class="text-lg text-brand-ink/80 max-w-2xl mx-auto">
+                LOGO 不只是一個圖案，它是品牌的「臉」。<br>
+                這是常溫編集所為您梳理的 5 個核心階段，<br>協助您將抽象的理念，轉化為具體的視覺語言。
+            </p>
+        </header>
+
+        <!-- Content Stages -->
+        <div class="max-w-4xl mx-auto space-y-16 md:space-y-24">
+
+            <!-- Stage 1 -->
+            <section class="bg-white rounded-2xl p-8 md:p-12 shadow-soft border border-brand-sand/50 relative overflow-hidden group hover:border-brand-sage/30 transition-colors duration-500">
+                <div class="absolute top-0 right-0 p-6 opacity-10 font-serif text-9xl text-brand-sage select-none group-hover:opacity-20 transition-opacity">1</div>
+                <div class="relative">
+                    <h2 class="text-2xl md:text-3xl font-serif font-bold text-brand-ink mb-6 flex items-center">
+                        <span class="text-brand-clay mr-4 text-sm tracking-widest uppercase border border-brand-clay/30 px-3 py-1 rounded-full">Identity</span>
+                        品牌核心定位
+                    </h2>
+                    <p class="text-brand-ink/90 mb-6 font-medium">目標：在動筆畫圖之前，先搞清楚「我是誰」。</p>
+                    <p class="text-brand-ink/70 mb-8">這是最重要的一步，如果這裡沒想清楚，做出來的 LOGO 再漂亮也無法傳達正確的訊息。</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-brand-paper p-6 rounded-lg border border-brand-sand">
+                            <h3 class="font-bold text-brand-sage mb-2">關鍵字聯想</h3>
+                            <p class="text-sm">列出 3-5 個形容你品牌的形容詞（例如：科技感、溫暖、傳統、極簡、奢華）。</p>
+                        </div>
+                        <div class="bg-brand-paper p-6 rounded-lg border border-brand-sand">
+                            <h3 class="font-bold text-brand-sage mb-2">目標受眾 (TA)</h3>
+                            <p class="text-sm">你的客戶是誰？年輕人喜歡大膽的配色，企業客戶喜歡穩重的線條。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-brand-sage/10 rounded-lg border border-brand-sage/20">
+                        <p class="text-sm text-brand-ink"><strong>💡 小撇步：</strong> 試著用一句話描述你的品牌：「我們是專門為 [誰] 提供 [什麼服務/產品] 的品牌，我們希望給人 [什麼感覺]。」</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stage 2 -->
+            <section class="bg-white rounded-2xl p-8 md:p-12 shadow-soft border border-brand-sand/50 relative overflow-hidden group hover:border-brand-sage/30 transition-colors duration-500">
+                <div class="absolute top-0 right-0 p-6 opacity-10 font-serif text-9xl text-brand-sage select-none group-hover:opacity-20 transition-opacity">2</div>
+                <div class="relative">
+                    <h2 class="text-2xl md:text-3xl font-serif font-bold text-brand-ink mb-6 flex items-center">
+                        <span class="text-brand-clay mr-4 text-sm tracking-widest uppercase border border-brand-clay/30 px-3 py-1 rounded-full">Moodboard</span>
+                        靈感搜集與情緒板
+                    </h2>
+                    <p class="text-brand-ink/90 mb-6 font-medium">目標：將抽象的感覺轉化為具體的視覺方向。</p>
+                    
+                    <ul class="space-y-4 text-brand-ink/80 list-disc list-inside marker:text-brand-clay">
+                        <li><strong>搜集參考圖：</strong> 去 Pinterest 或 Behance 搜尋跟你風格類似的圖片。</li>
+                        <li><strong>建立情緒板：</strong> 把喜歡的字體、配色、圖片風格拼在一起。這能幫助你確認視覺風格是否統一。</li>
+                        <li><strong>競品分析：</strong> 看一下你的競爭對手長什麼樣？你要跟他們很像（安全牌）還是完全不同（差異化）？</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Stage 3 (Updated Layout: Text Left, Image Right) -->
+            <section class="bg-white rounded-2xl p-8 md:p-12 shadow-soft border border-brand-sand/50 relative overflow-hidden group hover:border-brand-sage/30 transition-colors duration-500">
+                <div class="absolute top-0 right-0 p-6 opacity-10 font-serif text-9xl text-brand-sage select-none group-hover:opacity-20 transition-opacity">3</div>
+                <div class="relative">
+                    <h2 class="text-2xl md:text-3xl font-serif font-bold text-brand-ink mb-6 flex items-center">
+                        <span class="text-brand-clay mr-4 text-sm tracking-widest uppercase border border-brand-clay/30 px-3 py-1 rounded-full">Sketching</span>
+                        草圖與概念發展
+                    </h2>
+                    <p class="text-brand-ink/90 mb-6 font-medium">目標：快速嘗試各種可能性，不要急著用電腦。</p>
+                    
+                    <div class="mb-8">
+                        <h3 class="text-lg font-serif font-bold text-brand-ink mb-3">三大設計方向範例</h3>
+                        <p class="text-brand-ink/80">在發想草圖時，可以嘗試將思維發散到這三種常見的 LOGO 構成形式。</p>
+                    </div>
+
+                    <!-- New Layout: Vertical Stack of Horizontal Items -->
+                    <div class="space-y-8">
+                        
+                        <!-- Logotype (Updated with real logos) -->
+                        <div class="group/card flex flex-col md:flex-row items-center gap-6 md:gap-8 p-6 rounded-xl border border-brand-sand/50 hover:border-brand-sage/50 hover:bg-brand-paper/50 transition-all duration-300">
+                            <!-- Text Side (Left) -->
+                            <div class="flex-1 order-1 md:order-1 w-full text-left">
+                                <span class="text-brand-sage font-serif text-xl mb-1 block">Logotype</span>
+                                <h4 class="text-lg font-bold text-brand-ink mb-3">文字型</h4>
+                                <p class="text-sm text-brand-ink/70 leading-relaxed mb-4">以獨特字體設計為主，直接使用品牌名稱進行設計。優點是能快速建立品牌名稱的知名度。</p>
+                                <div class="inline-block px-3 py-1 bg-brand-sand/30 rounded text-xs text-brand-ink/60 font-medium">案例：Sony, Google, Disney</div>
+                            </div>
+                            <!-- Image Side (Right) -->
+                            <div class="w-full md:w-[40%] order-2 md:order-2">
+                                <div class="rounded-lg border border-brand-sand overflow-hidden aspect-[4/3] relative shadow-sm bg-white p-4 flex flex-row justify-between items-center gap-2 group-hover/card:bg-white transition-colors">
+                                    <!-- Sony -->
+                                    <img src="https://hualiteq.com/wp-content/uploads/2025/01/sony-logo.jpg" 
+                                         alt="Sony Logo" 
+                                         class="h-auto w-1/3 max-h-12 object-contain grayscale group-hover/card:grayscale-0 transition-all duration-500 opacity-80 group-hover/card:opacity-100">
+                                    <!-- Google -->
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/1200px-Google_2015_logo.svg.png" 
+                                         alt="Google Logo" 
+                                         class="h-auto w-1/3 max-h-12 object-contain grayscale group-hover/card:grayscale-0 transition-all duration-500 opacity-80 group-hover/card:opacity-100">
+                                    <!-- Disney -->
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/ff/2024_Disney_Channel_text_logo.svg" 
+                                         alt="Disney Logo" 
+                                         class="h-auto w-1/3 max-h-12 object-contain grayscale group-hover/card:grayscale-0 transition-all duration-500 opacity-80 group-hover/card:opacity-100">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Logomark (Updated) -->
+                        <div class="group/card flex flex-col md:flex-row items-center gap-6 md:gap-8 p-6 rounded-xl border border-brand-sand/50 hover:border-brand-sage/50 hover:bg-brand-paper/50 transition-all duration-300">
+                            <!-- Text Side (Left) -->
+                            <div class="flex-1 order-1 md:order-1 w-full text-left">
+                                <span class="text-brand-sage font-serif text-xl mb-1 block">Logomark</span>
+                                <h4 class="text-lg font-bold text-brand-ink mb-3">圖形型</h4>
+                                <p class="text-sm text-brand-ink/70 leading-relaxed mb-4">使用具象（蘋果、鳥）或抽象幾何符號。視覺衝擊力強，能跨越語言障礙，但初期需要行銷推廣才能連結意義。</p>
+                                <div class="inline-block px-3 py-1 bg-brand-sand/30 rounded text-xs text-brand-ink/60 font-medium">案例：Apple, Nike, Twitter</div>
+                            </div>
+                            <!-- Image Side (Right) -->
+                            <div class="w-full md:w-[40%] order-2 md:order-2">
+                                <div class="rounded-lg border border-brand-sand overflow-hidden aspect-[4/3] relative shadow-sm bg-white p-4 flex flex-row justify-between items-center gap-2 group-hover/card:bg-white transition-colors">
+                                    <!-- Apple -->
+                                    <img src="https://www.shutterstock.com/image-vector/batumi-georgia-december-1-2023-600nw-2395541231.jpg" 
+                                         alt="Apple Logo" 
+                                         class="h-auto w-1/3 max-h-12 object-contain grayscale group-hover/card:grayscale-0 transition-all duration-500 opacity-80 group-hover/card:opacity-100 mix-blend-multiply">
+                                    <!-- Nike -->
+                                    <img src="https://play-lh.googleusercontent.com/xW4Qb1KvvxoJc6fDR0GTlGPPD0DHRnHEt8vNGH1syTNSJ4U-YUNuwVgCKAkUgrcOeU8=w600-h300-pc0xffffff-pd" 
+                                         alt="Nike Logo" 
+                                         class="h-auto w-1/3 max-h-12 object-contain grayscale group-hover/card:grayscale-0 transition-all duration-500 opacity-80 group-hover/card:opacity-100">
+                                    <!-- Twitter -->
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/250px-Logo_of_Twitter.svg.png" 
+                                         alt="Twitter Logo" 
+                                         class="h-auto w-1/3 max-h-12 object-contain grayscale group-hover/card:grayscale-0 transition-all duration-500 opacity-80 group-hover/card:opacity-100">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Combination (Updated) -->
+                        <div class="group/card flex flex-col md:flex-row items-center gap-6 md:gap-8 p-6 rounded-xl border border-brand-sand/50 hover:border-brand-sage/50 hover:bg-brand-paper/50 transition-all duration-300">
+                            <!-- Text Side (Left) -->
+                            <div class="flex-1 order-1 md:order-1 w-full text-left">
+                                <span class="text-brand-sage font-serif text-xl mb-1 block">Combination</span>
+                                <h4 class="text-lg font-bold text-brand-ink mb-3">組合型</h4>
+                                <p class="text-sm text-brand-ink/70 leading-relaxed mb-4">圖形與文字的結合。這是最靈活也最安全的選擇，既有圖形的記憶點，又有文字的說明性。</p>
+                                <div class="inline-block px-3 py-1 bg-brand-sand/30 rounded text-xs text-brand-ink/60 font-medium">案例：Adidas, Burger King, Starbucks</div>
+                            </div>
+                            <!-- Image Side (Right) -->
+                            <div class="w-full md:w-[40%] order-2 md:order-2">
+                                <div class="rounded-lg border border-brand-sand overflow-hidden aspect-[4/3] relative shadow-sm bg-white p-4 flex flex-row justify-between items-center gap-2 group-hover/card:bg-white transition-colors">
+                                    <!-- Adidas -->
+                                    <img src="https://tw.buy.yahoo.com/act/assets/shopping/--albee/adidaslogo.jpg" 
+                                         alt="Adidas Logo" 
+                                         class="h-auto w-1/3 max-h-12 object-contain grayscale group-hover/card:grayscale-0 transition-all duration-500 opacity-80 group-hover/card:opacity-100 mix-blend-multiply">
+                                    <!-- Burger King -->
+                                    <img src="https://play-lh.googleusercontent.com/kLT3RQDRXmZY5mSPo8VbL02huNNhrW2Rc4-jIC_fOTdpsQFr_hmRmzQQVEnQx1-16NGv=w600-h300-pc0xffffff-pd" 
+                                         alt="Burger King Logo" 
+                                         class="h-auto w-1/3 max-h-12 object-contain grayscale group-hover/card:grayscale-0 transition-all duration-500 opacity-80 group-hover/card:opacity-100">
+                                    <!-- Starbucks -->
+                                    <img src="https://foodtracer.health.ntpc.gov.tw/WebUPD/foodtracer/FoodCompany/STARBUCKS-LOGO_22030310531630787.png" 
+                                         alt="Starbucks Logo" 
+                                         class="h-auto w-1/3 max-h-12 object-contain grayscale group-hover/card:grayscale-0 transition-all duration-500 opacity-80 group-hover/card:opacity-100">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stage 4 -->
+            <section class="bg-white rounded-2xl p-8 md:p-12 shadow-soft border border-brand-sand/50 relative overflow-hidden group hover:border-brand-sage/30 transition-colors duration-500">
+                <div class="absolute top-0 right-0 p-6 opacity-10 font-serif text-9xl text-brand-sage select-none group-hover:opacity-20 transition-opacity">4</div>
+                <div class="relative">
+                    <h2 class="text-2xl md:text-3xl font-serif font-bold text-brand-ink mb-6 flex items-center">
+                        <span class="text-brand-clay mr-4 text-sm tracking-widest uppercase border border-brand-clay/30 px-3 py-1 rounded-full">Digitalization</span>
+                        數位化與修飾
+                    </h2>
+                    <p class="text-brand-ink/90 mb-6 font-medium">目標：進入電腦軟體製作，精確化線條與配色。</p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-sand flex items-center justify-center text-brand-ink font-bold mt-1">1</div>
+                            <div class="ml-4">
+                                <h3 class="font-bold text-brand-ink">向量繪製 (Vector)</h3>
+                                <p class="text-sm text-brand-ink/80 mt-1">使用 Illustrator (AI) 等向量軟體。絕對不要用 Photoshop 做標準 LOGO，因為放大會模糊。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-sand flex items-center justify-center text-brand-ink font-bold mt-1">2</div>
+                            <div class="ml-4">
+                                <h3 class="font-bold text-brand-ink">字體搭配</h3>
+                                <p class="text-sm text-brand-ink/80 mt-1">選擇適合的字體。注意字間距 (Kerning) 和字重 (Weight)。</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-brand-sand flex items-center justify-center text-brand-ink font-bold mt-1">3</div>
+                            <div class="ml-4">
+                                <h3 class="font-bold text-brand-ink">色彩計畫</h3>
+                                <div class="flex mt-3 h-4 rounded-full overflow-hidden max-w-xs">
+                                    <div class="w-[60%] bg-brand-ink" title="主色 60%"></div>
+                                    <div class="w-[30%] bg-brand-sage" title="輔助色 30%"></div>
+                                    <div class="w-[10%] bg-brand-clay" title="點綴色 10%"></div>
+                                </div>
+                                <p class="text-xs text-brand-ink/60 mt-2">60% 主色 / 30% 輔助色 / 10% 點綴色</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stage 5 -->
+            <section class="bg-white rounded-2xl p-8 md:p-12 shadow-soft border border-brand-sand/50 relative overflow-hidden group hover:border-brand-sage/30 transition-colors duration-500">
+                <div class="absolute top-0 right-0 p-6 opacity-10 font-serif text-9xl text-brand-sage select-none group-hover:opacity-20 transition-opacity">5</div>
+                <div class="relative">
+                    <h2 class="text-2xl md:text-3xl font-serif font-bold text-brand-ink mb-6 flex items-center">
+                        <span class="text-brand-clay mr-4 text-sm tracking-widest uppercase border border-brand-clay/30 px-3 py-1 rounded-full">Finalization</span>
+                        測試與定稿
+                    </h2>
+                    <p class="text-brand-ink/90 mb-6 font-medium">目標：確保 LOGO 在任何地方都好用。</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="font-serif font-bold text-brand-ink mb-4 border-b border-brand-sand pb-2">測試項目</h3>
+                            <ul class="space-y-3 text-sm">
+                                <li class="flex items-center"><span class="w-1.5 h-1.5 bg-brand-clay rounded-full mr-2"></span>縮小測試：縮小到 2cm 是否清楚？</li>
+                                <li class="flex items-center"><span class="w-1.5 h-1.5 bg-brand-clay rounded-full mr-2"></span>深淺背景測試</li>
+                                <li class="flex items-center"><span class="w-1.5 h-1.5 bg-brand-clay rounded-full mr-2"></span>應用模擬 (Mockup)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="font-serif font-bold text-brand-ink mb-4 border-b border-brand-sand pb-2">交付格式</h3>
+                            <div class="grid grid-cols-2 gap-2 text-sm">
+                                <div class="bg-brand-paper p-2 rounded text-center border border-brand-sand">AI / EPS<br><span class="text-xs text-brand-ink/50">原始檔</span></div>
+                                <div class="bg-brand-paper p-2 rounded text-center border border-brand-sand">SVG<br><span class="text-xs text-brand-ink/50">網頁向量</span></div>
+                                <div class="bg-brand-paper p-2 rounded text-center border border-brand-sand">PNG<br><span class="text-xs text-brand-ink/50">透明背景</span></div>
+                                <div class="bg-brand-paper p-2 rounded text-center border border-brand-sand">JPG<br><span class="text-xs text-brand-ink/50">一般預覽</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Checklist -->
+            <section class="max-w-3xl mx-auto mt-20">
+                <h2 class="text-2xl font-serif font-bold text-center text-brand-ink mb-8">LOGO 設計自我檢核表</h2>
+                <div class="bg-white p-8 rounded-xl shadow-soft border border-brand-sand">
+                    <div class="space-y-4">
+                        <label class="flex items-start cursor-pointer group p-3 hover:bg-brand-paper rounded-lg transition-colors">
+                            <input type="checkbox" class="mt-1 w-5 h-5 text-brand-sage border-brand-sand rounded focus:ring-brand-sage">
+                            <div class="ml-4">
+                                <span class="font-bold text-brand-ink block group-hover:text-brand-sage transition-colors">識別性 (Distinctiveness)</span>
+                                <span class="text-sm text-brand-ink/70">跟競爭對手放在一起，能一眼認出你嗎？</span>
+                            </div>
+                        </label>
+                        <div class="h-px bg-brand-sand/50"></div>
+                        
+                        <label class="flex items-start cursor-pointer group p-3 hover:bg-brand-paper rounded-lg transition-colors">
+                            <input type="checkbox" class="mt-1 w-5 h-5 text-brand-sage border-brand-sand rounded focus:ring-brand-sage">
+                            <div class="ml-4">
+                                <span class="font-bold text-brand-ink block group-hover:text-brand-sage transition-colors">易讀性 (Legibility)</span>
+                                <span class="text-sm text-brand-ink/70">字體是否清晰？縮小後是否模糊？</span>
+                            </div>
+                        </label>
+                        <div class="h-px bg-brand-sand/50"></div>
+
+                        <label class="flex items-start cursor-pointer group p-3 hover:bg-brand-paper rounded-lg transition-colors">
+                            <input type="checkbox" class="mt-1 w-5 h-5 text-brand-sage border-brand-sand rounded focus:ring-brand-sage">
+                            <div class="ml-4">
+                                <span class="font-bold text-brand-ink block group-hover:text-brand-sage transition-colors">適應性 (Adaptability)</span>
+                                <span class="text-sm text-brand-ink/70">印在黑白傳真紙或單色收據上，圖案還清楚嗎？</span>
+                            </div>
+                        </label>
+                        <div class="h-px bg-brand-sand/50"></div>
+
+                        <label class="flex items-start cursor-pointer group p-3 hover:bg-brand-paper rounded-lg transition-colors">
+                            <input type="checkbox" class="mt-1 w-5 h-5 text-brand-sage border-brand-sand rounded focus:ring-brand-sage">
+                            <div class="ml-4">
+                                <span class="font-bold text-brand-ink block group-hover:text-brand-sage transition-colors">永恆性 (Timelessness)</span>
+                                <span class="text-sm text-brand-ink/70">這個設計 5 年後看會不會覺得很過時（太過追隨流行）？</span>
+                            </div>
+                        </label>
+                        <div class="h-px bg-brand-sand/50"></div>
+
+                        <label class="flex items-start cursor-pointer group p-3 hover:bg-brand-paper rounded-lg transition-colors">
+                            <input type="checkbox" class="mt-1 w-5 h-5 text-brand-sage border-brand-sand rounded focus:ring-brand-sage">
+                            <div class="ml-4">
+                                <span class="font-bold text-brand-ink block group-hover:text-brand-sage transition-colors">關聯性 (Relevance)</span>
+                                <span class="text-sm text-brand-ink/70">這個圖案真的符合你的行業屬性嗎？</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA / Next Step / Form (Updated) -->
+            <div class="text-center mt-24">
+                <p class="text-brand-sage mb-4 font-serif italic">Let's start from the beginning.</p>
+                <div class="bg-brand-paper inline-block px-8 py-10 rounded-xl border border-brand-sand max-w-3xl w-full text-left shadow-soft">
+                    <h3 class="text-2xl font-bold text-brand-ink mb-2 text-center">開始您的品牌定位</h3>
+                    <p class="text-brand-ink/70 mb-8 text-center text-sm">請填寫以下內容，這將是設計專案最重要的第一步。<br>填寫完畢後可直接匯出文字檔，傳送給設計師。</p>
+                    
+                    <!-- Form -->
+                    <form id="brandForm" class="grid gap-6 md:grid-cols-2">
+                        <!-- Brand Name -->
+                        <div class="md:col-span-2">
+                            <label for="brandName" class="block text-xs font-bold text-brand-sage uppercase tracking-wider mb-2">1. 品牌名稱 (Brand Name)</label>
+                            <input type="text" id="brandName" placeholder="例如：常溫編集所" class="w-full bg-white border border-brand-sand rounded p-3 text-brand-ink focus:outline-none focus:border-brand-sage focus:ring-1 focus:ring-brand-sage transition-colors">
+                        </div>
+
+                        <!-- Industry / Service -->
+                        <div class="md:col-span-2">
+                            <label for="brandService" class="block text-xs font-bold text-brand-sage uppercase tracking-wider mb-2">2. 核心業務/產品 (Core Business)</label>
+                            <textarea id="brandService" rows="3" placeholder="例如：我們販售自家烘焙的淺焙咖啡豆，並提供手沖咖啡教學課程。" class="w-full bg-white border border-brand-sand rounded p-3 text-brand-ink focus:outline-none focus:border-brand-sage focus:ring-1 focus:ring-brand-sage transition-colors"></textarea>
+                        </div>
+
+                        <!-- Target Audience -->
+                        <div class="md:col-span-1">
+                            <label for="brandTA" class="block text-xs font-bold text-brand-sage uppercase tracking-wider mb-2">3. 目標受眾 (Target Audience)</label>
+                            <input type="text" id="brandTA" placeholder="例如：25-35歲，重視生活儀式感的上班族" class="w-full bg-white border border-brand-sand rounded p-3 text-brand-ink focus:outline-none focus:border-brand-sage focus:ring-1 focus:ring-brand-sage transition-colors">
+                        </div>
+
+                        <!-- Adjectives -->
+                        <div class="md:col-span-1">
+                            <label for="brandKeywords" class="block text-xs font-bold text-brand-sage uppercase tracking-wider mb-2">4. 品牌關鍵字 (3-5 Keywords)</label>
+                            <input type="text" id="brandKeywords" placeholder="例如：溫暖、極簡、知性、有機" class="w-full bg-white border border-brand-sand rounded p-3 text-brand-ink focus:outline-none focus:border-brand-sage focus:ring-1 focus:ring-brand-sage transition-colors">
+                        </div>
+
+                         <!-- Brand Story -->
+                         <div class="md:col-span-2">
+                            <label for="brandStory" class="block text-xs font-bold text-brand-sage uppercase tracking-wider mb-2">5. 品牌故事/願景 (Vision & Story)</label>
+                            <textarea id="brandStory" rows="4" placeholder="例如：為什麼想創立這個品牌？希望帶給客人什麼樣的改變？" class="w-full bg-white border border-brand-sand rounded p-3 text-brand-ink focus:outline-none focus:border-brand-sage focus:ring-1 focus:ring-brand-sage transition-colors"></textarea>
+                        </div>
+                    </form>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-8 flex justify-center gap-4">
+                        <button onclick="exportBrandBrief()" class="bg-brand-ink text-white px-8 py-3 rounded-full font-bold hover:bg-brand-sage transition-all duration-300 shadow-lg hover:shadow-soft flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            匯出品牌定位藍圖 (.txt)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-24 pt-12 border-t border-brand-sand/50">
+            <div class="text-brand-sage font-serif italic text-lg mb-2">Ambient Edit Studio</div>
+            <p class="text-xs text-brand-ink/40 tracking-widest">BRANDING & DESIGN</p>
+        </footer>
+
+    </main>
+
+    <!-- Export Script -->
+    <script>
+        function exportBrandBrief() {
+            // Get values
+            const name = document.getElementById('brandName').value || '未填寫';
+            const service = document.getElementById('brandService').value || '未填寫';
+            const ta = document.getElementById('brandTA').value || '未填寫';
+            const keywords = document.getElementById('brandKeywords').value || '未填寫';
+            const story = document.getElementById('brandStory').value || '未填寫';
+
+            // Get current date
+            const date = new Date().toISOString().split('T')[0];
+
+            // Format content
+            const content = `
+【常溫編集所｜品牌定位藍圖】
+建檔日期：${date}
+
+1. 品牌名稱 (Brand Name):
+${name}
+
+2. 核心業務/產品 (Core Business):
+${service}
+
+3. 目標受眾 (Target Audience):
+${ta}
+
+4. 品牌關鍵字 (Keywords):
+${keywords}
+
+5. 品牌故事/願景 (Vision & Story):
+${story}
+
+--------------------------------------------------
+Ambient Edit Studio - Branding & Design
+`;
+
+            // Create blob and download link
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            
+            a.href = url;
+            a.download = `Brand_Brief_${name}_${date}.txt`;
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            
+            a.click();
+            
+            // Cleanup
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+    </script>
+
+</body>
+</html>

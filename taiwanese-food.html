@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>食間・菜單｜常溫編集所</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                            charcoal: '#2c2c2c',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        soft: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        card: '0 2px 10px rgba(0, 0, 0, 0.03)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 模擬紙張纖維質感 */
+        .bg-noise {
+            background-color: #fdfbf7;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+        
+        /* 隱藏滾動條但保留功能 */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 選項卡激活狀態樣式 */
+        .tab-active {
+            background-color: #4a4a4a; /* brand-ink */
+            color: #fdfbf7; /* brand-paper */
+            border-color: #4a4a4a;
+        }
+        .tab-inactive {
+            background-color: transparent;
+            color: #8da399; /* brand-sage */
+            border-color: #e6e2dd; /* brand-sand */
+        }
+        .tab-inactive:hover {
+            border-color: #8da399;
+            color: #4a4a4a;
+        }
+    </style>
+</head>
+<body class="bg-noise text-brand-ink min-h-screen flex flex-col p-4 md:p-8 font-sans">
+
+    <!-- Header Section -->
+    <header class="max-w-4xl mx-auto w-full mb-10 pt-2">
+        
+        <!-- Mobile Nav (Visible only on mobile) -->
+        <div class="flex justify-end mb-4 md:hidden">
+            <a href="https://weichun0203.github.io/ambientedit/" 
+               class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft"
+               aria-label="返回常溫首頁">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
+            </a>
+        </div>
+
+        <!-- Brand Name (Top Center) -->
+        <div class="text-center mb-1 relative z-10">
+            <p class="text-brand-sage text-xs font-bold tracking-[0.2em]">常溫編集所</p>
+        </div>
+
+        <!-- Title Row (Relative Container for Alignment) -->
+        <div class="relative w-full text-center z-10">
+            <!-- Title -->
+            <h1 class="font-serif text-3xl md:text-4xl text-brand-ink mb-2 tracking-wider inline-block">食間・菜單</h1>
+            
+            <!-- Desktop Button (Absolute Right, Vertically Centered relative to this Title Row) -->
+            <div class="absolute right-0 top-1/2 -translate-y-1/2 hidden md:block">
+                <a href="https://weichun0203.github.io/ambientedit/" 
+                   class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft"
+                   aria-label="返回常溫首頁">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Subtitles -->
+        <div class="text-center relative z-10">
+            <p class="text-brand-sage text-sm tracking-widest uppercase">The Menu</p>
+            <p class="text-xs text-brand-sage/60 mt-2 font-serif tracking-wider">點擊卡片即可搜尋附近店家</p>
+            <div class="w-16 h-0.5 bg-brand-clay mx-auto mt-4 rounded-full opacity-60"></div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow w-full max-w-2xl mx-auto">
+
+        <!-- Filter Tabs -->
+        <div class="flex flex-wrap justify-center gap-3 mb-8 sticky top-4 z-10 bg-brand-paper/90 backdrop-blur-sm p-2 rounded-full shadow-sm">
+            <button onclick="filterMenu('all')" id="tab-all" class="px-5 py-2 rounded-full border text-sm transition-all duration-300 tab-active font-serif tracking-wide">
+                全部
+            </button>
+            <button onclick="filterMenu('low')" id="tab-low" class="px-5 py-2 rounded-full border text-sm transition-all duration-300 tab-inactive font-serif tracking-wide">
+                日常 <span class="text-xs opacity-60 ml-1">$100↓</span>
+            </button>
+            <button onclick="filterMenu('mid')" id="tab-mid" class="px-5 py-2 rounded-full border text-sm transition-all duration-300 tab-inactive font-serif tracking-wide">
+                質感 <span class="text-xs opacity-60 ml-1">$100-300</span>
+            </button>
+            <button onclick="filterMenu('high')" id="tab-high" class="px-5 py-2 rounded-full border text-sm transition-all duration-300 tab-inactive font-serif tracking-wide">
+                饗宴 <span class="text-xs opacity-60 ml-1">$300↑</span>
+            </button>
+        </div>
+
+        <!-- Menu Grid -->
+        <div id="menuGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-12">
+            <!-- Items will be injected here via JS -->
+        </div>
+
+        <!-- Empty State (Hidden by default) -->
+        <div id="emptyState" class="hidden text-center py-12">
+            <p class="text-brand-sage font-serif">暫無資料</p>
+        </div>
+
+    </main>
+
+    <footer class="mt-12 text-center text-brand-sage/60 text-xs py-4 border-t border-brand-sand/50 max-w-4xl mx-auto w-full">
+        &copy; Ambient Edit Studio
+    </footer>
+
+    <script>
+        // 資料庫：保留乾淨的 Name (品牌) 用於搜尋，Desc (品項) 用於展示
+        const menuItems = [
+            // === Low ($100↓) ===
+            { category: "low", price: "$", name: "八方雲集", tags: ["連鎖", "快速"], desc: "鍋貼水餃 / 酸辣湯" },
+            { category: "low", price: "$", name: "7-11", tags: ["超商", "便利"], desc: "國民便當 / 關東煮" },
+            { category: "low", price: "$", name: "麥當勞", tags: ["速食", "快樂"], desc: "1+1 銅板點 / 漢堡" },
+            { category: "low", price: "$", name: "鬍鬚張", tags: ["台式", "經典"], desc: "招牌魯肉飯" },
+            { category: "low", price: "$", name: "阜杭豆漿", tags: ["早餐", "傳統"], desc: "厚燒餅油條 / 鹹豆漿" },
+            { category: "low", price: "$", name: "洪瑞珍", tags: ["輕食", "簡單"], desc: "招牌三明治" },
+            { category: "low", price: "$", name: "豪大大雞排", tags: ["炸物", "罪惡"], desc: "超大雞排" },
+            { category: "low", price: "$", name: "台鐵便當", tags: ["便當", "懷舊"], desc: "經典排骨飯" },
+            { category: "low", price: "$", name: "路易莎", tags: ["咖啡", "輕食"], desc: "熱壓吐司 / 莊園拿鐵" },
+            { category: "low", price: "$", name: "繼光香香雞", tags: ["炸物", "點心"], desc: "蒜香炸雞" },
+            { category: "low", price: "$", name: "阿宗麵線", tags: ["小吃", "站著吃"], desc: "大腸麵線" },
+            { category: "low", price: "$", name: "50嵐", tags: ["午茶", "甜點"], desc: "1號珍波椰 / 雞蛋糕" },
+            { category: "low", price: "$", name: "潤餅捲", tags: ["夜市", "清爽"], desc: "蔬菜滿滿潤餅" },
+            { category: "low", price: "$", name: "四海遊龍", tags: ["連鎖", "麵食"], desc: "酸辣湯餃" },
+            { category: "low", price: "$", name: "肯德基", tags: ["甜點", "速食"], desc: "原味蛋塔" },
+            { category: "low", price: "$", name: "全家便利商店", tags: ["健康", "超商"], desc: "夯番薯+無糖豆漿" },
+            { category: "low", price: "$", name: "梁社漢排骨", tags: ["便當", "新寵"], desc: "厚實排骨飯" },
+            { category: "low", price: "$", name: "福勝亭", tags: ["日式", "豬排"], desc: "開運豬排定食" },
+            { category: "low", price: "$", name: "Costco 好市多", tags: ["美式", "高CP"], desc: "熱狗堡套餐" },
+            { category: "low", price: "$", name: "摩斯漢堡", tags: ["早餐", "日式"], desc: "番茄吉士蛋堡" },
+            { category: "low", price: "$", name: "師園鹽酥雞", tags: ["炸物", "蒜味"], desc: "蒜味鹽酥雞" },
+            { category: "low", price: "$", name: "藍家割包", tags: ["小吃", "公館"], desc: "綜合割包 / 四神湯" },
+            { category: "low", price: "$", name: "Q Burger", tags: ["早餐", "連鎖"], desc: "創意早午餐" },
+            { category: "low", price: "$", name: "頂呱呱", tags: ["炸物", "台式"], desc: "呱呱包 / 甜甜包" },
+            { category: "low", price: "$", name: "晴光紅豆餅", tags: ["甜點", "爆漿"], desc: "紅豆/奶油車輪餅" },
+            { category: "low", price: "$", name: "大腸包小腸", tags: ["夜市", "經典"], desc: "炭火香腸" },
+            { category: "low", price: "$", name: "臭豆腐", tags: ["小吃", "國民"], desc: "脆皮臭豆腐 / 泡菜" },
+            { category: "low", price: "$", name: "樺達奶茶", tags: ["手搖", "高雄"], desc: "美容奶茶 / 普洱" },
+            { category: "low", price: "$", name: "永和豆漿大王", tags: ["宵夜", "傳統"], desc: "宵夜小籠包" },
+            { category: "low", price: "$", name: "爭鮮外帶", tags: ["壽司", "便當"], desc: "外帶餐盒" },
+
+            // === Mid ($100 - $300) ===
+            { category: "mid", price: "$$", name: "石二鍋", tags: ["火鍋", "王品"], desc: "石頭鍋 / 檸檬冬瓜冰" },
+            { category: "mid", price: "$$", name: "すき家 Sukiya", tags: ["牛丼", "日式"], desc: "蔥溫玉牛丼" },
+            { category: "mid", price: "$$", name: "鼎泰豐", tags: ["點心", "精緻"], desc: "排骨炒飯 / 小籠包" },
+            { category: "mid", price: "$$", name: "春水堂", tags: ["茶館", "台式"], desc: "功夫麵 / 珍珠奶茶" },
+            { category: "mid", price: "$$", name: "壽司郎", tags: ["壽司", "迴轉"], desc: "鮮蝦三貫 / 薯條" },
+            { category: "mid", price: "$$", name: "MOS Burger", tags: ["速食", "米漢堡"], desc: "海洋珍珠堡" },
+            { category: "mid", price: "$$", name: "三商巧福", tags: ["麵食", "老牌"], desc: "牛肉麵 / 酸菜" },
+            { category: "mid", price: "$$", name: "薩莉亞", tags: ["義式", "平價"], desc: "焗烤飯 / 佛卡夏" },
+            { category: "mid", price: "$$", name: "CoCo壱番屋", tags: ["咖哩", "日式"], desc: "歐姆蛋咖哩" },
+            { category: "mid", price: "$$", name: "大心", tags: ["泰式", "酸辣"], desc: "酸辣海陸麵 / 芝麻冰" },
+            { category: "mid", price: "$$", name: "拿坡里", tags: ["炸物", "分享"], desc: "義式炸雞" },
+            { category: "mid", price: "$$", name: "林東芳牛肉麵", tags: ["名店", "宵夜"], desc: "半筋半肉麵" },
+            { category: "mid", price: "$$", name: "添好運", tags: ["港式", "米其林"], desc: "酥皮焗叉燒包" },
+            { category: "mid", price: "$$", name: "丸龜製麵", tags: ["烏龍麵", "日式"], desc: "豚骨烏龍 / 炸蔬菜" },
+            { category: "mid", price: "$$", name: "Subway", tags: ["潛艇堡", "蔬菜"], desc: "12吋潛艇堡" },
+            { category: "mid", price: "$$", name: "金峰魯肉飯", tags: ["台式", "排隊"], desc: "魯肉飯 / 鼎邊銼" },
+            { category: "mid", price: "$$", name: "必勝客", tags: ["披薩", "獨享"], desc: "個人Pizza" },
+            { category: "mid", price: "$$", name: "屯京拉麵", tags: ["拉麵", "日式"], desc: "東京豚骨拉麵" },
+            { category: "mid", price: "$$", name: "吉野家", tags: ["牛丼", "日式"], desc: "牛丼套餐" },
+            { category: "mid", price: "$$", name: "定食8", tags: ["定食", "快速"], desc: "海鮮丼 / 豬排" },
+            { category: "mid", price: "$$", name: "一蘭拉麵", tags: ["拉麵", "名店"], desc: "豚骨拉麵" },
+            { category: "mid", price: "$$", name: "貳樓", tags: ["早午餐", "美式"], desc: "班尼迪克蛋" },
+            { category: "mid", price: "$$", name: "藏壽司", tags: ["壽司", "迴轉"], desc: "扭蛋壽司" },
+            { category: "mid", price: "$$", name: "涓豆腐", tags: ["韓式", "豆腐鍋"], desc: "海鮮嫩豆腐鍋" },
+            { category: "mid", price: "$$", name: "壽喜燒一丁", tags: ["吃到飽", "日式"], desc: "肉品吃到飽" },
+            { category: "mid", price: "$$", name: "燒肉Like", tags: ["燒肉", "單人"], desc: "個人燒肉套餐" },
+            { category: "mid", price: "$$", name: "輕井澤鍋物", tags: ["火鍋", "氣派"], desc: "日式鍋物" },
+            { category: "mid", price: "$$", name: "涮乃葉", tags: ["火鍋", "吃到飽"], desc: "野菜豬肉吃到飽" },
+            { category: "mid", price: "$$", name: "麵屋一燈", tags: ["拉麵", "沾麵"], desc: "魚介沾麵" },
+            { category: "mid", price: "$$", name: "這一小鍋", tags: ["火鍋", "復古"], desc: "石頭鍋" },
+            { category: "mid", price: "$$", name: "星巴克", tags: ["咖啡", "空間"], desc: "冷萃咖啡 / 可頌" },
+
+            // === High ($300↑) ===
+            { category: "high", price: "$$$", name: "王品牛排", tags: ["排餐", "經典"], desc: "台塑牛排" },
+            { category: "high", price: "$$$", name: "海底撈", tags: ["火鍋", "服務"], desc: "麻辣火鍋 / 撈麵" },
+            { category: "high", price: "$$$", name: "饗食天堂", tags: ["Buffet", "吃到飽"], desc: "多國料理 Buffet" },
+            { category: "high", price: "$$$", name: "屋馬燒肉", tags: ["燒肉", "台中"], desc: "雞湯 / 燒肉套餐" },
+            { category: "high", price: "$$$", name: "瓦城", tags: ["泰式", "聚餐"], desc: "月亮蝦餅 / 檸檬魚" },
+            { category: "high", price: "$$$", name: "欣葉台菜", tags: ["台菜", "宴客"], desc: "煎豬肝 / 菜脯蛋" },
+            { category: "high", price: "$$$", name: "乾杯燒肉", tags: ["燒肉", "氣氛"], desc: "牛舌 / 親親五花肉" },
+            { category: "high", price: "$$$", name: "教父牛排", tags: ["牛排", "米其林"], desc: "老饕牛排" },
+            { category: "high", price: "$$$", name: "這一鍋", tags: ["火鍋", "宮廷"], desc: "神仙牛肉 / 老火湯" },
+            { category: "high", price: "$$$", name: "詹記麻辣火鍋", tags: ["火鍋", "復古"], desc: "鴨血豆腐" },
+            { category: "high", price: "$$$", name: "Smith & Wollensky", tags: ["牛排", "景觀"], desc: "乾式熟成牛排" },
+            { category: "high", price: "$$$", name: "RAW", tags: ["法式", "名廚"], desc: "台灣味法式料理" },
+            { category: "high", price: "$$$", name: "橘色涮涮屋", tags: ["火鍋", "頂級"], desc: "頂級海陸鍋" },
+            { category: "high", price: "$$$", name: "初魚", tags: ["無菜單", "預約"], desc: "鐵板燒 / 日式料亭" },
+            { category: "high", price: "$$$", name: "漢來海港", tags: ["Buffet", "海鮮"], desc: "海鮮百匯" },
+            { category: "high", price: "$$$", name: "晶華酒店 柏麗廳", tags: ["Buffet", "飯店"], desc: "五星級自助餐" },
+            { category: "high", price: "$$$", name: "老乾杯", tags: ["燒肉", "和牛"], desc: "澳洲和牛" },
+            { category: "high", price: "$$$", name: "金色三麥", tags: ["餐酒", "啤酒"], desc: "蜂蜜啤酒 / 拼盤" },
+            { category: "high", price: "$$$", name: "茹絲葵 Ruth's Chris", tags: ["牛排", "美式"], desc: "肋眼牛排" },
+            { category: "high", price: "$$$", name: "上引水產", tags: ["海鮮", "日式"], desc: "立吞壽司" },
+            { category: "high", price: "$$$", name: "饗饗 Inparadise", tags: ["Buffet", "景觀"], desc: "高空景觀 Buffet" },
+            { category: "high", price: "$$$", name: "旭集", tags: ["Buffet", "日式"], desc: "日式料理 Buffet" },
+            { category: "high", price: "$$$", name: "A Cut", tags: ["牛排", "米其林"], desc: "乾式熟成牛排" },
+            { category: "high", price: "$$$", name: "頤宮", tags: ["粵菜", "三星"], desc: "火焰片皮鴨" },
+            { category: "high", price: "$$$", name: "MUME", tags: ["歐式", "現代"], desc: "現代歐式料理" },
+            { category: "high", price: "$$$", name: "Longtail", tags: ["餐酒", "創意"], desc: "創意無國界料理" },
+            { category: "high", price: "$$$", name: "無老鍋", tags: ["火鍋", "養生"], desc: "冰淇淋豆腐鍋" },
+            { category: "high", price: "$$$", name: "MO-MO-Paradise", tags: ["壽喜燒", "連鎖"], desc: "壽喜燒吃到飽" },
+            { category: "high", price: "$$$", name: "點水樓", tags: ["江浙", "小籠包"], desc: "七彩小籠包" },
+            { category: "high", price: "$$$", name: "Ukai-tei", tags: ["鐵板燒", "頂級"], desc: "米其林鐵板燒" }
+        ];
+
+        const grid = document.getElementById('menuGrid');
+        
+        function renderItems(items) {
+            grid.innerHTML = '';
+            
+            if (items.length === 0) {
+                document.getElementById('emptyState').classList.remove('hidden');
+                return;
+            } else {
+                document.getElementById('emptyState').classList.add('hidden');
+            }
+
+            items.forEach((item, index) => {
+                const delay = Math.min(index * 30, 1000);
+                
+                const el = document.createElement('a');
+                
+                // 搜尋邏輯：只搜尋 item.name (品牌)，確保地圖精準
+                const cleanName = item.name.split(/[/(]/)[0].trim();
+                const query = encodeURIComponent(cleanName);
+                
+                el.href = `https://www.google.com/maps/search/?api=1&query=${query}`;
+                el.target = "_blank";
+                el.rel = "noopener noreferrer";
+                
+                el.className = 'group bg-white border border-brand-sand rounded-xl p-4 md:p-5 hover:border-brand-sage hover:shadow-soft transition-all duration-300 fade-in-up flex flex-col justify-between cursor-pointer relative overflow-hidden block';
+                el.style.animationDelay = `${delay}ms`;
+                
+                let barColor = 'bg-brand-sage';
+                if(item.category === 'low') barColor = 'bg-brand-sage';
+                if(item.category === 'mid') barColor = 'bg-brand-clay';
+                if(item.category === 'high') barColor = 'bg-brand-ink';
+
+                // 視覺顯示：品牌 + (品項簡稱)
+                const displayDesc = item.desc.split('/')[0].trim();
+
+                el.innerHTML = `
+                    <div class="absolute left-0 top-0 bottom-0 w-1 ${barColor} opacity-40 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="pl-3 flex justify-between items-start h-full">
+                        <div class="flex flex-col h-full w-full">
+                            <div class="flex flex-wrap items-baseline gap-2 mb-1">
+                                <h3 class="font-serif text-lg text-brand-ink group-hover:text-black transition-colors font-medium whitespace-nowrap">${item.name}</h3>
+                                <span class="text-sm text-brand-sage/90 font-serif group-hover:text-brand-ink/70 transition-colors">${displayDesc}</span>
+                            </div>
+                            
+                            <div class="w-full h-px bg-brand-sand/30 my-2"></div>
+
+                            <div class="flex flex-wrap gap-1.5 mt-auto">
+                                ${item.tags.map(tag => `<span class="text-[10px] text-brand-sage border border-brand-sand bg-brand-paper px-1.5 py-0.5 rounded-md tracking-wider group-hover:border-brand-sage/50 transition-colors">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="text-brand-clay font-serif italic text-sm opacity-40 group-hover:opacity-100 transition-opacity flex-shrink-0 ml-3">
+                            ${item.price}
+                        </div>
+                    </div>
+                    <div class="absolute right-2 top-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-brand-sage opacity-0 group-hover:opacity-50 transition-opacity transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                    </div>
+                `;
+                grid.appendChild(el);
+            });
+        }
+
+        function filterMenu(category) {
+            const tabs = ['all', 'low', 'mid', 'high'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === category) {
+                    btn.classList.remove('tab-inactive');
+                    btn.classList.add('tab-active');
+                } else {
+                    btn.classList.remove('tab-active');
+                    btn.classList.add('tab-inactive');
+                }
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (category === 'all') {
+                renderItems(menuItems);
+            } else {
+                const filtered = menuItems.filter(item => item.category === category);
+                renderItems(filtered);
+            }
+        }
+
+        renderItems(menuItems);
+
+    </script>
+</body>
+</html>

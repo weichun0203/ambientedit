@@ -109,30 +109,38 @@
     <!-- Main Container -->
     <main class="relative z-10 px-6 py-12 md:py-20">
         
-        <!-- Navigation Code Provided -->
-        <nav class="max-w-4xl mx-auto mb-12 flex justify-end">
-            <a href="https://weichun0203.github.io/ambientedit/" 
-               class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft"
-               aria-label="返回常溫首頁">
-                <!-- Icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                    <polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
-                <!-- Text -->
-                <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
-            </a>
-        </nav>
+        <!-- Header (Updated Layout: Center Title, Button Absolute Right) -->
+        <header class="max-w-4xl mx-auto mb-20 animate-fade-in-up text-center">
+            <!-- Pre-header -->
+            <p class="text-brand-sage tracking-[0.2em] text-sm font-medium mb-2 uppercase text-center">Ambient Edit Studio</p>
 
-        <!-- Header -->
-        <header class="max-w-3xl mx-auto text-center mb-24 animate-fade-in-up">
-            <p class="text-brand-sage tracking-[0.2em] text-sm font-medium mb-4 uppercase">Ambient Edit Studio</p>
-            <h1 class="text-4xl md:text-5xl font-serif font-bold text-brand-ink mb-8 leading-tight">
-                LOGO 設計<br>
-                <span class="text-2xl md:text-3xl font-normal block mt-2 text-brand-ink/80">品牌視覺建構指南</span>
-            </h1>
-            <div class="w-16 h-1 bg-brand-clay mx-auto mb-8 rounded-full"></div>
-            <p class="text-lg text-brand-ink/80 max-w-2xl mx-auto">
+            <!-- Title Container: Relative for absolute button positioning -->
+            <div class="relative">
+                <!-- Title: Centered -->
+                <h1 class="text-4xl md:text-5xl font-serif font-bold text-brand-ink leading-tight">
+                    LOGO 設計<br>
+                    <span class="text-2xl md:text-3xl font-normal block mt-2 text-brand-ink/80">品牌視覺建構指南</span>
+                </h1>
+
+                <!-- Right: Button (Absolute positioning to keep title truly centered) -->
+                <div class="absolute right-0 top-0 pt-1 md:pt-2">
+                    <a href="https://weichun0203.github.io/ambientedit/" 
+                       class="group inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft"
+                       aria-label="返回常溫首頁">
+                        <!-- Icon -->
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 md:h-4 md:w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        <!-- Text -->
+                        <span class="ml-1.5 md:ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Divider & Description (Centered) -->
+            <div class="w-16 h-1 bg-brand-clay my-8 rounded-full mx-auto"></div>
+            <p class="text-lg text-brand-ink/80 max-w-2xl mx-auto text-center">
                 LOGO 不只是一個圖案，它是品牌的「臉」。<br>
                 這是常溫編集所為您梳理的 5 個核心階段，<br>協助您將抽象的理念，轉化為具體的視覺語言。
             </p>

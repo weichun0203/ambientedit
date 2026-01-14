@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>常溫理財金字塔 | 堆疊生活的厚度</title>
+    
+    <!-- GA4 追蹤碼 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                            dark: '#2c2c2c',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    },
+                    screens: {
+                        'xs': '375px',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 質感紋理 */
+        .bg-noise {
+            background-color: #fdfbf7;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+        /* 隱藏滾動條但保留功能 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 解決 iOS Safari 100vh 問題 */
+        .h-safe-screen {
+            height: 100vh;
+            height: -webkit-fill-available;
+            min-height: 100vh;
+        }
+
+        /* 安全區域 padding */
+        .pl-safe { padding-left: env(safe-area-inset-left, 16px); }
+        .pr-safe { padding-right: env(safe-area-inset-right, 16px); }
+        
+        /* 基礎淡入淡出 Transition */
+        .fade-content {
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .fade-content.hiding {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        /* Modal Transition */
+        .modal-overlay {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            transform: scale(0.95) translateY(10px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-overlay.open .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        /* 選單項目樣式 */
+        .nav-item {
+            transition: all 0.3s ease;
+        }
+        .nav-item.active {
+            background-color: #4a4a4a;
+            color: #fdfbf7;
+            border-color: #4a4a4a;
+            box-shadow: 0 4px 12px rgba(74, 74, 74, 0.15);
+        }
+
+        /* 桌面版金字塔按鈕樣式 */
+        .pyramid-btn {
+            transition: all 0.3s ease;
+        }
+        .pyramid-btn:hover {
+            filter: brightness(1.05);
+            transform: scale(1.01);
+        }
+        .pyramid-btn.active {
+            transform: scale(1.03);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.15);
+            z-index: 10;
+        }
+
+        /* 手機版微型金字塔樣式 */
+        .mini-bar {
+            transition: all 0.4s ease;
+            opacity: 0.3;
+        }
+        .mini-bar.active {
+            opacity: 1;
+            transform: scaleX(1.05);
+        }
+        
+        /* Quiz Specific Styles - Fixed Colors */
+        .option-btn { 
+            transition: all 0.2s; 
+            position: relative;
+        }
+        .option-btn.correct { 
+            background-color: rgba(141, 163, 153, 0.2) !important; /* brand-sage with opacity */
+            border-color: #8da399 !important;
+            color: #2c2c2c !important;
+            font-weight: 600;
+        }
+        .option-btn.wrong { 
+            background-color: rgba(212, 165, 154, 0.2) !important; /* brand-clay with opacity */
+            border-color: #d4a59a !important;
+            color: #2c2c2c !important;
+        }
+        .option-btn.disabled { 
+            pointer-events: none; 
+            opacity: 0.6; 
+        }
+        
+        .bar-fill { transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1); }
+    </style>
+</head>
+<body class="bg-noise text-brand-ink font-sans h-safe-screen flex flex-col overflow-hidden">
+
+    <!-- Header 品牌導航 -->
+    <header class="flex-shrink-0 py-3 md:py-6 pl-safe pr-safe px-4 md:px-12 flex justify-between items-center z-50 bg-[#fdfbf7] shadow-sm md:shadow-none">
+        <!-- Brand Title -->
+        <div class="flex flex-col">
+            <h1 class="font-serif font-bold text-lg md:text-2xl tracking-widest text-brand-ink whitespace-nowrap">
+                常溫理財金字塔<span class="text-brand-sage">.</span>
+            </h1>
+            <p class="text-[9px] md:text-xs tracking-[0.2em] text-brand-ink/40 mt-0.5 uppercase hidden xs:block">
+                AMBIENT PYRAMID
+            </p>
+        </div>
+
+        <!-- Home Button -->
+        <nav class="ml-4">
+            <a href="https://weichun0203.github.io/ambientedit/" 
+               class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft"
+               aria-label="返回常溫首頁">
+               <!-- Icon -->
+               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                   <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                   <polyline points="9 22 9 12 15 12 15 22"/>
+               </svg>
+               <!-- Text -->
+               <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow flex flex-col lg:flex-row w-full h-full relative overflow-hidden">
+        
+        <!-- ================= Mobile/Tablet Navigation (Sticky Tabs) ================= -->
+        <div class="lg:hidden flex-shrink-0 w-full bg-white border-b border-brand-sand/50 z-40 shadow-sm relative">
+            <div class="flex overflow-x-auto no-scrollbar py-3 px-safe px-4 gap-2 snap-x">
+                <button onclick="switchLevel(1)" class="nav-item snap-start flex-shrink-0 px-4 py-1.5 rounded-full border border-brand-sand text-xs font-bold tracking-wider text-brand-ink/60 whitespace-nowrap active" id="mob-btn-1">
+                    01 風險
+                </button>
+                <button onclick="switchLevel(2)" class="nav-item snap-center flex-shrink-0 px-4 py-1.5 rounded-full border border-brand-sand text-xs font-bold tracking-wider text-brand-ink/60 whitespace-nowrap" id="mob-btn-2">
+                    02 儲蓄
+                </button>
+                <button onclick="switchLevel(3)" class="nav-item snap-center flex-shrink-0 px-4 py-1.5 rounded-full border border-brand-sand text-xs font-bold tracking-wider text-brand-ink/60 whitespace-nowrap" id="mob-btn-3">
+                    03 增值
+                </button>
+                <button onclick="switchLevel(4)" class="nav-item snap-center flex-shrink-0 px-4 py-1.5 rounded-full border border-brand-sand text-xs font-bold tracking-wider text-brand-ink/60 whitespace-nowrap" id="mob-btn-4">
+                    04 傳承
+                </button>
+                <div class="w-4 flex-shrink-0"></div> <!-- Padding end -->
+            </div>
+        </div>
+
+        <!-- ================= Desktop Pyramid Visual (Left Side) ================= -->
+        <div class="hidden lg:flex lg:w-5/12 h-full flex-col justify-center items-center relative p-12 overflow-y-auto no-scrollbar bg-brand-paper/50">
+            <!-- 裝飾線 -->
+            <div class="fixed top-0 bottom-0 left-[20.83%] w-[1px] bg-gradient-to-b from-transparent via-brand-sand to-transparent -z-10 opacity-30"></div>
+
+            <div class="w-full max-w-md space-y-2 relative my-auto">
+                <!-- Level 4 -->
+                <div onclick="switchLevel(4)" id="desk-btn-4" class="pyramid-btn w-[30%] mx-auto h-24 bg-brand-ink rounded-t-lg rounded-b-sm cursor-pointer flex items-center justify-center text-brand-paper shadow-lg hover:shadow-xl opacity-90 hover:opacity-100 group">
+                    <span class="font-serif tracking-widest text-sm">傳承</span>
+                </div>
+                <!-- Level 3 -->
+                <div onclick="switchLevel(3)" id="desk-btn-3" class="pyramid-btn w-[50%] mx-auto h-28 bg-brand-clay rounded-sm cursor-pointer flex items-center justify-center text-white shadow-lg hover:shadow-xl opacity-90 hover:opacity-100 group">
+                    <span class="font-serif tracking-widest text-lg">增值</span>
+                </div>
+                <!-- Level 2 -->
+                <div onclick="switchLevel(2)" id="desk-btn-2" class="pyramid-btn w-[70%] mx-auto h-32 bg-brand-sand rounded-sm cursor-pointer flex items-center justify-center text-brand-ink shadow-lg hover:shadow-xl opacity-90 hover:opacity-100 group">
+                    <span class="font-serif tracking-widest text-xl">積累</span>
+                </div>
+                <!-- Level 1 -->
+                <div onclick="switchLevel(1)" id="desk-btn-1" class="pyramid-btn w-[90%] mx-auto h-36 bg-brand-sage rounded-b-lg rounded-t-sm cursor-pointer flex items-center justify-center text-white shadow-lg hover:shadow-xl opacity-90 hover:opacity-100 group border-4 border-brand-paper active">
+                    <span class="font-serif tracking-widest text-2xl">防護</span>
+                </div>
+            </div>
+            
+            <p class="mt-8 text-brand-ink/40 font-serif text-sm tracking-widest italic flex-shrink-0">Select a layer to explore</p>
+        </div>
+
+        <!-- ================= Content Area (Right Side / Mobile Body) ================= -->
+        <div class="flex-grow w-full lg:w-7/12 h-full relative">
+            
+            <!-- Scroll Container -->
+            <div class="absolute inset-0 overflow-y-auto pb-24 lg:pb-12 pl-safe pr-safe pt-6 lg:pt-24 z-0" id="content-scroll">
+                <div class="max-w-3xl mx-auto px-6 lg:px-12 min-h-full flex flex-col justify-start lg:justify-center">
+                    
+                    <!-- ================= Mobile/Tablet Mini Visual Pyramid ================= -->
+                    <div class="lg:hidden mb-8 w-full max-w-xs mx-auto flex flex-col items-center gap-1 opacity-90">
+                        <div onclick="switchLevel(4)" id="mini-4" class="mini-bar w-16 h-4 bg-brand-ink rounded-t-md cursor-pointer"></div>
+                        <div onclick="switchLevel(3)" id="mini-3" class="mini-bar w-24 h-5 bg-brand-clay rounded-sm cursor-pointer"></div>
+                        <div onclick="switchLevel(2)" id="mini-2" class="mini-bar w-32 h-6 bg-brand-sand rounded-sm cursor-pointer"></div>
+                        <div onclick="switchLevel(1)" id="mini-1" class="mini-bar w-40 h-7 bg-brand-sage rounded-b-md cursor-pointer active"></div>
+                        <!-- Updated Label -->
+                        <p class="text-[10px] text-brand-ink/30 mt-2 font-serif tracking-widest">點擊圖表切換層級</p>
+                    </div>
+
+                    <!-- 內容區塊 -->
+                    <div id="content-wrapper" class="fade-content">
+                        <!-- 裝飾性標籤 -->
+                        <div class="flex items-center gap-3 lg:gap-4 mb-4 lg:mb-8">
+                            <span id="display-num" class="font-serif text-5xl lg:text-8xl font-bold text-brand-sand/50 leading-none">01</span>
+                            <div class="h-[1px] w-8 lg:w-12 bg-brand-ink/20"></div>
+                            <span id="display-tag" class="font-sans text-[10px] lg:text-xs font-bold tracking-[0.3em] text-brand-sage uppercase">PROTECTION</span>
+                        </div>
+
+                        <!-- 標題 -->
+                        <h2 id="display-title" class="font-serif text-2xl lg:text-5xl font-bold text-brand-ink mb-4 lg:mb-10 leading-tight">
+                            風險防護網
+                        </h2>
+
+                        <!-- 核心描述 -->
+                        <div class="relative pl-5 lg:pl-6 border-l-2 border-brand-clay mb-6 lg:mb-12">
+                            <p id="display-desc" class="text-sm lg:text-lg text-brand-ink/80 leading-relaxed font-serif italic text-justify">
+                                在追求財富增長之前，這是最關鍵的基石。如同建築的地基，我們必須確保當生命中的「黑天鵝」（失業、疾病、意外）降臨時，原本的生活品質不會瞬間崩塌。
+                            </p>
+                        </div>
+
+                        <!-- 重點列表 -->
+                        <div class="grid gap-3 lg:gap-4">
+                            <h3 class="text-[10px] lg:text-xs font-bold text-brand-ink/40 tracking-widest uppercase mb-1 lg:mb-2">Key Actions</h3>
+                            <div id="display-points" class="space-y-3 lg:space-y-4">
+                                <!-- JS Populated -->
+                            </div>
+                        </div>
+
+                        <!-- 呼籲行動 (CTA) -->
+                        <div id="cta-container" class="mt-8 lg:mt-16 pt-6 lg:pt-8 border-t border-brand-ink/5 mb-12">
+                           <!-- JS will populate button here -->
+                        </div>
+                    </div> <!-- End of fade-content -->
+
+                    <!-- 底部墊高 -->
+                    <div class="h-16 lg:h-0"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ================= Calculation Modal (Risk Level 1) ================= -->
+    <div id="calc-modal" class="fixed inset-0 z-[100] modal-overlay flex items-center justify-center px-4 bg-brand-ink/30 backdrop-blur-sm">
+        <div class="modal-content w-full max-w-lg bg-[#fdfbf7] rounded-3xl shadow-2xl overflow-hidden border border-white/50 relative">
+            <button onclick="closeModal('calc-modal')" class="absolute top-4 right-4 p-2 text-brand-ink/40 hover:text-brand-ink transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="bg-brand-sage/10 p-6 border-b border-brand-sage/10">
+                <h3 class="font-serif text-xl font-bold text-brand-ink flex items-center gap-2">
+                    <span class="w-2 h-6 bg-brand-sage rounded-full"></span>
+                    財務緩衝水位試算
+                </h3>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-brand-ink/80 tracking-wider">每月「必要」生存支出</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-brand-ink/40">$</span>
+                        <input type="number" id="input-expenses" placeholder="房租、伙食、交通、帳單" class="w-full pl-8 pr-4 py-3 bg-white border border-brand-sand rounded-xl focus:outline-none focus:border-brand-sage focus:ring-1 focus:ring-brand-sage transition-all text-brand-ink placeholder:text-brand-ink/20">
+                    </div>
+                    <p class="text-[11px] text-brand-sage flex items-start gap-1">
+                        <svg class="w-3 h-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        小撇步：若住家裡，生存模式可不計房租。
+                    </p>
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-sm font-bold text-brand-ink/80 tracking-wider">目前緊急預備金</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-brand-ink/40">$</span>
+                        <input type="number" id="input-savings" placeholder="現金、活存（不含投資部位）" class="w-full pl-8 pr-4 py-3 bg-white border border-brand-sand rounded-xl focus:outline-none focus:border-brand-sage focus:ring-1 focus:ring-brand-sage transition-all text-brand-ink placeholder:text-brand-ink/20">
+                    </div>
+                </div>
+                <div id="calc-result" class="hidden pt-4 border-t border-brand-sand/50 space-y-4 animate-fade-up">
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs font-bold tracking-wider">
+                            <span class="text-brand-clay">生存模式 (3個月)</span>
+                            <span id="target-survival">$0</span>
+                        </div>
+                        <div class="h-2 w-full bg-brand-sand/30 rounded-full overflow-hidden">
+                            <div id="bar-survival" class="h-full bg-brand-clay rounded-full w-0 transition-all duration-1000"></div>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs font-bold tracking-wider">
+                            <span class="text-brand-sage">安全模式 (6個月)</span>
+                            <span id="target-safe">$0</span>
+                        </div>
+                        <div class="h-2 w-full bg-brand-sand/30 rounded-full overflow-hidden">
+                            <div id="bar-safe" class="h-full bg-brand-sage rounded-full w-0 transition-all duration-1000"></div>
+                        </div>
+                    </div>
+                    <div class="bg-brand-paper p-4 rounded-lg border border-brand-sand mt-2">
+                        <p id="result-feedback" class="text-sm text-brand-ink/80 leading-relaxed text-justify">請輸入數值...</p>
+                    </div>
+                </div>
+                <button id="btn-calc" onclick="calculateHealth()" class="w-full py-3 bg-brand-ink text-brand-paper rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-[1.01] transition-all">開始分析</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 6 Jars Modal (Savings Level 2) ================= -->
+    <div id="jars-modal" class="fixed inset-0 z-[100] modal-overlay flex items-center justify-center px-4 bg-brand-ink/30 backdrop-blur-sm">
+        <div class="modal-content w-full max-w-lg bg-[#fdfbf7] rounded-3xl shadow-2xl overflow-hidden border border-white/50 relative max-h-[90vh] flex flex-col">
+            <button onclick="closeModal('jars-modal')" class="absolute top-4 right-4 p-2 text-brand-ink/40 hover:text-brand-ink transition-colors z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="bg-brand-clay/10 p-6 border-b border-brand-clay/10 flex-shrink-0">
+                <h3 class="font-serif text-xl font-bold text-brand-ink flex items-center gap-2">
+                    <span class="w-2 h-6 bg-brand-clay rounded-full"></span>
+                    六罐子理財分配
+                </h3>
+                <p class="text-xs text-brand-ink/60 mt-1 pl-4">哈福．艾克 (T. Harv Eker) 的財富管理系統</p>
+            </div>
+            <div class="p-6 overflow-y-auto no-scrollbar">
+                <div class="space-y-4 mb-6">
+                    <label class="block text-sm font-bold text-brand-ink/80 tracking-wider">請輸入您的月收入 (實領)</label>
+                    <div class="flex gap-2">
+                        <div class="relative flex-grow">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-brand-ink/40">$</span>
+                            <input type="number" id="input-income" placeholder="例如：45000" class="w-full pl-8 pr-4 py-3 bg-white border border-brand-sand rounded-xl focus:outline-none focus:border-brand-clay focus:ring-1 focus:ring-brand-clay transition-all text-brand-ink font-serif text-lg">
+                        </div>
+                        <button onclick="calculateJars()" class="px-6 py-3 bg-brand-ink text-white rounded-xl font-bold shadow-md hover:bg-brand-dark transition-all whitespace-nowrap">分配</button>
+                    </div>
+                </div>
+                <div id="jars-result" class="hidden space-y-4 animate-fade-up">
+                    <div class="bg-white p-4 rounded-xl border border-brand-sand shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-ink"></div>
+                        <div class="flex justify-between items-center mb-1">
+                            <h4 class="font-bold text-brand-ink flex items-center gap-2">
+                                生活開銷 (NEC) <span class="text-[10px] px-1.5 py-0.5 bg-brand-ink/10 rounded text-brand-ink/60">55%</span>
+                            </h4>
+                            <span class="font-serif text-lg font-bold text-brand-ink" id="val-nec">$0</span>
+                        </div>
+                        <p class="text-xs text-brand-ink/50">房租、水電、交通、伙食。若超過比例，需檢視開銷或增加收入。</p>
+                    </div>
+                    <!-- Other Jars simplified for brevity in this block, will be populated by JS -->
+                     <div class="bg-white p-4 rounded-xl border border-brand-sand shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-sage"></div>
+                        <div class="flex justify-between items-center mb-1">
+                            <h4 class="font-bold text-brand-sage flex items-center gap-2">
+                                財務自由 (FFA) <span class="text-[10px] px-1.5 py-0.5 bg-brand-sage/10 rounded text-brand-sage">10%</span>
+                            </h4>
+                            <span class="font-serif text-lg font-bold text-brand-sage" id="val-ffa">$0</span>
+                        </div>
+                        <p class="text-xs text-brand-ink/50">養金鵝專用。只能用於投資生息資產，<b class="text-brand-ink/80">絕對不可花掉本金</b>。</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-brand-sand shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-clay"></div>
+                        <div class="flex justify-between items-center mb-1">
+                            <h4 class="font-bold text-brand-clay flex items-center gap-2">
+                                長期儲蓄 (LTSS) <span class="text-[10px] px-1.5 py-0.5 bg-brand-clay/10 rounded text-brand-clay">10%</span>
+                            </h4>
+                            <span class="font-serif text-lg font-bold text-brand-clay" id="val-ltss">$0</span>
+                        </div>
+                        <p class="text-xs text-brand-ink/50">為了未來的消費（買車、旅遊、結婚、緊急預備金）。</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-brand-sand shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-sand"></div>
+                        <div class="flex justify-between items-center mb-1">
+                            <h4 class="font-bold text-brand-ink/70 flex items-center gap-2">
+                                教育學習 (EDU) <span class="text-[10px] px-1.5 py-0.5 bg-brand-sand rounded text-brand-ink/60">10%</span>
+                            </h4>
+                            <span class="font-serif text-lg font-bold text-brand-ink/70" id="val-edu">$0</span>
+                        </div>
+                        <p class="text-xs text-brand-ink/50">投資自己的腦袋。買書、上課、參加研討會。</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-brand-sand shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-sage/50"></div>
+                        <div class="flex justify-between items-center mb-1">
+                            <h4 class="font-bold text-brand-sage flex items-center gap-2">
+                                休閒娛樂 (PLAY) <span class="text-[10px] px-1.5 py-0.5 bg-brand-sage/10 rounded text-brand-sage">10%</span>
+                            </h4>
+                            <span class="font-serif text-lg font-bold text-brand-sage" id="val-play">$0</span>
+                        </div>
+                        <p class="text-xs text-brand-ink/50">盡情揮霍！犒賞自己，保持對生活的熱情與平衡。</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-brand-sand shadow-sm relative overflow-hidden group hover:shadow-md transition-all">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-clay/50"></div>
+                        <div class="flex justify-between items-center mb-1">
+                            <h4 class="font-bold text-brand-clay flex items-center gap-2">
+                                贈與奉獻 (GIVE) <span class="text-[10px] px-1.5 py-0.5 bg-brand-clay/10 rounded text-brand-clay">5%</span>
+                            </h4>
+                            <span class="font-serif text-lg font-bold text-brand-clay" id="val-give">$0</span>
+                        </div>
+                        <p class="text-xs text-brand-ink/50">慈善捐款或送禮。給予是富足的開始。</p>
+                    </div>
+                    <div class="pt-4 text-center">
+                        <button class="w-full py-3 bg-brand-ink text-white rounded-full text-sm font-bold shadow-lg hover:shadow-xl hover:bg-black transition-all">
+                            加入 LINE@ 紀錄每月分配
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Investment Modal (Growth Level 3) ================= -->
+    <div id="invest-modal" class="fixed inset-0 z-[100] modal-overlay flex items-center justify-center px-4 bg-brand-ink/30 backdrop-blur-sm">
+        <div class="modal-content w-full max-w-lg bg-[#fdfbf7] rounded-3xl shadow-2xl overflow-hidden border border-white/50 relative">
+            <button onclick="closeModal('invest-modal')" class="absolute top-4 right-4 p-2 text-brand-ink/40 hover:text-brand-ink transition-colors z-10">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="bg-brand-clay/10 p-6 border-b border-brand-clay/10">
+                <h3 class="font-serif text-xl font-bold text-brand-ink flex items-center gap-2">
+                    <span class="w-2 h-6 bg-brand-clay rounded-full"></span>
+                    8% 複利滾雪球試算
+                </h3>
+                <p class="text-xs text-brand-ink/60 mt-1 pl-4">基於歷史市場平均回報的長期推估</p>
+            </div>
+            <div class="p-6 space-y-6">
+                <!-- Inputs -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2 col-span-2">
+                        <label class="block text-sm font-bold text-brand-ink/80 tracking-wider">每月定期定額金額</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-brand-ink/40">$</span>
+                            <input type="number" id="invest-amount" placeholder="例如：5000" class="w-full pl-8 pr-4 py-3 bg-white border border-brand-sand rounded-xl focus:outline-none focus:border-brand-clay focus:ring-1 focus:ring-brand-clay transition-all text-brand-ink font-serif text-lg">
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-brand-ink/80 tracking-wider">預計投資年限</label>
+                        <div class="relative">
+                            <input type="number" id="invest-years" placeholder="例如：20" class="w-full pl-4 pr-8 py-3 bg-white border border-brand-sand rounded-xl focus:outline-none focus:border-brand-clay focus:ring-1 focus:ring-brand-clay transition-all text-brand-ink font-serif text-lg">
+                            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-brand-ink/40 text-sm">年</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-bold text-brand-ink/80 tracking-wider">預估報酬率</label>
+                        <div class="relative">
+                            <input type="number" value="8" disabled class="w-full pl-4 pr-8 py-3 bg-brand-sand/20 border border-brand-sand rounded-xl text-brand-ink font-serif text-lg opacity-60">
+                            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-brand-ink/40 text-sm">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Button (Initial) -->
+                <button id="btn-invest-calc" onclick="calculateInvest()" class="w-full py-3 bg-brand-ink text-brand-paper rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-[1.01] transition-all">
+                    開始滾雪球
+                </button>
+
+                <!-- Result Area -->
+                <div id="invest-result" class="hidden border-t border-brand-sand/50 pt-4 animate-fade-up">
+                    <div class="text-center mb-6">
+                        <p class="text-xs text-brand-ink/40 tracking-widest uppercase mb-1">Estimated Total Assets</p>
+                        <h4 class="font-serif text-3xl font-bold text-brand-ink" id="invest-total">$0</h4>
+                    </div>
+
+                    <!-- Bar Chart Visual -->
+                    <div class="flex h-4 w-full rounded-full overflow-hidden mb-2">
+                        <div id="bar-principal" class="bg-brand-sand h-full transition-all duration-1000 w-0"></div>
+                        <div id="bar-profit" class="bg-brand-clay h-full transition-all duration-1000 w-0"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-brand-ink/60 mb-6">
+                        <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-sand"></span> 本金總額 <span id="invest-principal" class="font-bold ml-1">$0</span></div>
+                        <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-brand-clay"></span> 複利增值 <span id="invest-profit" class="font-bold ml-1">$0</span></div>
+                    </div>
+
+                    <div class="bg-brand-paper p-4 rounded-lg border border-brand-sand text-justify">
+                        <p class="text-sm text-brand-ink/80 leading-relaxed">
+                            這就是<span class="text-brand-clay font-bold">8% 複利</span>的力量。隨著時間推移，您的「獲利」將有機會超越您投入的「本金」。
+                        </p>
+                    </div>
+
+                    <div class="mt-4">
+                        <button class="w-full py-3 bg-brand-ink text-white rounded-full text-sm font-bold shadow-lg hover:shadow-xl hover:bg-black transition-all">
+                            加入 LINE@ 啟動複利計畫
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Quiz Modal (Legacy Level 4) ================= -->
+    <div id="quiz-modal" class="fixed inset-0 z-[100] modal-overlay flex items-center justify-center px-4 bg-brand-ink/30 backdrop-blur-sm">
+        <div class="modal-content w-full max-w-2xl bg-[#fdfbf7] rounded-3xl shadow-2xl overflow-hidden border border-white/50 relative max-h-[90vh] flex flex-col">
+            <button onclick="closeModal('quiz-modal')" class="absolute top-4 right-4 p-2 text-brand-ink/40 hover:text-brand-ink transition-colors z-20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            
+            <!-- Header -->
+            <div class="bg-brand-ink text-brand-paper p-6 flex-shrink-0 relative overflow-hidden">
+                <div class="relative z-10 text-center">
+                     <h3 class="font-serif text-xl font-bold tracking-widest mb-1">Legacy & Apex</h3>
+                     <p class="text-xs opacity-70 tracking-wider">財富傳承模擬測驗</p>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="p-6 md:p-8 overflow-y-auto no-scrollbar">
+                
+                <!-- Intro Section -->
+                <div id="quiz-intro" class="space-y-6 text-center">
+                    <h2 class="text-2xl font-serif text-brand-ink font-bold">1 億元的代價</h2>
+                    <p class="text-brand-ink/70 leading-relaxed text-justify md:text-center">
+                        假設一位長輩留下了價值 <strong>1 億元</strong> 的資產（房產為主）。
+                        但他生前認為「不必規劃」，完全沒有做任何準備。<br><br>
+                        接下來有 5 道問題，請你預測這筆財富在移轉過程中會發生什麼事？
+                    </p>
+                    <button onclick="quizApp.startQuiz()" class="px-8 py-3 bg-brand-clay text-white rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all">
+                        開始模擬
+                    </button>
+                </div>
+
+                <!-- Quiz Section -->
+                <div id="quiz-q" class="hidden space-y-6">
+                    <!-- Progress -->
+                    <div class="h-1.5 w-full bg-brand-sand rounded-full overflow-hidden">
+                        <div id="quiz-progress" class="h-full bg-brand-clay w-0 transition-all duration-300"></div>
+                    </div>
+                    
+                    <!-- Question -->
+                    <h3 id="question-text" class="text-lg md:text-xl font-bold text-brand-ink leading-relaxed">題目載入中...</h3>
+                    
+                    <!-- Options -->
+                    <div id="options-container" class="space-y-3">
+                        <!-- JS injected -->
+                    </div>
+
+                    <!-- Feedback (Updated for Better Interaction) -->
+                    <div id="quiz-feedback" class="hidden p-4 rounded-xl border mb-4">
+                        <div id="feedback-header" class="mb-2"></div>
+                        <div class="text-sm text-brand-ink/80 leading-relaxed">
+                            <strong class="text-brand-dark mr-1">解析：</strong>
+                            <span id="rationale-text"></span>
+                        </div>
+                    </div>
+
+                    <!-- Next Button -->
+                    <button id="next-btn" onclick="quizApp.nextQuestion()" class="hidden w-full py-3 bg-brand-ink text-white rounded-full font-bold hover:bg-brand-dark transition-all">
+                        下一題
+                    </button>
+                </div>
+
+                <!-- Result Section -->
+                <div id="quiz-result" class="hidden space-y-8">
+                    <div class="text-center">
+                        <h2 class="text-2xl font-serif text-brand-ink font-bold mb-2">模擬結果結算</h2>
+                        <p class="text-brand-ink/60 text-sm">如果沒有提前規劃，這就是資產縮水的真相：</p>
+                    </div>
+
+                    <!-- Visual Chart -->
+                    <div class="space-y-4 bg-white p-6 rounded-2xl border border-brand-sand shadow-sm">
+                        <!-- Bar 1: Original -->
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold text-brand-ink/50">
+                                <span>原始資產</span>
+                                <span>100% (1億)</span>
+                            </div>
+                            <div class="h-4 w-full bg-brand-sand/20 rounded-full overflow-hidden">
+                                <div class="h-full bg-brand-sand w-full"></div>
+                            </div>
+                        </div>
+
+                        <!-- Bar 2: Tax -->
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold text-brand-clay">
+                                <span>扣：遺產稅 (政府)</span>
+                                <span>-12%</span>
+                            </div>
+                            <div class="h-4 w-full bg-brand-sand/20 rounded-full overflow-hidden">
+                                <div id="bar-tax" class="h-full bg-brand-clay w-0 transition-all duration-1000 ease-out"></div>
+                            </div>
+                        </div>
+
+                        <!-- Bar 3: Loss -->
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold text-orange-500">
+                                <span>扣：急售折價損失 (市場)</span>
+                                <span>-5%</span>
+                            </div>
+                            <div class="h-4 w-full bg-brand-sand/20 rounded-full overflow-hidden">
+                                <div id="bar-loss" class="h-full bg-orange-400 w-0 transition-all duration-1000 ease-out"></div>
+                            </div>
+                        </div>
+
+                        <!-- Bar 4: Legal -->
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-bold text-yellow-600">
+                                <span>扣：行政與訴訟 (律師/代書)</span>
+                                <span>-3%</span>
+                            </div>
+                            <div class="h-4 w-full bg-brand-sand/20 rounded-full overflow-hidden">
+                                <div id="bar-legal" class="h-full bg-yellow-400 w-0 transition-all duration-1000 ease-out"></div>
+                            </div>
+                        </div>
+
+                        <div class="my-4 border-t border-dashed border-brand-sand"></div>
+
+                        <!-- Bar 5: Final -->
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-end">
+                                <span class="text-brand-sage font-bold text-lg">最終實際到手</span>
+                                <span class="text-brand-sage font-bold text-lg">約 8,000 萬</span>
+                            </div>
+                            <div class="h-8 w-full bg-brand-sand/20 rounded-full overflow-hidden relative">
+                                <div id="bar-final" class="h-full bg-brand-sage w-0 transition-all duration-1000 ease-out flex items-center justify-end px-3 text-white text-xs font-bold">80%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-brand-ink text-white p-6 rounded-2xl text-center shadow-lg">
+                        <h3 class="font-serif text-xl font-bold text-brand-clay mb-2">你的選擇決定了傳承的厚度</h3>
+                        <p class="text-sm opacity-80 leading-relaxed">預先規劃不是為了自己，而是為了不讓這 20% 的資產憑空蒸發。</p>
+                        <button onclick="quizApp.reset()" class="mt-4 px-6 py-2 border border-white/30 rounded-full text-xs hover:bg-white/10 transition-colors">重新測驗</button>
+                    </div>
+
+                    <button class="w-full py-3 bg-brand-sage text-white rounded-full font-bold shadow-md hover:shadow-lg transition-all">
+                        預約傳承顧問諮詢
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 資料結構
+        const contentData = {
+            1: {
+                title: "風險防護網",
+                tag: "PROTECTION",
+                desc: "在追求財富增長之前，這是最關鍵的基石。如同建築的地基，我們必須確保當生命中的「黑天鵝」（失業、疾病、意外）降臨時，原本的生活品質不會瞬間崩塌。",
+                points: [
+                    { t: "緊急預備金", d: "準備 3-6 個月生活費，存放在高流動性帳戶，這是您的安全氣囊。" },
+                    { t: "保險防護", d: "將無法承擔的巨大風險（醫療、壽險）轉嫁給保險公司，以小博大。" },
+                    { t: "債務清理", d: "優先處理高利率壞債（如信用卡循環利息），止住財務破口。" }
+                ],
+                // Level 1 CTA: Fixed Icon (Standard Arrow)
+                cta: `
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <p class="text-xs text-brand-ink/40 tracking-wider">想知道您的安全水位在哪裡？</p>
+                    <button onclick="openModal('calc-modal')" class="group relative px-8 py-3 bg-brand-ink text-brand-paper rounded-full overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 w-full lg:w-auto">
+                        <span class="absolute inset-0 w-full h-full bg-brand-sage/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out"></span>
+                        <span class="relative font-bold text-sm tracking-widest flex items-center justify-center gap-2">
+                            開始檢測
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </span>
+                    </button>
+                </div>`
+            },
+            2: {
+                title: "儲蓄與積累",
+                tag: "ACCUMULATION",
+                desc: "當防護網建立後，重點轉向「留住金錢」。這是一個考驗紀律的階段，透過有意識的預算分配，讓每一分錢都為您的未來工作，並開始啟動複利效應。",
+                points: [
+                    { t: "收支管理", d: "建立記帳習慣，精準區分「想要」與「需要」，找出隱形開銷。" },
+                    { t: "專款專用", d: "為不同目標（旅遊、買房）設立獨立子帳戶，避免資金混用。" },
+                    { t: "啟動投資", d: "透過定期定額，累積第一桶金，作為進入市場的入場券。" }
+                ],
+                // Level 2 CTA: Six Jars
+                cta: `
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <p class="text-xs text-brand-ink/40 tracking-wider">不知道薪水該如何分配？</p>
+                    <button onclick="openModal('jars-modal')" class="group relative px-8 py-3 border border-brand-ink text-brand-ink rounded-full overflow-hidden hover:bg-brand-paper transition-all duration-300 w-full lg:w-auto">
+                        <span class="relative font-bold text-sm tracking-widest flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            六罐子理財分配
+                        </span>
+                    </button>
+                </div>`
+            },
+            3: {
+                title: "增值投資",
+                tag: "GROWTH",
+                desc: "單靠儲蓄無法戰勝通膨。在這個階段，我們學習與市場共舞。目標不是追求一夜致富，而是建立一個能夠長期穩健成長的資產組合，享受時間帶來的紅利。",
+                points: [
+                    { t: "資產配置", d: "股債平衡、ETF 多元配置，不將雞蛋放在同一個籃子裡。" },
+                    { t: "長期思維", d: "忽略市場短期雜訊，專注於長期趨勢，保持在市場中。" },
+                    { t: "被動收入", d: "逐步建立股息或租金流，讓資產產生的現金流覆蓋生活支出。" }
+                ],
+                // Level 3 CTA: 8% Investment Calculator
+                cta: `
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <p class="text-xs text-brand-ink/40 tracking-wider">想看看複利滾雪球的威力？</p>
+                    <button onclick="openModal('invest-modal')" class="group relative px-8 py-3 border border-brand-ink text-brand-ink rounded-full overflow-hidden hover:bg-brand-paper transition-all duration-300 w-full lg:w-auto">
+                        <span class="relative font-bold text-sm tracking-widest flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                            8% 複利效應試算
+                        </span>
+                    </button>
+                </div>`
+            },
+            4: {
+                title: "傳承與投機",
+                tag: "LEGACY & APEX",
+                desc: "站在金字塔頂端，視野更加開闊。這裡的資金是用來創造夢想、承擔高風險回報，或是為了下一代與社會做準備。這是財富自由後的自我實現。",
+                points: [
+                    { t: "風險投資", d: "加密貨幣、新創投資。用「輸得起」的錢博取超額報酬。" },
+                    { t: "稅務傳承", d: "預先規劃遺產稅與贈與稅，確保家族財富能順利移轉。" },
+                    { t: "社會影響", d: "透過慈善與回饋，將金錢轉化為對社會的正面影響力。" }
+                ],
+                // Level 4 CTA: Quiz Modal (New)
+                cta: `
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <p class="text-xs text-brand-ink/40 tracking-wider">擔心資產傳承時縮水？</p>
+                    <button onclick="openModal('quiz-modal')" class="group relative px-8 py-3 border border-brand-ink text-brand-ink rounded-full overflow-hidden hover:bg-brand-paper transition-all duration-300 w-full lg:w-auto">
+                         <span class="relative font-bold text-sm tracking-widest flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            開始財富傳承模擬
+                        </span>
+                    </button>
+                </div>`
+            }
+        };
+
+        // 切換內容函式
+        function switchLevel(level) {
+            const wrapper = document.getElementById('content-wrapper');
+            wrapper.classList.add('hiding');
+            setTimeout(() => {
+                const data = contentData[level];
+                document.getElementById('display-num').innerText = `0${level}`;
+                document.getElementById('display-tag').innerText = data.tag;
+                document.getElementById('display-title').innerText = data.title;
+                document.getElementById('display-desc').innerText = data.desc;
+                const pointsContainer = document.getElementById('display-points');
+                pointsContainer.innerHTML = '';
+                data.points.forEach(p => {
+                    const div = document.createElement('div');
+                    div.className = "bg-white p-4 rounded-xl border border-brand-sand shadow-sm hover:shadow-md transition-shadow duration-300";
+                    div.innerHTML = `<h4 class="font-serif font-bold text-sm text-brand-ink mb-1 flex items-center"><span class="w-1.5 h-1.5 bg-brand-sage rounded-full mr-2 flex-shrink-0"></span>${p.t}</h4><p class="text-xs lg:text-sm text-brand-ink/60 pl-3.5 leading-relaxed">${p.d}</p>`;
+                    pointsContainer.appendChild(div);
+                });
+                document.getElementById('cta-container').innerHTML = data.cta || '';
+                wrapper.classList.remove('hiding');
+            }, 300);
+            updateNavState(level);
+            if(window.innerWidth < 1024) document.getElementById('content-scroll').scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function updateNavState(level) {
+            for(let i=1; i<=4; i++) {
+                const deskBtn = document.getElementById(`desk-btn-${i}`);
+                if (deskBtn) {
+                    deskBtn.classList.remove('active', 'border-4', 'border-brand-paper', 'scale-105', 'z-10');
+                    if(i === level) deskBtn.classList.add('active', 'border-4', 'border-brand-paper', 'scale-105', 'z-10');
+                }
+                const mobBtn = document.getElementById(`mob-btn-${i}`);
+                if (mobBtn) {
+                    mobBtn.classList.remove('active');
+                    if(i === level) {
+                        mobBtn.classList.add('active');
+                        mobBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    }
+                }
+                const miniBtn = document.getElementById(`mini-${i}`);
+                if (miniBtn) {
+                    miniBtn.classList.remove('active', 'opacity-100');
+                    if(i === level) miniBtn.classList.add('active', 'opacity-100');
+                }
+            }
+        }
+
+        // ================= Modal Functions =================
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('open');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('open');
+        }
+
+        // ================= Calc: Risk Level 1 =================
+        function calculateHealth() {
+            const expenses = parseFloat(document.getElementById('input-expenses').value);
+            const savings = parseFloat(document.getElementById('input-savings').value);
+            const resultArea = document.getElementById('calc-result');
+            const calcBtn = document.getElementById('btn-calc');
+
+            if (!expenses || !savings && savings !== 0) {
+                alert("請輸入完整數值");
+                return;
+            }
+            const survivalTarget = expenses * 3;
+            const safeTarget = expenses * 6;
+            calcBtn.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+            document.getElementById('target-survival').innerText = `$${survivalTarget.toLocaleString()}`;
+            document.getElementById('target-safe').innerText = `$${safeTarget.toLocaleString()}`;
+            let survivalPct = Math.min((savings / survivalTarget) * 100, 100);
+            let safePct = Math.min((savings / safeTarget) * 100, 100);
+            setTimeout(() => {
+                document.getElementById('bar-survival').style.width = `${survivalPct}%`;
+                document.getElementById('bar-safe').style.width = `${safePct}%`;
+            }, 100);
+            let feedback = "";
+            if (savings < survivalTarget) {
+                const gap = survivalTarget - savings;
+                feedback = `目前水位處於<span class="text-brand-clay font-bold">警戒區</span>。距離基本的生存模式還差 <b>$${gap.toLocaleString()}</b>。建議優先暫停非必要開銷，將火力集中在建立這道防線。`;
+            } else if (savings < safeTarget) {
+                const gap = safeTarget - savings;
+                feedback = `恭喜達成生存模式！您已具備基本的抗風險能力。下一步是邁向<span class="text-brand-sage font-bold">安全模式</span>，建議每月撥出固定比例，填補剩下的 <b>$${gap.toLocaleString()}</b> 缺口。`;
+            } else {
+                feedback = `太棒了！您的緊急預備金非常充裕，已達到<span class="text-brand-sage font-bold">安全模式</span>標準。這筆資金能讓您在面對生活變動時從容不迫，多餘的資金可以開始考慮進入「增值投資」階段囉！`;
+            }
+            document.getElementById('result-feedback').innerHTML = feedback;
+        }
+
+        // ================= Calc: 6 Jars Level 2 =================
+        function calculateJars() {
+            const income = parseFloat(document.getElementById('input-income').value);
+            const resultArea = document.getElementById('jars-result');
+
+            if (!income) {
+                alert("請輸入月收入");
+                return;
+            }
+
+            resultArea.classList.remove('hidden');
+
+            // Calculation
+            const nec = Math.floor(income * 0.55);
+            const ffa = Math.floor(income * 0.10);
+            const ltss = Math.floor(income * 0.10);
+            const edu = Math.floor(income * 0.10);
+            const play = Math.floor(income * 0.10);
+            const give = Math.floor(income * 0.05);
+
+            // Update DOM
+            document.getElementById('val-nec').innerText = `$${nec.toLocaleString()}`;
+            document.getElementById('val-ffa').innerText = `$${ffa.toLocaleString()}`;
+            document.getElementById('val-ltss').innerText = `$${ltss.toLocaleString()}`;
+            document.getElementById('val-edu').innerText = `$${edu.toLocaleString()}`;
+            document.getElementById('val-play').innerText = `$${play.toLocaleString()}`;
+            document.getElementById('val-give').innerText = `$${give.toLocaleString()}`;
+        }
+        
+        // ================= Calc: 8% Investment Level 3 =================
+        function calculateInvest() {
+            const amount = parseFloat(document.getElementById('invest-amount').value);
+            const years = parseFloat(document.getElementById('invest-years').value);
+            const resultArea = document.getElementById('invest-result');
+            const btn = document.getElementById('btn-invest-calc');
+
+            if(!amount || !years) {
+                alert("請輸入完整數值");
+                return;
+            }
+
+            // Calculation Logic (FV of Annuity)
+            // FV = P * [((1 + r)^n - 1) / r] * (1+r)  <-- Making it simple monthly compounding
+            // rate = 0.08 / 12
+            // n = years * 12
+            
+            const r = 0.08 / 12;
+            const n = years * 12;
+            
+            // FV formula for monthly investment made at the beginning of each period
+            // let fv = amount * ( (Math.pow(1+r, n) - 1) / r ) * (1+r);
+            
+            // FV formula for monthly investment made at the end of period
+            let fv = amount * ( (Math.pow(1+r, n) - 1) / r );
+            
+            const totalPrincipal = amount * n;
+            const profit = fv - totalPrincipal;
+
+            // UI Update
+            btn.classList.add('hidden');
+            resultArea.classList.remove('hidden');
+
+            document.getElementById('invest-total').innerText = `$${Math.round(fv).toLocaleString()}`;
+            document.getElementById('invest-principal').innerText = `$${Math.round(totalPrincipal).toLocaleString()}`;
+            document.getElementById('invest-profit').innerText = `$${Math.round(profit).toLocaleString()}`;
+            
+            // Bar Width Calculation
+            // Scale logic: profit vs principal ratio
+            const total = totalPrincipal + profit; // which is fv
+            const principalPct = (totalPrincipal / total) * 100;
+            const profitPct = (profit / total) * 100;
+
+            setTimeout(() => {
+                document.getElementById('bar-principal').style.width = `${principalPct}%`;
+                document.getElementById('bar-profit').style.width = `${profitPct}%`;
+            }, 100);
+        }
+
+        // ================= Quiz Logic (Level 4) =================
+        const quizData = [
+            {
+                question: "1. 【殘酷預測】如果不做任何規劃，1 億元的資產（房產與股票）傳到子女手中，你覺得「最可能」剩下多少價值？",
+                options: [
+                    { text: "幾乎完整保留 (約 9,800 萬)", correct: false },
+                    { text: "嚴重縮水 (約 8,000 萬)", correct: true },
+                    { text: "只剩一半 (約 5,000 萬)", correct: false },
+                    { text: "會變多 (約 1 億 2,000 萬)", correct: false }
+                ],
+                rationale: "正確答案是縮水約 20%。包含遺產稅、急售房產的折價損失、以及潛在的律師代書費。"
+            },
+            {
+                question: "2. 【第一大破洞：稅】在台灣，1 億元資產扣除基本免稅額後，大約要繳多少「遺產稅」給政府？",
+                options: [
+                    { text: "約 100 萬 (意思意思收一點)", correct: false },
+                    { text: "約 1,200 萬 (適用 15%~20% 稅率)", correct: true },
+                    { text: "約 3,000 萬 (三分之一充公)", correct: false },
+                    { text: "0 元 (遺產稅已廢除)", correct: false }
+                ],
+                rationale: "1 億元資產已進入累進稅率級距。扣除免稅額後淨額約 7,000 萬，需繳納約 1,200 萬現金。"
+            },
+            {
+                question: "3. 【第二大破洞：變現】如果沒有留現金，子女被迫在 6 個月內「急售」房產來繳稅，通常會損失多少？",
+                options: [
+                    { text: "沒差，照市價賣", correct: false },
+                    { text: "打 8 折至 85 折 (損失數百萬)", correct: true },
+                    { text: "反而賣更貴", correct: false },
+                    { text: "政府會原價收購", correct: false }
+                ],
+                rationale: "「急售 (Fire Sale)」是買方市場，為了求快換現金繳稅，往往需低於市價 10%~20% 出售。"
+            },
+            {
+                question: "4. 【第三大破洞：爭產】若沒立遺囑導致子女打官司，除了親情破裂，對「資產」最大的傷害是什麼？",
+                options: [
+                    { text: "法院會幫忙免費分配", correct: false },
+                    { text: "資產凍結數年 + 高額律師費", correct: true },
+                    { text: "資產會自動增值", correct: false },
+                    { text: "沒有影響", correct: false }
+                ],
+                rationale: "訴訟期間資產無法處分投資，且律師費與時間成本極高，往往導致資產再縮水 3%~5%。"
+            },
+            {
+                question: "5. 【防禦策略】為了守住這蒸發的 2,000 萬，財富金字塔頂端 (Apex) 最核心的策略是什麼？",
+                options: [
+                    { text: "努力賺更多錢來補洞", correct: false },
+                    { text: "相信子女會自動團結", correct: false },
+                    { text: "預立遺囑 + 預留稅源 (保險/信託)", correct: true },
+                    { text: "把財產換成黃金埋起來", correct: false }
+                ],
+                rationale: "正解：用遺囑解決「分給誰」的紛爭，用保險/信託準備好「繳稅」的現金。"
+            }
+        ];
+
+        const quizApp = {
+            currentIdx: 0,
+            score: 0,
+            
+            startQuiz: function() {
+                document.getElementById('quiz-intro').classList.add('hidden');
+                document.getElementById('quiz-q').classList.remove('hidden');
+                this.showQuestion();
+            },
+
+            showQuestion: function() {
+                const q = quizData[this.currentIdx];
+                document.getElementById('question-text').innerText = q.question;
+                
+                // Update Progress
+                const percent = ((this.currentIdx) / quizData.length) * 100;
+                document.getElementById('quiz-progress').style.width = percent + '%';
+
+                // Render Options
+                const container = document.getElementById('options-container');
+                container.innerHTML = '';
+                
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    // Styling handled by utility classes and specific Quiz CSS
+                    btn.className = 'option-btn w-full p-4 text-left border rounded-xl hover:bg-brand-paper transition-all text-sm md:text-base border-brand-sand';
+                    btn.innerText = opt.text;
+                    btn.onclick = () => this.handleAnswer(idx, btn, opt.correct);
+                    container.appendChild(btn);
+                });
+
+                // Reset UI
+                document.getElementById('quiz-feedback').classList.add('hidden');
+                document.getElementById('next-btn').classList.add('hidden');
+            },
+
+            handleAnswer: function(selectedIndex, btnElement, isCorrect) {
+                // Disable all buttons
+                const allBtns = document.querySelectorAll('.option-btn');
+                allBtns.forEach(b => b.classList.add('disabled'));
+
+                const feedbackHeader = document.getElementById('feedback-header');
+                const feedbackContainer = document.getElementById('quiz-feedback');
+
+                // Highlight selected
+                if(isCorrect) {
+                    btnElement.classList.add('correct');
+                    this.score++;
+                    // Add Checkmark
+                    btnElement.innerHTML += `<span class="float-right text-brand-sage"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg></span>`;
+                    
+                    // Feedback Style (Success)
+                    feedbackContainer.className = "bg-brand-sage/10 p-4 rounded-xl border border-brand-sage/20 mb-4";
+                    feedbackHeader.innerHTML = `<span class="text-brand-sage font-bold flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>完全正確！</span>`;
+                } else {
+                    btnElement.classList.add('wrong');
+                    // Add Cross
+                    btnElement.innerHTML += `<span class="float-right text-brand-clay"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></span>`;
+                    
+                    // Show correct one
+                    const correctIdx = quizData[this.currentIdx].options.findIndex(o => o.correct);
+                    allBtns[correctIdx].classList.add('correct');
+                    allBtns[correctIdx].innerHTML += `<span class="float-right text-brand-sage"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg></span>`;
+
+                    // Feedback Style (Error)
+                    feedbackContainer.className = "bg-brand-clay/10 p-4 rounded-xl border border-brand-clay/20 mb-4";
+                    feedbackHeader.innerHTML = `<span class="text-brand-clay font-bold flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>這題的關鍵是...</span>`;
+                }
+
+                // Show Feedback
+                document.getElementById('rationale-text').innerText = quizData[this.currentIdx].rationale;
+                feedbackContainer.classList.remove('hidden');
+                
+                // Show Next Button or Finish
+                const nextBtn = document.getElementById('next-btn');
+                nextBtn.classList.remove('hidden');
+                nextBtn.innerText = (this.currentIdx === quizData.length - 1) ? "查看資產縮水真相" : "下一題";
+            },
+
+            nextQuestion: function() {
+                this.currentIdx++;
+                if(this.currentIdx < quizData.length) {
+                    this.showQuestion();
+                } else {
+                    this.showResults();
+                }
+            },
+
+            showResults: function() {
+                document.getElementById('quiz-q').classList.add('hidden');
+                document.getElementById('quiz-result').classList.remove('hidden');
+                
+                // Trigger Chart Animation
+                setTimeout(() => {
+                    document.getElementById('bar-tax').style.width = '12%';
+                    document.getElementById('bar-loss').style.width = '5%';
+                    document.getElementById('bar-legal').style.width = '3%';
+                    document.getElementById('bar-final').style.width = '80%';
+                }, 500);
+            },
+            
+            reset: function() {
+                this.currentIdx = 0;
+                this.score = 0;
+                document.getElementById('quiz-result').classList.add('hidden');
+                document.getElementById('quiz-intro').classList.remove('hidden');
+                // Reset bars for next time
+                document.getElementById('bar-tax').style.width = '0%';
+                document.getElementById('bar-loss').style.width = '0%';
+                document.getElementById('bar-legal').style.width = '0%';
+                document.getElementById('bar-final').style.width = '0%';
+            }
+        };
+
+        // Close modal on outside click
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) this.classList.remove('open');
+            });
+        });
+
+        // Init Level 1
+        switchLevel(1);
+
+    </script>
+</body>
+</html>

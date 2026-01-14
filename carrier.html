@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>職涯探索羅盤｜常溫編集所</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                            'sage-light': '#e8efec',
+                            'clay-light': '#fdf2f0',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Noto Serif TC"', 'serif'],
+                    },
+                    boxShadow: {
+                        soft: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #fdfbf7;
+            color: #4a4a4a;
+            /* Noise Texture [Source: 1] */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+        
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid #8da399; /* Sage */
+            cursor: pointer;
+            margin-top: -8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e6e2dd; /* Sand */
+            border-radius: 2px;
+        }
+        input[type=range]:focus {
+            outline: none;
+        }
+        
+        .slider-clay::-webkit-slider-thumb {
+            border-color: #d4a59a;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen p-4 md:p-8">
+
+    <nav class="max-w-6xl mx-auto mb-8 flex justify-end">
+        <a href="https://weichun0203.github.io/ambientedit/" 
+           class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft"
+           aria-label="返回常溫首頁">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
+        </a>
+    </nav>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // Icons Components
+        const Icons = {
+            Plus: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>,
+            Trash2: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>,
+            Map: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg>,
+            Target: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
+            Heart: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>,
+            Zap: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+            BookOpen: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
+            Frown: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>,
+            Info: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="16" y2="12"/><line x1="12" x2="12.01" y1="8" y2="8"/></svg>,
+            Clock: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+            Sparkles: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+        };
+
+        const { useState, useEffect } = React;
+
+        const CareerCompass = () => {
+            const [activity, setActivity] = useState('');
+            const [likeScore, setLikeScore] = useState(50);
+            const [patienceScore, setPatienceScore] = useState(50);
+            const [savedItems, setSavedItems] = useState([]);
+            const [activeZone, setActiveZone] = useState(null);
+
+            // Default suggestions
+            const suggestionItems = [
+                "每週例會", "整理報表", "學習外語", "下廚料理", 
+                "通勤時間", "客戶開發", "社群經營", "運動健身"
+            ];
+
+            // Analyze the current zone based on scores
+            useEffect(() => {
+                if (likeScore >= 50 && patienceScore >= 50) {
+                    setActiveZone('mastery');
+                } else if (likeScore >= 50 && patienceScore < 50) {
+                    setActiveZone('impulse');
+                } else if (likeScore < 50 && patienceScore >= 50) {
+                    setActiveZone('discipline');
+                } else {
+                    setActiveZone('torture');
+                }
+            }, [likeScore, patienceScore]);
+
+            const handleAddItem = () => {
+                if (!activity.trim()) return;
+                const newItem = {
+                    id: Date.now(),
+                    name: activity,
+                    x: patienceScore,
+                    y: likeScore,
+                    zone: activeZone
+                };
+                setSavedItems([...savedItems, newItem]);
+                setActivity('');
+                // Reset scores to center
+                setLikeScore(50);
+                setPatienceScore(50);
+            };
+
+            const selectSuggestion = (item) => {
+                setActivity(item);
+                setLikeScore(50);
+                setPatienceScore(50);
+            };
+
+            const deleteItem = (id) => {
+                setSavedItems(savedItems.filter(item => item.id !== id));
+            };
+
+            const getZoneInfo = (zoneKey) => {
+                switch (zoneKey) {
+                    case 'mastery':
+                        return {
+                            title: '真愛 / 職人 (Flow)',
+                            containerClass: 'bg-brand-sage/10 text-brand-ink border-brand-sage',
+                            dotColor: 'bg-brand-sage',
+                            icon: <Icons.Heart className="w-5 h-5 text-brand-sage" />,
+                            desc: '這是你的天賦領域。你不僅喜歡，還願意忍受過程中的枯燥。',
+                            advice: '這應該是你的核心職業或長期投入的志業。請持續精進，追求卓越。'
+                        };
+                    case 'impulse':
+                        return {
+                            title: '衝動 / 樂趣 (Interest)',
+                            containerClass: 'bg-brand-clay/10 text-brand-ink border-brand-clay',
+                            dotColor: 'bg-brand-clay',
+                            icon: <Icons.Zap className="w-5 h-5 text-brand-clay" />,
+                            desc: '你喜歡這件事，但缺乏深入鑽研的耐心，容易三分鐘熱度。',
+                            advice: '適合當作休閒興趣。若想轉為職業，需要訓練「延遲滿足」的能力，或尋找短期專案型的工作。'
+                        };
+                    case 'discipline':
+                        return {
+                            title: '責任 / 修行 (Grit)',
+                            containerClass: 'bg-gray-200 text-brand-ink border-gray-400',
+                            dotColor: 'bg-brand-ink',
+                            icon: <Icons.BookOpen className="w-5 h-5 text-brand-ink" />,
+                            desc: '你不喜歡這件事，但你有能力並願意花時間把它做好。',
+                            advice: '這通常是工作中的「硬技能」或為了生存必須做的事。給予自己適當的獎勵，別讓它耗盡你的熱情。'
+                        };
+                    case 'torture':
+                        return {
+                            title: '折磨 / 放棄 (Drop)',
+                            containerClass: 'bg-brand-sand text-brand-ink/60 border-brand-ink/20',
+                            dotColor: 'bg-gray-400',
+                            icon: <Icons.Frown className="w-5 h-5 text-gray-500" />,
+                            desc: '既不喜歡，也沒有耐心。做這件事讓你感到痛苦且效率低落。',
+                            advice: '這是你的「地雷區」。請盡快授權他人、自動化處理，或直接斷捨離，不要浪費生命。'
+                        };
+                    default:
+                        return {};
+                }
+            };
+
+            const currentZoneData = getZoneInfo(activeZone);
+
+            return (
+                <div className="max-w-6xl mx-auto font-sans">
+                    
+                    {/* Header */}
+                    <header className="mb-10 text-center">
+                        <h1 className="text-3xl md:text-4xl font-bold font-serif text-brand-ink mb-3 flex items-center justify-center gap-3 tracking-wide">
+                            <Icons.Map className="w-8 h-8 text-brand-sage" />
+                            職涯探索羅盤
+                        </h1>
+                        <p className="text-brand-ink/70 max-w-2xl mx-auto font-serif">
+                            透過「喜好」與「耐心」兩個維度，在常溫中探索你手邊的任務、技能或目標，<br/>找到最適合你的人生配置。
+                        </p>
+                    </header>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        
+                        {/* Left Column: Input & Controls */}
+                        <div className="lg:col-span-4 space-y-6">
+                            <div className="bg-white p-6 rounded-2xl shadow-soft border border-brand-sand/50 backdrop-blur-sm bg-opacity-80">
+                                <h2 className="text-xl font-bold font-serif mb-6 flex items-center gap-2 text-brand-ink">
+                                    <Icons.Target className="w-5 h-5 text-brand-clay" />
+                                    第一步：輸入項目
+                                </h2>
+                                
+                                <div className="space-y-6">
+                                    <div>
+                                        <label className="block text-sm font-bold text-brand-ink/80 mb-2">你想分析什麼？</label>
+                                        <input
+                                            type="text"
+                                            value={activity}
+                                            onChange={(e) => setActivity(e.target.value)}
+                                            placeholder="例如：寫程式、做簡報、學英文..."
+                                            className="w-full p-3 border border-brand-sand rounded-lg focus:ring-2 focus:ring-brand-sage focus:border-brand-sage outline-none transition bg-brand-paper"
+                                        />
+                                        
+                                        {/* Suggestions Area */}
+                                        <div className="mt-3">
+                                            <div className="flex items-center gap-1 text-xs text-brand-ink/50 mb-2">
+                                                <Icons.Sparkles className="w-3 h-3" />
+                                                <span>不知道填什麼？試試這些靈感種子：</span>
+                                            </div>
+                                            <div className="flex flex-wrap gap-2">
+                                                {suggestionItems.map((item, index) => (
+                                                    <button
+                                                        key={index}
+                                                        onClick={() => selectSuggestion(item)}
+                                                        className="px-3 py-1 text-xs rounded-full border border-brand-sand bg-white hover:bg-brand-sage hover:text-white hover:border-brand-sage transition-all duration-300 text-brand-ink/70"
+                                                    >
+                                                        {item}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Sliders */}
+                                    <div className="space-y-6 pt-2">
+                                        <div>
+                                            <div className="flex justify-between mb-2">
+                                                <label className="text-sm font-bold text-brand-ink flex items-center gap-1">
+                                                    <Icons.Heart className="w-4 h-4 text-brand-clay" /> 喜好程度 (Y軸)
+                                                </label>
+                                                <span className="text-sm text-brand-clay font-bold">{likeScore}%</span>
+                                            </div>
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max="100"
+                                                value={likeScore}
+                                                onChange={(e) => setLikeScore(parseInt(e.target.value))}
+                                                className="w-full h-2 rounded-lg slider-clay"
+                                            />
+                                            <div className="flex justify-between text-xs text-brand-ink/40 mt-1">
+                                                <span>非常討厭</span>
+                                                <span>非常喜歡</span>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <div className="flex justify-between mb-2">
+                                                <label className="text-sm font-bold text-brand-ink flex items-center gap-1">
+                                                    <Icons.Clock className="w-4 h-4 text-brand-sage" /> 耐心/耐久度 (X軸)
+                                                </label>
+                                                <span className="text-sm text-brand-sage font-bold">{patienceScore}%</span>
+                                            </div>
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max="100"
+                                                value={patienceScore}
+                                                onChange={(e) => setPatienceScore(parseInt(e.target.value))}
+                                                className="w-full h-2 rounded-lg"
+                                            />
+                                            <div className="flex justify-between text-xs text-brand-ink/40 mt-1">
+                                                <span>完全沒耐心</span>
+                                                <span>超有耐心</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Analysis Card (Preview) */}
+                                    {activeZone && (
+                                        <div className={`p-4 rounded-xl border-l-4 transition-all duration-500 ${currentZoneData.containerClass}`}>
+                                            <div className="flex items-center gap-2 font-bold text-lg mb-2 font-serif">
+                                                {currentZoneData.icon}
+                                                {currentZoneData.title}
+                                            </div>
+                                            <p className="text-sm opacity-90 leading-relaxed text-justify">
+                                                {currentZoneData.desc}
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    <button
+                                        onClick={handleAddItem}
+                                        disabled={!activity.trim()}
+                                        className="w-full py-3 bg-brand-ink hover:bg-brand-sage disabled:bg-brand-sand disabled:text-brand-ink/30 disabled:cursor-not-allowed text-white rounded-xl font-bold shadow-soft transition-all duration-300 flex items-center justify-center gap-2 tracking-wide"
+                                    >
+                                        <Icons.Plus className="w-5 h-5" />
+                                        加入地圖
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Educational Note */}
+                            <div className="bg-brand-sage-light/50 border border-brand-sage/20 p-5 rounded-2xl text-brand-ink text-sm">
+                                <h3 className="font-bold font-serif flex items-center gap-2 mb-3 text-brand-sage">
+                                    <Icons.Info className="w-4 h-4" />
+                                    思考引導
+                                </h3>
+                                <ul className="space-y-2 list-disc list-inside opacity-80 marker:text-brand-sage">
+                                    <li>「喜歡」代表這件事本身帶給你的快樂。</li>
+                                    <li>「耐心」代表你能忍受這件事枯燥過程的能力。</li>
+                                    <li>最棒的工作不是只有快樂，而是你能享受其中的痛苦。</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* Right Column: The Chart & Results */}
+                        <div className="lg:col-span-8 space-y-6">
+                            
+                            {/* The 2x2 Matrix */}
+                            <div className="bg-white p-2 md:p-6 rounded-2xl shadow-soft border border-brand-sand/50 relative overflow-hidden backdrop-blur-sm bg-opacity-80">
+                                <h2 className="text-xl font-bold font-serif mb-4 text-center lg:text-left pl-2 text-brand-ink">生涯分佈圖</h2>
+                                
+                                <div className="relative w-full aspect-square max-w-[600px] mx-auto bg-brand-paper border-2 border-brand-sand rounded-lg">
+                                    
+                                    {/* Background Quadrant Colors (Subtle Brand Colors) */}
+                                    <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
+                                        <div className="bg-brand-clay/5 border-r border-b border-brand-sand flex items-start justify-start p-3">
+                                            <span className="text-brand-clay/40 text-xs md:text-sm font-bold uppercase tracking-widest font-serif">衝動/樂趣</span>
+                                        </div>
+                                        <div className="bg-brand-sage/5 border-b border-brand-sand flex items-start justify-end p-3">
+                                            <span className="text-brand-sage/40 text-xs md:text-sm font-bold uppercase tracking-widest font-serif">真愛/職人</span>
+                                        </div>
+                                        <div className="bg-gray-100/50 border-r border-brand-sand flex items-end justify-start p-3">
+                                            <span className="text-gray-400 text-xs md:text-sm font-bold uppercase tracking-widest font-serif">折磨/放棄</span>
+                                        </div>
+                                        <div className="bg-brand-ink/5 flex items-end justify-end p-3">
+                                            <span className="text-brand-ink/30 text-xs md:text-sm font-bold uppercase tracking-widest font-serif">責任/修行</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Axes Labels */}
+                                    <div className="absolute top-1/2 left-0 w-full h-px bg-brand-sand z-10"></div>
+                                    <div className="absolute left-1/2 top-0 w-px h-full bg-brand-sand z-10"></div>
+                                    
+                                    <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-white/80 px-2 rounded text-xs text-brand-ink/50 font-bold">喜歡 (High)</div>
+                                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white/80 px-2 rounded text-xs text-brand-ink/50 font-bold">不喜歡 (Low)</div>
+                                    <div className="absolute top-1/2 right-2 -translate-y-1/2 bg-white/80 px-1 rounded text-xs text-brand-ink/50 font-bold rotate-90 origin-center">耐心 (High)</div>
+                                    <div className="absolute top-1/2 left-2 -translate-y-1/2 bg-white/80 px-1 rounded text-xs text-brand-ink/50 font-bold -rotate-90 origin-center">沒耐心 (Low)</div>
+
+                                    {/* Current Interactive Dot */}
+                                    <div 
+                                        className={`absolute w-4 h-4 md:w-6 md:h-6 rounded-full border-2 border-white shadow-xl z-30 transition-all duration-200 ease-out transform -translate-x-1/2 translate-y-1/2 ${currentZoneData.dotColor || 'bg-brand-ink'}`}
+                                        style={{ 
+                                            left: `${patienceScore}%`, 
+                                            bottom: `${likeScore}%` 
+                                        }}
+                                    >
+                                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-brand-ink text-brand-paper text-xs px-2 py-1 rounded whitespace-nowrap opacity-90 pointer-events-none shadow-soft">
+                                            {activity || "當前位置"}
+                                        </div>
+                                    </div>
+
+                                    {/* Saved Items Dots */}
+                                    {savedItems.map(item => {
+                                        const zoneInfo = getZoneInfo(item.zone);
+                                        return (
+                                            <div 
+                                                key={item.id}
+                                                className={`absolute w-3 h-3 md:w-4 md:h-4 rounded-full border border-white shadow-sm z-20 opacity-80 hover:opacity-100 hover:scale-125 transition-all cursor-pointer ${zoneInfo.dotColor}`}
+                                                style={{ 
+                                                    left: `${item.x}%`, 
+                                                    bottom: `${item.y}%` 
+                                                }}
+                                                title={`${item.name} (${item.x}, ${item.y})`}
+                                            >
+                                                <span className="absolute mt-4 left-1/2 -translate-x-1/2 text-[10px] md:text-xs text-brand-ink bg-white/90 border border-brand-sand px-1.5 rounded-sm whitespace-nowrap shadow-sm">
+                                                    {item.name}
+                                                </span>
+                                            </div>
+                                        );
+                                    })}
+
+                                </div>
+                            </div>
+
+                            {/* List of Analyzed Items */}
+                            {savedItems.length > 0 && (
+                                <div className="bg-white p-6 rounded-2xl shadow-soft border border-brand-sand/50 backdrop-blur-sm bg-opacity-80">
+                                    <h2 className="text-xl font-bold font-serif mb-4 flex items-center gap-2 text-brand-ink">
+                                        <Icons.BookOpen className="w-5 h-5 text-brand-ink" />
+                                        我的分析清單
+                                    </h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {savedItems.map(item => {
+                                            const info = getZoneInfo(item.zone);
+                                            // Extract the pure color class for the tag
+                                            const tagClass = info.containerClass ? info.containerClass : 'bg-gray-100';
+                                            
+                                            return (
+                                                <div key={item.id} className="flex items-start justify-between p-4 rounded-xl border border-brand-sand/60 hover:shadow-soft transition bg-brand-paper/50 group">
+                                                    <div>
+                                                        <div className="font-bold text-brand-ink text-lg">{item.name}</div>
+                                                        <div className={`text-xs inline-block px-2 py-0.5 rounded mt-1 font-medium ${tagClass}`}>
+                                                            {info.title.split(' ')[0]}
+                                                        </div>
+                                                        <p className="text-xs text-brand-ink/60 mt-2 leading-relaxed">{info.advice}</p>
+                                                    </div>
+                                                    <button 
+                                                        onClick={() => deleteItem(item.id)}
+                                                        className="text-brand-sand hover:text-brand-clay transition p-1 opacity-0 group-hover:opacity-100"
+                                                    >
+                                                        <Icons.Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<CareerCompass />);
+    </script>
+</body>
+</html>

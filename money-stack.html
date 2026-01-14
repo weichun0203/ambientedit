@@ -198,7 +198,8 @@
     </header>
 
     <!-- Main Container -->
-    <main class="flex-grow flex flex-col lg:flex-row w-full h-full relative overflow-hidden">
+    <!-- 修正重點：移除 h-full，改用 flex-grow 與 min-h-0，確保在 Desktop 模式下 Flexbox 正確撐開高度 -->
+    <main class="flex-grow flex flex-col lg:flex-row w-full min-h-0 relative overflow-hidden">
         
         <!-- ================= Mobile/Tablet Navigation (Sticky Tabs) ================= -->
         <div class="lg:hidden flex-shrink-0 w-full bg-white border-b border-brand-sand/50 z-40 shadow-sm relative">
@@ -251,7 +252,8 @@
             
             <!-- Scroll Container -->
             <div class="absolute inset-0 overflow-y-auto pb-24 lg:pb-12 pl-safe pr-safe pt-6 lg:pt-24 z-0" id="content-scroll">
-                <div class="max-w-3xl mx-auto px-6 lg:px-12 min-h-full flex flex-col justify-start lg:justify-center">
+                <!-- 修正重點：將 max-w-3xl 放寬至 max-w-5xl，讓大螢幕閱讀更舒適 -->
+                <div class="max-w-5xl mx-auto px-6 lg:px-16 min-h-full flex flex-col justify-start lg:justify-center">
                     
                     <!-- ================= Mobile/Tablet Mini Visual Pyramid ================= -->
                     <div class="lg:hidden mb-8 w-full max-w-xs mx-auto flex flex-col items-center gap-1 opacity-90">
@@ -285,10 +287,13 @@
                         </div>
 
                         <!-- 重點列表 -->
-                        <div class="grid gap-3 lg:gap-4">
-                            <h3 class="text-[10px] lg:text-xs font-bold text-brand-ink/40 tracking-widest uppercase mb-1 lg:mb-2">Key Actions</h3>
-                            <div id="display-points" class="space-y-3 lg:space-y-4">
-                                <!-- JS Populated -->
+                        <!-- 修正重點：改為 Grid 2 columns (md) 增加排版豐富度 -->
+                        <div class="grid gap-3 lg:gap-6 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                            <div class="col-span-full">
+                                <h3 class="text-[10px] lg:text-xs font-bold text-brand-ink/40 tracking-widest uppercase mb-1 lg:mb-2">Key Actions</h3>
+                            </div>
+                            <div id="display-points" class="space-y-3 lg:space-y-0 contents">
+                                <!-- JS Populated (Will be updated to handle grid layout gracefully) -->
                             </div>
                         </div>
 
@@ -305,6 +310,7 @@
         </div>
     </main>
 
+    <!-- ... (Modals remain unchanged) ... -->
     <!-- ================= Calculation Modal (Risk Level 1) ================= -->
     <div id="calc-modal" class="fixed inset-0 z-[100] modal-overlay flex items-center justify-center px-4 bg-brand-ink/30 backdrop-blur-sm">
         <div class="modal-content w-full max-w-lg bg-[#fdfbf7] rounded-3xl shadow-2xl overflow-hidden border border-white/50 relative">
@@ -782,12 +788,24 @@
                 document.getElementById('display-desc').innerText = data.desc;
                 const pointsContainer = document.getElementById('display-points');
                 pointsContainer.innerHTML = '';
+                
+                // Add Grid Logic for points container to match parent
+                // But container is styled by parent grid class (contents).
+                
                 data.points.forEach(p => {
                     const div = document.createElement('div');
-                    div.className = "bg-white p-4 rounded-xl border border-brand-sand shadow-sm hover:shadow-md transition-shadow duration-300";
-                    div.innerHTML = `<h4 class="font-serif font-bold text-sm text-brand-ink mb-1 flex items-center"><span class="w-1.5 h-1.5 bg-brand-sage rounded-full mr-2 flex-shrink-0"></span>${p.t}</h4><p class="text-xs lg:text-sm text-brand-ink/60 pl-3.5 leading-relaxed">${p.d}</p>`;
+                    // Ensure full width in grid or span logic
+                    div.className = "bg-white p-4 rounded-xl border border-brand-sand shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-center h-full";
+                    div.innerHTML = `
+                        <h4 class="font-serif font-bold text-sm text-brand-ink mb-2 flex items-center">
+                            <span class="w-1.5 h-1.5 bg-brand-sage rounded-full mr-2 flex-shrink-0"></span>
+                            ${p.t}
+                        </h4>
+                        <p class="text-xs lg:text-sm text-brand-ink/60 pl-3.5 leading-relaxed">${p.d}</p>
+                    `;
                     pointsContainer.appendChild(div);
                 });
+                
                 document.getElementById('cta-container').innerHTML = data.cta || '';
                 wrapper.classList.remove('hiding');
             }, 300);

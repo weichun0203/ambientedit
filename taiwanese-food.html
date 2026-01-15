@@ -3,14 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>食間・菜單｜常溫編集所</title>
     
-    <!-- Google Fonts -->
+    <title>常溫食間・菜單｜Ambient Food Menu</title>
+    <meta name="description" content="常溫編集所推出的美食選擇指南，收錄平價小吃至頂級饗宴，解決您的選擇障礙，點擊即可搜尋附近店家。">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "常溫食間・菜單",
+      "alternateName": "Ambient Food Menu",
+      "operatingSystem": "Any",
+      "applicationCategory": "LifestyleApplication",
+      "description": "美食選擇輔助工具，提供不同價位的餐飲建議。",
+      "brand": {
+        "@type": "Brand",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "TWD"
+      }
+    }
+    </script>
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS  -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -84,13 +117,11 @@
 </head>
 <body class="bg-noise text-brand-ink min-h-screen flex flex-col p-4 md:p-8 font-sans">
 
-    <!-- Header Section -->
-    <header class="max-w-4xl mx-auto w-full mb-10 pt-2">
+    <header class="max-w-4xl mx-auto w-full mb-10 pt-2 relative">
         
-        <!-- Mobile Nav (Visible only on mobile) -->
         <div class="flex justify-end mb-4 md:hidden">
             <a href="https://weichun0203.github.io/ambientedit/" 
-               class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft"
+               class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
                aria-label="返回常溫首頁">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -100,20 +131,16 @@
             </a>
         </div>
 
-        <!-- Brand Name (Top Center) -->
         <div class="text-center mb-1 relative z-10">
             <p class="text-brand-sage text-xs font-bold tracking-[0.2em]">常溫編集所</p>
         </div>
 
-        <!-- Title Row (Relative Container for Alignment) -->
         <div class="relative w-full text-center z-10">
-            <!-- Title -->
             <h1 class="font-serif text-3xl md:text-4xl text-brand-ink mb-2 tracking-wider inline-block">食間・菜單</h1>
             
-            <!-- Desktop Button (Absolute Right, Vertically Centered relative to this Title Row) -->
             <div class="absolute right-0 top-1/2 -translate-y-1/2 hidden md:block">
                 <a href="https://weichun0203.github.io/ambientedit/" 
-                   class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft"
+                   class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
                    aria-label="返回常溫首頁">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -124,7 +151,6 @@
             </div>
         </div>
 
-        <!-- Subtitles -->
         <div class="text-center relative z-10">
             <p class="text-brand-sage text-sm tracking-widest uppercase">The Menu</p>
             <p class="text-xs text-brand-sage/60 mt-2 font-serif tracking-wider">點擊卡片即可搜尋附近店家</p>
@@ -132,11 +158,9 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-grow w-full max-w-2xl mx-auto">
+    <main class="flex-grow w-full max-w-3xl mx-auto">
 
-        <!-- Filter Tabs -->
-        <div class="flex flex-wrap justify-center gap-3 mb-8 sticky top-4 z-10 bg-brand-paper/90 backdrop-blur-sm p-2 rounded-full shadow-sm">
+        <div class="flex flex-wrap justify-center gap-3 mb-8 sticky top-4 z-20 bg-brand-paper/90 backdrop-blur-md p-2 rounded-full shadow-sm border border-brand-sand/30">
             <button onclick="filterMenu('all')" id="tab-all" class="px-5 py-2 rounded-full border text-sm transition-all duration-300 tab-active font-serif tracking-wide">
                 全部
             </button>
@@ -151,12 +175,9 @@
             </button>
         </div>
 
-        <!-- Menu Grid -->
         <div id="menuGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-12">
-            <!-- Items will be injected here via JS -->
-        </div>
+            </div>
 
-        <!-- Empty State (Hidden by default) -->
         <div id="emptyState" class="hidden text-center py-12">
             <p class="text-brand-sage font-serif">暫無資料</p>
         </div>
@@ -164,11 +185,11 @@
     </main>
 
     <footer class="mt-12 text-center text-brand-sage/60 text-xs py-4 border-t border-brand-sand/50 max-w-4xl mx-auto w-full">
-        &copy; Ambient Edit Studio
+        © 2026 常溫編集所 Ambient Edit Studio. All Rights Reserved.
     </footer>
 
     <script>
-        // 資料庫：保留乾淨的 Name (品牌) 用於搜尋，Desc (品項) 用於展示
+        // 資料庫
         const menuItems = [
             // === Low ($100↓) ===
             { category: "low", price: "$", name: "八方雲集", tags: ["連鎖", "快速"], desc: "鍋貼水餃 / 酸辣湯" },
@@ -281,14 +302,16 @@
             }
 
             items.forEach((item, index) => {
-                const delay = Math.min(index * 30, 1000);
+                const delay = Math.min(index * 30, 1000); // 動畫延遲上限
                 
                 const el = document.createElement('a');
                 
                 // 搜尋邏輯：只搜尋 item.name (品牌)，確保地圖精準
+                // 移除括號內的文字，例如 "すき家 Sukiya" -> "すき家"
                 const cleanName = item.name.split(/[/(]/)[0].trim();
                 const query = encodeURIComponent(cleanName);
                 
+                // Google Maps 搜尋連結
                 el.href = `https://www.google.com/maps/search/?api=1&query=${query}`;
                 el.target = "_blank";
                 el.rel = "noopener noreferrer";
@@ -296,6 +319,7 @@
                 el.className = 'group bg-white border border-brand-sand rounded-xl p-4 md:p-5 hover:border-brand-sage hover:shadow-soft transition-all duration-300 fade-in-up flex flex-col justify-between cursor-pointer relative overflow-hidden block';
                 el.style.animationDelay = `${delay}ms`;
                 
+                // 設定左側裝飾條顏色
                 let barColor = 'bg-brand-sage';
                 if(item.category === 'low') barColor = 'bg-brand-sage';
                 if(item.category === 'mid') barColor = 'bg-brand-clay';
@@ -355,6 +379,7 @@
             }
         }
 
+        // Init
         renderItems(menuItems);
 
     </script>

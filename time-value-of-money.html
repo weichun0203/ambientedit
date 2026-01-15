@@ -1,24 +1,51 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-        <!-- Google tag (gtag.js) -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>常溫時間價值換算｜Ambient Time Value Calculator</title>
+    <meta name="description" content="常溫編集所推出的時間價值換算工具，將消費金額轉化為工作時數，協助您釐清每筆支出的生命成本，做出更明智的財務決策。">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "常溫時間價值換算",
+      "alternateName": "Ambient Time Value Calculator",
+      "operatingSystem": "Any",
+      "applicationCategory": "FinancialApplication",
+      "description": "將金錢換算為工作時數的理財工具。",
+      "brand": {
+        "@type": "Brand",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "TWD"
+      }
+    }
+    </script>
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-    
       gtag('config', 'G-2F079YMSFW');
     </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>時間價值換算｜常溫編集所</title>
-    <!-- Google Fonts -->
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS -->
+    
     <script src="https://cdn.tailwindcss.com"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -43,6 +70,7 @@
             }
         }
     </script>
+
     <style>
         body {
             background-color: #fdfbf7; /* brand-paper */
@@ -79,42 +107,32 @@
 </head>
 <body class="min-h-screen font-sans flex flex-col items-center py-10 px-4 sm:px-6">
 
-    <!-- Main Container -->
     <main class="w-full max-w-2xl bg-white/80 backdrop-blur-sm rounded-2xl shadow-soft p-8 md:p-12 border border-brand-sand/50 fade-in" style="animation-delay: 0.2s;">
         
-        <!-- Header -->
         <header class="mb-10">
-            <!-- Brand Name & English (New Addition) -->
             <div class="text-brand-sage text-xs font-bold tracking-[0.2em] uppercase mb-2">
                 常溫編集所 Ambient Edit Studio
             </div>
 
-            <!-- Title Row: Flex container to align Title and Button -->
             <div class="flex justify-between items-center mb-3">
                 <h1 class="font-serif text-3xl md:text-4xl font-bold tracking-wider text-brand-ink">時間價值換算</h1>
                 
-                <!-- Brand Home Button -->
                 <a href="https://weichun0203.github.io/ambientedit/" 
                    class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft flex-shrink-0 ml-4"
                    aria-label="返回常溫首頁">
-                    <!-- Icon -->
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                         <polyline points="9 22 9 12 15 12 15 22"/>
                     </svg>
-                    <!-- Text -->
                     <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
                 </a>
             </div>
 
-            <!-- Subtitle -->
             <p class="text-brand-ink/60 text-sm md:text-base font-serif italic">「每筆支出，都是一段生命的交換。」</p>
         </header>
 
-        <!-- Calculator Form -->
         <div id="calculator-section" class="space-y-8">
             
-            <!-- Step 1: Base Value -->
             <div class="space-y-4">
                 <div class="flex items-center space-x-2 text-brand-sage font-bold tracking-widest text-xs uppercase border-b border-brand-sand pb-1 mb-4">
                     <span class="whitespace-nowrap">STEP 01</span>
@@ -122,7 +140,6 @@
                     <span class="whitespace-nowrap">基礎設定</span>
                 </div>
                 
-                <!-- Grid Layout: Force 2 columns -->
                 <div class="grid grid-cols-2 gap-4 md:gap-6">
                     <div>
                         <label for="salary" class="block text-sm font-medium text-brand-ink/80 mb-2">月收入 (TWD)</label>
@@ -133,18 +150,15 @@
                         <label for="hours" class="block text-sm font-medium text-brand-ink/80 mb-2">月總工時</label>
                         <input type="number" id="hours" placeholder="160" value="160"
                             class="brand-input w-full px-3 py-3 rounded-lg border border-brand-sand text-brand-ink placeholder-brand-ink/30 text-sm md:text-base">
-                        <!-- Restored Helper Text -->
                         <p class="text-[10px] text-brand-ink/40 mt-1 text-right">*預設為 8小時 × 20天</p>
                     </div>
                 </div>
                 
-                <!-- Computed Hourly Wage (Hidden initially) -->
                 <div id="hourly-wage-display" class="hidden text-center py-1">
                     <p class="text-xs text-brand-clay font-serif">您的時間單價約為 <span id="wage-val" class="font-bold text-lg mx-1">0</span> 元/小時</p>
                 </div>
             </div>
 
-            <!-- Step 2: Item Value -->
             <div class="space-y-4 pt-4">
                 <div class="flex items-center space-x-2 text-brand-sage font-bold tracking-widest text-xs uppercase border-b border-brand-sand pb-1 mb-4">
                     <span class="whitespace-nowrap">STEP 02</span>
@@ -152,7 +166,6 @@
                     <span class="whitespace-nowrap">慾望轉化</span>
                 </div>
 
-                <!-- Grid Layout: Force 2 columns (Matched with Step 1) -->
                 <div class="grid grid-cols-2 gap-4 md:gap-6">
                     <div>
                         <label for="item-name" class="block text-sm font-medium text-brand-ink/80 mb-2">想購買的物品</label>
@@ -167,7 +180,6 @@
                 </div>
             </div>
 
-            <!-- Action -->
             <div class="pt-6 text-center">
                 <button onclick="calculateTimeValue()" 
                     class="group relative inline-flex items-center justify-center px-8 py-3 overflow-hidden font-medium tracking-tighter text-white bg-brand-sage rounded-full hover:bg-brand-ink transition-colors duration-300 shadow-soft">
@@ -177,7 +189,6 @@
             </div>
         </div>
 
-        <!-- Result Section (Initially Hidden) -->
         <div id="result-section" class="hidden mt-12 pt-10 border-t border-brand-sand/60 text-center space-y-6">
             <h3 class="text-brand-sage text-sm font-bold tracking-widest uppercase mb-2">CONVERSION RESULT</h3>
             
@@ -195,8 +206,6 @@
                 </p>
             </div>
 
-            <!-- TVM Educational Section -->
-            <!-- Updated margin-top to mt-20 to visually match the top spacing of the Result Section (mt-12 + pt-10) -->
             <div class="mt-20 mx-auto max-w-lg bg-white border border-brand-sand rounded-xl p-6 shadow-sm text-left">
                 <div class="flex items-center mb-3">
                     <span class="bg-brand-sage/20 text-brand-sage p-1.5 rounded-full mr-3">
@@ -233,26 +242,26 @@
     </main>
 
     <footer class="mt-12 text-center text-brand-ink/30 text-xs font-light tracking-wider fade-in" style="animation-delay: 0.3s;">
-        <p>&copy; Ambient Edit Studio. All Rights Reserved.</p>
+        <p>&copy; 2026 常溫編集所 Ambient Edit Studio. All Rights Reserved.</p>
     </footer>
 
     <script>
-        // Data format for future GAS integration
-        let transactionData = {
-            salary: 0,
-            workHours: 0,
-            hourlyWage: 0,
-            itemName: '',
-            itemPrice: 0,
-            costInHours: 0,
-            timestamp: ''
-        };
-
-        // Real-time wage calculation (Optional feedback)
+        // 5. 本地存取設定：載入與儲存邏輯
         const salaryInput = document.getElementById('salary');
         const hoursInput = document.getElementById('hours');
         const wageDisplay = document.getElementById('hourly-wage-display');
         const wageVal = document.getElementById('wage-val');
+
+        // Load saved data
+        window.onload = function() {
+            const savedSalary = localStorage.getItem('ambientTimeValue_salary');
+            const savedHours = localStorage.getItem('ambientTimeValue_hours');
+            
+            if (savedSalary) salaryInput.value = savedSalary;
+            if (savedHours) hoursInput.value = savedHours;
+            
+            updateHourlyWage(); // Initial calculation if data exists
+        };
 
         function updateHourlyWage() {
             const salary = parseFloat(salaryInput.value);
@@ -263,6 +272,10 @@
                 wageVal.innerText = wage.toLocaleString();
                 wageDisplay.classList.remove('hidden');
                 wageDisplay.classList.add('fade-in');
+                
+                // Save to localStorage
+                localStorage.setItem('ambientTimeValue_salary', salary);
+                localStorage.setItem('ambientTimeValue_hours', hours);
             }
         }
 
@@ -286,17 +299,6 @@
             const timeCost = itemPrice / hourlyWage;
             const daysCost = timeCost / 8; // Assuming 8 hours workday for context
 
-            // Update Data Object (Ready for API)
-            transactionData = {
-                salary: salary,
-                workHours: hours,
-                hourlyWage: hourlyWage,
-                itemName: itemName,
-                itemPrice: itemPrice,
-                costInHours: timeCost.toFixed(1),
-                timestamp: new Date().toISOString()
-            };
-
             // Update UI
             document.getElementById('res-item-name').innerText = itemName;
             document.getElementById('res-hours').innerText = Math.round(timeCost * 10) / 10; // Round to 1 decimal
@@ -306,9 +308,6 @@
             const resultSection = document.getElementById('result-section');
             resultSection.classList.remove('hidden');
             resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            
-            // Here you would add the function to send data to GAS
-            // sendToGoogleSheets(transactionData);
         }
 
         function resetCalculator() {
@@ -317,12 +316,6 @@
             document.getElementById('result-section').classList.add('hidden');
             document.getElementById('calculator-section').scrollIntoView({ behavior: 'smooth' });
         }
-
-        /* * Future Integration Note:
-         * To connect with Google Sheets via GAS:
-         * 1. Create a GAS Web App tailored to receive JSON POST requests.
-         * 2. Use fetch() in the calculateTimeValue function to send 'transactionData'.
-         */
     </script>
 </body>
 </html>

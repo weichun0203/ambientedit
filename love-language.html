@@ -3,27 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>常溫關係手札｜Ambient Edit Studio</title>
     
-    <!-- Google tag (gtag.js) -->
+    <title>常溫愛的基礎原型｜Ambient Love Styles Journal</title>
+    <meta name="description" content="常溫編集所推出的關係紀錄工具，基於 John Alan Lee 的愛之色彩理論，協助你辨識與紀錄每日的互動品質與愛的型態。">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "常溫愛的基礎原型",
+      "alternateName": "Ambient Love Styles Journal",
+      "operatingSystem": "Any",
+      "applicationCategory": "LifestyleApplication",
+      "description": "基於心理學理論的情感互動紀錄工具。",
+      "brand": {
+        "@type": "Brand",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      }
+    }
+    </script>
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-    
       gtag('config', 'G-2F079YMSFW');
     </script>
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Google Fonts: Noto Serif TC & Noto Sans TC -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@300;400;600&display=swap" rel="stylesheet">
 
-    <!-- Brand Configuration -->
     <script>
         tailwind.config = {
             theme: {
@@ -45,6 +62,15 @@
                     boxShadow: {
                         'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
                         'card': '0 2px 8px rgba(0, 0, 0, 0.08)',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
                     }
                 }
             }
@@ -138,41 +164,29 @@
             border-color: #8da399;
         }
 
-        .fade-in {
-            animation: fadeIn 0.8s ease-out forwards;
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        
         /* 延遲動畫類別 */
         .delay-100 { animation-delay: 0.1s; }
         .delay-200 { animation-delay: 0.2s; }
         .delay-300 { animation-delay: 0.3s; }
         .delay-500 { animation-delay: 0.5s; }
 
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
         /* 隱藏滾動條但保持功能 */
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
         }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #e6e2dd;
+            border-radius: 20px;
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center py-12 px-4 sm:px-6">
 
-    <!-- 整合導航與標題的 Header 區塊 -->
-    <header class="w-full max-w-5xl mx-auto mb-12 relative px-4 fade-in delay-200">
+    <header class="w-full max-w-5xl mx-auto mb-12 relative px-4 animate-fade-in delay-200">
         
-        <!-- 返回按鈕 (Desktop: 絕對定位於右側垂直置中; Mobile: 彈性排列在上方) -->
         <div class="flex justify-end mb-4 md:mb-0 md:absolute md:right-4 md:top-1/2 md:-translate-y-1/2 z-10">
             <a href="https://weichun0203.github.io/ambientedit/" 
                class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
@@ -185,22 +199,19 @@
             </a>
         </div>
 
-        <!-- 標題文字 (保持置中) -->
         <div class="text-center">
             <div class="inline-block p-1 border-b-2 border-brand-clay mb-4">
                 <span class="text-xs tracking-[0.2em] text-brand-sage uppercase">Six Colors of Love</span>
             </div>
-            <h1 class="text-3xl md:text-4xl font-serif text-brand-ink mb-3 tracking-wide">愛的樣貌食堂</h1>
+            <h1 class="text-3xl md:text-4xl font-serif text-brand-ink mb-3 tracking-wide">愛的基礎原型</h1>
             <p class="text-brand-ink/70 text-sm md:text-base font-light tracking-wider">
                 先理解愛的形狀，再點一份今日的互動。
             </p>
         </div>
     </header>
 
-    <!-- 區塊一：科普引導區 (愛的六種原色) -->
-    <section class="w-full max-w-5xl mx-auto mb-12 fade-in delay-300">
+    <section class="w-full max-w-5xl mx-auto mb-12 animate-fade-in delay-300">
         <div class="bg-white/60 backdrop-blur-sm border-t border-b border-brand-sand py-12 relative overflow-hidden rounded-xl shadow-soft">
-            <!-- 裝飾線條 -->
             <div class="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-brand-clay/30 rounded-b-full"></div>
 
             <div class="text-center mb-8 px-4">
@@ -212,7 +223,6 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 lg:px-12">
-                <!-- Eros -->
                 <div class="p-5 bg-white rounded-lg shadow-sm border border-brand-sand/50 hover:border-brand-clay/50 transition-colors duration-300 group">
                     <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300 origin-left">🌹</div>
                     <h3 class="font-serif font-bold text-brand-ink mb-2">情欲之愛 Eros</h3>
@@ -220,7 +230,6 @@
                         浪漫、激情的愛。建立在強烈的吸引力與熱情之上，渴望身心完全融合，如同一見鍾情的電影情節。
                     </p>
                 </div>
-                <!-- Ludus -->
                 <div class="p-5 bg-white rounded-lg shadow-sm border border-brand-sand/50 hover:border-brand-sage/50 transition-colors duration-300 group">
                     <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300 origin-left">🎭</div>
                     <h3 class="font-serif font-bold text-brand-ink mb-2">遊戲之愛 Ludus</h3>
@@ -228,7 +237,6 @@
                         視愛情為一場輕鬆的遊戲。重視過程樂趣大於結果承諾，追求新鮮感，享受自由自在、無負擔的相處。
                     </p>
                 </div>
-                <!-- Storge -->
                 <div class="p-5 bg-white rounded-lg shadow-sm border border-brand-sand/50 hover:border-brand-wood/50 transition-colors duration-300 group">
                     <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300 origin-left">🌱</div>
                     <h3 class="font-serif font-bold text-brand-ink mb-2">友誼之愛 Storge</h3>
@@ -236,7 +244,6 @@
                         細水長流、如老友般的愛。沒有強烈激情，卻有深厚的信賴與依賴，是寧靜、溫馨且共同成長的穩定關係。
                     </p>
                 </div>
-                 <!-- Mania -->
                  <div class="p-5 bg-white rounded-lg shadow-sm border border-brand-sand/50 hover:border-brand-clay/50 transition-colors duration-300 group">
                     <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300 origin-left">❤️‍🔥</div>
                     <h3 class="font-serif font-bold text-brand-ink mb-2">依附之愛 Mania</h3>
@@ -244,7 +251,6 @@
                         強烈佔有與依賴。情感需求高，情緒起伏大，時刻需要對方的回應來確認愛的存續，愛得濃烈且深刻。
                     </p>
                 </div>
-                <!-- Pragma -->
                 <div class="p-5 bg-white rounded-lg shadow-sm border border-brand-sand/50 hover:border-brand-sage/50 transition-colors duration-300 group">
                     <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300 origin-left">⚖️</div>
                     <h3 class="font-serif font-bold text-brand-ink mb-2">現實之愛 Pragma</h3>
@@ -252,7 +258,6 @@
                         理性務實的愛。考慮現實條件與未來規劃，如同經營夥伴關係，追求雙方最大共同利益與穩定的未來。
                     </p>
                 </div>
-                 <!-- Agape -->
                  <div class="p-5 bg-white rounded-lg shadow-sm border border-brand-sand/50 hover:border-brand-wood/50 transition-colors duration-300 group">
                     <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300 origin-left">🕊️</div>
                     <h3 class="font-serif font-bold text-brand-ink mb-2">利他之愛 Agape</h3>
@@ -262,7 +267,6 @@
                 </div>
             </div>
 
-            <!-- 引導往下的 UX 設計 -->
             <div class="mt-10 text-center relative z-10">
                 <p class="text-brand-ink/50 text-xs tracking-widest mb-4">準備好紀錄今天的互動了嗎？</p>
                 <button onclick="document.getElementById('menuSection').scrollIntoView({behavior: 'smooth'})" 
@@ -275,21 +279,16 @@
         </div>
     </section>
 
-    <!-- 區塊二：互動點餐區 (Menu) -->
     <main id="menuSection" class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16 scroll-mt-8">
         
-        <!-- 左側：翻牌與表單 -->
-        <div class="lg:col-span-7 space-y-8 fade-in delay-500">
+        <div class="lg:col-span-7 space-y-8 animate-fade-in delay-500">
             
-            <!-- 翻牌菜單區 -->
             <div class="relative">
                 <h2 class="text-center text-xs font-bold text-brand-ink/40 tracking-widest mb-4">— 選擇今日的相處模式 —</h2>
                 <div class="absolute top-[-10px] left-0 right-0 h-1 bg-brand-wood rounded-full opacity-30 z-0 hidden md:block"></div>
                 
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-3 px-1">
                     
-                    <!-- 卡片區 (維持不變) -->
-                    <!-- 1. Eros -->
                     <div class="flip-card h-36 perspective-1000 group" data-type="eros">
                         <div class="flip-card-inner transition-transform duration-500">
                             <div class="flip-card-front bg-white border-brand-sand">
@@ -305,7 +304,6 @@
                         </div>
                     </div>
 
-                    <!-- 2. Ludus -->
                     <div class="flip-card h-36 perspective-1000 group" data-type="ludus">
                         <div class="flip-card-inner transition-transform duration-500">
                             <div class="flip-card-front bg-white border-brand-sand">
@@ -321,7 +319,6 @@
                         </div>
                     </div>
 
-                    <!-- 3. Storge -->
                     <div class="flip-card h-36 perspective-1000 group" data-type="storge">
                         <div class="flip-card-inner transition-transform duration-500">
                             <div class="flip-card-front bg-white border-brand-sand">
@@ -337,7 +334,6 @@
                         </div>
                     </div>
 
-                    <!-- 4. Mania -->
                     <div class="flip-card h-36 perspective-1000 group" data-type="mania">
                         <div class="flip-card-inner transition-transform duration-500">
                             <div class="flip-card-front bg-white border-brand-sand">
@@ -353,7 +349,6 @@
                         </div>
                     </div>
 
-                    <!-- 5. Pragma -->
                     <div class="flip-card h-36 perspective-1000 group" data-type="pragma">
                         <div class="flip-card-inner transition-transform duration-500">
                             <div class="flip-card-front bg-white border-brand-sand">
@@ -369,7 +364,6 @@
                         </div>
                     </div>
 
-                    <!-- 6. Agape -->
                     <div class="flip-card h-36 perspective-1000 group" data-type="agape">
                         <div class="flip-card-inner transition-transform duration-500">
                             <div class="flip-card-front bg-white border-brand-sand">
@@ -388,7 +382,6 @@
                 </div>
             </div>
 
-            <!-- 動態建議區 -->
             <div id="suggestionsArea" class="hidden opacity-0 transition-all duration-500">
                 <div class="bg-brand-sage/10 rounded-lg p-4 border border-brand-sage/20">
                     <h4 class="text-xs font-bold text-brand-sage mb-3 flex items-center justify-between">
@@ -396,12 +389,10 @@
                         <span class="text-[10px] text-brand-ink/40">點擊加入筆記</span>
                     </h4>
                     <div id="suggestionChips" class="flex flex-wrap gap-2">
-                        <!-- JS 產生 Chips -->
-                    </div>
+                        </div>
                 </div>
             </div>
 
-            <!-- 填寫詳細資料表單 -->
             <div class="bg-white/60 backdrop-blur-sm p-6 rounded-lg border-t-2 border-brand-sand/50 shadow-sm">
                 <form id="relationForm" class="space-y-6">
                     <input type="hidden" id="interactionType" name="interactionType" required>
@@ -437,8 +428,7 @@
             </div>
         </div>
 
-        <!-- 右側：歷史收據區 -->
-        <div class="lg:col-span-5 fade-in delay-500">
+        <div class="lg:col-span-5 animate-fade-in delay-500">
             <div class="bg-[#f2f0eb] p-6 rounded-t-lg shadow-inner min-h-[600px] border-t-4 border-brand-sand relative">
                 <h2 class="text-center text-brand-ink/60 font-serif font-bold mb-6 tracking-widest flex items-center justify-center">
                     <span class="border-b border-brand-ink/20 flex-grow mx-4"></span>
@@ -447,10 +437,8 @@
                 </h2>
 
                 <div id="logsContainer" class="space-y-4 max-h-[600px] overflow-y-auto pr-2 pb-10 custom-scrollbar">
-                    <!-- 內容會由 JS 讀取 LocalStorage 產生 -->
-                </div>
+                    </div>
                 
-                <!-- 若無資料顯示的預設提示 -->
                 <div id="emptyState" class="hidden text-center mt-20 opacity-50">
                     <span class="text-4xl block mb-2">🍂</span>
                     <p class="text-sm font-serif">目前還沒有紀錄，<br>開始收藏你的日常溫度吧。</p>
@@ -460,11 +448,10 @@
 
     </main>
 
-    <footer class="mt-8 mb-6 text-center text-brand-ink/30 text-xs tracking-widest fade-in">
-        <p>&copy; 2026 Ambient Edit Studio. Based on Lee's Love Styles.</p>
+    <footer class="mt-8 mb-6 text-center text-brand-ink/30 text-xs tracking-widest animate-fade-in">
+        <p>&copy; 2026 常溫編集所 Ambient Edit Studio. Based on Lee's Love Styles.</p>
     </footer>
 
-    <!-- JavaScript Logic -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const dateInput = document.getElementById('date');
@@ -555,9 +542,9 @@
                 }
             };
 
-            // --- LocalStorage 存取邏輯 ---
+            // --- 5. 本地存取設定 (LocalStorage) ---
             function loadLogs() {
-                const logs = JSON.parse(localStorage.getItem('ambient_relations_logs') || '[]');
+                const logs = JSON.parse(localStorage.getItem('ambient_love_logs') || '[]');
                 logsContainer.innerHTML = '';
                 
                 if (logs.length === 0) {
@@ -569,9 +556,9 @@
             }
 
             function saveLog(logData) {
-                const logs = JSON.parse(localStorage.getItem('ambient_relations_logs') || '[]');
+                const logs = JSON.parse(localStorage.getItem('ambient_love_logs') || '[]');
                 logs.unshift(logData); // 新的放前面
-                localStorage.setItem('ambient_relations_logs', JSON.stringify(logs));
+                localStorage.setItem('ambient_love_logs', JSON.stringify(logs));
                 
                 // 移除空狀態並渲染新卡片
                 emptyState.classList.add('hidden');

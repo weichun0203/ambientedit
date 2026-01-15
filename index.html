@@ -1,104 +1,47 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-    
       gtag('config', 'G-2F079YMSFW');
     </script>
-    <!-- SEO Meta Tags - 常溫編集所 -->
-    <meta name="description" content="常溫編集所 (Ambient Edit Studio) 提供運費成本、存股加薪、決策矩陣、曼陀羅思考法等實用線上工具。我們致力於將複雜的計算交給程式，將時間留給生活中的美好事物。">
-    <meta name="keywords" content="常溫編集所, Ambient Edit Studio, 運費計算, 存股計算, 複利計算, 決策矩陣, 曼陀羅計畫表, 線上工具, 時間價值, 投資理財工具">
-    <meta name="author" content="常溫編集所 Ambient Edit Studio">
-    <meta name="copyright" content="Ambient Edit Studio">
-    <meta name="robots" content="index, follow">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- Open Graph / Facebook (社群分享設定) -->
+    <title>常溫編集所 • 工具箱</title>
+    
+    <meta name="description" content="常溫編集所 (Ambient Edit Studio) 線上工具箱。提供運費成本、存股加薪、決策矩陣、曼陀羅思考法等實用工具。致力於將複雜的計算交給程式，將時間留給生活中的美好事物。">
+    <meta name="keywords" content="常溫編集所, Ambient Edit Studio, 運費計算, 存股計算, 複利計算, 決策矩陣, 線上工具, 時間價值">
+    <meta name="author" content="常溫編集所 Ambient Edit Studio">
+    
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.ambientedit.com/">
-    <meta property="og:title" content="常溫編集所 | 把複雜交給程式，時間留給生活">
-    <meta property="og:description" content="提供運費、投資、決策分析等質感工具。在這裡，理性運算與感性生活並存。">
-    <meta property="og:image" content="https://www.your-domain.com/assets/og-image.jpg"> <!-- 請替換為您的預覽圖路徑 -->
+    <meta property="og:title" content="常溫工具箱｜Ambient Toolbox">
+    <meta property="og:description" content="把複雜的計算交給程式，將時間留給生活中的美好事物。">
     <meta property="og:site_name" content="常溫編集所 Ambient Edit Studio">
     <meta property="og:locale" content="zh_TW">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://www.your-domain.com/">
-    <meta name="twitter:title" content="常溫編集所 | 把複雜交給程式，時間留給生活">
-    <meta name="twitter:description" content="提供運費、投資、決策分析等質感工具。在這裡，理性運算與感性生活並存。">
-    <meta name="twitter:image" content="https://www.your-domain.com/assets/og-image.jpg">
-    
-    <!-- Favicon (建議製作 32x32 或 SVG 格式的品牌圖標) -->
-    <link rel="icon" type="image/png" href="assets/favicon.png">
-    
-    <!-- JSON-LD 結構化資料 (讓 Google 知道這是一個品牌與軟體工具網站) -->
+
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "WebSite",
-          "name": "常溫編集所 Ambient Edit Studio",
-          "url": "https://www.ambientedit.com/",
-          "description": "把複雜的計算交給程式，將時間留給生活中的美好事物。",
-          "publisher": {
-            "@type": "Organization",
-            "name": "常溫編集所",
-            "alternateName": "Ambient Edit Studio",
-            "logo": {
-              "@type": "ImageObject",
-              "url": "https://www.your-domain.com/assets/logo.png"
-            },
-            "sameAs": [
-              "https://www.instagram.com/weichun0203/",
-              "https://www.facebook.com/weichun0203/?locale=zh_TW"
-            ]
-          }
-        },
-        {
-          "@type": "WebApplication",
-          "name": "常溫工具箱 Ambient Toolbox",
-          "applicationCategory": "Productivity",
-          "operatingSystem": "All",
-          "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "TWD"
-          },
-          "featureList": [
-            "運費成本報價計算",
-            "存股加薪計算",
-            "薪資分配計算",
-            "複利股價計算",
-            "時間價值換算",
-            "決策矩陣分析",
-            "曼陀羅九宮格計畫表",
-            "LOGO設計流程",
-            "選擇障礙菜單",
-            "理財金字塔",
-            "常溫職涯探索羅盤",
-            "情感關係理論"
-          ]
-        }
-      ]
+      "@type": "CollectionPage",
+      "name": "常溫工具箱",
+      "alternateName": "Ambient Toolbox",
+      "description": "常溫編集所開發的線上實用工具集合。",
+      "publisher": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      }
     }
     </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>常溫編集所 • 工具箱</title>
-    
-    <!-- 引入 Tailwind CSS -->
+
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 引入 Phosphor Icons (圖標庫) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- 引入 Google Fonts: Noto Serif TC (襯線體) 和 Noto Sans TC -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500&family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
@@ -108,11 +51,11 @@
             theme: {
                 extend: {
                     colors: {
-                        'paper': '#fdfbf7', // 暖米白背景
-                        'ink': '#4a4a4a',   // 深灰墨色文字
-                        'sage': '#8da399',  // 鼠尾草綠 (點綴)
-                        'clay': '#d4a59a',  // 陶土粉 (點綴)
-                        'sand': '#e6e2dd',  // 沙色邊框
+                        'paper': '#fdfbf7',
+                        'ink': '#4a4a4a',
+                        'sage': '#8da399',
+                        'clay': '#d4a59a',
+                        'sand': '#e6e2dd',
                     },
                     fontFamily: {
                         serif: ['"Noto Serif TC"', 'serif'],
@@ -131,7 +74,6 @@
             background-color: #fdfbf7;
             color: #4a4a4a;
             font-family: 'Noto Sans TC', sans-serif;
-            /* 模擬紙張質感的微噪點 */
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
         }
         
@@ -145,7 +87,6 @@
             border-color: #8da399;
         }
 
-        /* 標題下方的裝飾線 */
         .decoration-line {
             width: 1px;
             height: 60px;
@@ -153,17 +94,15 @@
             margin: 0 auto 2rem auto;
         }
 
-        /* 按鈕 hover 動畫 */
         .btn-hover {
             transition: all 0.3s ease;
         }
         .btn-hover:hover {
-            background-color: #4a4a4a; /* ink color */
-            color: #fdfbf7; /* paper color */
+            background-color: #4a4a4a;
+            color: #fdfbf7;
             border-color: #4a4a4a;
         }
 
-        /* 搜尋框與過濾按鈕樣式 */
         .filter-btn {
             transition: all 0.3s ease;
         }
@@ -179,13 +118,12 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-sage selection:text-white">
 
-    <!-- Header 區域 -->
     <header class="pt-20 pb-8 px-6 text-center">
         <h1 class="text-4xl md:text-5xl font-serif font-semibold tracking-widest text-ink mb-4">
-            常溫編集所
+            常溫工具箱
         </h1>
         <p class="text-gray-500 font-serif text-sm md:text-base tracking-widest mb-8 uppercase">
-            Ambient Edit Studio
+            Ambient Toolbox
         </p>
         <div class="decoration-line"></div>
         <p class="max-w-md mx-auto text-gray-600 font-light leading-loose text-sm">
@@ -194,20 +132,15 @@
         </p>
     </header>
 
-    <!-- Main Content 區域 -->
     <main class="flex-grow w-full max-w-6xl mx-auto px-6 pb-20">
         
-        <!-- 過濾與搜尋控制列 -->
         <div class="mb-12 flex flex-col md:flex-row gap-6 items-center justify-between border-b border-sand pb-6">
-            <!-- 分類按鈕區 -->
             <div id="filter-buttons" class="flex flex-wrap gap-2 justify-center md:justify-start">
-                <!-- JS 自動生成按鈕 -->
                 <button onclick="filterTools('all')" class="filter-btn active px-4 py-1.5 rounded-full text-sm tracking-wide bg-ink text-paper border border-ink">
                     全部
                 </button>
             </div>
 
-            <!-- 標題搜尋框 -->
             <div class="relative w-full md:w-64">
                 <i class="ph-magnifying-glass absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                 <input type="text" id="search-input" placeholder="搜尋標題..." 
@@ -215,18 +148,14 @@
             </div>
         </div>
         
-        <!-- 工具列表容器 -->
         <div id="tool-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-            <!-- 內容由 JS 生成 -->
-        </div>
+            </div>
 
-        <!-- 空白佔位符 (無搜尋結果時顯示) -->
         <div id="empty-state" class="hidden text-center py-20 text-gray-400 font-light">
             <i class="ph-coffee text-4xl mb-4 text-gray-300 block"></i>
             沒有找到相關工具
         </div>
 
-        <!-- 關於我 / 連結區塊 -->
         <div class="relative border-t border-sand pt-12">
             <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-paper px-4 text-gray-400 font-serif tracking-widest text-xs">
                 CONNECT
@@ -237,40 +166,36 @@
                 <p class="text-gray-500 text-sm font-light mb-8">在這裡找到更多關於我的故事與分享</p>
                 
                 <div id="social-container" class="flex flex-wrap justify-center gap-4">
-                    <!-- 內容由 JS 生成 -->
-                </div>
+                    </div>
             </div>
         </div>
 
     </main>
 
-    <!-- Footer 區域 -->
     <footer class="border-t border-sand py-8 text-center text-xs text-gray-400 font-light tracking-wider">
-        <p>&copy; <span id="year"></span> Ambient Edit Studio. All Rights Reserved.</p>
+        <p>&copy; 2026 常溫編集所 Ambient Edit Studio. All Rights Reserved.</p>
     </footer>
 
-    <!-- JavaScript 邏輯 -->
     <script>
-        document.getElementById('year').textContent = new Date().getFullYear();
-
         // ==========================================
         // 1. 工具列表設定 (Tools Data)
+        // 注意：link 屬性已加上 .html 以符合 GitHub Pages 結構
         // ==========================================
         const toolsData = [
             {
                 title: "運費成本報價",
-                desc: "精算物流開銷，掌握每一分成本。",
+                desc: "精算跨境物流開銷，掌握每一分成本與利潤。",
                 icon: "ph-truck", 
                 tag: "Business",
-                link: "shipping-fee-calculator", 
+                link: "shipping-fee-calculator.html", 
                 color: "text-stone-600"
             },
             {
                 title: "存股加薪計算",
-                desc: "預見未來的被動收入，規劃財富藍圖。",
+                desc: "預見未來的被動收入，規劃溫柔的財富藍圖。",
                 icon: "ph-plant",
                 tag: "Invest",
-                link: "dividend-investing", 
+                link: "dividend-investing.html", 
                 color: "text-emerald-700"
             },
             {
@@ -278,7 +203,7 @@
                 desc: "或是儲蓄或是享受，找到收支的完美平衡。",
                 icon: "ph-wallet",
                 tag: "Invest",
-                link: "daily-budget", 
+                link: "daily-budget.html", 
                 color: "text-amber-700"
             },
             {
@@ -286,89 +211,80 @@
                 desc: "時間是投資最好的朋友，見證複利的力量。",
                 icon: "ph-trend-up",
                 tag: "Invest",
-                link: "compound-interest", 
+                link: "compound-interest.html", 
                 color: "text-blue-800"
             },
             {
                 title: "時間價值換算",
-                desc: "每筆支出，都是一段生命的交換",
-                icon: "ph-trend-up",
+                desc: "每筆支出，都是一段生命的交換。",
+                icon: "ph-clock",
                 tag: "Invest",
-                link: "time-value-of-money", 
+                link: "time-value-of-money.html", 
                 color: "text-blue-800"
             },
             {
                 title: "決策矩陣分析",
-                desc: "透過理性梳理感性的選擇",
-                icon: "ph-wallet",
+                desc: "透過理性權重梳理，輔助感性的選擇。",
+                icon: "ph-matrix-logo",
                 tag: "Planning",
-                link: "decision-matrix-analysis", 
+                link: "decision-matrix-analysis.html", 
                 color: "text-amber-700"
             },
             {
-                title: "曼陀羅九宮格計畫表",
-                desc: "分析問題核心、完整思考，讓理想落地",
-                icon: "ph-wallet",
+                title: "曼陀羅九宮格",
+                desc: "分析問題核心、完整思考，讓理想落地。",
+                icon: "ph-squares-four",
                 tag: "Planning",
-                link: "mandala-chart", 
+                link: "mandala-chart.html", 
                 color: "text-amber-700"
             },
             {
-                title: "品牌設計建構指南",
-                desc: "開啟你的品牌，用設計開始事業",
-                icon: "ph-wallet",
-                tag: "Design",
-                link: "logo-design", 
+                title: "職涯探索羅盤",
+                desc: "透過喜好與耐心，記錄你的天賦熱情。",
+                icon: "ph-compass",
+                tag: "Growth",
+                link: "career-exploration.html", 
                 color: "text-amber-700"
             },
             {
                 title: "食間・菜單",
-                desc: "選擇障礙更障礙的食物菜單",
-                icon: "ph-wallet",
+                desc: "解決選擇障礙，今天要吃什麼？",
+                icon: "ph-bowl-food",
                 tag: "Daily",
-                link: "taiwanese-food", 
-                color: "text-amber-700"
-            },
-            {
-                title: "理財金字塔",
-                desc: "建立完整基礎的財務知識",
-                icon: "ph-wallet",
-                tag: "Invest",
-                link: "money-stack", 
+                link: "taiwanese-food.html", 
                 color: "text-amber-700"
             },
             {
                 title: "愛的基礎原型",
-                desc: "愛的六色輪-情感基礎理論",
-                icon: "ph-wallet",
+                desc: "愛的六色輪 - 探索情感基礎理論。",
+                icon: "ph-heart",
                 tag: "Growth",
-                link: "love-language", 
+                link: "love-language.html", 
                 color: "text-amber-700"
             },
             {
-                title: "常溫職涯探索羅盤",
-                desc: "記錄你的天賦熱情",
-                icon: "ph-wallet",
-                tag: "Growth",
-                link: "career-exploration", 
+                title: "理財金字塔",
+                desc: "建立完整基礎的財務知識結構。",
+                icon: "ph-pyramid",
+                tag: "Invest",
+                link: "money-stack.html", 
                 color: "text-amber-700"
             }
         ];
 
         // ==========================================
-        // 2. 關於我連結設定 (Social / About Data)
+        // 2. 關於我連結設定
         // ==========================================
         const socialData = [
             { title: "Instagram", link: "https://www.instagram.com/weichun0203/", icon: "ph-instagram-logo" },
             { title: "Facebook", link: "https://www.facebook.com/weichun0203/?locale=zh_TW", icon: "ph-facebook-logo" },
             { title: "Line@", link: "https://line.me/R/ti/p/@890mvlvl", icon: "ph-line-logo"},
-            { title: "個人接案", link: "#", icon: "ph-article" },
-            { title: "聯絡我", link: "weichun0203@gmail.com", icon: "ph-envelope-simple" },
+            { title: "聯絡我", link: "mailto:weichun0203@gmail.com", icon: "ph-envelope-simple" },
             { title: "賣貨便", link: "https://myship.7-11.com.tw/general/detail/GM2601131963313", icon: "ph-storefront" }
         ];
 
         // ==========================================
-        // 3. 核心邏輯：渲染與過濾
+        // 3. 核心邏輯
         // ==========================================
         
         const container = document.getElementById('tool-container');
@@ -376,13 +292,12 @@
         const searchInput = document.getElementById('search-input');
         const filterBtnContainer = document.getElementById('filter-buttons');
 
-        // 當前過濾狀態
         let currentFilter = 'all';
         let currentSearch = '';
 
-        // A. 初始化：產生分類按鈕 (自動抓取唯一的 tag)
+        // A. 初始化：產生分類按鈕
         function initFilterButtons() {
-            const tags = [...new Set(toolsData.map(item => item.tag))]; // 取得不重複的 tag
+            const tags = [...new Set(toolsData.map(item => item.tag))];
             
             tags.forEach(tag => {
                 const btn = document.createElement('button');
@@ -395,10 +310,8 @@
 
         // B. 過濾功能
         function filterTools(tag, btnElement = null) {
-            // 更新狀態
             if (tag) currentFilter = tag;
             
-            // 更新按鈕樣式
             if (btnElement || tag === 'all') {
                 const allBtns = document.querySelectorAll('.filter-btn');
                 allBtns.forEach(b => {
@@ -406,8 +319,7 @@
                     b.classList.add('bg-transparent', 'text-gray-500', 'border-transparent');
                 });
 
-                // 如果是點擊觸發，或是重置為 all
-                const activeBtn = btnElement || document.querySelector('.filter-btn'); // 預設第一個是 'All'
+                const activeBtn = btnElement || document.querySelector('.filter-btn');
                 activeBtn.classList.remove('bg-transparent', 'text-gray-500', 'border-transparent');
                 activeBtn.classList.add('active', 'bg-ink', 'text-paper', 'border-ink');
             }
@@ -421,16 +333,13 @@
             renderTools();
         });
 
-        // D. 渲染工具卡片 (根據當前過濾和搜尋狀態)
+        // D. 渲染工具卡片
         function renderTools() {
             container.innerHTML = '';
             
             const filteredData = toolsData.filter(tool => {
-                // 1. 檢查分類
                 const matchTag = currentFilter === 'all' || tool.tag === currentFilter;
-                // 2. 檢查標題搜尋
                 const matchSearch = tool.title.toLowerCase().includes(currentSearch);
-                
                 return matchTag && matchSearch;
             });
 
@@ -449,7 +358,6 @@
                         rounded-sm shadow-soft card-hover relative overflow-hidden
                         cursor-pointer animate-fade-in
                     `;
-                    // 加入簡單的淡入動畫樣式
                     card.style.animation = "fadeIn 0.5s ease-out";
                     
                     card.innerHTML = `

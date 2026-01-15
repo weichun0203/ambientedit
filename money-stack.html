@@ -3,28 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>常溫理財金字塔 | 堆疊生活的厚度</title>
     
-    <!-- 1. GA4 追蹤碼 (已置入) -->
-    <!-- Google tag (gtag.js) -->
+    <title>常溫理財金字塔｜Ambient Wealth Hierarchy</title>
+    <meta name="description" content="常溫編集所推出的理財金字塔工具，透過風險、儲蓄、增值、傳承四個階段，協助您建立穩健的財務結構與資產配置。">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FinancialProduct",
+      "name": "常溫理財金字塔",
+      "alternateName": "Ambient Wealth Hierarchy",
+      "description": "理財教育互動工具，涵蓋緊急預備金試算、資產配置建議與傳承規劃。",
+      "brand": {
+        "@type": "Brand",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "TWD"
+      }
+    }
+    </script>
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-2F079YMSFW');
     </script>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@300;400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
             theme: {
@@ -61,7 +80,7 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
         }
 
-        /* 隱藏滾動條但保留功能 (App-like feel) */
+        /* 隱藏滾動條但保留功能 */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -170,39 +189,31 @@
 </head>
 <body class="bg-noise text-brand-ink font-sans h-full flex flex-col overflow-hidden">
 
-    <!-- Header 品牌導航 -->
     <header class="flex-shrink-0 py-3 md:py-4 pl-safe pr-safe px-4 md:px-12 flex justify-between items-center z-50 bg-[#fdfbf7]/90 backdrop-blur-sm border-b border-brand-sand/30">
-        <!-- Brand Title -->
         <div class="flex flex-col">
             <h1 class="font-serif font-bold text-lg md:text-2xl tracking-widest text-brand-ink whitespace-nowrap cursor-default">
                 常溫理財金字塔<span class="text-brand-sage">.</span>
             </h1>
             <p class="text-[9px] md:text-xs tracking-[0.2em] text-brand-ink/40 mt-0.5 uppercase hidden xs:block font-serif">
-                AMBIENT PYRAMID
+                AMBIENT WEALTH HIERARCHY
             </p>
         </div>
 
-        <!-- 2. Home Button (Updated Code) -->
         <nav class="ml-4">
              <a href="https://weichun0203.github.io/ambientedit/" 
-                class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft"
+                class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
                 aria-label="返回常溫首頁">
-                 <!-- Icon -->
                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                      <polyline points="9 22 9 12 15 12 15 22"/>
                  </svg>
-                 <!-- Text -->
                  <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300 hidden sm:inline">常溫首頁</span>
              </a>
         </nav>
     </header>
 
-    <!-- Main Container -->
-    <!-- 這裡使用了 flex-grow 和 min-h-0 來確保內容區域會自動填滿剩餘高度，且不超出視窗 -->
     <main class="flex-grow flex flex-col lg:flex-row w-full min-h-0 relative overflow-hidden">
         
-        <!-- ================= Mobile/Tablet Navigation (Sticky Tabs) ================= -->
         <div class="lg:hidden flex-shrink-0 w-full bg-white border-b border-brand-sand/50 z-40 shadow-sm relative">
             <div class="flex overflow-x-auto no-scrollbar py-3 px-safe px-4 gap-2 snap-x">
                 <button onclick="switchLevel(1)" class="nav-item snap-start flex-shrink-0 px-5 py-2 rounded-full border border-brand-sand text-xs font-bold tracking-wider text-brand-ink/60 whitespace-nowrap active" id="mob-btn-1">
@@ -217,29 +228,22 @@
                 <button onclick="switchLevel(4)" class="nav-item snap-center flex-shrink-0 px-5 py-2 rounded-full border border-brand-sand text-xs font-bold tracking-wider text-brand-ink/60 whitespace-nowrap" id="mob-btn-4">
                     04 傳承
                 </button>
-                <div class="w-4 flex-shrink-0"></div> <!-- Padding end -->
-            </div>
+                <div class="w-4 flex-shrink-0"></div> </div>
         </div>
 
-        <!-- ================= Desktop Pyramid Visual (Left Side: 4/12) ================= -->
         <div class="hidden lg:flex lg:w-4/12 h-full flex-col justify-center items-center relative p-12 overflow-y-auto no-scrollbar bg-brand-paper border-r border-brand-sand/30">
-            <!-- 裝飾線 -->
             <div class="fixed top-0 bottom-0 left-[16.66%] w-[1px] bg-gradient-to-b from-transparent via-brand-sand to-transparent -z-10 opacity-30"></div>
 
             <div class="w-full max-w-sm space-y-2 relative my-auto py-10">
-                <!-- Level 4 -->
                 <div onclick="switchLevel(4)" id="desk-btn-4" class="pyramid-btn w-[30%] mx-auto h-24 bg-brand-ink rounded-t-lg rounded-b-sm cursor-pointer flex items-center justify-center text-brand-paper shadow-lg hover:shadow-xl opacity-90 hover:opacity-100 group">
                     <span class="font-serif tracking-widest text-sm relative top-1">傳承</span>
                 </div>
-                <!-- Level 3 -->
                 <div onclick="switchLevel(3)" id="desk-btn-3" class="pyramid-btn w-[50%] mx-auto h-28 bg-brand-clay rounded-sm cursor-pointer flex items-center justify-center text-white shadow-lg hover:shadow-xl opacity-90 hover:opacity-100 group">
                     <span class="font-serif tracking-widest text-lg relative top-1">增值</span>
                 </div>
-                <!-- Level 2 -->
                 <div onclick="switchLevel(2)" id="desk-btn-2" class="pyramid-btn w-[70%] mx-auto h-32 bg-brand-sand rounded-sm cursor-pointer flex items-center justify-center text-brand-ink shadow-lg hover:shadow-xl opacity-90 hover:opacity-100 group">
                     <span class="font-serif tracking-widest text-xl relative top-1">積累</span>
                 </div>
-                <!-- Level 1 -->
                 <div onclick="switchLevel(1)" id="desk-btn-1" class="pyramid-btn w-[90%] mx-auto h-36 bg-brand-sage rounded-b-lg rounded-t-sm cursor-pointer flex items-center justify-center text-white shadow-lg hover:shadow-xl opacity-90 hover:opacity-100 group border-4 border-brand-paper active">
                     <span class="font-serif tracking-widest text-2xl relative top-1">防護</span>
                 </div>
@@ -251,16 +255,11 @@
             </p>
         </div>
 
-        <!-- ================= Content Area (Right Side: 8/12) ================= -->
-        <!-- 使用 relative 確保絕對定位的 scroll container 參考正確 -->
         <div class="flex-grow w-full lg:w-8/12 h-full relative bg-white/40">
             
-            <!-- Scroll Container -->
-            <!-- 修正：absolute inset-0 搭配 overflow-y-auto 實現內區塊滾動，避免整頁滾動 -->
             <div class="absolute inset-0 overflow-y-auto no-scrollbar pb-safe pl-safe pr-safe pt-6 lg:pt-16 z-0" id="content-scroll">
                 <div class="w-full px-6 md:px-12 lg:px-24 xl:px-32 min-h-full flex flex-col justify-start pb-24">
                     
-                    <!-- ================= Mobile/Tablet Mini Visual Pyramid ================= -->
                     <div class="lg:hidden mb-10 w-full max-w-xs mx-auto flex flex-col items-center gap-1 opacity-90 pt-4">
                         <div onclick="switchLevel(4)" id="mini-4" class="mini-bar w-16 h-4 bg-brand-ink rounded-t-md cursor-pointer"></div>
                         <div onclick="switchLevel(3)" id="mini-3" class="mini-bar w-24 h-5 bg-brand-clay rounded-sm cursor-pointer"></div>
@@ -268,47 +267,38 @@
                         <div onclick="switchLevel(1)" id="mini-1" class="mini-bar w-40 h-7 bg-brand-sage rounded-b-md cursor-pointer active"></div>
                     </div>
 
-                    <!-- 內容區塊 -->
                     <div id="content-wrapper" class="fade-content">
-                        <!-- 裝飾性標籤 -->
                         <div class="flex items-center gap-3 lg:gap-4 mb-4 lg:mb-8">
                             <span id="display-num" class="font-serif text-5xl lg:text-7xl font-bold text-brand-sand leading-none">01</span>
                             <div class="h-[1px] w-8 lg:w-12 bg-brand-ink/20"></div>
                             <span id="display-tag" class="font-sans text-[10px] lg:text-xs font-bold tracking-[0.3em] text-brand-sage uppercase">PROTECTION</span>
                         </div>
 
-                        <!-- 標題 -->
                         <h2 id="display-title" class="font-serif text-3xl lg:text-5xl font-bold text-brand-ink mb-6 lg:mb-10 leading-tight">
                             風險防護網
                         </h2>
 
-                        <!-- 核心描述 -->
                         <div class="relative pl-5 lg:pl-8 border-l-2 border-brand-clay mb-8 lg:mb-12">
                             <p id="display-desc" class="text-sm lg:text-lg text-brand-ink/80 leading-relaxed font-serif italic text-justify max-w-3xl">
                                 在追求財富增長之前，這是最關鍵的基石。如同建築的地基，我們必須確保當生命中的「黑天鵝」（失業、疾病、意外）降臨時，原本的生活品質不會瞬間崩塌。
                             </p>
                         </div>
 
-                        <!-- 重點列表 Grid Layout -->
                         <div class="w-full mb-12">
                             <h3 class="text-[10px] lg:text-xs font-bold text-brand-ink/40 tracking-widest uppercase mb-4">Key Actions</h3>
                             <div id="display-points" class="grid gap-4 md:grid-cols-2 lg:gap-6">
-                                <!-- JS Populated -->
-                            </div>
+                                </div>
                         </div>
 
-                        <!-- 呼籲行動 (CTA) -->
                         <div id="cta-container" class="mt-auto pt-8 border-t border-brand-ink/5">
-                           <!-- JS will populate button here -->
-                        </div>
-                    </div> <!-- End of fade-content -->
+                           </div>
+                    </div> 
 
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- ================= Calculation Modal (Risk Level 1) ================= -->
     <div id="calc-modal" class="fixed inset-0 z-[100] modal-overlay flex items-center justify-center px-4 bg-brand-ink/40 backdrop-blur-sm">
         <div class="modal-content w-full max-w-lg bg-[#fdfbf7] rounded-3xl shadow-2xl overflow-hidden border border-white/50 relative flex flex-col max-h-[90vh]">
             <button onclick="closeModal('calc-modal')" class="absolute top-4 right-4 p-2 text-brand-ink/40 hover:text-brand-ink transition-colors z-10">
@@ -358,7 +348,6 @@
                         <p id="result-feedback" class="text-sm text-brand-ink/80 leading-relaxed text-justify">請輸入數值...</p>
                     </div>
                     
-                    <!-- LINE@ CTA (Risk Level 1) -->
                     <a href="https://line.me/R/ti/p/@890mvlvl" target="_blank" class="block w-full py-3 bg-[#06C755] text-white rounded-full font-bold shadow-md hover:shadow-lg text-center transition-all flex items-center justify-center gap-2">
                         <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M21.5 10.3c0-4.8-4.6-8.8-10.2-8.8S1.1 5.4 1.1 10.3c0 4.1 3.5 7.6 8.3 8.4l-.5 2.5c-.1.3.2.6.5.4l4.2-2.8c5.4-.5 7.9-4.2 7.9-8.5z"/></svg>
                         了解常溫理財課程
@@ -369,7 +358,6 @@
         </div>
     </div>
 
-    <!-- ================= 6 Jars Modal (Savings Level 2) ================= -->
     <div id="jars-modal" class="fixed inset-0 z-[100] modal-overlay flex items-center justify-center px-4 bg-brand-ink/40 backdrop-blur-sm">
         <div class="modal-content w-full max-w-lg bg-[#fdfbf7] rounded-3xl shadow-2xl overflow-hidden border border-white/50 relative max-h-[90vh] flex flex-col">
             <button onclick="closeModal('jars-modal')" class="absolute top-4 right-4 p-2 text-brand-ink/40 hover:text-brand-ink transition-colors z-10">
@@ -393,7 +381,6 @@
                     </div>
                 </div>
                 <div id="jars-result" class="hidden space-y-3 animate-fade-up">
-                    <!-- JAR 1 -->
                     <div class="bg-white p-3 rounded-xl border border-brand-sand shadow-sm relative overflow-hidden flex items-center gap-4">
                         <div class="w-1 self-stretch bg-brand-ink rounded-full"></div>
                         <div class="flex-grow">
@@ -406,7 +393,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- JAR 2 -->
                     <div class="bg-white p-3 rounded-xl border border-brand-sand shadow-sm relative overflow-hidden flex items-center gap-4">
                         <div class="w-1 self-stretch bg-brand-sage rounded-full"></div>
                         <div class="flex-grow">
@@ -417,7 +403,6 @@
                             <p class="text-[10px] text-brand-ink/50 mt-1">養金鵝專用，不可動用 (10%)</p>
                         </div>
                     </div>
-                    <!-- JAR 3 -->
                     <div class="bg-white p-3 rounded-xl border border-brand-sand shadow-sm relative overflow-hidden flex items-center gap-4">
                         <div class="w-1 self-stretch bg-brand-clay rounded-full"></div>
                         <div class="flex-grow">
@@ -428,7 +413,6 @@
                             <p class="text-[10px] text-brand-ink/50 mt-1">未來消費、緊急預備金 (10%)</p>
                         </div>
                     </div>
-                    <!-- JAR 4 -->
                     <div class="bg-white p-3 rounded-xl border border-brand-sand shadow-sm relative overflow-hidden flex items-center gap-4">
                         <div class="w-1 self-stretch bg-brand-sand rounded-full"></div>
                         <div class="flex-grow">
@@ -439,7 +423,6 @@
                             <p class="text-[10px] text-brand-ink/50 mt-1">投資大腦，買書上課 (10%)</p>
                         </div>
                     </div>
-                    <!-- JAR 5 -->
                     <div class="bg-white p-3 rounded-xl border border-brand-sand shadow-sm relative overflow-hidden flex items-center gap-4">
                         <div class="w-1 self-stretch bg-brand-sage/50 rounded-full"></div>
                         <div class="flex-grow">
@@ -450,7 +433,6 @@
                             <p class="text-[10px] text-brand-ink/50 mt-1">盡情揮霍，犒賞自己 (10%)</p>
                         </div>
                     </div>
-                    <!-- JAR 6 -->
                     <div class="bg-white p-3 rounded-xl border border-brand-sand shadow-sm relative overflow-hidden flex items-center gap-4">
                         <div class="w-1 self-stretch bg-brand-clay/50 rounded-full"></div>
                         <div class="flex-grow">
@@ -463,7 +445,6 @@
                     </div>
 
                     <div class="pt-4 text-center">
-                        <!-- LINE@ CTA (Savings Level 2) -->
                         <a href="https://line.me/R/ti/p/@890mvlvl" target="_blank" class="block w-full py-3 bg-[#06C755] text-white rounded-full text-sm font-bold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2">
                              <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M21.5 10.3c0-4.8-4.6-8.8-10.2-8.8S1.1 5.4 1.1 10.3c0 4.1 3.5 7.6 8.3 8.4l-.5 2.5c-.1.3.2.6.5.4l4.2-2.8c5.4-.5 7.9-4.2 7.9-8.5z"/></svg>
                              了解常溫理財課程
@@ -474,7 +455,6 @@
         </div>
     </div>
 
-    <!-- ================= Investment Modal (Growth Level 3) ================= -->
     <div id="invest-modal" class="fixed inset-0 z-[100] modal-overlay flex items-center justify-center px-4 bg-brand-ink/40 backdrop-blur-sm">
         <div class="modal-content w-full max-w-lg bg-[#fdfbf7] rounded-3xl shadow-2xl overflow-hidden border border-white/50 relative flex flex-col max-h-[90vh]">
             <button onclick="closeModal('invest-modal')" class="absolute top-4 right-4 p-2 text-brand-ink/40 hover:text-brand-ink transition-colors z-10">
@@ -487,7 +467,6 @@
                 </h3>
             </div>
             <div class="p-6 space-y-6 overflow-y-auto no-scrollbar">
-                <!-- Inputs -->
                 <div class="grid grid-cols-2 gap-4">
                     <div class="space-y-2 col-span-2">
                         <label class="block text-sm font-bold text-brand-ink/80 tracking-wider">每月定期定額金額</label>
@@ -512,14 +491,12 @@
                     </div>
                 </div>
 
-                <!-- Result Area -->
                 <div id="invest-result" class="hidden border-t border-brand-sand/50 pt-4 animate-fade-up">
                     <div class="text-center mb-6">
                         <p class="text-xs text-brand-ink/40 tracking-widest uppercase mb-1">Estimated Total Assets</p>
                         <h4 class="font-serif text-4xl font-bold text-brand-ink" id="invest-total">$0</h4>
                     </div>
 
-                    <!-- Bar Chart Visual -->
                     <div class="flex h-4 w-full rounded-full overflow-hidden mb-2">
                         <div id="bar-principal" class="bg-brand-sand h-full transition-all duration-1000 w-0"></div>
                         <div id="bar-profit" class="bg-brand-clay h-full transition-all duration-1000 w-0"></div>
@@ -536,7 +513,6 @@
                     </div>
 
                     <div class="mt-4">
-                        <!-- LINE@ CTA (Invest Level 3) -->
                         <a href="https://line.me/R/ti/p/@890mvlvl" target="_blank" class="block w-full py-3 bg-[#06C755] text-white rounded-full text-sm font-bold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2">
                              <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M21.5 10.3c0-4.8-4.6-8.8-10.2-8.8S1.1 5.4 1.1 10.3c0 4.1 3.5 7.6 8.3 8.4l-.5 2.5c-.1.3.2.6.5.4l4.2-2.8c5.4-.5 7.9-4.2 7.9-8.5z"/></svg>
                              了解常溫理財課程
@@ -544,7 +520,6 @@
                     </div>
                 </div>
                 
-                <!-- Action Button (Initial) -->
                 <button id="btn-invest-calc" onclick="calculateInvest()" class="w-full py-3 bg-brand-ink text-brand-paper rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-[1.01] transition-all">
                     開始滾雪球
                 </button>
@@ -552,14 +527,12 @@
         </div>
     </div>
 
-    <!-- ================= Quiz Modal (Legacy Level 4) ================= -->
     <div id="quiz-modal" class="fixed inset-0 z-[100] modal-overlay flex items-center justify-center px-4 bg-brand-ink/40 backdrop-blur-sm">
         <div class="modal-content w-full max-w-2xl bg-[#fdfbf7] rounded-3xl shadow-2xl overflow-hidden border border-white/50 relative max-h-[90vh] flex flex-col">
             <button onclick="closeModal('quiz-modal')" class="absolute top-4 right-4 p-2 text-brand-ink/40 hover:text-brand-ink transition-colors z-20">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             
-            <!-- Header -->
             <div class="bg-brand-ink text-brand-paper p-6 flex-shrink-0 relative overflow-hidden">
                 <div class="relative z-10 text-center">
                      <h3 class="font-serif text-xl font-bold tracking-widest mb-1">Legacy & Apex</h3>
@@ -567,10 +540,7 @@
                 </div>
             </div>
 
-            <!-- Body -->
             <div class="p-6 md:p-8 overflow-y-auto no-scrollbar flex-grow">
-                
-                <!-- Intro Section -->
                 <div id="quiz-intro" class="space-y-6 text-center h-full flex flex-col justify-center">
                     <h2 class="text-2xl font-serif text-brand-ink font-bold">1 億元的代價</h2>
                     <p class="text-brand-ink/70 leading-relaxed text-justify md:text-center">
@@ -583,22 +553,12 @@
                     </button>
                 </div>
 
-                <!-- Quiz Section -->
                 <div id="quiz-q" class="hidden space-y-6">
-                    <!-- Progress -->
                     <div class="h-1.5 w-full bg-brand-sand rounded-full overflow-hidden">
                         <div id="quiz-progress" class="h-full bg-brand-clay w-0 transition-all duration-300"></div>
                     </div>
-                    
-                    <!-- Question -->
                     <h3 id="question-text" class="text-lg md:text-xl font-bold text-brand-ink leading-relaxed">題目載入中...</h3>
-                    
-                    <!-- Options -->
-                    <div id="options-container" class="space-y-3">
-                        <!-- JS injected -->
-                    </div>
-
-                    <!-- Feedback -->
+                    <div id="options-container" class="space-y-3"></div>
                     <div id="quiz-feedback" class="hidden p-4 rounded-xl border mb-4">
                         <div id="feedback-header" class="mb-2"></div>
                         <div class="text-sm text-brand-ink/80 leading-relaxed">
@@ -606,77 +566,38 @@
                             <span id="rationale-text"></span>
                         </div>
                     </div>
-
-                    <!-- Next Button -->
                     <button id="next-btn" onclick="quizApp.nextQuestion()" class="hidden w-full py-3 bg-brand-ink text-white rounded-full font-bold hover:bg-brand-dark transition-all">
                         下一題
                     </button>
                 </div>
 
-                <!-- Result Section -->
                 <div id="quiz-result" class="hidden space-y-8">
                     <div class="text-center">
                         <h2 class="text-2xl font-serif text-brand-ink font-bold mb-2">模擬結果結算</h2>
                         <p class="text-brand-ink/60 text-sm">如果沒有提前規劃，這就是資產縮水的真相：</p>
                     </div>
 
-                    <!-- Visual Chart -->
                     <div class="space-y-4 bg-white p-6 rounded-2xl border border-brand-sand shadow-sm">
-                        <!-- Bar 1: Original -->
                         <div class="space-y-1">
-                            <div class="flex justify-between text-xs font-bold text-brand-ink/50">
-                                <span>原始資產</span>
-                                <span>100% (1億)</span>
-                            </div>
-                            <div class="h-4 w-full bg-brand-sand/20 rounded-full overflow-hidden">
-                                <div class="h-full bg-brand-sand w-full"></div>
-                            </div>
+                            <div class="flex justify-between text-xs font-bold text-brand-ink/50"><span>原始資產</span><span>100% (1億)</span></div>
+                            <div class="h-4 w-full bg-brand-sand/20 rounded-full overflow-hidden"><div class="h-full bg-brand-sand w-full"></div></div>
                         </div>
-
-                        <!-- Bar 2: Tax -->
                         <div class="space-y-1">
-                            <div class="flex justify-between text-xs font-bold text-brand-clay">
-                                <span>扣：遺產稅 (政府)</span>
-                                <span>-12%</span>
-                            </div>
-                            <div class="h-4 w-full bg-brand-sand/20 rounded-full overflow-hidden">
-                                <div id="bar-tax" class="h-full bg-brand-clay w-0 transition-all duration-1000 ease-out"></div>
-                            </div>
+                            <div class="flex justify-between text-xs font-bold text-brand-clay"><span>扣：遺產稅 (政府)</span><span>-12%</span></div>
+                            <div class="h-4 w-full bg-brand-sand/20 rounded-full overflow-hidden"><div id="bar-tax" class="h-full bg-brand-clay w-0 transition-all duration-1000 ease-out"></div></div>
                         </div>
-
-                        <!-- Bar 3: Loss -->
                         <div class="space-y-1">
-                            <div class="flex justify-between text-xs font-bold text-orange-500">
-                                <span>扣：急售折價損失 (市場)</span>
-                                <span>-5%</span>
-                            </div>
-                            <div class="h-4 w-full bg-brand-sand/20 rounded-full overflow-hidden">
-                                <div id="bar-loss" class="h-full bg-orange-400 w-0 transition-all duration-1000 ease-out"></div>
-                            </div>
+                            <div class="flex justify-between text-xs font-bold text-orange-500"><span>扣：急售折價損失 (市場)</span><span>-5%</span></div>
+                            <div class="h-4 w-full bg-brand-sand/20 rounded-full overflow-hidden"><div id="bar-loss" class="h-full bg-orange-400 w-0 transition-all duration-1000 ease-out"></div></div>
                         </div>
-
-                        <!-- Bar 4: Legal -->
                         <div class="space-y-1">
-                            <div class="flex justify-between text-xs font-bold text-yellow-600">
-                                <span>扣：行政與訴訟 (律師/代書)</span>
-                                <span>-3%</span>
-                            </div>
-                            <div class="h-4 w-full bg-brand-sand/20 rounded-full overflow-hidden">
-                                <div id="bar-legal" class="h-full bg-yellow-400 w-0 transition-all duration-1000 ease-out"></div>
-                            </div>
+                            <div class="flex justify-between text-xs font-bold text-yellow-600"><span>扣：行政與訴訟 (律師/代書)</span><span>-3%</span></div>
+                            <div class="h-4 w-full bg-brand-sand/20 rounded-full overflow-hidden"><div id="bar-legal" class="h-full bg-yellow-400 w-0 transition-all duration-1000 ease-out"></div></div>
                         </div>
-
                         <div class="my-4 border-t border-dashed border-brand-sand"></div>
-
-                        <!-- Bar 5: Final -->
                         <div class="space-y-2">
-                            <div class="flex justify-between items-end">
-                                <span class="text-brand-sage font-bold text-lg">最終實際到手</span>
-                                <span class="text-brand-sage font-bold text-lg">約 8,000 萬</span>
-                            </div>
-                            <div class="h-8 w-full bg-brand-sand/20 rounded-full overflow-hidden relative">
-                                <div id="bar-final" class="h-full bg-brand-sage w-0 transition-all duration-1000 ease-out flex items-center justify-end px-3 text-white text-xs font-bold">80%</div>
-                            </div>
+                            <div class="flex justify-between items-end"><span class="text-brand-sage font-bold text-lg">最終實際到手</span><span class="text-brand-sage font-bold text-lg">約 8,000 萬</span></div>
+                            <div class="h-8 w-full bg-brand-sand/20 rounded-full overflow-hidden relative"><div id="bar-final" class="h-full bg-brand-sage w-0 transition-all duration-1000 ease-out flex items-center justify-end px-3 text-white text-xs font-bold">80%</div></div>
                         </div>
                     </div>
 
@@ -686,13 +607,11 @@
                         <button onclick="quizApp.reset()" class="mt-4 px-6 py-2 border border-white/30 rounded-full text-xs hover:bg-white/10 transition-colors">重新測驗</button>
                     </div>
 
-                    <!-- LINE@ CTA (Quiz Level 4) -->
                     <a href="https://line.me/R/ti/p/@890mvlvl" target="_blank" class="block w-full py-3 bg-[#06C755] text-white rounded-full font-bold shadow-md hover:shadow-lg text-center transition-all flex items-center justify-center gap-2">
                         <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M21.5 10.3c0-4.8-4.6-8.8-10.2-8.8S1.1 5.4 1.1 10.3c0 4.1 3.5 7.6 8.3 8.4l-.5 2.5c-.1.3.2.6.5.4l4.2-2.8c5.4-.5 7.9-4.2 7.9-8.5z"/></svg>
                         了解常溫理財課程
                     </a>
                 </div>
-
             </div>
         </div>
     </div>
@@ -709,7 +628,6 @@
                     { t: "保險防護", d: "將無法承擔的巨大風險（醫療、壽險）轉嫁給保險公司，以小博大。" },
                     { t: "債務清理", d: "優先處理高利率壞債（如信用卡循環利息），止住財務破口。" }
                 ],
-                // Level 1 CTA
                 cta: `
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <p class="text-xs text-brand-ink/40 tracking-wider">想知道您的安全水位在哪裡？</p>
@@ -731,7 +649,6 @@
                     { t: "專款專用", d: "為不同目標（旅遊、買房）設立獨立子帳戶，避免資金混用。" },
                     { t: "啟動投資", d: "透過定期定額，累積第一桶金，作為進入市場的入場券。" }
                 ],
-                // Level 2 CTA
                 cta: `
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <p class="text-xs text-brand-ink/40 tracking-wider">不知道薪水該如何分配？</p>
@@ -752,7 +669,6 @@
                     { t: "長期思維", d: "忽略市場短期雜訊，專注於長期趨勢，保持在市場中。" },
                     { t: "被動收入", d: "逐步建立股息或租金流，讓資產產生的現金流覆蓋生活支出。" }
                 ],
-                // Level 3 CTA
                 cta: `
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <p class="text-xs text-brand-ink/40 tracking-wider">想看看複利滾雪球的威力？</p>
@@ -773,7 +689,6 @@
                     { t: "稅務傳承", d: "預先規劃遺產稅與贈與稅，確保家族財富能順利移轉。" },
                     { t: "社會影響", d: "透過慈善與回饋，將金錢轉化為對社會的正面影響力。" }
                 ],
-                // Level 4 CTA
                 cta: `
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <p class="text-xs text-brand-ink/40 tracking-wider">擔心資產傳承時縮水？</p>
@@ -933,14 +848,9 @@
             }
 
             // Calculation Logic (FV of Annuity)
-            // FV = P * [((1 + r)^n - 1) / r] * (1+r)  <-- Making it simple monthly compounding
-            // rate = 0.08 / 12
-            // n = years * 12
-            
             const r = 0.08 / 12;
             const n = years * 12;
             
-            // FV formula for monthly investment made at the end of period
             let fv = amount * ( (Math.pow(1+r, n) - 1) / r );
             
             const totalPrincipal = amount * n;
@@ -955,8 +865,7 @@
             document.getElementById('invest-profit').innerText = `$${Math.round(profit).toLocaleString()}`;
             
             // Bar Width Calculation
-            // Scale logic: profit vs principal ratio
-            const total = totalPrincipal + profit; // which is fv
+            const total = totalPrincipal + profit; 
             const principalPct = (totalPrincipal / total) * 100;
             const profitPct = (profit / total) * 100;
 
@@ -1044,7 +953,6 @@
                 
                 q.options.forEach((opt, idx) => {
                     const btn = document.createElement('button');
-                    // Styling handled by utility classes and specific Quiz CSS
                     btn.className = 'option-btn w-full p-4 text-left border rounded-xl hover:bg-brand-paper transition-all text-sm md:text-base border-brand-sand bg-white shadow-sm';
                     btn.innerText = opt.text;
                     btn.onclick = () => this.handleAnswer(idx, btn, opt.correct);
@@ -1057,43 +965,34 @@
             },
 
             handleAnswer: function(selectedIndex, btnElement, isCorrect) {
-                // Disable all buttons
                 const allBtns = document.querySelectorAll('.option-btn');
                 allBtns.forEach(b => b.classList.add('disabled'));
 
                 const feedbackHeader = document.getElementById('feedback-header');
                 const feedbackContainer = document.getElementById('quiz-feedback');
 
-                // Highlight selected
                 if(isCorrect) {
                     btnElement.classList.add('correct');
                     this.score++;
-                    // Add Checkmark
                     btnElement.innerHTML += `<span class="float-right text-brand-sage"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg></span>`;
                     
-                    // Feedback Style (Success)
                     feedbackContainer.className = "bg-brand-sage/10 p-4 rounded-xl border border-brand-sage/20 mb-4";
                     feedbackHeader.innerHTML = `<span class="text-brand-sage font-bold flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>完全正確！</span>`;
                 } else {
                     btnElement.classList.add('wrong');
-                    // Add Cross
                     btnElement.innerHTML += `<span class="float-right text-brand-clay"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" /></svg></span>`;
                     
-                    // Show correct one
                     const correctIdx = quizData[this.currentIdx].options.findIndex(o => o.correct);
                     allBtns[correctIdx].classList.add('correct');
                     allBtns[correctIdx].innerHTML += `<span class="float-right text-brand-sage"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg></span>`;
 
-                    // Feedback Style (Error)
                     feedbackContainer.className = "bg-brand-clay/10 p-4 rounded-xl border border-brand-clay/20 mb-4";
                     feedbackHeader.innerHTML = `<span class="text-brand-clay font-bold flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>這題的關鍵是...</span>`;
                 }
 
-                // Show Feedback
                 document.getElementById('rationale-text').innerText = quizData[this.currentIdx].rationale;
                 feedbackContainer.classList.remove('hidden');
                 
-                // Show Next Button or Finish
                 const nextBtn = document.getElementById('next-btn');
                 nextBtn.classList.remove('hidden');
                 nextBtn.innerText = (this.currentIdx === quizData.length - 1) ? "查看資產縮水真相" : "下一題";
@@ -1112,7 +1011,6 @@
                 document.getElementById('quiz-q').classList.add('hidden');
                 document.getElementById('quiz-result').classList.remove('hidden');
                 
-                // Trigger Chart Animation
                 setTimeout(() => {
                     document.getElementById('bar-tax').style.width = '12%';
                     document.getElementById('bar-loss').style.width = '5%';
@@ -1126,7 +1024,6 @@
                 this.score = 0;
                 document.getElementById('quiz-result').classList.add('hidden');
                 document.getElementById('quiz-intro').classList.remove('hidden');
-                // Reset bars for next time
                 document.getElementById('bar-tax').style.width = '0%';
                 document.getElementById('bar-loss').style.width = '0%';
                 document.getElementById('bar-legal').style.width = '0%';

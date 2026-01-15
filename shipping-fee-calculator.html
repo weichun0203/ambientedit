@@ -1,34 +1,55 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <!-- Google tag (gtag.js)  -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>常溫跨境成本計算器｜Ambient Cross-Border Cost Calculator</title>
+    <meta name="description" content="常溫編集所推出的跨境電商成本計算工具，協助計算採購、運費、平台手續費、關稅與匯差，精準掌握每一筆訂單的真實利潤。">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "常溫跨境成本計算器",
+      "alternateName": "Ambient Cross-Border Cost Calculator",
+      "operatingSystem": "Any",
+      "applicationCategory": "BusinessApplication",
+      "description": "跨境電商成本試算工具，包含運費、匯率與手續費計算。",
+      "brand": {
+        "@type": "Brand",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "TWD"
+      }
+    }
+    </script>
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-    
       gtag('config', 'G-2F079YMSFW');
     </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>常溫跨境成本計算器｜Ambient Cross-Border Cost Calculator</title>
     
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Lucide Icons Library -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Vue 3 -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
-    <!-- 品牌 CIS 設定 -->
     <script>
         tailwind.config = {
             theme: {
@@ -80,7 +101,7 @@
             background-color: #fdfbf7;
             color: #4a4a4a;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
-            font-size: 16px; /* 稍微縮小基礎字體以適應更緊湊的佈局 */
+            font-size: 16px;
         }
         
         /* 隱藏數字輸入框的箭頭 */
@@ -134,16 +155,11 @@
             box-shadow: none !important;
         }
 
-        /* 修正：卡片寬度調整為響應式，以容納更多內容 */
         .card-scenario {
             @apply min-w-[280px] lg:min-w-[200px] flex-1 bg-white rounded-xl shadow-soft border-2 border-white transition-all duration-200 relative overflow-hidden flex flex-col;
         }
         .card-scenario:hover {
             @apply shadow-lg -translate-y-1;
-        }
-
-        .float-btn {
-            @apply flex items-center gap-2 px-6 py-3 rounded-full shadow-lg transition-transform transform active:scale-95 font-serif font-bold tracking-wide;
         }
 
         .stamp-btn {
@@ -161,13 +177,28 @@
         .fade-enter-from, .fade-leave-to {
             transform: translateY(20px);
         }
+        
+        /* Utility */
+        .action-btn {
+            @apply flex items-center gap-2 px-4 py-2 bg-white text-ink rounded-lg shadow-sm border border-sand hover:border-sage-500 hover:text-sage-600 transition-all text-sm font-medium font-serif;
+        }
+        .input-group {
+            @apply flex flex-col gap-2 relative min-w-0; 
+        }
+        .input-group label {
+            @apply text-sm font-bold uppercase tracking-wider text-sage-600 font-sans truncate; 
+        }
+        .input-group input {
+            @apply w-full p-2 bg-sand/30 border-none rounded-t focus:bg-white outline-none transition-all text-ink font-mono text-xl min-w-0; 
+        }
+        
+        [v-cloak] { display: none; }
     </style>
 </head>
-<body class="antialiased font-sans selection:bg-sage-200 selection:text-ink">
+<body class="antialiased font-sans selection:bg-sage-200 selection:text-ink flex flex-col min-h-screen">
 
-    <div id="app" class="min-h-screen pb-32 relative flex flex-col items-center">
+    <div id="app" v-cloak class="flex-grow pb-32 relative flex flex-col items-center w-full">
         
-        <!-- Header -->
         <header class="w-full max-w-6xl mx-auto px-6 pt-12 pb-8 flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-sand/50">
             <div class="flex items-center gap-4">
                 <div class="w-14 h-14 bg-sage-500 rounded-full flex items-center justify-center text-paper shadow-soft">
@@ -179,18 +210,14 @@
                 </div>
             </div>
 
-            <!-- Header Actions -->
             <div class="flex flex-wrap gap-3 items-center">
-                <!-- 回主頁按鈕 -->
-                <a href="https://weichun0203.github.io/ambientedit/" class="action-btn group">
-                    <lucide-icon name="home" class="w-4 h-4"></lucide-icon>
-                    <span>回主頁</span>
+                <a href="https://weichun0203.github.io/ambientedit/" class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50" aria-label="返回常溫首頁">
+                    <lucide-icon name="home" class="w-4 h-4 text-brand-sage group-hover:text-brand-ink transition-colors"></lucide-icon>
+                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors">常溫首頁</span>
                 </a>
 
-                <!-- 分隔線 (Divider) -->
                 <div class="hidden md:block w-px h-8 bg-sand mx-1"></div>
                 
-                <!-- 工具連結群組 -->
                 <a href="https://www.bot.com.tw/tw/personal-banking" target="_blank" class="action-btn group">
                     <lucide-icon name="external-link" class="w-4 h-4"></lucide-icon>
                     <span>匯率查詢</span>
@@ -202,10 +229,8 @@
             </div>
         </header>
 
-        <!-- Main Content -->
         <main class="w-full max-w-6xl mx-auto px-6 py-8">
             
-            <!-- Global Settings Panel -->
             <section class="bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-soft border border-white mb-12">
                 <div class="flex items-center justify-center gap-2 mb-8 text-sage-700">
                     <lucide-icon name="package" class="w-5 h-5"></lucide-icon>
@@ -257,11 +282,9 @@
                 </div>
             </section>
 
-            <!-- Comparison Section -->
-            <div class="flex gap-0 md:gap-4 items-start"> <!-- gap-6 -> gap-4 -->
+            <div class="flex gap-0 md:gap-4 items-start">
                 
-                <!-- Left Labels (Desktop) -->
-                <div class="hidden lg:block w-36 flex-shrink-0 text-right pt-2"> <!-- w-40 -> w-36 -->
+                <div class="hidden lg:block w-36 flex-shrink-0 text-right pt-2">
                     <div class="pt-8 pb-4 px-2">
                         <div class="h-row-md flex items-center justify-end font-serif text-sage-600 text-base">運送方式</div>
                         <div class="h-row-md flex items-center justify-end font-serif text-sage-600 text-base">郵寄費用</div>
@@ -279,8 +302,6 @@
                     </div>
                 </div>
 
-                <!-- Cards Container -->
-                <!-- gap-4 -> gap-2, px-2 -> px-0 -->
                 <div 
                     class="flex-1 flex gap-2 overflow-x-auto pb-8 pt-2 px-0 -mx-2 items-start cursor-grab active:cursor-grabbing select-none"
                     ref="scrollContainer"
@@ -295,7 +316,6 @@
                          :class="['card-scenario group flex-shrink-0']"
                          :style="selectedId === scenario.id ? 'border-color: #8da399; box-shadow: 0 0 0 1px #8da399, 0 10px 15px -3px rgba(0, 0, 0, 0.1); background-color: #f4f7f6;' : ''">
                         
-                        <!-- Card Header -->
                         <div class="pt-8 pb-4 px-2 text-center border-b border-sand relative bg-gradient-to-b from-paper to-transparent">
                             <div class="h-row-md flex items-center justify-center">
                                 <input type="text" v-model="scenario.name" 
@@ -306,7 +326,7 @@
                             
                             <div class="h-row-md flex items-center justify-center gap-2">
                                 <span class="lg:hidden text-sm text-sage-500 font-serif whitespace-nowrap">郵資</span>
-                                <div class="relative w-28 mx-auto"> <!-- w-32 -> w-28 -->
+                                <div class="relative w-28 mx-auto">
                                     <span class="absolute left-2 top-1/2 -translate-y-1/2 text-ink/30 text-sm">$</span>
                                     <input type="number" v-model.number="scenario.shippingFee" 
                                            @click="selectScenario(scenario.id)"
@@ -315,8 +335,7 @@
                             </div>
                         </div>
 
-                        <!-- Card Body (Calculations) -->
-                        <div class="p-4 pb-0"> <!-- p-5 -> p-4 -->
+                        <div class="p-4 pb-0">
                             <div class="border-t border-dashed border-sand lg:hidden mb-4"></div>
 
                             <div class="h-row-sm flex items-center justify-between lg:justify-center">
@@ -324,16 +343,16 @@
                                 <span class="font-sans text-ink/80 text-lg">{{ calculate(scenario).totalGoodsPrice.toLocaleString() }}</span>
                             </div>
 
-                            <div class="h-row-lg flex items-center justify-between lg:justify-center bg-sand/20 lg:bg-transparent -mx-4 px-4 lg:mx-0 lg:px-0 mt-2 lg:mt-0"> <!-- mx-5 -> mx-4 -->
+                            <div class="h-row-lg flex items-center justify-between lg:justify-center bg-sand/20 lg:bg-transparent -mx-4 px-4 lg:mx-0 lg:px-0 mt-2 lg:mt-0">
                                 <span class="lg:hidden font-serif font-bold text-ink">台幣成本</span>
                                 <span class="font-serif font-bold text-xl text-ink">{{ calculate(scenario).totalTwd.toLocaleString() }}</span>
                             </div>
 
-                            <div class="h-row-lg flex items-center justify-between lg:justify-center bg-sage-100/50 lg:bg-transparent -mx-4 px-4 lg:mx-0 lg:px-0 text-sage-700"> <!-- mx-5 -> mx-4 -->
+                            <div class="h-row-lg flex items-center justify-between lg:justify-center bg-sage-100/50 lg:bg-transparent -mx-4 px-4 lg:mx-0 lg:px-0 text-sage-700">
                                 <span class="lg:hidden font-serif font-bold">美金報價</span>
                                 <div class="flex items-center gap-1">
-                                    <lucide-icon name="dollar-sign" class="w-5 h-5"></lucide-icon> <!-- w-6 -> w-5 -->
-                                    <span class="font-serif font-bold text-3xl">{{ calculate(scenario).convertedUsd.toLocaleString() }}</span> <!-- text-4xl -> text-3xl -->
+                                    <lucide-icon name="dollar-sign" class="w-5 h-5"></lucide-icon>
+                                    <span class="font-serif font-bold text-3xl">{{ calculate(scenario).convertedUsd.toLocaleString() }}</span>
                                 </div>
                             </div>
 
@@ -350,8 +369,7 @@
                             </div>
                         </div>
 
-                        <!-- Explicit Remove Button -->
-                        <div class="p-3 pt-2"> <!-- p-4 -> p-3 -->
+                        <div class="p-3 pt-2">
                              <button @click.stop="removeScenario(scenario.id)" 
                                      class="w-full py-1.5 flex items-center justify-center gap-2 text-sand hover:text-clay-600 hover:bg-clay-100 rounded-lg transition-colors text-xs font-bold tracking-wider group-hover:text-sand/80">
                                 <lucide-icon name="trash-2" class="w-3.5 h-3.5"></lucide-icon>
@@ -361,8 +379,7 @@
 
                     </div>
 
-                    <!-- Add Button -->
-                    <div class="min-w-[60px] flex items-center justify-center pt-20 flex-shrink-0"> <!-- min-w-80 -> min-w-60 -->
+                    <div class="min-w-[60px] flex items-center justify-center pt-20 flex-shrink-0">
                         <button @click="addScenario" class="w-12 h-12 rounded-full border-2 border-dashed border-sage-200 text-sage-500 hover:border-sage-500 hover:text-sage-600 hover:bg-white flex items-center justify-center transition-all group">
                             <lucide-icon name="plus" class="w-6 h-6 group-hover:scale-110 transition-transform"></lucide-icon>
                         </button>
@@ -373,7 +390,6 @@
 
         </main>
 
-        <!-- Toast Notification -->
         <transition name="toast">
             <div v-if="showToast" class="fixed bottom-28 md:bottom-10 left-1/2 -translate-x-1/2 z-50 bg-ink text-paper px-6 py-3 rounded-full shadow-lg flex items-center gap-3 font-medium border border-sage-500/30 backdrop-blur-md pointer-events-none">
                 <lucide-icon name="check" class="w-4 h-4 text-sage-500"></lucide-icon>
@@ -381,11 +397,9 @@
             </div>
         </transition>
 
-        <!-- Floating Actions -->
         <transition name="fade">
             <div v-if="selectedId" class="fixed bottom-8 right-8 z-40 flex flex-col md:flex-row gap-4 items-end">
                 
-                <!-- 複製中文報價 (票券風格) -->
                 <button @click="copyQuote('zh')" class="stamp-btn group bg-sage-50 border-sage-500 text-sage-700">
                     <div class="flex items-center gap-2">
                         <lucide-icon name="copy" class="w-5 h-5 group-hover:scale-110 transition-transform"></lucide-icon>
@@ -393,7 +407,6 @@
                     </div>
                 </button>
 
-                <!-- COPY ENGLISH (與中文相同的淺色風格) -->
                 <button @click="copyQuote('en')" class="stamp-btn group bg-sage-50 border-sage-500 text-sage-700 hover:bg-sage-100">
                     <div class="flex items-center gap-2">
                         <lucide-icon name="globe" class="w-5 h-5 group-hover:scale-110 transition-transform"></lucide-icon>
@@ -405,11 +418,16 @@
 
     </div>
 
+    <footer class="mt-auto py-8 text-center text-ink/30 text-xs font-serif tracking-widest uppercase">
+        &copy; 2026 常溫編集所 Ambient Edit Studio. All Rights Reserved.
+    </footer>
+
     <script>
-        const { createApp, ref, computed } = Vue;
+        const { createApp, ref, computed, watch, onMounted } = Vue;
 
         const app = createApp({
             setup() {
+                // State Refs
                 const quantity = ref(20);
                 const unitPrice = ref(400);
                 const handlingRate = ref(4.4);
@@ -417,16 +435,65 @@
                 const exchangeRate = ref(30.5);
                 const spotBuyRate = ref(30.5);
                 
+                const scenarios = ref([
+                    { id: 1, name: 'EMS (快捷)', shippingFee: 610 },
+                    { id: 2, name: 'Airmail (航空)', shippingFee: 350 },
+                    { id: 3, name: 'SAL (海空)', shippingFee: 340 },
+                    { id: 4, name: 'Surface (水陸)', shippingFee: 250 },
+                ]);
+
                 const selectedId = ref(null);
                 const showToast = ref(false);
                 const toastMsg = ref('');
 
-                // Drag Scroll Logic
+                // Drag Scroll Refs
                 const scrollContainer = ref(null);
                 const isDragging = ref(false);
                 const startX = ref(0);
                 const scrollLeft = ref(0);
 
+                // 5. 本地存取設定 (LocalStorage Logic)
+                const STORAGE_KEY = 'ambient_cross_border_v1';
+
+                const loadState = () => {
+                    const stored = localStorage.getItem(STORAGE_KEY);
+                    if (stored) {
+                        try {
+                            const data = JSON.parse(stored);
+                            if(data.quantity) quantity.value = data.quantity;
+                            if(data.unitPrice) unitPrice.value = data.unitPrice;
+                            if(data.handlingRate) handlingRate.value = data.handlingRate;
+                            if(data.fixedTax) fixedTax.value = data.fixedTax;
+                            if(data.exchangeRate) exchangeRate.value = data.exchangeRate;
+                            if(data.spotBuyRate) spotBuyRate.value = data.spotBuyRate;
+                            if(data.scenarios && Array.isArray(data.scenarios)) scenarios.value = data.scenarios;
+                        } catch (e) { console.error('Failed to load state', e); }
+                    }
+                };
+
+                const saveState = () => {
+                    const state = {
+                        quantity: quantity.value,
+                        unitPrice: unitPrice.value,
+                        handlingRate: handlingRate.value,
+                        fixedTax: fixedTax.value,
+                        exchangeRate: exchangeRate.value,
+                        spotBuyRate: spotBuyRate.value,
+                        scenarios: scenarios.value
+                    };
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                };
+
+                // Watchers for persistence
+                watch([quantity, unitPrice, handlingRate, fixedTax, exchangeRate, spotBuyRate, scenarios], () => {
+                    saveState();
+                }, { deep: true });
+
+                onMounted(() => {
+                    loadState();
+                });
+
+                // Drag Logic
                 const startDrag = (e) => {
                     isDragging.value = true;
                     startX.value = e.pageX - scrollContainer.value.offsetLeft;
@@ -444,13 +511,6 @@
                     const walk = (x - startX.value) * 1.5; // Scroll-fast
                     scrollContainer.value.scrollLeft = scrollLeft.value - walk;
                 };
-
-                const scenarios = ref([
-                    { id: 1, name: 'EMS (快捷)', shippingFee: 610 },
-                    { id: 2, name: 'Airmail (航空)', shippingFee: 350 },
-                    { id: 3, name: 'SAL (海空)', shippingFee: 340 },
-                    { id: 4, name: 'Surface (水陸)', shippingFee: 250 },
-                ]);
 
                 const safeCeil = (num) => {
                     const cleanNum = Number(num.toFixed(4));
@@ -555,7 +615,6 @@ Ambient Edit Studio`;
                     quantity, unitPrice, handlingRate, fixedTax, exchangeRate, spotBuyRate,
                     scenarios, selectedId, showToast, toastMsg,
                     calculate, addScenario, removeScenario, selectScenario, copyQuote,
-                    // Drag Scroll Refs & Methods
                     scrollContainer, startDrag, stopDrag, doDrag
                 };
             }
@@ -586,53 +645,5 @@ Ambient Edit Studio`;
 
         app.mount('#app');
     </script>
-
-    <style>
-        /* CSS Utility Classes & Components */
-        .action-btn {
-            @apply flex items-center gap-2 px-4 py-2 bg-white text-ink rounded-lg shadow-sm border border-sand hover:border-sage-500 hover:text-sage-600 transition-all text-sm font-medium font-serif;
-        }
-        .action-btn-primary {
-            @apply flex items-center gap-2 px-4 py-2 bg-sage-500 text-paper rounded-lg shadow-md hover:bg-sage-600 transition-all text-sm font-medium font-serif;
-        }
-        
-        .input-group {
-            @apply flex flex-col gap-2 relative min-w-0; 
-        }
-        .input-group label {
-            @apply text-sm font-bold uppercase tracking-wider text-sage-600 font-sans truncate; 
-        }
-        .input-group input {
-            @apply w-full p-2 bg-sand/30 border-none rounded-t focus:bg-white outline-none transition-all text-ink font-mono text-xl min-w-0; 
-        }
-
-        /* 修正：卡片寬度調整為響應式，以容納更多內容 */
-        .card-scenario {
-            @apply min-w-[280px] lg:min-w-[200px] flex-1 bg-white rounded-xl shadow-soft border-2 border-white transition-all duration-200 relative overflow-hidden flex flex-col;
-        }
-        .card-scenario:hover {
-            @apply shadow-lg -translate-y-1;
-        }
-
-        .float-btn {
-            @apply flex items-center gap-2 px-6 py-3 rounded-full shadow-lg transition-transform transform active:scale-95 font-serif font-bold tracking-wide;
-        }
-
-        .stamp-btn {
-            @apply flex items-center justify-center gap-2 px-6 py-4 rounded-xl border-2 border-dashed shadow-sm hover:shadow-md transition-all duration-200 font-serif font-bold text-lg cursor-pointer active:scale-95;
-        }
-
-        /* Vue Transitions */
-        .toast-enter-active, .toast-leave-active, .fade-enter-active, .fade-leave-active {
-            transition: all 0.3s ease;
-        }
-        .toast-enter-from, .toast-leave-to, .fade-enter-from, .fade-leave-to {
-            opacity: 0;
-            transform: translate(-50%, 20px);
-        }
-        .fade-enter-from, .fade-leave-to {
-            transform: translateY(20px);
-        }
-    </style>
 </body>
 </html>

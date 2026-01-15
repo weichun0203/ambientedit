@@ -1,39 +1,64 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-        <!-- Google tag (gtag.js)  -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>常溫存股｜Ambient Wealth Logic</title>
+    <meta name="description" content="常溫編集所推出的存股現金流計算工具，協助您計算平均月領股息，設定被動收入目標，打造溫柔而堅定的財務基礎。">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FinancialProduct",
+      "name": "常溫存股",
+      "alternateName": "Ambient Wealth Logic",
+      "description": "存股現金流計算工具，提供股息試算、目標進度追蹤與投資組合管理功能。",
+      "brand": {
+        "@type": "Brand",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "TWD"
+      }
+    }
+    </script>
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-    
       gtag('config', 'G-2F079YMSFW');
     </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>常溫存股｜Ambient Wealth Logic</title>
     
-    <!-- Google Fonts: 品牌指定字體 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS (快速樣式開發) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 設定品牌色票給 Tailwind -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         brand: {
-                            paper: '#fdfbf7', // 背景紙色
-                            ink: '#4a4a4a',   // 主要文字
-                            sage: '#8da399',  // 品牌輔助色 (綠) - 用於正向數據
-                            clay: '#d4a59a',  // 品牌輔助色 (紅/橘) - 用於按鈕/重點
-                            sand: '#e6e2dd',  // 線條/邊框
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
                             dark: '#2c2c2c'
                         }
                     },
@@ -50,28 +75,20 @@
         }
     </script>
 
-    <!-- Vue 3 (透過 CDN 引入，輕量化解決方案) -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-
     <style>
         /* 品牌質感：紙張紋理與全局設定 */
         body {
             background-color: #fdfbf7;
             color: #4a4a4a;
-            /* 模擬紙張纖維質感的微噪點 */
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
         }
 
-        /* 隱藏數字輸入框的箭頭 (Chrome, Safari, Edge, Opera) */
+        /* 隱藏數字輸入框的箭頭 */
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
-        /* Firefox */
         input[type=number] {
             -moz-appearance: textfield;
         }
@@ -84,16 +101,6 @@
             opacity: 0;
         }
         
-        .list-enter-active,
-        .list-leave-active {
-            transition: all 0.4s ease;
-        }
-        .list-enter-from,
-        .list-leave-to {
-            opacity: 0;
-            transform: translateX(-20px);
-        }
-
         /* Modal 動畫 */
         .modal-enter-active, .modal-leave-active {
             transition: opacity 0.3s ease;
@@ -107,16 +114,16 @@
         .modal-enter-from .modal-content, .modal-leave-to .modal-content {
             transform: scale(0.95);
         }
+        
+        [v-cloak] { display: none; }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
 
-    <div id="app" class="flex-grow relative">
+    <div id="app" v-cloak class="flex-grow relative">
         
-        <!-- Header (Layout Updated: Left Aligned Title + Right Button) -->
         <header class="pt-10 pb-6 px-4 md:px-4 max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
             
-            <!-- Left: Title Group -->
             <div class="text-left w-full md:w-auto">
                 <h1 class="font-serif text-3xl md:text-4xl font-bold text-brand-ink tracking-widest mb-1 flex items-center gap-3">
                     <i data-lucide="sprout" class="text-brand-sage w-8 h-8"></i>
@@ -127,20 +134,24 @@
                 </p>
             </div>
 
-            <!-- Right: Home Button (With Outline) -->
-            <a href="https://weichun0203.github.io/ambientedit" class="flex items-center gap-2 px-5 py-2 border border-brand-sand rounded-full text-brand-ink/60 hover:text-brand-clay hover:border-brand-clay transition-all duration-300 group no-underline bg-white/50 backdrop-blur-sm shadow-sm self-start md:self-center">
-                <i data-lucide="home" class="w-4 h-4 transition-transform group-hover:scale-110"></i>
-                <span class="font-serif text-sm tracking-wider font-medium">常溫首頁</span>
-            </a>
+            <nav>
+                <a href="https://weichun0203.github.io/ambientedit/" 
+                   class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+                   aria-label="返回常溫首頁">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
+                </a>
+            </nav>
 
         </header>
 
         <main class="max-w-5xl mx-auto px-4 pb-20">
             
-            <!-- Dashboard: 數據儀表板 -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
                 
-                <!-- Card 1: 每月加薪 (Focus on Growth - Sage Color) -->
                 <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-soft border border-brand-sand relative overflow-hidden group hover:border-brand-sage/30 transition-colors duration-500">
                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <i data-lucide="trending-up" class="w-24 h-24 text-brand-sage"></i>
@@ -160,7 +171,6 @@
                     </div>
                 </div>
 
-                <!-- Card 2: 目標進度 (Focus on Warmth/Goal - Clay/Blue mixed) -->
                 <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-soft border border-brand-sand relative overflow-hidden group hover:border-brand-clay/30 transition-colors duration-500">
                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <i data-lucide="target" class="w-24 h-24 text-brand-clay"></i>
@@ -170,13 +180,12 @@
                         <div>
                             <div class="flex justify-between items-start">
                                 <p class="font-serif text-brand-ink/60 mb-2">月領股息目標</p>
-                                <!-- 編輯目標按鈕 -->
                                 <button @click="isEditingGoal = !isEditingGoal" class="text-xs text-brand-ink/40 hover:text-brand-clay transition flex items-center gap-1">
                                     <i data-lucide="edit-3" class="w-3 h-3"></i> 修改
                                 </button>
                             </div>
 
-                            <div v-if="isEditingGoal" class="flex items-center gap-2 mb-2 animate-fade-in">
+                            <div v-if="isEditingGoal" class="flex items-center gap-2 mb-2">
                                 <input 
                                     type="number" 
                                     v-model="tempGoal"
@@ -210,10 +219,8 @@
                 </div>
             </div>
 
-            <!-- Main Content: Form & List -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 
-                <!-- Left: 輸入區塊 (Sticky) -->
                 <div class="lg:col-span-4">
                     <div class="bg-white rounded-2xl shadow-soft border border-brand-sand p-6 md:p-8 sticky top-6">
                         <h3 class="font-serif text-xl font-bold text-brand-ink mb-6 flex items-center gap-2 border-b border-brand-sand pb-4">
@@ -222,7 +229,6 @@
                         </h3>
 
                         <form @submit.prevent="addStock" class="space-y-5">
-                            <!-- 股票名稱 -->
                             <div class="space-y-1">
                                 <label class="block text-xs font-bold text-brand-ink/50 uppercase tracking-widest font-sans">Name / Code</label>
                                 <input
@@ -234,7 +240,6 @@
                                 />
                             </div>
 
-                            <!-- 股數與配息 -->
                             <div class="grid grid-cols-2 gap-4">
                                 <div class="space-y-1">
                                     <label class="block text-xs font-bold text-brand-ink/50 uppercase tracking-widest font-sans">Shares</label>
@@ -263,7 +268,6 @@
                                 </div>
                             </div>
 
-                            <!-- 頻率選擇 -->
                             <div class="space-y-2 pt-2">
                                 <label class="block text-xs font-bold text-brand-ink/50 uppercase tracking-widest font-sans">Frequency</label>
                                 <div class="grid grid-cols-3 gap-3">
@@ -284,7 +288,6 @@
                                 </div>
                             </div>
 
-                            <!-- 送出按鈕 -->
                             <button 
                                 type="submit" 
                                 class="w-full mt-4 bg-brand-ink hover:bg-brand-dark text-brand-paper font-bold py-3.5 rounded-lg shadow-lg transform active:scale-[0.98] transition flex justify-center items-center gap-2 group"
@@ -293,7 +296,6 @@
                                 <span class="font-serif tracking-widest">寫入投資組合</span>
                             </button>
 
-                            <!-- Future Feature: Google Sync Indicator -->
                             <div class="pt-4 mt-4 border-t border-brand-sand/50 text-center">
                                 <p class="text-[10px] text-brand-ink/30 font-serif">
                                     支援格式：CSV 匯出 / JSON 格式相容 Google Apps Script
@@ -303,27 +305,21 @@
                     </div>
                 </div>
 
-                <!-- Right: 清單區塊 -->
                 <div class="lg:col-span-8">
                     <div class="bg-white rounded-2xl shadow-soft border border-brand-sand overflow-hidden min-h-[500px] flex flex-col">
                         
-                        <!-- List Header: Flexbox for Title & Actions -->
                         <div class="p-6 md:p-8 border-b border-brand-sand flex flex-col md:flex-row justify-between items-center gap-4 bg-brand-paper/50">
                             
-                            <!-- Title -->
                             <h3 class="font-serif text-xl font-bold text-brand-ink flex items-center gap-2">
                                 <i data-lucide="book-open" class="w-5 h-5 text-brand-clay"></i>
                                 投資明細帳本
                             </h3>
 
-                            <!-- Right Actions: Count & Import/Export -->
                             <div class="flex items-center gap-2">
-                                <!-- Count -->
                                 <span class="text-xs font-sans text-brand-ink/50 bg-brand-sand/30 px-3 py-1.5 rounded-full border border-brand-sand/50">
                                     共 {{ stocks.length }} 筆
                                 </span>
                                 
-                                <!-- Import Button -->
                                 <input 
                                     type="file" 
                                     ref="fileInput" 
@@ -340,7 +336,6 @@
                                     <span>匯入</span>
                                 </button>
 
-                                <!-- Export Button (常駐顯示) -->
                                 <button 
                                     @click="exportToCSV"
                                     class="flex items-center justify-center gap-1.5 text-xs font-sans text-brand-clay border border-brand-clay/50 px-3 py-1.5 rounded-full hover:bg-brand-clay hover:text-white transition group"
@@ -352,7 +347,6 @@
                             </div>
                         </div>
 
-                        <!-- Empty State -->
                         <div v-if="stocks.length === 0" class="flex-grow flex flex-col items-center justify-center p-12 text-center text-brand-ink/30">
                             <div class="w-20 h-20 bg-brand-sand/20 rounded-full flex items-center justify-center mb-6">
                                 <i data-lucide="coffee" class="w-10 h-10 opacity-50"></i>
@@ -361,7 +355,6 @@
                             <p class="font-sans text-sm font-light">請在左側輸入您的第一筆存股計畫，<br>開始累積您的被動收入。</p>
                         </div>
 
-                        <!-- Data List -->
                         <div v-else class="overflow-x-auto">
                             <table class="w-full text-left border-collapse">
                                 <thead class="bg-brand-paper text-brand-ink/50 text-xs font-bold uppercase tracking-widest font-sans">
@@ -375,7 +368,6 @@
                                 </thead>
                                 <tbody class="divide-y divide-brand-sand/50 font-sans text-sm text-brand-ink">
                                     <tr v-for="stock in stocks" :key="stock.id" class="hover:bg-brand-paper transition-colors group">
-                                        <!-- 名稱 -->
                                         <td class="p-5">
                                             <div class="font-bold text-base font-serif text-brand-ink">{{ stock.name }}</div>
                                             <a 
@@ -389,7 +381,6 @@
                                             </a>
                                         </td>
                                         
-                                        <!-- 股數 -->
                                         <td class="p-5 text-right">
                                             <div class="font-medium">{{ Number(stock.shares).toLocaleString() }} 股</div>
                                             <div class="text-[11px] text-brand-ink/40 mt-0.5">
@@ -397,7 +388,6 @@
                                             </div>
                                         </td>
                                         
-                                        <!-- 頻率/配息 -->
                                         <td class="p-5">
                                             <div class="flex items-center gap-2 mb-1">
                                                 <span 
@@ -416,14 +406,12 @@
                                             </div>
                                         </td>
                                         
-                                        <!-- 總額 -->
                                         <td class="p-5 text-right">
                                             <div class="font-mono font-bold text-brand-sage text-base">
                                                 {{ formatCurrency((stock.shares / 1000) * stock.dividend * stock.frequency) }}
                                             </div>
                                         </td>
                                         
-                                        <!-- 刪除按鈕 (取消透明度，常駐顯示) -->
                                         <td class="p-5 text-center">
                                             <button 
                                                 @click="confirmRemove(stock.id)"
@@ -438,23 +426,17 @@
                             </table>
                         </div>
                     </div>
-
-                    <!-- Footer Note -->
-                    <div class="mt-6 text-center">
-                        <p class="text-[10px] text-brand-ink/30 font-serif leading-relaxed">
-                            常溫編集所 Ambient Edit Studio · Financial Gardening Tool<br>
-                            * 本工具計算結果僅供參考，實際配息以券商公告為主。
-                        </p>
-                    </div>
                 </div>
             </div>
         </main>
 
-        <!-- Custom Delete Modal (Brand Style) -->
+        <footer class="mt-12 text-center text-brand-ink/30 text-xs font-serif tracking-widest uppercase pb-10">
+            &copy; 2026 常溫編集所 Ambient Edit Studio. All Rights Reserved.
+        </footer>
+
         <transition name="modal">
             <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-ink/20 backdrop-blur-sm">
                 <div class="modal-content bg-brand-paper rounded-2xl shadow-xl max-w-sm w-full p-6 border border-brand-sand relative">
-                    <!-- Decor -->
                     <div class="absolute top-0 left-0 w-full h-1 bg-brand-clay/30"></div>
                     
                     <div class="text-center mb-6">
@@ -485,7 +467,6 @@
 
     </div>
 
-    <!-- Vue Application Logic -->
     <script>
         const { createApp, ref, computed, watch, onMounted, nextTick } = Vue;
 
@@ -497,7 +478,7 @@
                 const tempGoal = ref(10000);
                 const isEditingGoal = ref(false);
 
-                // Modal State - Reset to false for production
+                // Modal State
                 const showDeleteModal = ref(false);
                 const itemToDelete = ref(null);
 
@@ -518,7 +499,7 @@
                     { val: '12', label: '月配' }
                 ];
 
-                // --- Persistence (LocalStorage) ---
+                // 5. 本地存取設定 (LocalStorage)
                 const loadData = () => {
                     try {
                         const savedStocks = localStorage.getItem('ambient_dividend_stocks');
@@ -636,8 +617,7 @@
                                     alert('匯入成功！');
                                 }
                             } else {
-                                // CSV Import (Simple Parser for our specific format)
-                                // Skip preamble, look for header row
+                                // CSV Import
                                 const lines = content.split(/\r\n|\n/);
                                 let startIndex = -1;
                                 
@@ -655,18 +635,14 @@
                                         const line = lines[i].trim();
                                         if(!line) continue;
                                         
-                                        // CSV split logic dealing with simple quotes
-                                        // Format: "Name",Shares,Dividend,FreqLabel,Total
                                         const parts = line.split(',');
                                         
                                         if(parts.length >= 4) {
-                                            // Handle name (remove quotes)
                                             let name = parts[0].replace(/^"|"$/g, '');
                                             let shares = parseFloat(parts[1]);
                                             let dividend = parseFloat(parts[2]);
                                             let freqLabel = parts[3];
                                             
-                                            // Convert Label back to Frequency
                                             let frequency = 1;
                                             if(freqLabel === '月配') frequency = 12;
                                             else if(freqLabel === '季配') frequency = 4;
@@ -674,7 +650,7 @@
 
                                             if(name && !isNaN(shares)) {
                                                 newStocks.push({
-                                                    id: Date.now() + i, // unique id
+                                                    id: Date.now() + i,
                                                     name,
                                                     shares,
                                                     dividend,
@@ -745,7 +721,7 @@
                     });
                 });
 
-                // Fixed: Added { deep: true } to ensure icons render on array mutation
+                // Watch for changes to re-render icons
                 watch([stocks, isEditingGoal, showDeleteModal], () => {
                     nextTick(() => {
                         lucide.createIcons();

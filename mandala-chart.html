@@ -1,27 +1,51 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <!-- Google tag (gtag.js) -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>常溫曼陀羅九宮格｜Ambient Mandala Chart</title>
+    <meta name="description" content="常溫編集所推出的曼陀羅九宮格思考工具，協助將遠大目標拆解為 64 個具體行動，透過視覺化圖表讓夢想落地。">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "常溫曼陀羅九宮格",
+      "alternateName": "Ambient Mandala Chart",
+      "operatingSystem": "Any",
+      "applicationCategory": "ProductivityApplication",
+      "description": "曼陀羅思考法數位工具，提供九宮格目標規劃與圖片匯出功能。",
+      "brand": {
+        "@type": "Brand",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "TWD"
+      }
+    }
+    </script>
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-    
       gtag('config', 'G-2F079YMSFW');
     </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>曼陀羅目標規劃｜常溫編集所</title>
-    <!-- Google Fonts: Noto Serif TC & Noto Sans TC -->
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- html2canvas for image generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script>
@@ -55,7 +79,6 @@
         body {
             background-color: #fdfbf7;
             color: #4a4a4a;
-            /* 模擬紙張纖維質感的微噪點 SVG */
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
             font-family: 'Noto Sans TC', sans-serif;
         }
@@ -126,41 +149,18 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        /* Modal Animation */
-        .modal-enter {
-            opacity: 0;
-            transform: scale(0.95);
-        }
-        .modal-enter-active {
-            opacity: 1;
-            transform: scale(1);
-            transition: opacity 300ms ease-out, transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .modal-exit {
-            opacity: 1;
-            transform: scale(1);
-        }
-        .modal-exit-active {
-            opacity: 0;
-            transform: scale(0.95);
-            transition: opacity 200ms ease-in, transform 200ms ease-in;
-        }
     </style>
 </head>
 <body class="min-h-screen py-12 px-4 sm:px-8 selection:bg-brand-clay selection:text-white">
 
-    <!-- 主標題區 (Header) -->
-    <header class="max-w-5xl mx-auto mb-12 animate-fade-in relative">
+    <header class="max-w-5xl mx-auto mb-12 relative">
         <div class="flex flex-col items-center">
             <div class="text-center w-full relative">
                 <h2 class="text-brand-sage text-sm tracking-[0.2em] font-bold uppercase mb-2">Ambient Edit Studio</h2>
                 
-                <!-- Main Title Wrapper -->
                 <div class="relative w-full max-w-5xl mx-auto flex justify-center items-end">
                     <h1 class="text-3xl md:text-4xl font-serif-heading text-brand-ink font-bold tracking-wide leading-tight pb-1">曼陀羅目標規劃</h1>
                     
-                    <!-- Home Button -->
                     <div class="hidden md:block absolute right-0 bottom-1.5">
                         <a href="https://weichun0203.github.io/ambientedit/" 
                            class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
@@ -196,7 +196,6 @@
         </p>
     </header>
 
-    <!-- 控制區 -->
     <div class="max-w-5xl mx-auto mb-8 flex flex-wrap justify-between items-center gap-4 border-b border-brand-sand/50 pb-6">
         <div class="flex items-center space-x-2 text-xs text-brand-sage">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -216,10 +215,8 @@
         </div>
     </div>
 
-    <!-- 核心互動區 -->
     <main class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
         
-        <!-- 左側：核心與八大面向 -->
         <section class="lg:col-span-1 flex flex-col">
             <div class="mb-4 flex items-center justify-between">
                 <h3 class="font-serif-heading text-xl text-brand-ink border-b-2 border-brand-sage/20 pb-1 inline-block">核心佈局</h3>
@@ -235,7 +232,6 @@
             </p>
         </section>
 
-        <!-- 右側：行動計畫展開 -->
         <section class="lg:col-span-2 flex flex-col">
              <div class="mb-4 flex items-center justify-between">
                 <h3 id="detail-title" class="font-serif-heading text-xl text-brand-ink border-b-2 border-brand-sage/20 pb-1 inline-block">行動細節</h3>
@@ -263,12 +259,13 @@
 
     </main>
 
-    <!-- Custom Modal for Reset Confirmation -->
+    <footer class="mt-8 mb-6 text-center text-brand-ink/30 text-xs tracking-widest">
+        <p>&copy; 2026 常溫編集所 Ambient Edit Studio. All Rights Reserved.</p>
+    </footer>
+
     <div id="reset-modal" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-all duration-300">
-        <!-- Backdrop -->
         <div class="absolute inset-0 bg-brand-ink/20 backdrop-blur-sm transition-opacity duration-300" onclick="hideResetModal()"></div>
         
-        <!-- Modal Content -->
         <div class="bg-white p-8 rounded-2xl shadow-modal border border-brand-sand w-full max-w-sm relative transform scale-95 transition-all duration-300 mx-4">
             <div class="text-center">
                 <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-brand-clay/10 mb-4">
@@ -292,7 +289,6 @@
         </div>
     </div>
 
-    <!-- 隱藏的 Export Canvas 區域 -->
     <div id="export-canvas" class="bg-[#fdfbf7] p-12 w-[1200px]">
         <div class="text-center mb-8">
              <h2 class="text-brand-sage text-lg tracking-[0.3em] font-bold uppercase mb-2">Ambient Edit Studio</h2>
@@ -314,7 +310,6 @@
         </div>
     </div>
 
-    <!-- JavaScript 邏輯 -->
     <script>
         // 工廠函數
         function createInitialData() {
@@ -333,7 +328,7 @@
         // Grid Mapping
         const gridToSubGoalIndex = {
             0: 0, 1: 1, 2: 2,
-            3: 3,       5: 4,
+            3: 3,        5: 4,
             6: 5, 7: 6, 8: 7
         };
         const subGoalToGridIndex = [0, 1, 2, 3, 5, 6, 7, 8];
@@ -381,7 +376,6 @@
 
             modal.classList.remove('opacity-0', 'pointer-events-none');
             
-            // Wait a tick for opacity to start transition, then animate scale
             setTimeout(() => {
                 content.classList.remove('scale-95');
                 content.classList.add('scale-100');
@@ -395,7 +389,6 @@
             content.classList.remove('scale-100');
             content.classList.add('scale-95');
 
-            // Wait for scale animation to finish slightly before hiding
             setTimeout(() => {
                 modal.classList.add('opacity-0', 'pointer-events-none');
             }, 150);
@@ -411,14 +404,12 @@
             appData = createInitialData();
             appData.lastEditedIndex = 0;
 
-            // 3. 稍微延遲以配合 Modal 關閉動畫，確保使用者看到變化
+            // 3. 稍微延遲以配合 Modal 關閉動畫
             setTimeout(() => {
-                // 手動強制重繪
                 renderMainGrid(); 
                 updateGridSelectionVisuals();
                 renderDetailPanel(0);
                 
-                // 視覺反饋
                 const status = document.getElementById('save-status');
                 status.innerText = "畫布已完全重置";
                 status.style.opacity = '1';
@@ -536,9 +527,10 @@
             });
 
             const panel = document.getElementById('detail-panel');
-            panel.classList.remove('animate-fade-in');
-            void panel.offsetWidth;
-            panel.classList.add('animate-fade-in');
+            // 簡單的動畫重置
+            panel.style.animation = 'none';
+            panel.offsetHeight; /* trigger reflow */
+            panel.style.animation = 'fadeIn 0.5s ease-out forwards';
         }
 
         function buildExportGrid() {
@@ -600,12 +592,14 @@
 
             buildExportGrid();
 
+            // Wait for DOM update
             setTimeout(() => {
                 const element = document.getElementById('export-canvas');
                 html2canvas(element, {
                     scale: 2, 
                     backgroundColor: '#fdfbf7',
-                    useCORS: true
+                    useCORS: true,
+                    logging: false
                 }).then(canvas => {
                     const link = document.createElement('a');
                     link.download = `常溫編集所_曼陀羅計畫_${new Date().toISOString().slice(0,10)}.png`;

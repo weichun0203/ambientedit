@@ -1,31 +1,51 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-        <!-- Google tag (gtag.js)  -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>常溫生活預算｜Ambient Budget Planner</title>
+    <meta name="description" content="常溫編集所推出的生活預算規劃工具，透過「固定」與「變動」支出的靈活分配，協助你釐清金錢流向，找回生活的餘裕。">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FinancialProduct",
+      "name": "常溫生活預算",
+      "alternateName": "Ambient Budget Planner",
+      "description": "個人財務預算規劃工具，提供薪資分配與支出追蹤功能。",
+      "brand": {
+        "@type": "Brand",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "TWD"
+      }
+    }
+    </script>
+    
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-    
       gtag('config', 'G-2F079YMSFW');
     </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>常溫生活預算 | Ambient Budget</title>
     
-    <!-- Google Fonts: Noto Serif TC & Noto Sans TC -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Configure Tailwind with Brand Colors -->
     <script>
         tailwind.config = {
             theme: {
@@ -83,16 +103,23 @@
             background-repeat: repeat-x;
             background-position: bottom;
         }
+        
+        /* 隱藏數字輸入框的箭頭 */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body class="min-h-screen font-sans antialiased selection:bg-brand-clay selection:text-white pb-12">
 
-    <!-- Main Container -->
     <main class="max-w-5xl mx-auto pt-12 md:pt-16 px-4 md:px-6">
 
-        <!-- Brand Header Section -->
         <header class="flex flex-col md:flex-row justify-between items-center md:items-end gap-6 mb-8">
-            <!-- Brand Info -->
             <div class="flex items-center gap-5">
                 <div class="w-14 h-14 bg-brand-ink text-brand-paper flex items-center justify-center rounded-full font-serif font-bold text-3xl shadow-soft">常</div>
                 <div class="flex flex-col justify-center">
@@ -101,7 +128,6 @@
                 </div>
             </div>
 
-            <!-- Actions -->
             <div class="flex items-center gap-4 w-full md:w-auto justify-center md:justify-end">
                 <a href="https://weichun0203.github.io/ambientedit/" class="text-sm font-medium text-brand-sage hover:text-brand-ink transition-colors flex items-center gap-1.5 group px-4 py-2 rounded-full border border-transparent hover:border-brand-sand hover:bg-white/50">
                     <i data-lucide="home" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> 回首頁
@@ -112,24 +138,18 @@
             </div>
         </header>
         
-        <!-- Paper Card -->
         <div class="bg-white rounded-2xl shadow-soft border border-brand-sand overflow-hidden relative">
             
-            <!-- Sticky Header Section inside Card -->
             <div class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-brand-sand transition-all duration-300" id="headerSection">
                 
-                <!-- Mode Switcher -->
                 <div class="px-2 pt-4 pb-2 overflow-x-auto no-scrollbar">
                     <div class="flex justify-start md:justify-center gap-2 min-w-max px-4" id="modeContainer">
-                        <!-- Modes will be injected here via JS -->
-                    </div>
+                        </div>
                 </div>
 
-                <!-- Salary Input Section -->
                 <div class="p-6 md:px-8 bg-gradient-to-b from-brand-paper to-white">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                         
-                        <!-- Left: Title & Legend -->
                         <div class="flex items-start gap-4">
                             <div class="w-12 h-12 rounded-xl bg-brand-paper border border-brand-sand flex items-center justify-center text-brand-clay shadow-sm shrink-0">
                                 <i data-lucide="calculator" class="w-6 h-6"></i>
@@ -138,7 +158,6 @@
                                 <h1 class="font-serif text-2xl text-brand-ink font-bold tracking-wide leading-tight">薪資分配</h1>
                                 <p class="text-xs text-gray-400 mt-1 font-light tracking-wider mb-2" id="currentModeLabel">正在規劃您的生活</p>
                                 
-                                <!-- Legend Moved Here -->
                                 <div class="flex flex-wrap gap-4 text-[10px] text-gray-400 font-medium tracking-wide">
                                     <div class="flex items-center gap-1.5">
                                         <span class="w-2 h-2 rounded-full bg-brand-clay"></span>
@@ -152,7 +171,6 @@
                             </div>
                         </div>
 
-                        <!-- Right: Amount Input -->
                         <div class="w-full md:w-auto flex flex-col items-end pl-16 md:pl-0">
                             <label class="text-xs text-gray-400 font-medium mb-1 tracking-widest uppercase" id="salaryLabel">本月收入</label>
                             <div class="flex items-baseline border-b border-brand-sand hover:border-brand-clay transition-colors group pb-1 w-full md:w-auto justify-end">
@@ -168,7 +186,6 @@
                     </div>
                 </div>
 
-                <!-- Table Header (Desktop Only) -->
                 <div class="hidden md:grid grid-cols-12 gap-4 px-8 py-2 bg-brand-paper/50 text-xs font-bold text-gray-400 tracking-widest uppercase border-t border-brand-sand">
                     <div class="col-span-4 pl-10">項目名稱</div>
                     <div class="col-span-2 text-center">模式</div>
@@ -178,12 +195,9 @@
                 </div>
             </div>
 
-            <!-- List Container -->
             <div id="itemsList" class="divide-y divide-brand-sand/40 min-h-[300px]">
-                <!-- Items will be injected here -->
-            </div>
+                </div>
 
-            <!-- Add Button -->
             <div class="p-6 bg-brand-paper/30 flex justify-center">
                 <button onclick="addNewItem()" class="group flex items-center gap-2 px-6 py-3 rounded-full border border-dashed border-brand-clay/50 text-brand-clay hover:bg-brand-clay hover:text-white transition-all duration-300 shadow-sm hover:shadow-md">
                     <i data-lucide="plus" class="w-4 h-4 transition-transform group-hover:rotate-90"></i>
@@ -191,7 +205,6 @@
                 </button>
             </div>
 
-            <!-- Footer Summary -->
             <div class="bg-brand-ink text-brand-paper p-6 md:px-8">
                 <div class="flex flex-col md:grid md:grid-cols-12 gap-6 items-center">
                     <div class="col-span-4 text-brand-sand/60 text-sm font-light">
@@ -213,19 +226,16 @@
                     </div>
                 </div>
                 
-                <!-- Alerts -->
                 <div id="alertsContainer" class="mt-4 space-y-2"></div>
             </div>
         </div>
 
-        <!-- Footer for Brand -->
-        <footer class="mt-12 text-center text-brand-ink/30 text-xs font-serif">
-            <p>Designed by Ambient Edit Studio | 常溫編集所</p>
+        <footer class="mt-12 text-center text-brand-ink/30 text-xs font-serif tracking-widest uppercase">
+            &copy; 2026 常溫編集所 Ambient Edit Studio. All Rights Reserved.
         </footer>
 
     </main>
 
-    <!-- JavaScript Logic -->
     <script>
         // --- 1. Data Definitions & State ---
         
@@ -238,7 +248,7 @@
                     { id: 2, name: '儲蓄目標', type: 'fixed', percent: 16.667, amount: 500, icon: '🐷' },
                     { id: 3, name: '交通儲值', type: 'fixed', percent: 6.667, amount: 200, icon: '🚌' },
                     { id: 4, name: '文具書籍', type: 'percent', percent: 20, amount: 600, icon: '📚' },
-                    { id: 5, name: '零食飲料', type: 'percent', percent: 26.667, amount: 800, icon: '🍪' }, // Changed to Cookie for better compatibility
+                    { id: 5, name: '零食飲料', type: 'percent', percent: 26.667, amount: 800, icon: '🍪' },
                     { id: 6, name: '遊戲娛樂', type: 'percent', percent: 20, amount: 600, icon: '🎮' },
                 ]
             },
@@ -299,11 +309,32 @@
             }).format(val);
         };
 
+        const saveState = () => {
+            localStorage.setItem('ambient_budget_state', JSON.stringify(state));
+        };
+
+        const loadState = () => {
+            const saved = localStorage.getItem('ambient_budget_state');
+            if (saved) {
+                try {
+                    state = JSON.parse(saved);
+                    // Ensure presets exist in case of version changes, or just refresh UI
+                    renderAll();
+                } catch (e) {
+                    initMode('worker');
+                }
+            } else {
+                initMode('worker');
+            }
+        };
+
+        // Switches mode and resets data to preset (intentional reset)
         const initMode = (modeKey) => {
             const preset = PRESETS[modeKey];
             state.mode = modeKey;
             state.salary = preset.salary;
             state.items = JSON.parse(JSON.stringify(preset.items));
+            saveState(); // Save the new preset state
             renderAll();
         };
 
@@ -323,12 +354,16 @@
                     return { ...item, amount: newAmount };
                 }
             });
+            saveState();
             renderAll();
         };
 
         const updateItemName = (id, newName) => {
             const item = state.items.find(i => i.id === id);
-            if(item) item.name = newName;
+            if(item) {
+                item.name = newName;
+                saveState();
+            }
         };
 
         const updateItemPercent = (id, newPercent) => {
@@ -337,6 +372,7 @@
                 const newAmount = Math.round(state.salary * (newPercent / 100));
                 return { ...item, percent: newPercent, amount: newAmount };
             });
+            saveState();
             renderAll();
         };
 
@@ -349,6 +385,7 @@
                 }
                 return { ...item, amount: newAmount, percent: newPercent };
             });
+            saveState();
             renderAll();
         };
 
@@ -358,11 +395,13 @@
                 ? { ...item, type: item.type === 'percent' ? 'fixed' : 'percent' } 
                 : item
             );
+            saveState();
             renderAll();
         };
 
         const deleteItem = (id) => {
             state.items = state.items.filter(item => item.id !== id);
+            saveState();
             renderAll();
         };
 
@@ -376,6 +415,7 @@
                 amount: 0, 
                 icon: '📝' 
             });
+            saveState();
             renderAll();
             setTimeout(() => {
                 document.getElementById('itemsList').lastElementChild.scrollIntoView({ behavior: 'smooth' });
@@ -388,6 +428,7 @@
             } else if (direction === 1 && index < state.items.length - 1) {
                 [state.items[index], state.items[index + 1]] = [state.items[index + 1], state.items[index]];
             }
+            saveState();
             renderAll();
         };
 
@@ -412,8 +453,11 @@
         };
 
         const renderHeader = () => {
-            document.getElementById('currentModeLabel').textContent = `${PRESETS[state.mode].label}模式`;
-            document.getElementById('salaryLabel').textContent = PRESETS[state.mode].salaryLabel;
+            const presetLabel = PRESETS[state.mode] ? PRESETS[state.mode].label : '自訂';
+            const presetSalaryLabel = PRESETS[state.mode] ? PRESETS[state.mode].salaryLabel : '本月收入';
+            
+            document.getElementById('currentModeLabel').textContent = `${presetLabel}模式`;
+            document.getElementById('salaryLabel').textContent = presetSalaryLabel;
             
             const salaryInput = document.getElementById('salaryInput');
             if (document.activeElement !== salaryInput) {
@@ -438,7 +482,6 @@
                     <div class="group relative bg-white transition-all hover:bg-brand-paper/40 p-4 md:px-8 md:py-4">
                         <div class="flex flex-col md:grid md:grid-cols-12 gap-3 md:gap-4 items-center">
                             
-                            <!-- Name -->
                             <div class="col-span-4 w-full flex items-center gap-3">
                                 <div class="flex flex-col md:hidden text-gray-300 gap-1">
                                     <button onclick="moveItem(${index}, -1)" class="hover:text-brand-ink"><i data-lucide="chevron-up" class="w-4 h-4"></i></button>
@@ -455,7 +498,6 @@
                                 </div>
                             </div>
 
-                            <!-- Type -->
                             <div class="col-span-2 w-full flex justify-end md:justify-center">
                                 <button onclick="toggleItemType(${item.id})" 
                                     class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-all ${typeColorClass} hover:opacity-80">
@@ -464,7 +506,6 @@
                                 </button>
                             </div>
 
-                            <!-- Percent -->
                             <div class="col-span-2 w-full flex justify-between md:justify-end items-center md:gap-2">
                                 <span class="md:hidden text-xs text-gray-400">比例</span>
                                 <div class="flex items-center">
@@ -475,7 +516,6 @@
                                 </div>
                             </div>
 
-                            <!-- Amount -->
                             <div class="col-span-2 w-full flex justify-between md:justify-end items-center md:gap-2">
                                 <span class="md:hidden text-xs text-gray-400">金額</span>
                                 <div class="flex items-center">
@@ -486,7 +526,6 @@
                                 </div>
                             </div>
 
-                            <!-- Remaining & Actions -->
                             <div class="col-span-2 w-full flex justify-between md:justify-end items-center md:gap-4 border-t border-brand-sand md:border-0 pt-2 md:pt-0 mt-2 md:mt-0">
                                 <span class="md:hidden text-xs text-gray-400">剩餘</span>
                                 <span class="font-mono text-sm ${remainingClass}">${formatCurrency(runningSalary)}</span>
@@ -566,7 +605,7 @@
             // Body
             state.items.forEach(item => {
                 const typeLabel = item.type === 'percent' ? '變動(依比例)' : '固定(鎖定金額)';
-                // Remove commas from name to prevent CSV breaks, though usually names are simple
+                // Remove commas from name to prevent CSV breaks
                 const cleanName = item.name.replace(/,/g, ' '); 
                 csvContent += `${cleanName},${typeLabel},${item.percent},${item.amount}\n`;
             });
@@ -583,9 +622,10 @@
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             const dateStr = new Date().toISOString().slice(0,10);
+            const modeName = PRESETS[state.mode] ? PRESETS[state.mode].label : '自訂';
             
             link.setAttribute("href", url);
-            link.setAttribute("download", `常溫生活預算_${PRESETS[state.mode].label}_${dateStr}.csv`);
+            link.setAttribute("download", `常溫生活預算_${modeName}_${dateStr}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -599,7 +639,7 @@
 
         // --- Init ---
         window.onload = () => {
-            initMode('worker');
+            loadState(); // Try to load from localStorage first
         };
 
     </script>

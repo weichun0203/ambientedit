@@ -3,7 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>職涯探索羅盤｜常溫編集所</title>
+    
+    <title>常溫職涯探索羅盤｜Ambient Career Exploration Compass</title>
+    <meta name="description" content="常溫編集所職涯探索工具，透過「喜好」與「耐心」的四象限分析，協助你釐清任務屬性，找到適合的職涯定位。">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "常溫職涯探索羅盤",
+      "alternateName": "Ambient Career Exploration Compass",
+      "operatingSystem": "Any",
+      "applicationCategory": "LifestyleApplication",
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "TWD"
+      }
+    }
+    </script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,7 +76,7 @@
         body {
             background-color: #fdfbf7;
             color: #4a4a4a;
-            /* Noise Texture [Source: 1] */
+            /* Noise Texture */
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
         }
         
@@ -89,9 +111,9 @@
         }
     </style>
 </head>
-<body class="antialiased min-h-screen p-4 md:p-8">
+<body class="antialiased min-h-screen p-4 md:p-8 flex flex-col">
 
-    <nav class="max-w-6xl mx-auto mb-8 flex justify-end">
+    <nav class="max-w-6xl mx-auto w-full mb-8 flex justify-end">
         <a href="https://weichun0203.github.io/ambientedit/" 
            class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft"
            aria-label="返回常溫首頁">
@@ -103,7 +125,13 @@
         </a>
     </nav>
 
-    <div id="root"></div>
+    <div id="root" class="flex-grow"></div>
+
+    <footer class="py-8 text-center mt-12">
+        <p class="text-xs text-brand-sage font-serif tracking-widest opacity-80">
+            &copy; 2026 常溫編集所 Ambient Edit Studio.
+        </p>
+    </footer>
 
     <script type="text/babel">
         // Icons Components
@@ -127,8 +155,17 @@
             const [activity, setActivity] = useState('');
             const [likeScore, setLikeScore] = useState(50);
             const [patienceScore, setPatienceScore] = useState(50);
-            const [savedItems, setSavedItems] = useState([]);
+            // Initialize from localStorage if available
+            const [savedItems, setSavedItems] = useState(() => {
+                const saved = localStorage.getItem('ambientCareerItems');
+                return saved ? JSON.parse(saved) : [];
+            });
             const [activeZone, setActiveZone] = useState(null);
+
+            // Save to localStorage whenever items change
+            useEffect(() => {
+                localStorage.setItem('ambientCareerItems', JSON.stringify(savedItems));
+            }, [savedItems]);
 
             // Default suggestions
             const suggestionItems = [

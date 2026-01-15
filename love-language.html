@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常溫關係手札｜Ambient Edit Studio</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Noto Serif TC & Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Brand Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                            wood: '#d8cfc4',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'card': '0 2px 8px rgba(0, 0, 0, 0.08)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #fdfbf7;
+            color: #4a4a4a;
+            /* 模擬紙張纖維質感 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            font-family: "Noto Sans TC", sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        h1, h2, h3, .font-serif {
+            font-family: "Noto Serif TC", serif;
+        }
+
+        /* 3D Flip Card Styles */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .flip-card-front {
+            background-color: #fff;
+            border: 1px solid #e6e2dd;
+            color: #4a4a4a;
+        }
+
+        .flip-card:not(.flipped):hover .flip-card-inner {
+            transform: translateY(-5px);
+        }
+        
+        .flip-card-back {
+            background-color: #8da399; 
+            color: white;
+            transform: rotateY(180deg);
+            border: 1px solid transparent;
+        }
+
+        .hole {
+            width: 8px;
+            height: 8px;
+            background-color: #fdfbf7;
+            border-radius: 50%;
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* 建議膠囊樣式 */
+        .suggestion-chip {
+            transition: all 0.3s ease;
+        }
+        .suggestion-chip:hover {
+            transform: translateY(-2px);
+            background-color: #8da399; /* brand-sage */
+            color: white;
+            border-color: #8da399;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        
+        /* 延遲動畫類別 */
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-500 { animation-delay: 0.5s; }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 隱藏滾動條但保持功能 */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-12 px-4 sm:px-6">
+
+    <!-- 整合導航與標題的 Header 區塊 -->
+    <header class="w-full max-w-5xl mx-auto mb-12 relative px-4 fade-in delay-200">
+        
+        <!-- 返回按鈕 (Desktop: 絕對定位於右側垂直置中; Mobile: 彈性排列在上方) -->
+        <div class="flex justify-end mb-4 md:mb-0 md:absolute md:right-4 md:top-1/2 md:-translate-y-1/2 z-10">
+            <a href="https://weichun0203.github.io/ambientedit/" 
+               class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+               aria-label="返回常溫首頁">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
+            </a>
+        </div>
+
+        <!-- 標題文字 (保持置中) -->
+        <div class="text-center">
+            <div class="inline-block p-1 border-b-2 border-brand-clay mb-4">
+                <span class="text-xs tracking-[0.2em] text-brand-sage uppercase">Six Colors of Love</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-serif text-brand-ink mb-3 tracking-wide">愛的樣貌食堂</h1>
+            <p class="text-brand-ink/70 text-sm md:text-base font-light tracking-wider">
+                先理解愛的形狀，再點一份今日的互動。
+            </p>
+        </div>
+    </header>
+
+    <!-- 區塊一：科普引導區 (愛的六種原色) -->
+    <section class="w-full max-w-5xl mx-auto mb-12 fade-in delay-300">
+        <div class="bg-white/60 backdrop-blur-sm border-t border-b border-brand-sand py-12 relative overflow-hidden rounded-xl shadow-soft">
+            <!-- 裝飾線條 -->
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-brand-clay/30 rounded-b-full"></div>
+
+            <div class="text-center mb-8 px-4">
+                 <h2 class="text-xl md:text-2xl font-serif text-brand-ink mb-3 tracking-wide">關於愛的六種原色</h2>
+                 <p class="text-sm text-brand-ink/70 max-w-2xl mx-auto leading-relaxed">
+                    社會學家約翰·李 (John Alan Lee) 將愛歸納為六種光譜。<br class="hidden md:block">
+                    在投入互動之前，試著辨識今天你們處於哪一種頻率？
+                 </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-4 lg:px-12">
+                <!-- Eros -->
+                <div class="p-5 bg-white rounded-lg shadow-sm border border-brand-sand/50 hover:border-brand-clay/50 transition-colors duration-300 group">
+                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300 origin-left">🌹</div>
+                    <h3 class="font-serif font-bold text-brand-ink mb-2">情欲之愛 Eros</h3>
+                    <p class="text-xs text-brand-ink/70 leading-relaxed text-justify">
+                        浪漫、激情的愛。建立在強烈的吸引力與熱情之上，渴望身心完全融合，如同一見鍾情的電影情節。
+                    </p>
+                </div>
+                <!-- Ludus -->
+                <div class="p-5 bg-white rounded-lg shadow-sm border border-brand-sand/50 hover:border-brand-sage/50 transition-colors duration-300 group">
+                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300 origin-left">🎭</div>
+                    <h3 class="font-serif font-bold text-brand-ink mb-2">遊戲之愛 Ludus</h3>
+                    <p class="text-xs text-brand-ink/70 leading-relaxed text-justify">
+                        視愛情為一場輕鬆的遊戲。重視過程樂趣大於結果承諾，追求新鮮感，享受自由自在、無負擔的相處。
+                    </p>
+                </div>
+                <!-- Storge -->
+                <div class="p-5 bg-white rounded-lg shadow-sm border border-brand-sand/50 hover:border-brand-wood/50 transition-colors duration-300 group">
+                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300 origin-left">🌱</div>
+                    <h3 class="font-serif font-bold text-brand-ink mb-2">友誼之愛 Storge</h3>
+                    <p class="text-xs text-brand-ink/70 leading-relaxed text-justify">
+                        細水長流、如老友般的愛。沒有強烈激情，卻有深厚的信賴與依賴，是寧靜、溫馨且共同成長的穩定關係。
+                    </p>
+                </div>
+                 <!-- Mania -->
+                 <div class="p-5 bg-white rounded-lg shadow-sm border border-brand-sand/50 hover:border-brand-clay/50 transition-colors duration-300 group">
+                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300 origin-left">❤️‍🔥</div>
+                    <h3 class="font-serif font-bold text-brand-ink mb-2">依附之愛 Mania</h3>
+                    <p class="text-xs text-brand-ink/70 leading-relaxed text-justify">
+                        強烈佔有與依賴。情感需求高，情緒起伏大，時刻需要對方的回應來確認愛的存續，愛得濃烈且深刻。
+                    </p>
+                </div>
+                <!-- Pragma -->
+                <div class="p-5 bg-white rounded-lg shadow-sm border border-brand-sand/50 hover:border-brand-sage/50 transition-colors duration-300 group">
+                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300 origin-left">⚖️</div>
+                    <h3 class="font-serif font-bold text-brand-ink mb-2">現實之愛 Pragma</h3>
+                    <p class="text-xs text-brand-ink/70 leading-relaxed text-justify">
+                        理性務實的愛。考慮現實條件與未來規劃，如同經營夥伴關係，追求雙方最大共同利益與穩定的未來。
+                    </p>
+                </div>
+                 <!-- Agape -->
+                 <div class="p-5 bg-white rounded-lg shadow-sm border border-brand-sand/50 hover:border-brand-wood/50 transition-colors duration-300 group">
+                    <div class="text-3xl mb-2 group-hover:scale-110 transition-transform duration-300 origin-left">🕊️</div>
+                    <h3 class="font-serif font-bold text-brand-ink mb-2">利他之愛 Agape</h3>
+                    <p class="text-xs text-brand-ink/70 leading-relaxed text-justify">
+                        無私奉獻、不求回報。將伴侶的需求置於自己之上，是一種純潔、包容與給予的極致溫柔展現。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 引導往下的 UX 設計 -->
+            <div class="mt-10 text-center relative z-10">
+                <p class="text-brand-ink/50 text-xs tracking-widest mb-4">準備好紀錄今天的互動了嗎？</p>
+                <button onclick="document.getElementById('menuSection').scrollIntoView({behavior: 'smooth'})" 
+                        class="animate-bounce p-3 rounded-full bg-brand-paper border border-brand-sand shadow-sm hover:shadow-md hover:bg-white text-brand-sage transition-all duration-300 group">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 group-hover:text-brand-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 區塊二：互動點餐區 (Menu) -->
+    <main id="menuSection" class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-16 scroll-mt-8">
+        
+        <!-- 左側：翻牌與表單 -->
+        <div class="lg:col-span-7 space-y-8 fade-in delay-500">
+            
+            <!-- 翻牌菜單區 -->
+            <div class="relative">
+                <h2 class="text-center text-xs font-bold text-brand-ink/40 tracking-widest mb-4">— 選擇今日的相處模式 —</h2>
+                <div class="absolute top-[-10px] left-0 right-0 h-1 bg-brand-wood rounded-full opacity-30 z-0 hidden md:block"></div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 px-1">
+                    
+                    <!-- 卡片區 (維持不變) -->
+                    <!-- 1. Eros -->
+                    <div class="flip-card h-36 perspective-1000 group" data-type="eros">
+                        <div class="flip-card-inner transition-transform duration-500">
+                            <div class="flip-card-front bg-white border-brand-sand">
+                                <div class="hole"></div>
+                                <span class="text-2xl mb-1">🌹</span>
+                                <h3 class="font-serif text-base font-bold tracking-widest">情欲</h3>
+                                <span class="text-[10px] text-brand-ink/40 uppercase tracking-widest">Eros</span>
+                            </div>
+                            <div class="flip-card-back bg-brand-clay border-brand-clay">
+                                <div class="hole bg-brand-clay shadow-none border border-white/20"></div>
+                                <span class="text-sm font-bold tracking-widest text-white">浪漫激情</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Ludus -->
+                    <div class="flip-card h-36 perspective-1000 group" data-type="ludus">
+                        <div class="flip-card-inner transition-transform duration-500">
+                            <div class="flip-card-front bg-white border-brand-sand">
+                                <div class="hole"></div>
+                                <span class="text-2xl mb-1">🎭</span>
+                                <h3 class="font-serif text-base font-bold tracking-widest">遊戲</h3>
+                                <span class="text-[10px] text-brand-ink/40 uppercase tracking-widest">Ludus</span>
+                            </div>
+                            <div class="flip-card-back bg-brand-sage border-brand-sage">
+                                <div class="hole bg-brand-sage shadow-none border border-white/20"></div>
+                                <span class="text-sm font-bold tracking-widest text-white">新鮮樂趣</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Storge -->
+                    <div class="flip-card h-36 perspective-1000 group" data-type="storge">
+                        <div class="flip-card-inner transition-transform duration-500">
+                            <div class="flip-card-front bg-white border-brand-sand">
+                                <div class="hole"></div>
+                                <span class="text-2xl mb-1">🌱</span>
+                                <h3 class="font-serif text-base font-bold tracking-widest">友誼</h3>
+                                <span class="text-[10px] text-brand-ink/40 uppercase tracking-widest">Storge</span>
+                            </div>
+                            <div class="flip-card-back bg-[#d8cfc4] border-[#d8cfc4]">
+                                <div class="hole bg-[#d8cfc4] shadow-none border border-white/20"></div>
+                                <span class="text-sm font-bold tracking-widest text-white">細水長流</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Mania -->
+                    <div class="flip-card h-36 perspective-1000 group" data-type="mania">
+                        <div class="flip-card-inner transition-transform duration-500">
+                            <div class="flip-card-front bg-white border-brand-sand">
+                                <div class="hole"></div>
+                                <span class="text-2xl mb-1">❤️‍🔥</span>
+                                <h3 class="font-serif text-base font-bold tracking-widest">依附</h3>
+                                <span class="text-[10px] text-brand-ink/40 uppercase tracking-widest">Mania</span>
+                            </div>
+                            <div class="flip-card-back bg-brand-clay border-brand-clay">
+                                <div class="hole bg-brand-clay shadow-none border border-white/20"></div>
+                                <span class="text-sm font-bold tracking-widest text-white">強烈佔有</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Pragma -->
+                    <div class="flip-card h-36 perspective-1000 group" data-type="pragma">
+                        <div class="flip-card-inner transition-transform duration-500">
+                            <div class="flip-card-front bg-white border-brand-sand">
+                                <div class="hole"></div>
+                                <span class="text-2xl mb-1">⚖️</span>
+                                <h3 class="font-serif text-base font-bold tracking-widest">現實</h3>
+                                <span class="text-[10px] text-brand-ink/40 uppercase tracking-widest">Pragma</span>
+                            </div>
+                            <div class="flip-card-back bg-brand-sage border-brand-sage">
+                                <div class="hole bg-brand-sage shadow-none border border-white/20"></div>
+                                <span class="text-sm font-bold tracking-widest text-white">理性務實</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Agape -->
+                    <div class="flip-card h-36 perspective-1000 group" data-type="agape">
+                        <div class="flip-card-inner transition-transform duration-500">
+                            <div class="flip-card-front bg-white border-brand-sand">
+                                <div class="hole"></div>
+                                <span class="text-2xl mb-1">🕊️</span>
+                                <h3 class="font-serif text-base font-bold tracking-widest">利他</h3>
+                                <span class="text-[10px] text-brand-ink/40 uppercase tracking-widest">Agape</span>
+                            </div>
+                            <div class="flip-card-back bg-[#d8cfc4] border-[#d8cfc4]">
+                                <div class="hole bg-[#d8cfc4] shadow-none border border-white/20"></div>
+                                <span class="text-sm font-bold tracking-widest text-white">無私奉獻</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 動態建議區 -->
+            <div id="suggestionsArea" class="hidden opacity-0 transition-all duration-500">
+                <div class="bg-brand-sage/10 rounded-lg p-4 border border-brand-sage/20">
+                    <h4 class="text-xs font-bold text-brand-sage mb-3 flex items-center justify-between">
+                        <div class="flex items-center"><span class="mr-2">💡</span> <span id="suggestionTitle">今日特餐推薦</span></div>
+                        <span class="text-[10px] text-brand-ink/40">點擊加入筆記</span>
+                    </h4>
+                    <div id="suggestionChips" class="flex flex-wrap gap-2">
+                        <!-- JS 產生 Chips -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- 填寫詳細資料表單 -->
+            <div class="bg-white/60 backdrop-blur-sm p-6 rounded-lg border-t-2 border-brand-sand/50 shadow-sm">
+                <form id="relationForm" class="space-y-6">
+                    <input type="hidden" id="interactionType" name="interactionType" required>
+                    <input type="hidden" id="loveTypeEn" name="loveTypeEn"> 
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="relative group">
+                            <label for="personName" class="block text-xs font-bold text-brand-ink/50 tracking-wider mb-2 uppercase">Who</label>
+                            <input type="text" id="personName" placeholder="共度時光的人..." required
+                                class="w-full bg-transparent border-b border-brand-sand py-2 text-brand-ink placeholder-brand-ink/30 focus:border-brand-sage focus:outline-none transition-colors text-lg font-serif">
+                        </div>
+
+                        <div class="relative group">
+                             <label for="date" class="block text-xs font-bold text-brand-ink/50 tracking-wider mb-2 uppercase">When</label>
+                             <input type="date" id="date" 
+                                class="w-full bg-transparent border-b border-brand-sand py-2 text-brand-ink focus:border-brand-sage focus:outline-none transition-colors font-serif">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="note" class="block text-xs font-bold text-brand-ink/50 tracking-wider mb-2 uppercase">Action / Memo</label>
+                        <textarea id="note" rows="3" placeholder="具體的互動內容，或從上方點選靈感..."
+                            class="w-full bg-brand-paper/50 border border-brand-sand rounded p-3 text-brand-ink placeholder-brand-ink/30 focus:border-brand-sage focus:ring-1 focus:ring-brand-sage/20 focus:outline-none transition-all resize-none"></textarea>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit" id="submitBtn"
+                            class="w-full bg-brand-ink text-brand-paper py-3 rounded hover:bg-brand-sage hover:shadow-lg transition-all duration-300 tracking-[0.2em] font-serif text-sm">
+                            紀錄這份愛
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 右側：歷史收據區 -->
+        <div class="lg:col-span-5 fade-in delay-500">
+            <div class="bg-[#f2f0eb] p-6 rounded-t-lg shadow-inner min-h-[600px] border-t-4 border-brand-sand relative">
+                <h2 class="text-center text-brand-ink/60 font-serif font-bold mb-6 tracking-widest flex items-center justify-center">
+                    <span class="border-b border-brand-ink/20 flex-grow mx-4"></span>
+                    愛情存根
+                    <span class="border-b border-brand-ink/20 flex-grow mx-4"></span>
+                </h2>
+
+                <div id="logsContainer" class="space-y-4 max-h-[600px] overflow-y-auto pr-2 pb-10 custom-scrollbar">
+                    <!-- 內容會由 JS 讀取 LocalStorage 產生 -->
+                </div>
+                
+                <!-- 若無資料顯示的預設提示 -->
+                <div id="emptyState" class="hidden text-center mt-20 opacity-50">
+                    <span class="text-4xl block mb-2">🍂</span>
+                    <p class="text-sm font-serif">目前還沒有紀錄，<br>開始收藏你的日常溫度吧。</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="mt-8 mb-6 text-center text-brand-ink/30 text-xs tracking-widest fade-in">
+        <p>&copy; 2024 Ambient Edit Studio. Based on Lee's Love Styles.</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateInput = document.getElementById('date');
+            dateInput.valueAsDate = new Date();
+
+            const hiddenInput = document.getElementById('interactionType'); 
+            const hiddenTypeEn = document.getElementById('loveTypeEn');
+            const suggestionsArea = document.getElementById('suggestionsArea');
+            const suggestionChips = document.getElementById('suggestionChips');
+            const suggestionTitle = document.getElementById('suggestionTitle');
+            const noteArea = document.getElementById('note');
+            const logsContainer = document.getElementById('logsContainer');
+            const emptyState = document.getElementById('emptyState');
+
+            // --- 擴充的建議資料庫 ---
+            const suggestionsData = {
+                eros: {
+                    title: "情欲 (Eros)：創造驚喜與浪漫",
+                    examples: [
+                        "安排一場無理由的驚喜約會",
+                        "穿上對方曾稱讚過的衣服",
+                        "深情注視對方超過 10 秒",
+                        "寫一張充滿愛意的小卡片",
+                        "為對方按摩放鬆",
+                        "重遊第一次約會的地點",
+                        "不經意地牽起對方的手"
+                    ]
+                },
+                ludus: {
+                    title: "遊戲 (Ludus)：輕鬆有趣的互動",
+                    examples: [
+                        "一起嘗試一款新桌遊或電玩",
+                        "去一個從未去過的地方探險",
+                        "進行一場不談未來的輕鬆對話",
+                        "互相開一個無傷大雅的玩笑",
+                        "一起挑戰新的運動或休閒",
+                        "隨機跳上一輛公車去兜風",
+                        "互相比賽誰先做完家事"
+                    ]
+                },
+                storge: {
+                    title: "友誼 (Storge)：細水長流的陪伴",
+                    examples: [
+                        "靜靜地一起喝杯熱茶",
+                        "一起翻看舊照片聊聊回憶",
+                        "像老朋友一樣散步聊天",
+                        "分享今天發生的一件小事",
+                        "一起去逛超市買菜",
+                        "睡前聊聊今天的感受",
+                        "陪伴對方做他喜歡的事"
+                    ]
+                },
+                mania: {
+                    title: "依附 (Mania)：建立安全感連結",
+                    examples: [
+                        "主動報備行程讓對方安心",
+                        "真誠表達對這段關係的重視",
+                        "確認彼此當下的情緒狀態",
+                        "給予對方一個很久的擁抱",
+                        "詢問對方「今天需要什麼樣的陪伴」",
+                        "秒回對方的重要訊息",
+                        "主動分享自己的脆弱"
+                    ]
+                },
+                pragma: {
+                    title: "現實 (Pragma)：務實規劃未來",
+                    examples: [
+                        "一起討論下個月的財務規劃",
+                        "共同整理家裡的一個角落",
+                        "理性討論雙方的職涯目標",
+                        "為共同的目標存下一筆錢",
+                        "討論健康檢查或保險規劃",
+                        "一起學習一項新技能",
+                        "解決一個擱置已久的家庭問題"
+                    ]
+                },
+                agape: {
+                    title: "利他 (Agape)：無私的溫柔付出",
+                    examples: [
+                        "默默為對方準備愛心早餐",
+                        "原諒對方的一個無心之過",
+                        "傾聽對方的煩惱而不做評判",
+                        "把對方的需求排在自己之前",
+                        "在對方疲憊時主動分擔事務",
+                        "為對方祈禱或祝福",
+                        "支持對方的夢想即使自己需犧牲"
+                    ]
+                }
+            };
+
+            // --- LocalStorage 存取邏輯 ---
+            function loadLogs() {
+                const logs = JSON.parse(localStorage.getItem('ambient_relations_logs') || '[]');
+                logsContainer.innerHTML = '';
+                
+                if (logs.length === 0) {
+                    emptyState.classList.remove('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                    logs.forEach(log => renderLog(log));
+                }
+            }
+
+            function saveLog(logData) {
+                const logs = JSON.parse(localStorage.getItem('ambient_relations_logs') || '[]');
+                logs.unshift(logData); // 新的放前面
+                localStorage.setItem('ambient_relations_logs', JSON.stringify(logs));
+                
+                // 移除空狀態並渲染新卡片
+                emptyState.classList.add('hidden');
+                renderLog(logData, true); // true 代表是新加入的，要有動畫
+            }
+
+            function renderLog(data, isNew = false) {
+                const newCard = document.createElement('div');
+                const animationClass = isNew ? 'animate-[fadeIn_0.5s_ease-out]' : '';
+                
+                newCard.className = `bg-white p-4 relative shadow-sm group hover:translate-y-[-2px] transition-transform duration-300 ${animationClass}`;
+                
+                // Icon Mapping
+                const icons = {
+                    eros: '🌹', ludus: '🎭', storge: '🌱',
+                    mania: '❤️‍🔥', pragma: '⚖️', agape: '🕊️'
+                };
+                const icon = icons[data.typeEn] || '📌';
+
+                newCard.innerHTML = `
+                    <div style="background: radial-gradient(circle, transparent 4px, #fff 4px); background-size: 10px 10px; background-position: -5px -5px; height: 5px; position: absolute; top: 0; left: 0; width: 100%;"></div>
+                    <div style="background: radial-gradient(circle, transparent 4px, #fff 4px); background-size: 10px 10px; background-position: -5px -5px; height: 5px; position: absolute; bottom: 0; left: 0; width: 100%;"></div>
+                    
+                    <div class="flex justify-between items-center mb-2 border-b border-dashed border-brand-sand pb-2 mt-2">
+                        <span class="text-xs font-mono text-brand-ink/40">NO.${data.id}</span>
+                        <span class="text-xs font-bold text-brand-sage">${data.date.replace(/-/g, '.')}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">${icon}</span>
+                        <div>
+                            <h3 class="text-base font-serif font-bold text-brand-ink">${data.person}</h3>
+                            <p class="text-xs text-brand-ink/60">${data.typeName} ${data.typeEn.charAt(0).toUpperCase() + data.typeEn.slice(1)}</p>
+                        </div>
+                    </div>
+                    <p class="mt-3 text-sm text-brand-ink/80 font-light border-l-2 border-brand-sand pl-3 italic whitespace-pre-wrap">"${data.note || 'Checked.'}"</p>
+                `;
+
+                if(isNew) {
+                    logsContainer.insertBefore(newCard, logsContainer.firstChild);
+                } else {
+                    logsContainer.appendChild(newCard);
+                }
+            }
+
+            // 初始化讀取
+            loadLogs();
+
+            // --- 翻牌與建議邏輯 ---
+            const cards = document.querySelectorAll('.flip-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const typeKey = card.dataset.type;
+                    
+                    cards.forEach(c => {
+                        if (c !== card) c.classList.remove('flipped');
+                    });
+
+                    if (!card.classList.contains('flipped')) {
+                        card.classList.add('flipped');
+                        
+                        const typeName = card.querySelector('.flip-card-front h3').innerText;
+                        hiddenInput.value = typeName;
+                        hiddenTypeEn.value = typeKey;
+
+                        showSuggestions(typeKey);
+
+                        // 視覺提示
+                        document.querySelector('form').classList.add('ring-2', 'ring-brand-sage/20');
+                        setTimeout(() => document.querySelector('form').classList.remove('ring-2'), 500);
+                    }
+                });
+            });
+
+            function showSuggestions(typeKey) {
+                const data = suggestionsData[typeKey];
+                if(!data) return;
+
+                suggestionTitle.innerText = data.title;
+                suggestionChips.innerHTML = '';
+                
+                data.examples.forEach(ex => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'suggestion-chip px-3 py-1 bg-white border border-brand-sand rounded-full text-xs text-brand-ink/70 hover:shadow-sm text-left mb-1';
+                    btn.innerText = ex;
+                    
+                    btn.addEventListener('click', () => {
+                        const currentVal = noteArea.value;
+                        if(currentVal) {
+                            noteArea.value = currentVal + "\n" + ex;
+                        } else {
+                            noteArea.value = ex;
+                        }
+                        btn.classList.add('bg-brand-sage', 'text-white', 'border-brand-sage');
+                        setTimeout(() => btn.classList.remove('bg-brand-sage', 'text-white', 'border-brand-sage'), 300);
+                    });
+
+                    suggestionChips.appendChild(btn);
+                });
+
+                suggestionsArea.classList.remove('hidden');
+                setTimeout(() => {
+                    suggestionsArea.classList.remove('opacity-0');
+                }, 10);
+            }
+
+            // --- 表單提交 ---
+            const form = document.getElementById('relationForm');
+            const submitBtn = document.getElementById('submitBtn');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                if(!hiddenInput.value) {
+                    alert("請先選擇一種愛的型態！");
+                    // 簡單搖晃動畫
+                    document.getElementById('menuSection').scrollIntoView({behavior: 'smooth'});
+                    return;
+                }
+
+                const person = document.getElementById('personName').value;
+                const typeName = hiddenInput.value;
+                const typeEn = hiddenTypeEn.value;
+                const note = document.getElementById('note').value;
+                const date = dateInput.value;
+                const randomId = Math.floor(Math.random() * 9000) + 1000;
+
+                // Loading
+                const originalBtnText = submitBtn.innerText;
+                submitBtn.innerText = "SAVING...";
+                submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
+                
+                setTimeout(() => {
+                    // 準備資料
+                    const logData = {
+                        id: randomId,
+                        date: date,
+                        person: person,
+                        typeName: typeName,
+                        typeEn: typeEn,
+                        note: note
+                    };
+
+                    // 存入 LocalStorage 並顯示
+                    saveLog(logData);
+
+                    // Reset
+                    form.reset();
+                    dateInput.valueAsDate = new Date();
+                    suggestionsArea.classList.add('opacity-0');
+                    setTimeout(() => suggestionsArea.classList.add('hidden'), 500);
+                    cards.forEach(c => c.classList.remove('flipped'));
+                    hiddenInput.value = '';
+
+                    submitBtn.innerText = "已存入回憶";
+                    setTimeout(() => {
+                        submitBtn.innerText = originalBtnText;
+                        submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+                    }, 2000);
+
+                }, 800);
+            });
+        });
+    </script>
+</body>
+</html>

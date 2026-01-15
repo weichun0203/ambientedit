@@ -1,12 +1,29 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+    <!-- GA4 追蹤碼 (置於 head 最前方以確保數據準確) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- 品牌標題規則：常溫 + 重點標題 + ｜Ambient + 英文標題 -->
     <title>常溫職涯探索羅盤｜Ambient Career Exploration Compass</title>
     <meta name="description" content="常溫編集所職涯探索工具，透過「喜好」與「耐心」的四象限分析，協助你釐清任務屬性，找到適合的職涯定位。">
 
+    <!-- Open Graph for Social Sharing (品牌行銷優化：讓連結分享時更美觀) -->
+    <meta property="og:title" content="常溫職涯探索羅盤｜Ambient Career Exploration Compass">
+    <meta property="og:description" content="透過「喜好」與「耐心」的四象限分析，找到適合你的職涯定位。">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="常溫編集所 Ambient Edit Studio">
+
+    <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -27,24 +44,18 @@
     }
     </script>
     
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
 
+    <!-- React & Tailwind -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-2F079YMSFW');
-    </script>
-
+    <!-- Tailwind Config (符合品牌 CIS) -->
     <script>
         tailwind.config = {
             theme: {
@@ -76,10 +87,11 @@
         body {
             background-color: #fdfbf7;
             color: #4a4a4a;
-            /* Noise Texture */
+            /* 品牌質感：紙張纖維微噪點 */
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
         }
         
+        /* 品牌化滑桿樣式 */
         input[type=range] {
             -webkit-appearance: none;
             background: transparent;
@@ -94,6 +106,10 @@
             cursor: pointer;
             margin-top: -8px; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
         }
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%;
@@ -113,21 +129,11 @@
 </head>
 <body class="antialiased min-h-screen p-4 md:p-8 flex flex-col">
 
-    <nav class="max-w-6xl mx-auto w-full mb-8 flex justify-end">
-        <a href="https://weichun0203.github.io/ambientedit/" 
-           class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft"
-           aria-label="返回常溫首頁">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                <polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
-            <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
-        </a>
-    </nav>
-
+    <!-- React App Root -->
     <div id="root" class="flex-grow"></div>
 
-    <footer class="py-8 text-center mt-12">
+    <!-- Footer Copyright -->
+    <footer class="py-8 text-center mt-12 border-t border-brand-sand/30">
         <p class="text-xs text-brand-sage font-serif tracking-widest opacity-80">
             &copy; 2026 常溫編集所 Ambient Edit Studio.
         </p>
@@ -146,7 +152,7 @@
             Frown: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>,
             Info: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="16" y2="12"/><line x1="12" x2="12.01" y1="8" y2="8"/></svg>,
             Clock: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
-            Sparkles: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+            Sparkles: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L12 3Z"/></svg>
         };
 
         const { useState, useEffect } = React;
@@ -155,7 +161,8 @@
             const [activity, setActivity] = useState('');
             const [likeScore, setLikeScore] = useState(50);
             const [patienceScore, setPatienceScore] = useState(50);
-            // Initialize from localStorage if available
+            
+            // Initialize from localStorage if available (本地存取)
             const [savedItems, setSavedItems] = useState(() => {
                 const saved = localStorage.getItem('ambientCareerItems');
                 return saved ? JSON.parse(saved) : [];
@@ -260,13 +267,39 @@
             return (
                 <div className="max-w-6xl mx-auto font-sans">
                     
-                    {/* Header */}
-                    <header className="mb-10 text-center">
-                        <h1 className="text-3xl md:text-4xl font-bold font-serif text-brand-ink mb-3 flex items-center justify-center gap-3 tracking-wide">
-                            <Icons.Map className="w-8 h-8 text-brand-sage" />
-                            職涯探索羅盤
-                        </h1>
-                        <p className="text-brand-ink/70 max-w-2xl mx-auto font-serif">
+                    {/* Header - Integrated Layout with Bottom Alignment */}
+                    <header className="mb-10 relative">
+                        {/* Desktop: Grid/Flex Layout for perfect alignment. Mobile: Stacked */}
+                        <div className="flex flex-col md:flex-row items-center justify-center relative">
+                            
+                            {/* Title Group - Centered */}
+                            <div className="text-center z-10 md:px-20">
+                                {/* Brand Subtitle (Eyebrow) */}
+                                <div className="text-brand-sage text-xs md:text-sm font-bold tracking-[0.2em] mb-2 uppercase font-serif">
+                                    常溫編集所 Ambient Edit Studio
+                                </div>
+                                <h1 className="text-3xl md:text-4xl font-bold font-serif text-brand-ink flex items-center justify-center gap-3 tracking-wide">
+                                    <Icons.Map className="w-8 h-8 text-brand-sage" />
+                                    職涯探索羅盤
+                                </h1>
+                            </div>
+
+                            {/* Home Button - Bottom Aligned on Desktop */}
+                            <div className="mt-6 md:mt-0 md:absolute md:right-0 md:bottom-0">
+                                <a href="https://weichun0203.github.io/ambientedit/" 
+                                   className="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft"
+                                   aria-label="返回常溫首頁">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                        <polyline points="9 22 9 12 15 12 15 22"/>
+                                    </svg>
+                                    <span className="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">常溫首頁</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        {/* Description below */}
+                        <p className="text-brand-ink/70 max-w-2xl mx-auto font-serif text-center mt-4 leading-relaxed">
                             透過「喜好」與「耐心」兩個維度，在常溫中探索你手邊的任務、技能或目標，<br/>找到最適合你的人生配置。
                         </p>
                     </header>

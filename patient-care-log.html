@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="常溫編集所病人照護日誌，提供細緻的生理數值、飲食與行為紀錄功能，結合雲端同步與本地存取，讓照護成為溫柔的日常。">
+    <meta name="author" content="常溫編集所 Ambient Edit Studio">
+    <meta property="og:title" content="常溫病人照護日誌｜Ambient Patient Care Log">
+    <meta property="og:description" content="細緻紀錄每一刻的變化，讓照護成為溫柔的日常。">
+    <meta property="og:type" content="website">
+    
+    <title>常溫病人照護日誌｜Ambient Patient Care Log</title>
+    
+    <!-- JSON-LD Structure Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "常溫病人照護日誌",
+      "alternateName": "Ambient Patient Care Log",
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "description": "協助紀錄病人生理數值、護理狀況的網頁應用程式。",
+      "applicationCategory": "HealthApplication",
+      "operatingSystem": "Any"
+    }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            sageDark: '#768a81',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                            soft: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Noto Serif TC"', 'serif']
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'card': '0 2px 10px rgba(0, 0, 0, 0.03)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body { 
+            font-family: 'Noto Sans TC', sans-serif; 
+            background-color: #fdfbf7; 
+            color: #4a4a4a;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+        
+        .input-group { margin-bottom: 1.2rem; }
+        .input-label { display: block; font-weight: 500; color: #768a81; margin-bottom: 0.4rem; font-size: 0.9rem; letter-spacing: 0.05em; }
+        .input-field { 
+            width: 100%; 
+            padding: 0.75rem; 
+            background-color: #fff;
+            border-radius: 0.75rem; 
+            border: 1px solid #e6e2dd; 
+            color: #4a4a4a;
+            outline: none; 
+            transition: all 0.3s ease; 
+            font-size: 0.95rem; 
+        }
+        .input-field:focus { border-color: #8da399; box-shadow: 0 0 0 3px rgba(141, 163, 153, 0.1); }
+        .input-field::placeholder { color: #d1cdc7; }
+        
+        .btn-primary { 
+            background-color: #8da399; 
+            color: white; 
+            padding: 0.8rem; 
+            border-radius: 2rem; 
+            width: 100%; 
+            font-weight: 500; 
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease; 
+            box-shadow: 0 4px 6px -1px rgba(141, 163, 153, 0.2);
+        }
+        .btn-primary:hover { background-color: #768a81; transform: translateY(-1px); box-shadow: 0 6px 8px -1px rgba(141, 163, 153, 0.3); }
+        .btn-primary:disabled { background-color: #cbd5e1; cursor: not-allowed; transform: none; }
+        
+        .btn-secondary { 
+            background-color: transparent; 
+            border: 1px solid #d4a59a; 
+            color: #d4a59a; 
+            padding: 0.6rem 1rem; 
+            border-radius: 2rem; 
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover { background-color: #fff5f5; }
+        
+        .card { 
+            background: white; 
+            border-radius: 1.25rem; 
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03); 
+            border: 1px solid #f3f0eb;
+            padding: 0; 
+            margin-bottom: 1.5rem; 
+            overflow: hidden; 
+        }
+        .card-header { padding: 1rem 1.5rem; background-color: #faf9f6; border-bottom: 1px solid #f3f0eb; }
+        .card-body { padding: 1.5rem; }
+        
+        .nav-item { cursor: pointer; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: all 0.3s; font-weight: 500; color: #9ca3af; }
+        .nav-item.active { color: #8da399; }
+        .nav-item.active i { stroke-width: 2.5px; }
+        
+        /* Spinner */
+        .spinner { border: 2px solid #f3f3f3; border-top: 2px solid #8da399; border-radius: 50%; width: 18px; height: 18px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; }
+        .spinner-white { border: 2px solid rgba(255,255,255,0.3); border-top: 2px solid white; border-radius: 50%; width: 14px; height: 14px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 4px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Badges */
+        .badge-sugar { background-color: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; padding: 2px 10px; border-radius: 20px; font-weight: 500; font-size: 0.8rem; }
+        .badge-bp { background-color: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; padding: 2px 10px; border-radius: 20px; font-weight: 500; font-size: 0.8rem; }
+        .badge-hr { background-color: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 2px 10px; border-radius: 20px; font-weight: 500; font-size: 0.8rem; }
+        
+        .badge-tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 500; margin-right: 8px; letter-spacing: 0.05em; }
+        
+        /* Fade In Animation */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        //const DEFAULT_API_URL = "https://script.google.com/macros/s/AKfycbzmpad-ZyLqih56OLsff5EQtAwuyui7MSFIofh8tTz7jf56yplcrRQL0NyA4QLR5mzs/exec";
+        const STORAGE_KEY_HISTORY = 'patient_tracker_history_v1';
+
+        const OPTIONS = {
+            bowel: ['正常', '便秘', '腹瀉', '失禁', '其他'],
+            appetite: ['正常', '佳', '差', '其他'],
+            mood: ['平穩', '開心', '焦慮', '生氣', '憂鬱', '躁動', '其他']
+        };
+
+        const App = () => {
+            const [view, setView] = useState('record'); 
+            const [gasUrl, setGasUrl] = useState(localStorage.getItem('patient_tracker_url') || DEFAULT_API_URL);
+            const [loading, setLoading] = useState(false);
+            const [message, setMessage] = useState(null);
+            const [historyData, setHistoryData] = useState([]);
+            
+            // Edit Mode State
+            const [isEditing, setIsEditing] = useState(false);
+            const [editingUuid, setEditingUuid] = useState(null);
+
+            // Delete Modal State
+            const [showDeleteModal, setShowDeleteModal] = useState(false);
+            const [deleteTargetUuid, setDeleteTargetUuid] = useState(null);
+
+            // Form State
+            const initialFormState = {
+                bpSystolic: '',
+                bpDiastolic: '',
+                bloodSugar: '',
+                heartRate: '',
+                medication: '',
+                bowelStatus: '',
+                bowelNotes: '',
+                appetite: '',
+                dietContent: '',
+                mood: '',
+                behaviorNotes: ''
+            };
+            const [formData, setFormData] = useState(initialFormState);
+
+            useEffect(() => {
+                if (!localStorage.getItem('patient_tracker_url')) {
+                    localStorage.setItem('patient_tracker_url', DEFAULT_API_URL);
+                    setGasUrl(DEFAULT_API_URL);
+                }
+                lucide.createIcons();
+            }, [view, historyData, showDeleteModal]);
+
+            const showMessage = (type, text) => {
+                setMessage({ type, text });
+                setTimeout(() => setMessage(null), 3000);
+            };
+
+            const handleChange = (e) => {
+                setFormData({ ...formData, [e.target.name]: e.target.value });
+            };
+
+            const handleNavToRecord = () => {
+                if (view !== 'record' || isEditing) {
+                    setIsEditing(false);
+                    setEditingUuid(null);
+                    setFormData(initialFormState); 
+                    setView('record');
+                }
+            };
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                if (!gasUrl) {
+                    showMessage('error', 'API URL 未設定');
+                    setView('settings');
+                    return;
+                }
+
+                setLoading(true);
+                try {
+                    const action = isEditing ? 'update' : 'create';
+                    
+                    const formatPayloadField = (status, content) => {
+                        const statusPart = status ? `[${status}]` : '';
+                        return `${statusPart} ${content || ''}`.trim();
+                    };
+
+                    const payload = {
+                        action: action,
+                        uuid: editingUuid,
+                        bpSystolic: formData.bpSystolic,
+                        bpDiastolic: formData.bpDiastolic,
+                        bloodSugar: formData.bloodSugar,
+                        heartRate: formData.heartRate,
+                        medication: formData.medication,
+                        bowel: formatPayloadField(formData.bowelStatus, formData.bowelNotes),
+                        diet: formatPayloadField(formData.appetite, formData.dietContent),
+                        behavior: formatPayloadField(formData.mood, formData.behaviorNotes)
+                    };
+
+                    // Optimistic UI Update (Save to local first to feel fast)
+                    const tempId = editingUuid || Date.now().toString();
+                    
+                    await fetch(gasUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    showMessage('success', isEditing ? '修改成功！' : '紀錄已送出，辛苦了。');
+                    setFormData(initialFormState);
+                    setIsEditing(false);
+                    setEditingUuid(null);
+                    
+                    if (isEditing) {
+                        setView('history');
+                        setTimeout(fetchHistory, 1500); 
+                    }
+
+                } catch (error) {
+                    console.error(error);
+                    showMessage('error', '發送失敗，請檢查網路');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const handleDeleteClick = (uuid) => {
+                setDeleteTargetUuid(uuid);
+                setShowDeleteModal(true);
+            };
+
+            const confirmDelete = async () => {
+                const uuid = deleteTargetUuid;
+                if (!uuid) return;
+                
+                setShowDeleteModal(false);
+                
+                const newData = historyData.filter(item => item.uuid !== uuid);
+                setHistoryData(newData);
+                localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(newData)); 
+                showMessage('success', '紀錄已刪除');
+
+                try {
+                    await fetch(gasUrl, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: JSON.stringify({ action: 'delete', uuid: uuid })
+                    });
+                    
+                    setTimeout(fetchHistory, 2500);
+                } catch (error) {
+                    showMessage('error', '刪除請求發送失敗，下次同步時修正');
+                } finally {
+                    setDeleteTargetUuid(null);
+                }
+            };
+
+            const parseField = (str, options) => {
+                if (!str) return { status: '', notes: '' };
+                const match = str.match(/^\[(.*?)\]\s*(.*)/);
+                if (match) {
+                    return { status: match[1], notes: match[2] };
+                }
+                if (options.includes(str)) {
+                    return { status: str, notes: '' };
+                }
+                return { status: '', notes: str };
+            };
+
+            const handleEditClick = (item) => {
+                const bowel = parseField(item.bowel, OPTIONS.bowel);
+                const diet = parseField(item.diet, OPTIONS.appetite);
+                const behavior = parseField(item.behavior, OPTIONS.mood);
+
+                setFormData({
+                    bpSystolic: item.bpSystolic,
+                    bpDiastolic: item.bpDiastolic,
+                    bloodSugar: item.bloodSugar,
+                    heartRate: item.heartRate || '',
+                    medication: item.medication,
+                    bowelStatus: bowel.status,
+                    bowelNotes: bowel.notes,
+                    appetite: diet.status,
+                    dietContent: diet.notes,
+                    mood: behavior.status,
+                    behaviorNotes: behavior.notes
+                });
+                setEditingUuid(item.uuid);
+                setIsEditing(true);
+                setView('record');
+            };
+
+            const handleCancelEdit = () => {
+                setIsEditing(false);
+                setEditingUuid(null);
+                setFormData(initialFormState);
+                setView('history');
+            };
+
+            const fetchHistory = async () => {
+                if (!gasUrl) return;
+
+                const cached = localStorage.getItem(STORAGE_KEY_HISTORY);
+                if (cached) {
+                    try {
+                        const parsedData = JSON.parse(cached);
+                        if (Array.isArray(parsedData) && parsedData.length > 0) {
+                            setHistoryData(parsedData);
+                        }
+                    } catch (e) {
+                        console.error('快取讀取失敗', e);
+                    }
+                }
+
+                setLoading(true); 
+                try {
+                    const response = await fetch(gasUrl);
+                    const result = await response.json();
+                    const freshData = result.data || [];
+                    
+                    setHistoryData(freshData);
+                    localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(freshData));
+                    
+                } catch (error) {
+                    console.error(error);
+                    if (cached) {
+                        showMessage('error', '同步失敗，目前顯示本地存檔');
+                    } else {
+                        showMessage('error', '讀取失敗，請檢查權限');
+                    }
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            useEffect(() => {
+                if (view === 'history') {
+                    fetchHistory();
+                }
+            }, [view]);
+
+            const formatDateTitle = (dateStr) => {
+                if (!dateStr) return '';
+                const parts = dateStr.split('/');
+                if (parts.length >= 3) return `${parts[1]}/${parts[2]}`;
+                const dashParts = dateStr.split('-');
+                if (dashParts.length >= 3) return `${dashParts[1]}/${dashParts[2]}`;
+                return dateStr;
+            };
+
+            const formatTime = (timeStr) => timeStr || '';
+
+            const groupedHistory = useMemo(() => {
+                const groups = [];
+                historyData.forEach(item => {
+                    const dateKey = item.date;
+                    const existingGroup = groups.find(g => g.date === dateKey);
+                    if (existingGroup) {
+                        existingGroup.items.push(item);
+                    } else {
+                        groups.push({ date: dateKey, items: [item] });
+                    }
+                });
+                return groups;
+            }, [historyData]);
+
+            const RenderField = ({ text, colorClass }) => {
+                if (!text) return null;
+                const match = text.match(/^\[(.*?)\]\s*(.*)/);
+                if (match) {
+                    const status = match[1];
+                    const content = match[2];
+                    const isNormal = ['正常', '平穩', '佳'].includes(status);
+                    
+                    return (
+                        <div className="flex items-baseline mt-1">
+                            <span className={`badge-tag ${isNormal ? 'bg-gray-100 text-gray-500 border border-gray-200' : colorClass}`}>
+                                {status}
+                            </span>
+                            <span className="text-brand-ink text-sm flex-1 break-words">{content}</span>
+                        </div>
+                    );
+                }
+                return <span className="text-sm text-brand-ink break-words">{text}</span>;
+            };
+
+            return (
+                <div className="max-w-md mx-auto min-h-screen pb-24 relative selection:bg-brand-sage selection:text-white">
+                    {/* Brand Header */}
+                    <div className="px-6 pt-8 pb-4">
+                        <div className="flex flex-col mb-4">
+                            <h2 className="text-xs font-medium tracking-widest text-brand-sage mb-2 uppercase">常溫編集所 Ambient Edit Studio</h2>
+                            <div className="flex flex-col md:flex-row justify-between md:items-end gap-3 border-b border-brand-sand/50 pb-4">
+                                <h1 className="text-2xl font-bold text-brand-ink tracking-wide flex items-center gap-2">
+                                    {isEditing ? '編輯紀錄' : '病人照護日誌'}
+                                </h1>
+                                
+                                {/* Back to Home Button - Bottom Aligned */}
+                                <a href="https://weichun0203.github.io/ambientedit/" 
+                                   className="group inline-flex items-center self-start md:self-auto px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+                                   aria-label="返回常溫首頁"
+                                   style={{textDecoration: 'none'}}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                        <polyline points="9 22 9 12 15 12 15 22"/>
+                                    </svg>
+                                    <span className="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                                        常溫首頁
+                                    </span>
+                                </a>
+                            </div>
+                            <p className="mt-3 text-sm text-gray-500 font-serif leading-relaxed italic">
+                                細緻紀錄每一刻的變化，讓照護成為溫柔的日常。
+                            </p>
+                        </div>
+
+                        {/* Status Bar */}
+                        <div className="flex justify-end items-center gap-3">
+                            {loading && (
+                                <div className="flex items-center text-xs text-brand-sage animate-fade-in">
+                                    <span className="spinner" style={{width: '14px', height: '14px', borderWidth: '2px'}}></span>
+                                    雲端同步中...
+                                </div>
+                            )}
+                            <button onClick={() => setView('settings')} className="p-2 text-gray-400 hover:text-brand-sage hover:bg-brand-paper rounded-full transition-colors">
+                                <i data-lucide="settings" className="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Notification & Modals */}
+                    {message && (
+                        <div className={`fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-full text-sm font-medium shadow-lg flex items-center gap-2 animate-fade-in ${message.type === 'error' ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-green-50 text-green-700 border border-green-100'}`}>
+                            {message.type === 'error' ? <i data-lucide="alert-circle" className="w-4 h-4"></i> : <i data-lucide="check" className="w-4 h-4"></i>}
+                            {message.text}
+                        </div>
+                    )}
+
+                    {showDeleteModal && (
+                        <div className="fixed inset-0 bg-brand-ink/20 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+                            <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-xs border border-brand-sand">
+                                <div className="text-center mb-6">
+                                    <h3 className="text-lg font-bold text-brand-ink mb-2">確認刪除這筆紀錄？</h3>
+                                    <p className="text-sm text-gray-500">刪除後將無法復原。</p>
+                                </div>
+                                <div className="flex gap-3">
+                                    <button 
+                                        onClick={() => { setShowDeleteModal(false); setDeleteTargetUuid(null); }}
+                                        className="flex-1 py-2 bg-gray-50 text-gray-600 rounded-full font-medium hover:bg-gray-100 transition-colors"
+                                    >
+                                        保留
+                                    </button>
+                                    <button 
+                                        onClick={confirmDelete}
+                                        className="flex-1 py-2 bg-brand-clay text-white rounded-full font-medium hover:opacity-90 transition-opacity"
+                                    >
+                                        刪除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Main Content */}
+                    <main className="px-4">
+                        {view === 'settings' && (
+                            <div className="card card-body animate-fade-in">
+                                <h2 className="text-lg font-bold mb-6 text-brand-ink flex items-center gap-2">
+                                    <i data-lucide="database" className="w-5 h-5 text-brand-sage"></i>
+                                    資料庫設定
+                                </h2>
+                                <label className="input-label">API 連線網址 (GAS URL)</label>
+                                <input type="text" value={gasUrl} onChange={(e) => setGasUrl(e.target.value)} className="input-field mb-6 text-sm bg-gray-50 text-gray-500 font-mono" />
+                                
+                                <div className="space-y-3">
+                                    <a href="https://docs.google.com/spreadsheets/d/1GFWKZ9A0-MRfh94rdh2BQ7EUO2ZKrS0P0bMc-HcimVg/edit?usp=sharing" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center w-full py-3 px-4 bg-brand-paper border border-brand-sage text-brand-sage rounded-xl font-medium hover:bg-green-50 transition-colors">
+                                        <i data-lucide="sheet" className="w-4 h-4 mr-2"></i> 開啟 Google 試算表
+                                    </a>
+                                    <button onClick={handleNavToRecord} className="btn-primary">返回紀錄</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {view === 'record' && (
+                            <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
+                                {isEditing && (
+                                    <div className="bg-brand-paper border border-brand-sage/30 text-brand-sageDark px-4 py-3 rounded-xl text-sm flex justify-between items-center">
+                                        <span className="font-medium flex items-center gap-2"><i data-lucide="edit-3" className="w-4 h-4"></i> 正​​在編輯舊紀錄</span>
+                                        <button type="button" onClick={handleCancelEdit} className="text-xs underline hover:text-brand-ink">取消</button>
+                                    </div>
+                                )}
+
+                                {/* 生理數據 */}
+                                <div className="card card-body">
+                                    <h3 className="font-bold text-brand-sage mb-4 flex items-center gap-2 text-lg">
+                                        <i data-lucide="heart-pulse" className="w-5 h-5"></i> 生理數值
+                                    </h3>
+                                    <div className="grid grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label className="input-label">收縮壓 (mmHg)</label>
+                                            <input type="number" name="bpSystolic" value={formData.bpSystolic} onChange={handleChange} className="input-field" placeholder="120" />
+                                        </div>
+                                        <div>
+                                            <label className="input-label">舒張壓 (mmHg)</label>
+                                            <input type="number" name="bpDiastolic" value={formData.bpDiastolic} onChange={handleChange} className="input-field" placeholder="80" />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="input-label">血糖 (mg/dL)</label>
+                                            <input type="number" name="bloodSugar" value={formData.bloodSugar} onChange={handleChange} className="input-field" placeholder="100" />
+                                        </div>
+                                        <div>
+                                            <label className="input-label">心跳率 (bpm)</label>
+                                            <input type="number" name="heartRate" value={formData.heartRate} onChange={handleChange} className="input-field" placeholder="75" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 護理紀錄 */}
+                                <div className="card card-body space-y-5">
+                                    <h3 className="font-bold text-brand-sage mb-2 flex items-center gap-2 text-lg">
+                                        <i data-lucide="clipboard-list" className="w-5 h-5"></i> 護理紀錄
+                                    </h3>
+
+                                    {/* 排便狀況 */}
+                                    <div>
+                                        <label className="input-label">排便狀況</label>
+                                        <div className="flex gap-2">
+                                            <div className="relative w-1/3">
+                                                <select name="bowelStatus" value={formData.bowelStatus} onChange={handleChange} className="input-field appearance-none bg-white">
+                                                    <option value="">選擇</option>
+                                                    {OPTIONS.bowel.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                                </select>
+                                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                                                    <i data-lucide="chevron-down" className="w-4 h-4"></i>
+                                                </div>
+                                            </div>
+                                            <input type="text" name="bowelNotes" value={formData.bowelNotes} onChange={handleChange} className="input-field w-2/3" placeholder="備註 (顏色/量)..." />
+                                        </div>
+                                    </div>
+
+                                    {/* 飲食內容 */}
+                                    <div>
+                                        <label className="input-label">飲食紀錄</label>
+                                        <div className="flex gap-2 items-start">
+                                            <div className="relative w-1/3">
+                                                <select name="appetite" value={formData.appetite} onChange={handleChange} className="input-field appearance-none">
+                                                    <option value="">食慾</option>
+                                                    {OPTIONS.appetite.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                                </select>
+                                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                                                    <i data-lucide="chevron-down" className="w-4 h-4"></i>
+                                                </div>
+                                            </div>
+                                            <input type="text" name="dietContent" value={formData.dietContent} onChange={handleChange} className="input-field w-2/3" placeholder="吃了什麼..." />
+                                        </div>
+                                    </div>
+
+                                    {/* 行為情緒 */}
+                                    <div>
+                                        <label className="input-label">行為與情緒</label>
+                                        <div className="flex gap-2 items-start">
+                                            <div className="relative w-1/3">
+                                                <select name="mood" value={formData.mood} onChange={handleChange} className="input-field appearance-none">
+                                                    <option value="">情緒</option>
+                                                    {OPTIONS.mood.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                                </select>
+                                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-400">
+                                                    <i data-lucide="chevron-down" className="w-4 h-4"></i>
+                                                </div>
+                                            </div>
+                                            <input type="text" name="behaviorNotes" value={formData.behaviorNotes} onChange={handleChange} className="input-field w-2/3" placeholder="睡眠狀況/異常行為..." />
+                                        </div>
+                                    </div>
+
+                                    {/* 服藥紀錄 */}
+                                    <div className="pt-2 border-t border-dashed border-gray-200">
+                                        <label className="input-label mt-2">服藥紀錄</label>
+                                        <textarea name="medication" value={formData.medication} onChange={handleChange} rows="2" className="input-field resize-none" placeholder="藥名與時間..."></textarea>
+                                    </div>
+                                </div>
+
+                                <button type="submit" disabled={loading} className={`btn-primary ${loading ? 'opacity-80' : ''}`}>
+                                    {loading ? <span><span className="spinner-white"></span>處理中...</span> : (isEditing ? '更新紀錄' : '確認紀錄')}
+                                </button>
+                                {isEditing && (
+                                    <button type="button" onClick={handleCancelEdit} className="w-full text-center text-gray-400 text-sm py-2 hover:text-gray-600">取消編輯</button>
+                                )}
+                            </form>
+                        )}
+
+                        {view === 'history' && (
+                            <div className="space-y-8 animate-fade-in">
+                                {!loading && groupedHistory.length === 0 && (
+                                    <div className="text-center py-12">
+                                        <div className="inline-block p-4 rounded-full bg-brand-paper mb-3">
+                                            <i data-lucide="book-open" className="w-8 h-8 text-brand-sand"></i>
+                                        </div>
+                                        <p className="text-gray-400 font-serif">尚無紀錄，開始第一筆吧。</p>
+                                    </div>
+                                )}
+
+                                {groupedHistory.map((group, groupIndex) => (
+                                    <div key={groupIndex}>
+                                        <div className="flex items-center mb-3 px-2">
+                                            <div className="w-2 h-2 rounded-full bg-brand-sage mr-2"></div>
+                                            <span className="font-serif font-bold text-lg text-brand-ink">{formatDateTitle(group.date)}</span>
+                                            <span className="ml-auto text-xs text-gray-400 font-mono bg-white px-2 py-1 rounded-full border border-gray-100">{group.items.length} 筆</span>
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            {group.items.map((item, itemIndex) => (
+                                                <div key={item.uuid || itemIndex} className="card relative hover:shadow-md transition-shadow duration-300">
+                                                    <div className="card-body py-4">
+                                                        <div className="flex justify-between items-start mb-3">
+                                                            <span className="text-xs font-bold text-brand-sage bg-brand-paper px-2 py-1 rounded border border-brand-sand/50 font-mono">
+                                                                {formatTime(item.time)}
+                                                            </span>
+                                                            <div className="flex gap-2">
+                                                                {item.uuid && (
+                                                                    <>
+                                                                        <button onClick={() => handleEditClick(item)} className="p-1.5 text-gray-400 hover:text-brand-sage bg-gray-50 rounded-full transition-colors"><i data-lucide="edit-2" className="w-3.5 h-3.5"></i></button>
+                                                                        <button onClick={() => handleDeleteClick(item.uuid)} className="p-1.5 text-gray-400 hover:text-brand-clay bg-gray-50 rounded-full transition-colors"><i data-lucide="trash-2" className="w-3.5 h-3.5"></i></button>
+                                                                    </>
+                                                                )}
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Vital Signs Grid */}
+                                                        {(item.bpSystolic || item.heartRate || item.bloodSugar) && (
+                                                            <div className="flex flex-wrap gap-2 mb-4 pb-3 border-b border-dashed border-gray-100">
+                                                                {(item.bpSystolic || item.bpDiastolic) && (
+                                                                    <span className="badge-bp flex items-center gap-1">
+                                                                        <i data-lucide="activity" className="w-3 h-3"></i> {item.bpSystolic}/{item.bpDiastolic}
+                                                                    </span>
+                                                                )}
+                                                                {item.heartRate && (
+                                                                    <span className="badge-hr flex items-center gap-1">
+                                                                        <i data-lucide="heart" className="w-3 h-3"></i> {item.heartRate}
+                                                                    </span>
+                                                                )}
+                                                                {item.bloodSugar && (
+                                                                    <span className="badge-sugar flex items-center gap-1">
+                                                                        <i data-lucide="droplet" className="w-3 h-3"></i> {item.bloodSugar}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        )}
+
+                                                        {/* Log Content */}
+                                                        <div className="space-y-3">
+                                                            {item.bowel && (
+                                                                <div className="flex items-start gap-2">
+                                                                    <i data-lucide="check-circle-2" className="w-4 h-4 text-purple-300 mt-0.5 shrink-0"></i>
+                                                                    <div className="flex-1">
+                                                                        <RenderField text={item.bowel} colorClass="bg-purple-100 text-purple-600 border border-purple-200" />
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            {item.diet && (
+                                                                <div className="flex items-start gap-2">
+                                                                    <i data-lucide="utensils" className="w-4 h-4 text-orange-300 mt-0.5 shrink-0"></i>
+                                                                    <div className="flex-1">
+                                                                        <RenderField text={item.diet} colorClass="bg-orange-100 text-orange-600 border border-orange-200" />
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            {item.behavior && (
+                                                                <div className="flex items-start gap-2">
+                                                                    <i data-lucide="brain-circuit" className="w-4 h-4 text-blue-300 mt-0.5 shrink-0"></i>
+                                                                    <div className="flex-1">
+                                                                        <RenderField text={item.behavior} colorClass="bg-blue-100 text-blue-600 border border-blue-200" />
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            {item.medication && (
+                                                                <div className="flex items-start gap-2 bg-gray-50 p-2 rounded-lg">
+                                                                    <i data-lucide="pill" className="w-4 h-4 text-gray-400 mt-0.5 shrink-0"></i>
+                                                                    <span className="text-sm text-gray-600">{item.medication}</span>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </main>
+
+                    {/* Footer Copyright */}
+                    <footer className="text-center py-6 text-xs text-gray-400 font-mono tracking-wider">
+                        2026 常溫編集所 Ambient Edit Studio.
+                    </footer>
+
+                    {/* Bottom Navigation */}
+                    <nav className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-md border border-white/50 shadow-lg rounded-full px-2 py-1 flex items-center gap-1 z-40">
+                        <div onClick={handleNavToRecord} 
+                             className={`nav-item flex items-center gap-2 rounded-full px-4 py-2 ${view === 'record' ? 'bg-brand-sage text-white shadow-md' : 'hover:bg-gray-100'}`}>
+                            <i data-lucide="plus-circle" className="w-5 h-5"></i>
+                            <span className="text-sm font-medium">紀錄</span>
+                        </div>
+                        <div onClick={() => setView('history')} 
+                             className={`nav-item flex items-center gap-2 rounded-full px-4 py-2 ${view === 'history' ? 'bg-brand-sage text-white shadow-md' : 'hover:bg-gray-100'}`}>
+                            <i data-lucide="history" className="w-5 h-5"></i>
+                            <span className="text-sm font-medium">歷史</span>
+                        </div>
+                    </nav>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
+<!--
+ * 病人照護追蹤系統 - 後端 API (V4.2 穩定版)
+ * 重要：每次修改此腳本後，務必點擊 [部署] > [管理部署作業] > [編輯] > 版本選 [建立新版本] > [部署]
+ */
+
+function setupSheet() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  // 欄位定義 (共 12 欄)
+  // A:時間戳, B:日期, C:時間, D:收縮壓, E:舒張壓, F:血糖, G:心跳, H:服藥, I:飲食, J:排便, K:行為, L:UUID
+  const headers = [
+    "時間戳記", "日期", "時間", 
+    "收縮壓 (mmHg)", "舒張壓 (mmHg)", "血糖 (mg/dL)", "心跳率 (bpm)",
+    "服藥紀錄", "飲食紀錄", "排便狀況", "行為表現", "UUID"
+  ];
+  
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(headers);
+  }
+}
+
+function doGet(e) {
+  return handleRequest(e);
+}
+
+function doPost(e) {
+  return handleRequest(e);
+}
+
+function handleRequest(e) {
+  const lock = LockService.getScriptLock();
+  lock.tryLock(10000);
+
+  try {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    if (sheet.getLastRow() === 0) setupSheet();
+
+    let data = {};
+    let action = 'read';
+    
+    if (e.postData && e.postData.contents) {
+      data = JSON.parse(e.postData.contents);
+      action = data.action || 'create';
+    }
+
+    // --- Create (新增) ---
+    if (action === 'create') {
+      const timestamp = new Date();
+      // 如果前端有傳來 UUID 就用前端的 (確保同步)，沒有就產生新的
+      const uuid = data.uuid || Utilities.getUuid(); 
+      const dateStr = Utilities.formatDate(timestamp, Session.getScriptTimeZone(), "yyyy/MM/dd");
+      const timeStr = Utilities.formatDate(timestamp, Session.getScriptTimeZone(), "HH:mm");
+      
+      sheet.appendRow([
+        timestamp, dateStr, timeStr,
+        data.bpSystolic || "", 
+        data.bpDiastolic || "", 
+        data.bloodSugar || "", 
+        data.heartRate || "", // G欄
+        data.medication || "", 
+        data.diet || "", 
+        data.bowel || "", 
+        data.behavior || "", 
+        uuid
+      ]);
+      return response({ result: "success", uuid: uuid });
+    }
+
+    // --- Delete (刪除) ---
+    else if (action === 'delete') {
+      const row = findRowByUuid(sheet, data.uuid);
+      if (row > 0) {
+        sheet.deleteRow(row);
+        return response({ result: "success" });
+      } else {
+        return response({ result: "error", message: "找不到資料" });
+      }
+    }
+
+    // --- Update (更新) ---
+    else if (action === 'update') {
+      const row = findRowByUuid(sheet, data.uuid);
+      if (row > 0) {
+        // 直接指定欄位寫入，避免錯位
+        sheet.getRange(row, 4).setValue(data.bpSystolic || "");
+        sheet.getRange(row, 5).setValue(data.bpDiastolic || "");
+        sheet.getRange(row, 6).setValue(data.bloodSugar || "");
+        sheet.getRange(row, 7).setValue(data.heartRate || ""); // G欄
+        sheet.getRange(row, 8).setValue(data.medication || "");
+        sheet.getRange(row, 9).setValue(data.diet || "");
+        sheet.getRange(row, 10).setValue(data.bowel || "");
+        sheet.getRange(row, 11).setValue(data.behavior || "");
+        return response({ result: "success" });
+      } else {
+        return response({ result: "error", message: "找不到資料" });
+      }
+    }
+
+    // --- Read (讀取) ---
+    else {
+      const lastRow = sheet.getLastRow();
+      if (lastRow < 2) return response({ data: [] });
+      
+      // 讀取 A2:L(最後一列)
+      const range = sheet.getRange(2, 1, lastRow - 1, 12);
+      const values = range.getValues();
+      
+      const resultData = values.map(row => ({
+        timestamp: row[0],
+        date: formatDateSafe(row[1], "yyyy/MM/dd"),
+        time: formatDateSafe(row[2], "HH:mm"),
+        bpSystolic: row[3],
+        bpDiastolic: row[4],
+        bloodSugar: row[5],
+        heartRate: row[6], // G欄
+        medication: row[7],
+        diet: row[8],
+        bowel: row[9],
+        behavior: row[10],
+        uuid: row[11] // L欄
+      })).reverse().slice(0, 50);
+
+      return response({ data: resultData });
+    }
+    
+  } catch (e) {
+    return response({ result: "error", error: e.toString() });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function formatDateSafe(val, format) {
+  if (!val) return "";
+  if (val instanceof Date) {
+    return Utilities.formatDate(val, Session.getScriptTimeZone(), format);
+  }
+  return String(val);
+}
+
+function findRowByUuid(sheet, uuid) {
+  if (!uuid) return -1;
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return -1;
+  const uuids = sheet.getRange(2, 12, lastRow - 1, 1).getValues().flat();
+  const index = uuids.indexOf(uuid);
+  return index !== -1 ? index + 2 : -1;
+}
+
+function response(data) {
+  return ContentService.createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+} -->

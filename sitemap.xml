@@ -1,11 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://www.ambientedit.com</loc>
-        <lastmod>2026-01-13</lastmod>
+        <loc>https://www.ambientedit.com/</loc>
+        <lastmod>2026-01-19</lastmod>
+        <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
     
+    <url>
+        <loc>https://www.ambientedit.com/shipping-fee-calculator.html</loc>
+        <lastmod>2026-01-19</lastmod>
+        <priority>0.8</priority>
+    </url>
 
-    </urlset>
+    <url>
+        <loc>https://www.ambientedit.com/dividend-investing.html</loc>
+        <lastmod>2026-01-19</lastmod>
+        <priority>0.8</priority>
+    </url>
 
+    <url>
+        <loc>https://www.ambientedit.com/daily-budget.html</loc>
+        <lastmod>2026-01-19</lastmod>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
+        <loc>https://www.ambientedit.com/compound-interest.html</loc>
+        <lastmod>2026-01-19</lastmod>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
+        <loc>https://www.ambientedit.com/time-value-of-money.html</loc>
+        <lastmod>2026-01-19</lastmod>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
+        <loc>https://www.ambientedit.com/decision-matrix-analysis.html</loc>
+        <lastmod>2026-01-19</lastmod>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
+        <loc>https://www.ambientedit.com/mandala-chart.html</loc>
+        <lastmod>2026-01-19</lastmod>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
+        <loc>https://www.ambientedit.com/career-exploration.html</loc>
+        <lastmod>2026-01-19</lastmod>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
+        <loc>https://www.ambientedit.com/taiwanese-food.html</loc>
+        <lastmod>2026-01-19</lastmod>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
+        <loc>https://www.ambientedit.com/love-language.html</loc>
+        <lastmod>2026-01-19</lastmod>
+        <priority>0.8</priority>
+    </url>
+
+    <url>
+        <loc>https://www.ambientedit.com/money-stack.html</loc>
+        <lastmod>2026-01-19</lastmod>
+        <priority>0.8</priority>
+    </url>
+</urlset>

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <!-- 
+        Brand: Ambient Edit Studio (常溫編集所)
+        Project: Ambient Task Cards (常溫任務小卡)
+        Designer: AI Brand Partner
+        Date: 2026
+        Update: Card Content Swap (Instruction Front / Context Back) & Header Redesign
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- 6. Title 規則 -->
+    <title>常溫任務小卡｜Ambient Task Cards</title>
+    
+    <meta name="description" content="常溫編集所推出的日常練習任務卡，涵蓋靈性、體能、智能、社交與專業工作，透過微小的行動，找回生活的溫潤質感。">
+    
+    <!-- 1. GA4 追蹤碼 -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Config for Brand Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                            stone: '#a8a29e',
+                            navy: '#2c3e50' 
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'card': '0 10px 30px -5px rgba(141, 163, 153, 0.15)',
+                        'float': '0 10px 40px -10px rgba(0, 0, 0, 0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Base Styles */
+        body {
+            background-color: #fdfbf7;
+            color: #4a4a4a;
+            /* 品牌紋理：模擬紙張質感 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+        /* Hide scrollbar for category selector but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Card Flip Animation */
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        
+        /* Floating Widget Animation */
+        @keyframes slideInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-slide-in {
+            animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+
+    <!-- 4. JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "常溫日常練習",
+      "alternateName": "Ambient Task Cards",
+      "url": "https://weichun0203.github.io/ambientedit/tasks",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "All",
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio",
+        "url": "https://weichun0203.github.io/ambientedit/"
+      },
+      "description": "一個提供靈性、體能、智能、社交與專業工作日常練習的任務卡網站，幫助使用者建立理想生活。",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "TWD"
+      }
+    }
+    </script>
+</head>
+<body class="font-sans min-h-screen flex flex-col antialiased selection:bg-brand-sage selection:text-white relative">
+
+    <!-- Header Section (Redesigned) -->
+    <header class="pt-12 pb-8 px-6 md:px-12 max-w-7xl mx-auto w-full">
+        <div class="flex flex-col w-full">
+            
+            <!-- Top Row: Grid for precise alignment -->
+            <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-end gap-6 w-full">
+                
+                <!-- Left Spacer -->
+                <div class="hidden md:block"></div>
+                
+                <!-- Center Group: Brand + Title -->
+                <div class="flex flex-col items-center text-center z-10">
+                    <!-- Brand Name (English Only) -->
+                    <span class="text-brand-sage font-sans text-sm tracking-[0.2em] mb-4 font-medium uppercase">
+                        Ambient Edit Studio
+                    </span>
+                    
+                    <!-- Main Title (Chinese) -->
+                    <h1 class="text-3xl md:text-4xl lg:text-5xl font-serif text-brand-ink tracking-wide font-medium leading-none">
+                        日常練習
+                    </h1>
+                    
+                    <!-- English Title (Below Chinese) -->
+                    <span class="text-brand-sage text-xl md:text-2xl font-light italic block mt-2 font-serif">
+                        Daily Practice
+                    </span>
+                </div>
+
+                <!-- Right Group: Home Button -->
+                <div class="flex justify-center md:justify-end mt-4 md:mt-0">
+                    <a href="https://weichun0203.github.io/ambientedit/" 
+                       class="group inline-flex items-center px-5 py-2.5 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm cursor-pointer"
+                       aria-label="返回常溫首頁"
+                       style="text-decoration: none;"> 
+                       
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        
+                        <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                            常溫首頁
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Intro Quote -->
+            <div class="text-center mt-8">
+                <p class="text-brand-ink/70 text-sm md:text-base font-serif leading-relaxed">
+                    「生活不是等待風暴過去，而是學會在雨中跳舞。」<br>
+                    透過微小的儀式，找回身心的溫潤質感。
+                </p>
+            </div>
+            
+        </div>
+        
+        <div class="w-full h-px bg-gradient-to-r from-transparent via-brand-sand/60 to-transparent mt-10"></div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow px-4 md:px-12 max-w-7xl mx-auto w-full pb-32">
+        
+        <!-- Category Filter -->
+        <nav class="flex overflow-x-auto no-scrollbar gap-4 py-6 mb-8 sticky top-0 bg-brand-paper/95 backdrop-blur-sm z-40 w-full border-b border-brand-sand/30 justify-start md:justify-center">
+            <button onclick="filterTasks('all')" id="btn-all" class="category-btn active px-6 py-2 rounded-full text-sm font-medium tracking-wider transition-all duration-300 bg-brand-sage text-white shadow-soft shrink-0">
+                全部
+            </button>
+            <button onclick="filterTasks('spirit')" id="btn-spirit" class="category-btn px-6 py-2 rounded-full text-sm font-medium tracking-wider transition-all duration-300 text-brand-ink hover:bg-brand-sand/50 border border-transparent hover:border-brand-sand shrink-0">
+                靈性 Spirit
+            </button>
+            <button onclick="filterTasks('physical')" id="btn-physical" class="category-btn px-6 py-2 rounded-full text-sm font-medium tracking-wider transition-all duration-300 text-brand-ink hover:bg-brand-sand/50 border border-transparent hover:border-brand-sand shrink-0">
+                體能 Physical
+            </button>
+            <button onclick="filterTasks('intelligence')" id="btn-intelligence" class="category-btn px-6 py-2 rounded-full text-sm font-medium tracking-wider transition-all duration-300 text-brand-ink hover:bg-brand-sand/50 border border-transparent hover:border-brand-sand shrink-0">
+                智能 Intelligence
+            </button>
+            <button onclick="filterTasks('social')" id="btn-social" class="category-btn px-6 py-2 rounded-full text-sm font-medium tracking-wider transition-all duration-300 text-brand-ink hover:bg-brand-sand/50 border border-transparent hover:border-brand-sand shrink-0">
+                社交 Social
+            </button>
+            <button onclick="filterTasks('professional')" id="btn-professional" class="category-btn px-6 py-2 rounded-full text-sm font-medium tracking-wider transition-all duration-300 text-brand-ink hover:bg-brand-sand/50 border border-transparent hover:border-brand-sand shrink-0">
+                專業 Professional
+            </button>
+        </nav>
+
+        <!-- Task Grid -->
+        <div id="task-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <!-- Cards will be injected here via JS -->
+        </div>
+
+    </main>
+
+    <!-- Floating Tasks Container -->
+    <div id="active-tasks-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm w-full pointer-events-none">
+        <!-- Active tasks widgets injected here -->
+    </div>
+
+    <!-- 3. Footer -->
+    <footer class="py-8 text-center text-brand-ink/40 text-xs font-serif border-t border-brand-sand/50">
+        <p>2026 常溫編集所 Ambient Edit Studio.</p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const STORAGE_KEY = 'ambient_task_progress_v5'; // Update version for content structure change
+
+        // 任務資料庫 
+        // 結構更新：
+        // desc -> 放在正面 (Front) 作為具體指引
+        // context -> 新增欄位，放在背面 (Back) 作為情境框架/心法
+        const tasks = [
+            // --- 靈性 Spirit ---
+            { id: 101, category: 'spirit', title: '晨間靜心', subtitle: 'Morning Meditation', desc: '在開始工作前，給自己5分鐘的空白。不看手機，只專注於呼吸。', duration: '5 min', context: '想像心靈是一座需要通風的房間，打開窗，讓清晨的空氣流動進來。' },
+            { id: 102, category: 'spirit', title: '書寫覺察', subtitle: 'Journaling', desc: '寫下此刻的三個情緒形容詞，不評判，只是記錄。', duration: '5 min', context: '情緒像雲，而你是天空。記錄它們，就是看著雲朵飄過，不被帶走。' },
+            { id: 103, category: 'spirit', title: '數位排毒', subtitle: 'Digital Detox', desc: '設定一小時不看任何螢幕，讓大腦從資訊流中休息。', duration: '1 Hour', context: '在不斷連線的世界裡，斷線是為了重新與自己連線。' },
+            { id: 104, category: 'spirit', title: '仰望天空', subtitle: 'Sky Gazing', desc: '走出戶外或看向窗外，觀察雲的形狀與天空的顏色變化。', duration: '3 min', context: '當視野變得遼闊，心裡的糾結就會變得渺小。' },
+            { id: 105, category: 'spirit', title: '點燃燭光', subtitle: 'Candle Light', desc: '點一支蠟燭，凝視火苗的跳動，讓思緒隨之平靜。', duration: '10 min', context: '火光是專注的錨點，讓紛亂的思緒如同飛蛾般靜止下來。' },
+            { id: 106, category: 'spirit', title: '觸摸自然', subtitle: 'Touch Nature', desc: '去摸摸樹皮的粗糙、草地的柔軟或石頭的涼意。', duration: 'Instant', context: '透過指尖的觸感，確認我們真實地活在這個世界上，而非虛擬之中。' },
+            { id: 107, category: 'spirit', title: '感恩練習', subtitle: 'Gratitude', desc: '睡前想出今天發生的三件好事，即使是很微小的事。', duration: 'Bedtime', context: '富足不是擁有多，而是察覺多。' },
+            { id: 108, category: 'spirit', title: '身體掃描', subtitle: 'Body Scan', desc: '從腳趾到頭頂，慢慢感受身體每一個部位的感覺。', duration: '10 min', context: '身體是你最忠實的夥伴，傾聽它微小的聲音。' },
+            { id: 109, category: 'spirit', title: '自我寬恕', subtitle: 'Self Forgiveness', desc: '對自己說：「我原諒自己過去的某個失誤，我盡力了。」', duration: 'Mindset', context: '放下過去的重擔，才能騰出雙手擁抱現在。' },
+            { id: 110, category: 'spirit', title: '聆聽白噪音', subtitle: 'White Noise', desc: '聽聽雨聲、海浪聲或風聲，讓心靈回到平靜頻率。', duration: '5 min', context: '自然的頻率，能溫柔地撫平大腦的皺褶。' },
+            { id: 111, category: 'spirit', title: '定義富足', subtitle: 'Define Abundance', desc: '思考除了金錢，現在你的生活中還有哪裡是「富足」的？', duration: 'Reflect', context: '陽光、空氣、健康，都是生命無條件的餽贈。' },
+            { id: 112, category: 'spirit', title: '正念飲食', subtitle: 'Mindful Eating', desc: '吃下一口食物，咀嚼 30 次，感受味道的層次變化。', duration: 'Meal', context: '食物是大地能量的轉化，用尊重的態度接納這份能量。' },
+            { id: 113, category: 'spirit', title: '寫信給未來', subtitle: 'Letter to Future', desc: '寫一段話給一年後的自己，說說你現在的希望。', duration: '15 min', context: '今天的你，是未來那個你的守護者。' },
+            { id: 114, category: 'spirit', title: '觀察巧合', subtitle: 'Notice Synchronicities', desc: '今天留意生活中有趣的巧合，那是宇宙的眨眼。', duration: 'All Day', context: '世界比我們想像的更有連結，保持好奇，就能看見魔法。' },
+            { id: 115, category: 'spirit', title: '祝福陌生人', subtitle: 'Bless a Stranger', desc: '在心裡默默祝福一個路人：「願你今天平安快樂。」', duration: 'Instant', context: '善意是一種迴力鏢，投擲出去的祝福最終會溫暖自己。' },
+            { id: 116, category: 'spirit', title: '整理一角', subtitle: 'Declutter', desc: '整理一個抽屜或桌面角落，清理外在也清理內在。', duration: '10 min', context: '空間反映心境，理順了物品，也就理順了思緒。' },
+            { id: 117, category: 'spirit', title: '緩慢行走', subtitle: 'Walking Meditation', desc: '放慢腳步，去感受腳底與地面接觸的每一個瞬間。', duration: 'Walking', context: '每一步都是對大地的親吻，走得慢，才能走得遠。' },
+            { id: 118, category: 'spirit', title: '回憶童趣', subtitle: 'Childhood Joy', desc: '做一件小時候喜歡的事（畫畫、拼圖、看雲）。', duration: 'Play', context: '喚醒內在小孩，因為快樂本該是件簡單的事。' },
+            { id: 119, category: 'spirit', title: '觀察光影', subtitle: 'Light & Shadow', desc: '觀察陽光灑在物體上的光影變化，欣賞此刻的美。', duration: 'Observe', context: '光影是時間的腳步，看見它，就看見了當下。' },
+            { id: 120, category: 'spirit', title: '閱讀詩歌', subtitle: 'Read a Poem', desc: '讀一首詩，不求甚解，只感受文字的韻律與意境。', duration: '5 min', context: '詩歌是靈魂的語言，讓邏輯休息，讓感受起飛。' },
+            { id: 121, category: 'spirit', title: '嗅覺喚醒', subtitle: 'Scent Awareness', desc: '專注聞咖啡香、花香或雨後的味道，喚醒感官。', duration: 'Instant', context: '氣味是記憶的鑰匙，打開通往當下的門。' },
+            { id: 122, category: 'spirit', title: '建立聖壇', subtitle: 'Create Altar', desc: '在家中找個角落，放上你喜愛的小物，成為心靈基地。', duration: 'Action', context: '為自己的靈魂保留一個神聖空間，隨時可以回來充電。' },
+            { id: 123, category: 'spirit', title: '接納情緒', subtitle: 'Accept Emotions', desc: '當負面情緒來襲，不抗拒，對它說：「我看見你了。」', duration: 'Mindset', context: '情緒只是訪客，歡迎它的到來，也允許它的離開。' },
+            { id: 124, category: 'spirit', title: '鏡中微笑', subtitle: 'Mirror Smile', desc: '看著鏡子裡的自己，給自己一個真誠的微笑。', duration: 'Morning', context: '你，是你自己這一生最親密的盟友。' },
+            { id: 125, category: 'spirit', title: '放下應該', subtitle: 'Drop the "Should"', desc: '今天試著放下一個「我應該做...」的念頭，隨心而動。', duration: 'All Day', context: '生命不是一張待辦清單，而是一場即興舞蹈。' },
+            { id: 126, category: 'spirit', title: '觀想安全', subtitle: 'Safe Place', desc: '閉上眼，想像一個讓你感到絕對安全與放鬆的地方。', duration: '3 min', context: '心裡有個避風港，外面的風雨就淋不濕你。' },
+            { id: 127, category: 'spirit', title: '不予置評', subtitle: 'Non-Judgment', desc: '今天試著不對看到的人事物貼標籤，只做觀察者。', duration: 'All Day', context: '剝去標籤，才能看見事物的本質。' },
+            { id: 128, category: 'spirit', title: '肯定語', subtitle: 'Affirmation', desc: '對自己說：「我是足夠的，我值得美好的事物。」', duration: 'Instant', context: '語言有力量，用溫柔的話語灌溉自己的內心。' },
+            { id: 129, category: 'spirit', title: '感受脈搏', subtitle: 'Feel Pulse', desc: '手指輕按手腕，感受心臟的跳動，感謝生命的運作。', duration: '1 min', context: '這穩定的節奏，是生命最原始的樂章。' },
+            { id: 130, category: 'spirit', title: '擁抱樹木', subtitle: 'Tree Hug', desc: '如果可以，去擁抱一棵樹，感受大地的穩固力量。', duration: 'Action', context: '向大樹借一點沈穩，扎根於大地。' },
+            { id: 131, category: 'spirit', title: '臣服練習', subtitle: 'Surrender', desc: '對於無法控制的事，試著在心中說：「我交托。」', duration: 'Mindset', context: '隨波逐流不是放棄，而是信任水流會帶你去該去的地方。' },
+            { id: 132, category: 'spirit', title: '尋找寧靜', subtitle: 'Find Silence', desc: '在喧囂中，尋找聲音背後的寧靜背景。', duration: 'Focus', context: '寧靜不需外求，它一直存在於聲音的間隙之中。' },
+            { id: 133, category: 'spirit', title: '晚安儀式', subtitle: 'Goodnight', desc: '睡前對身體說謝謝，為今天畫下溫柔句點。', duration: 'Bedtime', context: '好好休息，是為了明天能再次精彩綻放。' },
+
+            // --- 體能 Physical ---
+            { id: 201, category: 'physical', title: '伸展脊椎', subtitle: 'Spine Stretch', desc: '離開椅子，雙手向上延展，感受脊椎一節一節拉開的感覺。', duration: '3 min', context: '想像自己是一棵向陽生長的樹，舒展枝葉。' },
+            { id: 202, category: 'physical', title: '喝水儀式', subtitle: 'Hydration', desc: '緩慢地喝下一杯溫水，感受水流過身體的感覺。', duration: '1 min', context: '水是生命的源頭，滋潤每一個乾涸的細胞。' },
+            { id: 203, category: 'physical', title: '轉動頸部', subtitle: 'Neck Rolls', desc: '緩慢轉動脖子，順時針三圈，逆時針三圈，釋放壓力。', duration: '2 min', context: '卸下肩頭無形的重擔，讓頭腦重新靈活。' },
+            { id: 204, category: 'physical', title: '腳趾觸地', subtitle: 'Touch Toes', desc: '站立彎腰，試著用手觸碰腳趾，伸展後腿肌群。', duration: '2 min', context: '柔軟度不只是身體的，也是面對生活的彈性。' },
+            { id: 205, category: 'physical', title: '深蹲十下', subtitle: '10 Squats', desc: '做十個深蹲，喚醒腿部與核心的大肌肉群。', duration: '3 min', context: '向下扎根，才有向上躍起的力量。' },
+            { id: 206, category: 'physical', title: '護眼法則', subtitle: '20-20-20 Rule', desc: '每用眼20分鐘，看20英尺外的遠方20秒。', duration: 'Work', context: '給靈魂之窗一點呼吸的空間，看見更遠的風景。' },
+            { id: 207, category: 'physical', title: '吃份水果', subtitle: 'Eat Fruit', desc: '今天至少吃一份新鮮水果，攝取天然維生素。', duration: 'Diet', context: '攝取陽光的果實，讓身體充滿自然的活力。' },
+            { id: 208, category: 'physical', title: '冷水沖臉', subtitle: 'Cold Splash', desc: '用冷水潑臉三次，喚醒肌膚與精神。', duration: 'Instant', context: '清冽的觸感，是喚醒昏沉意志的鐘聲。' },
+            { id: 209, category: 'physical', title: '按摩耳朵', subtitle: 'Ear Massage', desc: '輕輕揉捏耳朵邊緣與耳垂，促進血液循環。', duration: '1 min', context: '微小的刺激，能啟動全身的能量循環。' },
+            { id: 210, category: 'physical', title: '調整坐姿', subtitle: 'Fix Posture', desc: '檢查現在的坐姿，肩膀放鬆，背部挺直。', duration: 'Instant', context: '挺直腰桿，是對自己尊嚴的一種物理展現。' },
+            { id: 211, category: 'physical', title: '腹式呼吸', subtitle: 'Belly Breath', desc: '吸氣時腹部隆起，吐氣時腹部凹陷，深層放鬆。', duration: '3 min', context: '回到嬰兒般的呼吸方式，找回最原始的平靜。' },
+            { id: 212, category: 'physical', title: '平板支撐', subtitle: 'Plank', desc: '嘗試平板支撐 30 秒，喚醒核心力量。', duration: '30 sec', context: '堅持這幾秒的顫抖，是為了鍛鍊穩定的內在核心。' },
+            { id: 213, category: 'physical', title: '赤腳行走', subtitle: 'Barefoot', desc: '在家赤腳走路，感受腳底與地面的接觸。', duration: 'Home', context: '脫去束縛，讓身體直接與環境對話。' },
+            { id: 214, category: 'physical', title: '隨樂起舞', subtitle: 'Dance', desc: '播放一首喜歡的快歌，隨意擺動身體。', duration: '3 min', context: '身體是樂器，讓它隨著節奏自由共鳴。' },
+            { id: 215, category: 'physical', title: '手腕伸展', subtitle: 'Wrist Stretch', desc: '反向壓手掌，舒緩使用滑鼠鍵盤的僵硬。', duration: '2 min', context: '感謝這雙創造價值的手，給予它們溫柔的呵護。' },
+            { id: 216, category: 'physical', title: '提早入睡', subtitle: 'Sleep Early', desc: '今天比平常提早 30 分鐘上床睡覺。', duration: 'Night', context: '睡眠是最好的修復師，給它足夠的時間工作。' },
+            { id: 217, category: 'physical', title: '走樓梯', subtitle: 'Take Stairs', desc: '如果有機會，選擇走樓梯代替搭電梯。', duration: 'Action', context: '生活的捷徑往往在於願意多走一段路。' },
+            { id: 218, category: 'physical', title: '聳肩運動', subtitle: 'Shrugs', desc: '用力聳肩靠近耳朵，然後瞬間放鬆，重複五次。', duration: '1 min', context: '放下肩膀的緊繃，就是放下心裡的防備。' },
+            { id: 219, category: 'physical', title: '午間小憩', subtitle: 'Power Nap', desc: '給自己 15 分鐘的午睡或閉目養神時間。', duration: '15 min', context: '短暫的停機，是為了更高效的重啟。' },
+            { id: 220, category: 'physical', title: '單腳站立', subtitle: 'Balance', desc: '刷牙或等車時，嘗試單腳站立練平衡。', duration: '1 min', context: '在動盪中尋找平衡，是身體與心靈共同的課題。' },
+            { id: 221, category: 'physical', title: '無糖一餐', subtitle: 'Sugar Free', desc: '試著在下一餐完全不攝取添加糖。', duration: 'Meal', context: '品嚐食物的原味，戒除對人工甜蜜的依賴。' },
+            { id: 222, category: 'physical', title: '自我擁抱', subtitle: 'Self Hug', desc: '雙手環抱自己，用力緊縮再放鬆，感受身體界線。', duration: 'Instant', context: '你是自己最堅強的後盾，給自己一個結實的擁抱。' },
+            { id: 223, category: 'physical', title: '測量心率', subtitle: 'Check HR', desc: '測量平靜時的心跳，了解身體的基礎狀態。', duration: '1 min', context: '傾聽生命的鼓點，確認自己安好地存在著。' },
+            { id: 224, category: 'physical', title: '獅子式', subtitle: 'Lion Breath', desc: '張大嘴吐舌頭用力呼氣，釋放臉部緊繃。', duration: 'Instant', context: '大膽地釋放壓力，不需要時刻保持優雅。' },
+            { id: 225, category: 'physical', title: '踮腳尖', subtitle: 'Calf Raise', desc: '原地踮腳尖 20 次，促進下肢血液回流。', duration: '2 min', context: '偶爾踮起腳尖，看見稍微不一樣的視野。' },
+            { id: 226, category: 'physical', title: '更換寢具', subtitle: 'Clean Sheets', desc: '更換枕頭套或床單，享受清新的睡眠環境。', duration: 'Weekly', context: '在潔淨的雲朵中入睡，做一個乾淨的夢。' },
+            { id: 227, category: 'physical', title: '曬曬太陽', subtitle: 'Sunlight', desc: '到戶外曬 10 分鐘太陽，製造維生素 D。', duration: '10 min', context: '讓太陽的金黃能量，穿透皮膚，溫暖骨骼。' },
+            { id: 228, category: 'physical', title: '按摩頭皮', subtitle: 'Scalp Massage', desc: '用指腹輕輕按摩頭皮，放鬆頭部壓力。', duration: '2 min', context: '鬆開緊繃的思緒結，讓靈感重新流動。' },
+            { id: 229, category: 'physical', title: '眼球運動', subtitle: 'Eye Roll', desc: '閉眼，緩慢轉動眼球上下左右。', duration: '1 min', context: '靈活的視線，能看見世界更多的角度。' },
+            { id: 230, category: 'physical', title: '少坐多站', subtitle: 'Stand Up', desc: '設定鬧鐘，每小時站起來活動 5 分鐘。', duration: 'Work', context: '打破僵固的姿勢，讓身體保持流動的狀態。' },
+            { id: 231, category: 'physical', title: '細嚼慢嚥', subtitle: 'Chew Well', desc: '這一餐專注於把食物咬碎，幫助消化。', duration: 'Meal', context: '慢慢來，消化生活，就像消化食物一樣。' },
+            { id: 232, category: 'physical', title: '伸展側腰', subtitle: 'Side Stretch', desc: '雙手舉高向左向右彎曲，拉開肋骨空間。', duration: '2 min', context: '擴大身體的空間，心裡的空間也會跟著變大。' },
+            { id: 233, category: 'physical', title: '睡前抬腿', subtitle: 'Legs Up', desc: '睡前將腿靠在牆上 10 分鐘，消除水腫。', duration: 'Night', context: '讓血液回流，把一天的疲憊倒進地心引力裡。' },
+
+            // --- 智能 Intelligence ---
+            { id: 301, category: 'intelligence', title: '閱讀一頁', subtitle: 'Read a Page', desc: '拿起那本買了很久卻還沒看完的書，只讀一頁就好。', duration: '10 min', context: '知識的累積，始於翻開書頁的那一瞬間。' },
+            { id: 302, category: 'intelligence', title: '學習新詞', subtitle: 'New Vocabulary', desc: '查一個你一直聽過但不確定定義的名詞，並試著造句。', duration: '5 min', context: '語言的邊界，就是你世界的邊界。擴張它。' },
+            { id: 303, category: 'intelligence', title: '隨機百科', subtitle: 'Random Wiki', desc: '瀏覽 Wikipedia 首頁的「你知道嗎？」或隨機條目。', duration: '5 min', context: '保持對世界的好奇，是心智年輕的秘訣。' },
+            { id: 304, category: 'intelligence', title: '外語招呼', subtitle: 'New Hello', desc: '學會用一種新語言說「你好」和「謝謝」。', duration: '2 min', context: '一句簡單的問候，是連結另一個文化的橋樑。' },
+            { id: 305, category: 'intelligence', title: 'TED 演講', subtitle: 'Watch TED', desc: '看一部 15 分鐘以內的 TED 演講，接觸新觀點。', duration: '15 min', context: '站在巨人的肩膀上，看見你不曾想過的風景。' },
+            { id: 306, category: 'intelligence', title: '解個謎題', subtitle: 'Solve Riddle', desc: '在網路上找一個邏輯謎題或腦筋急轉彎來解。', duration: '5 min', context: '給大腦一點小挑戰，磨利你的思維刀鋒。' },
+            { id: 307, category: 'intelligence', title: '繪製地圖', subtitle: 'Mind Map', desc: '畫出你今天的行程或大腦思緒的心智圖。', duration: '10 min', context: '將抽象的思緒視覺化，讓混亂變得井然有序。' },
+            { id: 308, category: 'intelligence', title: '湯匙用途', subtitle: 'Brainstorm', desc: '花兩分鐘想出湯匙除了吃東西以外的 10 種用途。', duration: '2 min', context: '創意就是連結看似無關的事物，打破慣性思考。' },
+            { id: 309, category: 'intelligence', title: '閱讀社論', subtitle: 'Editorial', desc: '閱讀一篇社論或觀點文章，理解作者的邏輯。', duration: '10 min', context: '理解不代表認同，而是擴充你思考的維度。' },
+            { id: 310, category: 'intelligence', title: '章節摘要', subtitle: 'Summarize', desc: '試著用三句話總結你最近看過的一本書或電影。', duration: '5 min', context: '提煉精髓的能力，是資訊爆炸時代的生存之道。' },
+            { id: 311, category: 'intelligence', title: '聽播客', subtitle: 'Podcast', desc: '在通勤或做家事時，聽一集知識型 Podcast。', duration: '20 min', context: '讓零碎的時間，變成自我成長的養分。' },
+            { id: 312, category: 'intelligence', title: '修繕物品', subtitle: 'Fix It', desc: '研究如何修理一個壞掉的小東西（如拉鍊、鈕扣）。', duration: 'Action', context: '動手解決問題，能帶來無與倫比的掌控感與成就感。' },
+            { id: 313, category: 'intelligence', title: '明日計畫', subtitle: 'Plan Tomorrow', desc: '列出明天最重要的三件事，讓大腦提前預備。', duration: '5 min', context: '預先規劃，是為了讓明天的自己從容不迫。' },
+            { id: 314, category: 'intelligence', title: '觀察路人', subtitle: 'Observe People', desc: '在公共場合觀察路人 5 分鐘，想像他們的故事。', duration: '5 min', context: '每個人都是一本書，學會閱讀周遭的人。' },
+            { id: 315, category: 'intelligence', title: '寫俳句', subtitle: 'Haiku', desc: '嘗試寫一首三行詩或俳句，捕捉當下意境。', duration: '5 min', context: '在限制中尋找自由，用精煉的文字捕捉瞬間。' },
+            { id: 316, category: 'intelligence', title: '數獨填字', subtitle: 'Sudoku', desc: '玩一局數獨或填字遊戲，活化邏輯區。', duration: '10 min', context: '邏輯遊戲是大腦的健身房，保持思維敏捷。' },
+            { id: 317, category: 'intelligence', title: '快捷鍵', subtitle: 'Shortcut Key', desc: '學一個電腦軟體的新快捷鍵，並在今天使用它。', duration: 'Instant', context: '微小的效率提升，累積起來就是巨大的時間自由。' },
+            { id: 318, category: 'intelligence', title: '歷史豆知識', subtitle: 'History Fact', desc: '搜尋「歷史上的今天」，了解過去發生了什麼。', duration: '3 min', context: '知曉過去，讓我們更謙卑地看待現在。' },
+            { id: 319, category: 'intelligence', title: '非慣用手', subtitle: 'Non-Dominant', desc: '試著用非慣用手刷牙或寫字，刺激大腦連結。', duration: '2 min', context: '跳出舒適圈，大腦會在不習慣中建立新迴路。' },
+            { id: 320, category: 'intelligence', title: '心算練習', subtitle: 'Mental Math', desc: '結帳時試著在心裡先算出總金額。', duration: 'Instant', context: '數字感是理性的基礎，隨時喚醒它。' },
+            { id: 321, category: 'intelligence', title: '認識星座', subtitle: 'Constellation', desc: '晚上抬頭，試著辨認出一個星座或星星。', duration: 'Night', context: '仰望星空，意識到我們只是宇宙塵埃中的思考者。' },
+            { id: 322, category: 'intelligence', title: '定義價值', subtitle: 'Define Value', desc: '選一個價值觀（如「誠實」），思考它對你的定義。', duration: 'Reflect', context: '釐清你的內在羅盤，人生航行才不會迷失方向。' },
+            { id: 323, category: 'intelligence', title: '質疑假設', subtitle: 'Questioning', desc: '對一個習以為常的觀念問「為什麼？真的嗎？」。', duration: 'Mindset', context: '批判性思考始於對「理所當然」的懷疑。' },
+            { id: 324, category: 'intelligence', title: '禮物發想', subtitle: 'Gift Ideas', desc: '為一位朋友構思 3 個適合他的禮物點子。', duration: '5 min', context: '同理心是一種智能，想像他人的需求與快樂。' },
+            { id: 325, category: 'intelligence', title: '檢視預算', subtitle: 'Budget Check', desc: '檢視這個月的開支，確認財務狀況。', duration: '10 min', context: '財務清晰，是生活安定的基石。' },
+            { id: 326, category: 'intelligence', title: '認識雲朵', subtitle: 'Cloud Type', desc: '查查現在天空中的雲叫什麼名字（卷雲、積雲？）。', duration: 'Instant', context: '命名是一種力量，讓你真正看見事物的存在。' },
+            { id: 327, category: 'intelligence', title: '建築細節', subtitle: 'Architecture', desc: '走路時抬頭看看建築物的屋頂或窗框細節。', duration: 'Walking', context: '美感存在於細節之中，等待被細心的人發現。' },
+            { id: 328, category: 'intelligence', title: '整理檔案', subtitle: 'Digital Clean', desc: '清理電腦桌面或手機相簿中的 10 張廢圖。', duration: '5 min', context: '數位極簡，騰出空間給真正重要的記憶。' },
+            { id: 329, category: 'intelligence', title: '閱讀說明書', subtitle: 'Read Manual', desc: '把一個家電的說明書拿出來讀，發現新功能。', duration: '10 min', context: '深入了解你的工具，才能發揮它們的最大價值。' },
+            { id: 330, category: 'intelligence', title: '分析劇情', subtitle: 'Analyze Plot', desc: '看完劇後，分析主角的動機與轉折點。', duration: 'Reflect', context: '故事是人生的模擬場，分析它，學習它。' },
+            { id: 331, category: 'intelligence', title: '學打繩結', subtitle: 'Learn Knot', desc: '學一種新的繩結打法（如平結、稱人結）。', duration: '5 min', context: '實用的技能，是隨時能派上用場的智慧。' },
+            { id: 332, category: 'intelligence', title: '目測估計', subtitle: 'Estimation', desc: '目測一個物體的長度，然後實際測量驗證。', duration: 'Instant', context: '校準你的感知，讓直覺變得更加精準。' },
+            { id: 333, category: 'intelligence', title: '逆向思考', subtitle: 'Reverse', desc: '對一個問題嘗試用「如果反過來做會怎樣？」思考。', duration: 'Mindset', context: '顛倒看世界，往往能發現被忽略的真相。' },
+
+            // --- 社交 Social ---
+            { id: 401, category: 'social', title: '感謝訊息', subtitle: 'Gratitude Message', desc: '傳一則訊息給一位朋友，告訴他你感謝他的一件事。', duration: '2 min', context: '感謝的話語要大聲說出來，讓溫暖流動。' },
+            { id: 402, category: 'social', title: '真誠聆聽', subtitle: 'Deep Listening', desc: '在今天的對話中，嘗試不打斷對方，聽完最後一個字再回應。', duration: 'Daily', context: '聆聽是給予對方最珍貴的禮物：時間與關注。' },
+            { id: 403, category: 'social', title: '聯繫家人', subtitle: 'Call Family', desc: '打通電話給父母或家人，只是聊聊日常。', duration: '10 min', context: '家是根基，用日常的問候滋養這份連結。' },
+            { id: 404, category: 'social', title: '擊掌鼓勵', subtitle: 'High Five', desc: '給同事或朋友一個實體的或虛擬的擊掌（High Five）。', duration: 'Instant', context: '身體的接觸或互動，能瞬間拉近心理的距離。' },
+            { id: 405, category: 'social', title: '分享點心', subtitle: 'Share Snack', desc: '帶一份小點心分給身邊的人吃。', duration: 'Action', context: '食物是愛的語言，分享讓滋味更甜美。' },
+            { id: 406, category: 'social', title: '推薦歌曲', subtitle: 'Song Rec', desc: '分享一首你最近喜歡的歌給朋友。', duration: 'Instant', context: '音樂是情緒的共鳴，邀請對方進入你的頻率。' },
+            { id: 407, category: 'social', title: '深度問候', subtitle: 'Real Ask', desc: '問朋友「你最近過得好嗎？」，並真心想聽答案。', duration: 'Chat', context: '越過寒暄的表象，去觸碰彼此真實的狀態。' },
+            { id: 408, category: 'social', title: '不抱怨', subtitle: 'No Complain', desc: '挑戰接下來的三小時，不對任何人抱怨。', duration: '3 Hours', context: '正向的語言創造正向的場域，吸引好的人事物。' },
+            { id: 409, category: 'social', title: '微笑致意', subtitle: 'Smile', desc: '對店員、保全或清潔人員微笑並點頭致意。', duration: 'Instant', context: '看見每一個為生活努力的人，給予平等的尊重。' },
+            { id: 410, category: 'social', title: '幫忙開門', subtitle: 'Hold Door', desc: '為後面的人扶住門，展現紳士/淑女風度。', duration: 'Action', context: '微小的善意，能像漣漪一樣擴散出去。' },
+            { id: 411, category: 'social', title: '手寫卡片', subtitle: 'Handwritten', desc: '寫一張手寫紙條或卡片給某人，這在數位時代很珍貴。', duration: '5 min', context: '筆跡的溫度，是鍵盤無法取代的情感載體。' },
+            { id: 412, category: 'social', title: '正向留言', subtitle: 'Nice Comment', desc: '在社群媒體上留下一則真誠且正面的留言。', duration: '2 min', context: '在網路世界留下善意的足跡，這也是一種佈施。' },
+            { id: 413, category: 'social', title: '微小捐贈', subtitle: 'Donate', desc: '捐出零錢箱的零錢，或捐贈不需要的物資。', duration: 'Action', context: '給予不會讓你匱乏，反而讓你感受到富足。' },
+            { id: 414, category: 'social', title: '為人下廚', subtitle: 'Cook for One', desc: '為家人或伴侶煮一道簡單的菜或泡一杯茶。', duration: 'Meal', context: '親手製作的食物，藏著無法言說的關懷。' },
+            { id: 415, category: 'social', title: '分享迷因', subtitle: 'Send Meme', desc: '傳一個好笑的梗圖給朋友，讓他們笑一笑。', duration: 'Instant', context: '幽默是生活的潤滑劑，一起笑是最好的連結。' },
+            { id: 416, category: 'social', title: '共同回憶', subtitle: 'Reminisce', desc: '和老朋友聊聊「你記不記得那次我們...」。', duration: 'Chat', context: '共同的回憶是友誼的基石，時常擦拭它。' },
+            { id: 417, category: 'social', title: '真誠讚美', subtitle: 'Compliment', desc: '讚美別人的具體優點（如：你的簡報邏輯很清晰）。', duration: 'Instant', context: '看見他人的光芒，並大方地指出來。' },
+            { id: 418, category: 'social', title: '介紹朋友', subtitle: 'Introduce', desc: '介紹兩位你覺得會合得來的朋友認識。', duration: 'Action', context: '成為人脈的橋樑，創造更多美好的緣分。' },
+            { id: 419, category: 'social', title: '咖啡邀約', subtitle: 'Coffee Date', desc: '主動約一位許久未見的朋友喝咖啡。', duration: 'Plan', context: '面對面的溫度，是任何通訊軟體都無法比擬的。' },
+            { id: 420, category: 'social', title: '主動協助', subtitle: 'Offer Help', desc: '看到有人需要幫忙時，主動問：「需要幫忙嗎？」', duration: 'Action', context: '伸出援手，不僅幫助了他人，也溫暖了自己。' },
+            { id: 421, category: 'social', title: '尋求建議', subtitle: 'Ask Advice', desc: '向人請教他們擅長領域的問題，這讓人感到被重視。', duration: 'Chat', context: '適度地示弱與請教，能建立更深層的信任。' },
+            { id: 422, category: 'social', title: '表達欣賞', subtitle: 'Appreciate', desc: '直接告訴某人：「我很欣賞你的...」。', duration: 'Instant', context: '欣賞是靈魂的養分，滋養彼此的關係。' },
+            { id: 423, category: 'social', title: '老友問候', subtitle: 'Old Friend', desc: '傳訊給一個超過一年沒聯絡的朋友。', duration: 'Instant', context: '有些人雖然不常見面，但依然值得被記在心上。' },
+            { id: 424, category: 'social', title: '一起遊戲', subtitle: 'Play Game', desc: '邀請朋友或家人玩一場桌遊或電玩。', duration: 'Fun', context: '在遊戲中放下防備，找回單純互動的快樂。' },
+            { id: 425, category: 'social', title: '分享好書', subtitle: 'Book Share', desc: '把一本你看完的好書借給朋友。', duration: 'Action', context: '分享知識與感動，是最高級的交流。' },
+            { id: 426, category: 'social', title: '真誠道歉', subtitle: 'Apologize', desc: '如果有虧欠，今天勇敢地說一聲「對不起」。', duration: 'Courage', context: '道歉不是示弱，而是修復關係的勇敢舉動。' },
+            { id: 427, category: 'social', title: '尊重界線', subtitle: 'Boundaries', desc: '察覺並尊重別人不想談論的話題或不想做的事。', duration: 'Mindset', context: '健康的界線，造就健康的關係。' },
+            { id: 428, category: 'social', title: '揮手招呼', subtitle: 'Wave', desc: '遇到鄰居時，揮手或點頭打個招呼。', duration: 'Instant', context: '敦親睦鄰，從一個微笑開始。' },
+            { id: 429, category: 'social', title: '大方小費', subtitle: 'Tip Well', desc: '如果可以，給外送員或服務生多一點點小費或好評。', duration: 'Action', context: '金錢是能量，讓它流向為你服務的人。' },
+            { id: 430, category: 'social', title: '稱呼名字', subtitle: 'Use Name', desc: '對話中多叫幾次對方的名字，這最悅耳的聲音。', duration: 'Chat', context: '名字是一個人的標記，呼喚它代表著重視。' },
+            { id: 431, category: 'social', title: '分享好消息', subtitle: 'Good News', desc: '把一件好消息分享給真心會為你高興的人。', duration: 'Chat', context: '快樂因為分享而加倍。' },
+            { id: 432, category: 'social', title: '擁抱家人', subtitle: 'Family Hug', desc: '給家人一個超過 3 秒鐘的擁抱。', duration: 'Instant', context: '長長的擁抱，能釋放催產素，帶來安全感。' },
+            { id: 433, category: 'social', title: '眼神交流', subtitle: 'Eye Contact', desc: '說話時看著對方的眼睛，傳遞專注與尊重。', duration: 'Chat', context: '眼睛是靈魂的窗戶，讓彼此看見。' },
+
+            // --- 專業 Professional ---
+            { id: 901, category: 'professional', title: '微笑問候', subtitle: 'Smile & Greet', desc: '微笑問候你在任何地方遇到的每一個顧客！', duration: 'Instant', context: '你的微笑是顧客今天收到的第一份禮物。' },
+            { id: 902, category: 'professional', title: '十秒迎接', subtitle: '10-Second Rule', desc: '在每位顧客進門後十秒內迎接他們！', duration: 'Instant', context: '被看見的感覺，是所有服務體驗的起點。' },
+            { id: 903, category: 'professional', title: '送客至門', subtitle: 'Escort to Door', desc: '當顧客離開時，送他們到門口。', duration: 'Action', context: '完美的句點，和起點一樣重要。' },
+            { id: 904, category: 'professional', title: '稱呼名字', subtitle: 'Call by Name', desc: '每次顧客交易或造訪時，稱呼他的名字兩次。', duration: 'During', context: '讓顧客覺得自己是獨一無二的 VIP，而非流水號。' },
+            { id: 905, category: 'professional', title: '記憶熟客', subtitle: 'Recognize Regulars', desc: '留意回頭客，無需經過詢問，直接說出他們的名字。', duration: 'Memory', context: '被記住，是一種無聲卻強大的歸屬感。' },
+            { id: 906, category: 'professional', title: '停下傾聽', subtitle: 'Stop & Listen', desc: '當顧客接近時，停下來看看並傾聽。', duration: 'Focus', context: '專注的當下，傳遞的是「你在我心中很重要」。' },
+            { id: 907, category: 'professional', title: '善待孩子', subtitle: 'Kindness to Kids', desc: '善待孩子：不厭其煩的關注他們，並詢問有關他們的問題。', duration: 'Care', context: '贏得了孩子的心，就贏得了父母的信任。' },
+            { id: 908, category: 'professional', title: '極致服務', subtitle: 'Go the Extra Mile', desc: '今天以一種特殊的方式為至少一位顧客竭盡全力。', duration: 'Daily', context: '超越期待的瞬間，就是傳奇發生的時刻。' },
+            { id: 909, category: 'professional', title: '親自引導', subtitle: 'Personal Guide', desc: '就算物品很小，也要引導顧客到物品所在位置。', duration: 'Action', context: '服務不是指路，而是陪伴。' },
+            { id: 910, category: 'professional', title: '應對難題', subtitle: 'Handle Difficulties', desc: '與難相處的顧客打交道時，最後要：傾聽、道歉、解決和感謝。', duration: 'Mindset', context: '在衝突中展現優雅，是專業人士的修養。' },
+            { id: 911, category: 'professional', title: '感謝邀請', subtitle: 'Thank & Invite', desc: '感謝顧客讓你有爲他們服務的機會，並邀請他們再次光臨。', duration: 'Closing', context: '每一次服務，都是一次珍貴的相遇。' },
+            { id: 912, category: 'professional', title: '深入需求', subtitle: 'Deep Understanding', desc: '仔細深入聆聽及了解顧客的需求。', duration: 'Focus', context: '聽見沒說出口的需求，才是真正的洞察。' },
+            { id: 913, category: 'professional', title: '眼神接觸', subtitle: 'Eye Contact', desc: '注意每個人眼睛的顏色，並將你的心轉向他們。', duration: 'Connect', context: '眼神接觸，是心與心連結的最短路徑。' },
+            { id: 914, category: 'professional', title: '投訴禮物', subtitle: 'Complaint as Gift', desc: '今天將每一個投訴視為一份「禮物」。感謝像你提出問題的人，並盡一切努力積極解決問題。', duration: 'Mindset', context: '抱怨是包裝難看的禮物，裡面藏著改進的寶藏。' },
+            { id: 915, category: 'professional', title: '尋求建議', subtitle: 'Ask Customers', desc: '今天詢問三位顧客：「我們可以採取哪些不同的做法？」', duration: 'Feedback', context: '顧客是最好的老師，虛心請教。' },
+            { id: 916, category: 'professional', title: '關注同事', subtitle: 'Focus on Team', desc: '今天就停下來，看看並聆聽同事們的意見！', duration: 'Team', context: '團隊的智慧大於個人，傾聽讓彼此更強大。' },
+            { id: 917, category: 'professional', title: '慷慨讚美', subtitle: 'Give Compliments', desc: '今天多給顧客、同事和每個人一些讚美！', duration: 'Daily', context: '讚美是免費的，但價值連城。' },
+            { id: 918, category: 'professional', title: '敬重長者', subtitle: 'Respect Elders', desc: '今天特別善待退休人員和老年人：向他們表示禮儀不是一門失傳的藝術！', duration: 'Manner', context: '尊重長者，就是尊重時間與經驗的積累。' },
+            { id: 919, category: 'professional', title: '零負能量', subtitle: 'No Negativity', desc: '一整天不要對同事或顧客說任何負面的話。', duration: 'All Day', context: '成為團隊中的正能量發電機，而非黑洞。' },
+            { id: 920, category: 'professional', title: '互助週', subtitle: 'Help Colleagues', desc: '這週每天都要格外幫助及善待同事。', duration: 'Weekly', context: '互相補位，成就彼此的完美演出。' },
+            { id: 921, category: 'professional', title: '結交新友', subtitle: 'New Connection', desc: '今天與一個同事結交成為新朋友，或更了解某個人。', duration: 'Social', context: '工作不僅是做事，更是做人。' },
+            { id: 922, category: 'professional', title: '展現興趣', subtitle: 'Be Interested', desc: '在今天每一次互動中，力求表現感到興趣且投入，而不是讓自己專注於引起他人注意！', duration: 'Focus', context: '做一個有趣的人之前，先做一個感興趣的人。' },
+            { id: 923, category: 'professional', title: '積極態度', subtitle: 'Positive Attitude', desc: '全天在與周圍每個人的所有互動中表現出積極的態度。', duration: 'All Day', context: '態度決定高度，熱情是最好的感染力。' },
+            { id: 924, category: 'professional', title: '驗證感受', subtitle: 'Validate Feelings', desc: '今天驗證感受。當某人有強烈情緒時，不要試圖「修復」它⋯⋯只要驗證和同情。', duration: 'Empathy', context: '同理心不是解決問題，而是陪伴感受。' },
+            { id: 925, category: 'professional', title: '關注特別', subtitle: 'Notice the Special', desc: '今天要友善：注意某人的一些特別之處。對它感興趣、足夠關心的表達它，你會感覺很棒，他們也會！', duration: 'Observe', context: '看見別人的獨特，世界會因此發光。' },
+            { id: 926, category: 'professional', title: '改進點子', subtitle: 'Improvement Idea', desc: '今天想出一個如何改進某件事情的點子。', duration: 'Idea', context: '創新不是發明輪子，而是讓輪子轉得更順。' },
+            { id: 927, category: 'professional', title: '環境維護', subtitle: 'Clean Up', desc: '今天撿起垃圾或打掃/改善外部區域。', duration: 'Action', context: '環境是品牌的延伸，守護它就是守護品牌。' },
+            { id: 928, category: 'professional', title: '解決方案', subtitle: 'Find a Way', desc: '即使你沒有客戶想要的也要找到一個方法對某件事或某個東西說「是」。', duration: 'Solve', context: '專業就是：在「不可能」中找到「可能」。' },
+            { id: 929, category: 'professional', title: '觀察競品', subtitle: 'Competitor Check', desc: '逛逛競爭對手的商店及網站，了解他們的產品和價格。', duration: 'Study', context: '知己知彼，才能在市場中找到自己的定位。' },
+            { id: 930, category: 'professional', title: '產品專家', subtitle: 'Product Knowledge', desc: '本週學習兩個主要產品或服務的詳細資訊。', duration: 'Weekly', context: '專業知識是自信的來源，也是信任的基石。' },
+            { id: 931, category: 'professional', title: '虛擬顧客', subtitle: 'Virtual Customer', desc: '這週的每一天，都要回顧一下你的營運情況，嘗試以「虛擬客戶」的身份來體驗它，停下來問自己：「我的問題在這裡得到解決了嗎？我感覺很棒嗎？ 」', duration: 'Review', context: '換位思考，才能看見盲點。' },
+            { id: 932, category: 'professional', title: '得體穿著', subtitle: 'Dress for Success', desc: '這週每天都穿得格外得體。穿著展現出你的卓越和與眾不同！', duration: 'Weekly', context: '你的形象，就是你對工作的尊重程度。' },
+            { id: 933, category: 'professional', title: '使命宣言', subtitle: 'Mission Statement', desc: '記住公司或團隊的使命宣言⋯並認真思考。', duration: 'Mindset', context: '不忘初心，方得始終。' }
+        ];
+
+        // 狀態管理
+        let userProgress = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+            activeTasks: [], // IDs of tasks currently doing
+            completedTasks: [] // IDs of completed tasks
+        };
+
+        // DOM Elements
+        const grid = document.getElementById('task-grid');
+        const activeTasksContainer = document.getElementById('active-tasks-container');
+        const buttons = document.querySelectorAll('.category-btn');
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTasks('all');
+            renderActiveTasksWidget();
+        });
+
+        // 篩選功能
+        function filterTasks(category) {
+            // Update Buttons UI
+            buttons.forEach(btn => {
+                if (btn.id === `btn-${category}`) {
+                    btn.classList.add('bg-brand-sage', 'text-white', 'shadow-soft');
+                    btn.classList.remove('text-brand-ink', 'hover:bg-brand-sand/50', 'border-transparent');
+                } else {
+                    btn.classList.remove('bg-brand-sage', 'text-white', 'shadow-soft');
+                    btn.classList.add('text-brand-ink', 'hover:bg-brand-sand/50', 'border-transparent');
+                }
+            });
+
+            renderTasks(category);
+        }
+
+        // 渲染卡片
+        function renderTasks(filter) {
+            grid.innerHTML = '';
+            
+            const filteredTasks = filter === 'all' 
+                ? tasks 
+                : tasks.filter(t => t.category === filter);
+
+            filteredTasks.forEach(task => {
+                const isActive = userProgress.activeTasks.includes(task.id);
+                const isCompleted = userProgress.completedTasks.includes(task.id);
+                
+                let stateClass = '';
+                let btnText = '開始練習';
+                let btnAction = `startTask(${task.id})`;
+                let cardOpacity = 'opacity-100';
+                
+                let categoryBg = 'bg-brand-sand/30';
+                if (task.category === 'professional') {
+                    categoryBg = 'bg-brand-navy/10 text-brand-navy';
+                }
+
+                if (isActive) {
+                    stateClass = 'ring-2 ring-brand-clay ring-offset-2';
+                    btnText = '完成任務';
+                    btnAction = `completeTask(${task.id})`;
+                } else if (isCompleted) {
+                    cardOpacity = 'opacity-60 grayscale';
+                    btnText = '已完成';
+                    btnAction = ''; // No action
+                }
+
+                const cardHTML = `
+                <div class="group h-80 w-full perspective-1000 cursor-pointer" onclick="toggleFlip(this)">
+                    <div class="relative w-full h-full transform-style-3d transition-transform duration-700 shadow-card rounded-2xl ${cardOpacity}">
+                        
+                        <!-- Front Face (Instruction Focused) -->
+                        <div class="absolute w-full h-full backface-hidden bg-white rounded-2xl p-6 flex flex-col justify-between border border-brand-sand/30 ${stateClass}">
+                            <div>
+                                <div class="flex justify-between items-start mb-4">
+                                    <span class="inline-block px-3 py-1 ${categoryBg} text-xs tracking-widest rounded-full uppercase font-bold">
+                                        ${task.category}
+                                    </span>
+                                </div>
+                                <h3 class="text-xl font-serif text-brand-ink font-medium mb-2">${task.title}</h3>
+                                <p class="text-xs text-brand-sage uppercase tracking-wider font-sans mb-4">${task.subtitle}</p>
+                                
+                                <!-- Instruction is now on Front -->
+                                <p class="text-brand-ink/80 text-sm leading-relaxed font-sans text-justify border-l-2 border-brand-sand pl-3">
+                                    ${task.desc}
+                                </p>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <div class="w-full h-px bg-brand-sand/50 mb-4"></div>
+                                <div class="flex justify-between items-center text-sm text-brand-ink/60 font-serif">
+                                    <span>預估時間</span>
+                                    <span>${task.duration}</span>
+                                </div>
+                                <div class="mt-4 text-center text-brand-clay text-xs tracking-widest opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    翻轉看心法
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Back Face (Context/Mood Focused) -->
+                        <div class="absolute w-full h-full backface-hidden rotate-y-180 bg-brand-paper rounded-2xl p-6 flex flex-col justify-between border border-brand-clay/30 shadow-inner">
+                            <div class="flex flex-col h-full">
+                                <h4 class="text-lg font-serif text-brand-clay mb-4">情境心法</h4>
+                                <div class="flex-grow flex items-center">
+                                    <p class="text-brand-ink/80 text-base leading-relaxed font-serif italic text-center w-full">
+                                        "${task.context}"
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <button onclick="event.stopPropagation(); ${btnAction}" 
+                                class="w-full py-2 mt-4 rounded-lg ${isCompleted ? 'bg-brand-sand text-white cursor-default' : isActive ? 'bg-brand-clay text-white hover:bg-brand-sage' : 'bg-brand-sage text-white hover:bg-brand-ink'} transition-colors duration-300 text-sm tracking-widest font-medium shadow-sm shrink-0">
+                                ${btnText}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+                grid.innerHTML += cardHTML;
+            });
+        }
+
+        // 渲染浮動任務視窗
+        function renderActiveTasksWidget() {
+            activeTasksContainer.innerHTML = '';
+            
+            if (userProgress.activeTasks.length === 0) return;
+
+            userProgress.activeTasks.forEach(taskId => {
+                const task = tasks.find(t => t.id === taskId);
+                if (!task) return;
+
+                const widgetHTML = `
+                <div class="bg-white/95 backdrop-blur-md border border-brand-sage/30 rounded-xl p-4 shadow-float animate-slide-in pointer-events-auto flex items-center justify-between gap-4">
+                    <div class="flex-grow">
+                        <span class="text-xs text-brand-sage tracking-widest uppercase block mb-1">正在進行 Current Task</span>
+                        <h4 class="text-brand-ink font-serif font-medium text-sm md:text-base">${task.title}</h4>
+                    </div>
+                    <button onclick="completeTask(${task.id})" class="bg-brand-clay hover:bg-brand-sage text-white text-xs font-bold py-2 px-4 rounded-full transition-colors duration-300 shadow-sm whitespace-nowrap">
+                        完成
+                    </button>
+                </div>
+                `;
+                activeTasksContainer.innerHTML += widgetHTML;
+            });
+        }
+
+        // 卡片翻轉效果
+        function toggleFlip(cardElement) {
+            const inner = cardElement.querySelector('.transform-style-3d');
+            if (inner.classList.contains('rotate-y-180')) {
+                inner.classList.remove('rotate-y-180');
+            } else {
+                document.querySelectorAll('.transform-style-3d').forEach(el => el.classList.remove('rotate-y-180'));
+                inner.classList.add('rotate-y-180');
+            }
+        }
+
+        // 開始任務
+        function startTask(id) {
+            if (!userProgress.activeTasks.includes(id)) {
+                userProgress.activeTasks.push(id);
+                saveProgress();
+                const activeBtnId = document.querySelector('.category-btn.active').id;
+                renderTasks(activeBtnId.replace('btn-', ''));
+                renderActiveTasksWidget();
+                
+                gtag('event', 'start_task', {
+                    'event_category': 'engagement',
+                    'event_label': id
+                });
+            }
+        }
+
+        // 完成任務
+        function completeTask(id) {
+            userProgress.activeTasks = userProgress.activeTasks.filter(taskId => taskId !== id);
+            if (!userProgress.completedTasks.includes(id)) {
+                userProgress.completedTasks.push(id);
+            }
+            saveProgress();
+            
+            const activeBtnId = document.querySelector('.category-btn.active').id;
+            renderTasks(activeBtnId.replace('btn-', ''));
+            renderActiveTasksWidget();
+            
+            gtag('event', 'complete_task', {
+                'event_category': 'engagement',
+                'event_label': id
+            });
+        }
+
+        // 儲存到本地
+        function saveProgress() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(userProgress));
+        }
+
+    </script>
+</body>
+</html>

@@ -61,6 +61,12 @@
         <priority>0.8</priority>
     </url>
 
+        <url>
+        <loc>https://www.ambientedit.com/logo-design.html</loc>
+        <lastmod>2026-01-19</lastmod>
+        <priority>0.8</priority>
+    </url>
+
     <url>
         <loc>https://www.ambientedit.com/love-language.html</loc>
         <lastmod>2026-01-19</lastmod>
@@ -73,3 +79,4 @@
         <priority>0.8</priority>
     </url>
 </urlset>
+

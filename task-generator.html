@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="常溫日常任務產生器 - 紀錄生活中的細微目標，編集你的日常。">
+    <meta name="author" content="常溫編集所 Ambient Edit Studio">
+    
+    <!-- 1. GA4 追蹤碼 -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
+    <!-- 6. Title 規則 -->
+    <title>常溫日常任務產生器｜Ambient Task List</title>
+
+    <!-- 4. JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "常溫日常任務產生器",
+      "alternateName": "Ambient Task List",
+      "url": "https://weichun0203.github.io/ambientedit/task-generator",
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "applicationCategory": "Productivity",
+      "operatingSystem": "Any"
+    }
+    </script>
+
+    <!-- 字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- 品牌樣式設定 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                            dark: '#2c2c2c'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Noto Serif TC"', 'serif'],
+                    },
+                    boxShadow: {
+                        soft: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        float: '0 10px 30px -5px rgba(74, 74, 74, 0.1)',
+                    },
+                    backgroundImage: {
+                        'grid-pattern': "linear-gradient(to right, #e6e2dd 1px, transparent 1px), linear-gradient(to bottom, #e6e2dd 1px, transparent 1px)",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 品牌質感與雜訊濾鏡 */
+        .bg-noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 40;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
+        }
+
+        /* 背景流動色塊 */
+        .blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: 0;
+            opacity: 0.4;
+            animation: float 10s infinite ease-in-out;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #e6e2dd; animation-delay: 0s; }
+        .blob-2 { bottom: -10%; right: -5%; width: 400px; height: 400px; background: #8da399; opacity: 0.15; animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 60%; width: 300px; height: 300px; background: #d4a59a; opacity: 0.1; animation-delay: -2s; }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, -20px); }
+        }
+
+        body {
+            background-color: #fdfbf7;
+            color: #4a4a4a;
+        }
+
+        /* 隱藏滾動條但保留功能 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 輸入框樣式優化 */
+        .input-brand {
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 1px solid transparent;
+            border-bottom: 1px solid #e6e2dd;
+            border-radius: 4px;
+            padding-left: 8px;
+            transition: all 0.3s ease;
+        }
+        .input-brand:focus {
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-bottom-color: #8da399;
+            box-shadow: 0 2px 10px rgba(141, 163, 153, 0.1);
+        }
+
+        /* 紙膠帶效果 */
+        .washi-tape {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            width: 140px;
+            height: 35px;
+            background-color: rgba(141, 163, 153, 0.85); /* brand-sage */
+            opacity: 0.9;
+            z-index: 20;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            mask-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='100%25' height='100%25' fill='white'/%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='100%25' height='100%25' fill='white'/%3E%3C/svg%3E");
+        }
+        /* 讓紙膠帶邊緣有點撕裂感 (簡單模擬) */
+        .washi-tape::before, .washi-tape::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #fdfbf7;
+            opacity: 0.6;
+        }
+        .washi-tape::before { left: 0; filter: blur(1px); }
+        .washi-tape::after { right: 0; filter: blur(1px); }
+
+        /* 任務勾選框動畫 */
+        .task-checkbox-mock {
+            transition: all 0.3s ease;
+        }
+        li:hover .task-checkbox-mock {
+            border-color: #8da399;
+            transform: scale(1.1);
+        }
+
+        /* 方格背景 */
+        .bg-grid {
+            background-size: 20px 20px;
+            background-image: linear-gradient(to right, rgba(230, 226, 221, 0.6) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(230, 226, 221, 0.6) 1px, transparent 1px);
+        }
+
+        /* 印章效果 CSS */
+        .stamp-box {
+            mask-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' fill='white'/%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.2'/%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' fill='white'/%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.2'/%3E%3C/svg%3E");
+        }
+        
+        /* Checkbox 自訂樣式 */
+        .checkbox-brand {
+            accent-color: #8da399;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative overflow-x-hidden selection:bg-brand-sage selection:text-white">
+
+    <!-- 背景元素 -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="bg-noise"></div>
+
+    <!-- 7. 頁首 Header Area -->
+    <header class="relative w-full max-w-5xl mx-auto pt-16 pb-8 px-6 flex flex-col items-center justify-center z-10">
+        
+        <div class="text-center relative w-full md:w-auto">
+            <!-- 7. 品牌名在副標題 -->
+            <h2 class="text-brand-sage font-serif tracking-[0.2em] text-xs mb-3 uppercase flex items-center justify-center gap-2">
+                <span class="w-8 h-[1px] bg-brand-sage/50"></span>
+                Ambient Edit Studio
+                <span class="w-8 h-[1px] bg-brand-sage/50"></span>
+            </h2>
+            
+            <!-- 主標題 -->
+            <h1 class="text-4xl md:text-5xl font-serif font-bold text-brand-ink mb-4 tracking-wide relative inline-block">
+                常溫日常任務
+                <!-- 裝飾點 -->
+                <span class="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-brand-clay opacity-80"></span>
+            </h1>
+            
+            <!-- 7. 引言在標題下方 -->
+            <p class="text-brand-clay text-sm font-serif italic tracking-wider opacity-90">
+                "為平凡的日子，下一筆註腳。"
+            </p>
+
+            <!-- 2. & 7. 返回常溫首頁按鈕 - 電腦版 -->
+            <div class="hidden md:block absolute right-[-180px] bottom-1">
+                <a href="https://weichun0203.github.io/ambientedit/" 
+                   class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+                   aria-label="返回常溫首頁"
+                   style="text-decoration: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                        常溫首頁
+                    </span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 返回按鈕 - 手機版 -->
+        <div class="md:hidden mt-6">
+            <a href="https://weichun0203.github.io/ambientedit/" 
+               class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                    常溫首頁
+                </span>
+            </a>
+        </div>
+    </header>
+
+    <!-- 主要內容區 -->
+    <main class="flex-grow w-full max-w-6xl mx-auto px-4 pb-20 flex flex-col lg:flex-row gap-12 items-start justify-center z-10">
+        
+        <!-- 左側：編輯區 -->
+        <div class="w-full lg:w-5/12 bg-white/70 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-float border border-white/50 transition-transform duration-500 hover:shadow-lg">
+            <div class="flex justify-between items-center mb-8">
+                <div class="flex items-center gap-3">
+                    <span class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-sage/10 text-brand-sage">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                    </span>
+                    <h3 class="font-serif text-xl text-brand-ink font-bold tracking-wide">編輯內容</h3>
+                </div>
+                <button onclick="fillRandomData()" class="group flex items-center gap-1 text-xs text-brand-sage hover:text-brand-clay transition-colors px-3 py-1 rounded-full border border-brand-sand/50 hover:bg-brand-paper">
+                    <span>隨機靈感</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- 標題設定 -->
+                <div class="group">
+                    <label class="block text-[10px] font-bold text-brand-sage tracking-[0.15em] mb-1 group-focus-within:text-brand-clay transition-colors">今日主題 TOPIC</label>
+                    <input type="text" id="inputTopic" placeholder="例如：週末的空白時間" class="w-full input-brand py-3 text-lg text-brand-ink font-serif font-bold" oninput="updatePreview()">
+                </div>
+
+                <!-- 日期設定 (改為截止日期 + 時間) -->
+                <div class="group">
+                    <div class="flex justify-between items-center mb-1">
+                        <label class="block text-[10px] font-bold text-brand-sage tracking-[0.15em] group-focus-within:text-brand-clay transition-colors">截止 DEADLINE</label>
+                        <label class="flex items-center space-x-2 cursor-pointer select-none group/toggle">
+                            <input type="checkbox" id="enableTime" class="checkbox-brand w-3 h-3 cursor-pointer" onchange="toggleTimeInput(); updatePreview()">
+                            <span class="text-[10px] text-brand-sage/70 font-sans group-hover/toggle:text-brand-ink transition-colors">指定時間</span>
+                        </label>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="date" id="inputDate" class="flex-grow input-brand py-2 text-brand-ink font-serif" oninput="updatePreview()">
+                        <input type="time" id="inputTime" class="w-1/3 input-brand py-2 text-brand-ink font-serif hidden opacity-0 transition-opacity duration-300" oninput="updatePreview()">
+                    </div>
+                </div>
+
+                <!-- 任務列表 -->
+                <div>
+                    <label class="block text-[10px] font-bold text-brand-sage tracking-[0.15em] mb-3">任務清單 TASKS</label>
+                    <div id="taskListInputs" class="space-y-3 pl-2 border-l border-brand-sand/50">
+                        <!-- 動態生成 -->
+                    </div>
+                    <button onclick="addTaskInput()" class="mt-4 w-full py-3 border border-dashed border-brand-sage/50 text-brand-sage rounded-xl hover:bg-brand-sage hover:text-white transition-all duration-300 text-sm flex items-center justify-center gap-2 group">
+                        <span class="group-hover:scale-110 transition-transform duration-300">+</span>
+                        新增一項任務
+                    </button>
+                </div>
+
+                <!-- 獎勵設定 -->
+                <div class="group">
+                    <label class="block text-[10px] font-bold text-brand-sage tracking-[0.15em] mb-1 group-focus-within:text-brand-clay transition-colors">完成獎勵 REWARD</label>
+                    <input type="text" id="inputReward" placeholder="例如：一塊檸檬塔" class="w-full input-brand py-2 text-brand-ink font-serif" oninput="updatePreview()">
+                </div>
+
+                <!-- 備註/心情 -->
+                <div class="group">
+                    <label class="block text-[10px] font-bold text-brand-sage tracking-[0.15em] mb-1 group-focus-within:text-brand-clay transition-colors">備註 NOTE</label>
+                    <textarea id="inputNote" rows="2" placeholder="寫給自己的一句話..." class="w-full input-brand py-2 text-brand-ink font-serif resize-none" oninput="updatePreview()"></textarea>
+                </div>
+            </div>
+
+            <!-- 下載按鈕 -->
+            <div class="mt-10 pt-6 border-t border-brand-sand">
+                <button onclick="downloadImage()" class="relative overflow-hidden w-full bg-brand-sage text-white font-serif py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300 tracking-widest flex items-center justify-center gap-3 group">
+                    <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    <span class="relative z-10 font-bold">匯出 PNG 圖片</span>
+                </button>
+                <p class="text-center text-[10px] text-brand-sage/60 mt-3 font-sans tracking-wide">
+                    * 圖片將以高畫質匯出，不論裝置螢幕大小
+                </p>
+            </div>
+        </div>
+
+        <!-- 右側：預覽區 -->
+        <div class="w-full lg:w-1/2 flex flex-col items-center sticky top-8">
+            <h3 class="font-serif text-lg text-brand-ink font-bold mb-6 self-start lg:self-center flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-brand-clay animate-pulse"></span>
+                預覽 Preview
+            </h3>
+            
+            <div id="previewContainer" class="relative shadow-2xl rounded-sm transition-transform duration-500 lg:hover:rotate-1 lg:hover:scale-[1.02]">
+                <!-- 紙膠帶裝飾 -->
+                <div class="washi-tape"></div>
+
+                <!-- 這塊區域將被 html2canvas 截圖 -->
+                <div id="captureArea" class="bg-brand-paper relative p-0 flex flex-col overflow-hidden" style="width: 600px; min-height: 800px; box-shadow: inset 0 0 40px rgba(0,0,0,0.02);">
+                    
+                    <!-- 裝飾邊框與紋理 -->
+                    <div class="absolute top-0 left-0 w-full h-4 bg-brand-ink/5 border-b border-brand-ink/10 flex items-center justify-between px-4 z-20">
+                        <!-- 模擬活頁紙孔洞 -->
+                        <div class="flex gap-8 mx-auto opacity-30">
+                            <div class="w-3 h-3 rounded-full bg-brand-paper border border-inset border-black/10 shadow-inner"></div>
+                            <div class="w-3 h-3 rounded-full bg-brand-paper border border-inset border-black/10 shadow-inner"></div>
+                            <div class="w-3 h-3 rounded-full bg-brand-paper border border-inset border-black/10 shadow-inner"></div>
+                        </div>
+                    </div>
+
+                    <!-- 內容內距包裝 -->
+                    <div class="p-8 flex flex-col flex-grow h-full pt-12 relative z-10">
+                        
+                        <!-- 裝飾外框 -->
+                        <div class="absolute top-8 left-6 right-6 bottom-6 border-2 border-brand-ink/5 pointer-events-none rounded-sm"></div>
+                        
+                        <!-- 卡片頭部 -->
+                        <div class="flex justify-between items-start border-b-2 border-brand-ink mb-6 pb-4 relative">
+                            <div class="relative">
+                                <span class="absolute -top-4 -left-2 text-[60px] leading-none text-brand-sand/50 font-serif font-bold pointer-events-none select-none">“</span>
+                                <p class="text-[10px] tracking-[0.4em] text-brand-sage mb-2 font-sans font-bold">AMBIENT TASK</p>
+                                <h2 id="previewTopic" class="text-4xl font-serif font-bold text-brand-ink leading-tight tracking-wide">日常任務</h2>
+                            </div>
+                            
+                            <!-- 印章感的日期顯示 -->
+                            <div class="text-right flex flex-col items-end transform rotate-3 relative top-2">
+                                <div class="border-2 border-brand-clay px-3 py-1 rounded-sm mix-blend-multiply opacity-90 stamp-box flex flex-col items-center justify-center min-w-[100px]">
+                                    <p class="text-[8px] text-brand-clay font-bold tracking-widest uppercase leading-none mb-1 text-center">DEADLINE</p>
+                                    <div id="previewDateContainer" class="text-center">
+                                        <p id="previewDate" class="font-serif text-lg text-brand-clay font-bold tracking-widest leading-none">2026.01.26</p>
+                                        <!-- 時間顯示區域，預設隱藏 -->
+                                        <p id="previewTime" class="font-serif text-sm text-brand-clay font-bold tracking-widest leading-none mt-1 hidden">14:00</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 任務列表區 (方格背景) -->
+                        <div class="flex-grow relative bg-grid p-6 -mx-2 rounded-lg mb-6">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-8 h-8 rounded-full bg-brand-ink text-white flex items-center justify-center font-serif italic text-sm shadow-md">
+                                    No.
+                                </div>
+                                <span class="text-xs font-bold text-brand-ink tracking-[0.2em] uppercase border-b border-brand-ink/20 pb-1">To-Do List</span>
+                            </div>
+                            
+                            <ul id="previewList" class="space-y-2">
+                                <!-- JS 生成的預覽項目 -->
+                                <li class="flex items-start py-3 group">
+                                    <div class="w-6 h-6 border-2 border-brand-ink/30 mr-5 mt-1 rounded-md bg-white shadow-sm flex items-center justify-center">
+                                        <!-- 模擬勾勾的空間 -->
+                                    </div>
+                                    <span class="text-2xl font-serif text-brand-ink leading-snug border-b border-transparent decoration-brand-sage/50 decoration-2 underline-offset-4">讀十頁的書</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- 底部資訊區 -->
+                        <div class="mt-auto relative">
+                            <!-- 獎勵卡片 -->
+                            <div class="bg-brand-sand/20 p-5 rounded-lg border border-brand-sand relative overflow-hidden mb-6">
+                                <div class="absolute -right-4 -top-4 w-16 h-16 bg-brand-sage/10 rounded-full blur-xl"></div>
+                                <p class="text-[10px] font-bold text-brand-sage tracking-widest mb-1 flex items-center gap-2">
+                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/></svg>
+                                    REWARD
+                                </p>
+                                <p id="previewReward" class="font-serif text-xl text-brand-ink italic relative z-10">
+                                    尚未設定獎勵
+                                </p>
+                            </div>
+                            
+                            <!-- Note -->
+                            <div class="pl-4 border-l-2 border-brand-clay/50">
+                                <p class="text-[10px] font-bold text-brand-clay tracking-widest mb-1">NOTE</p>
+                                <p id="previewNote" class="font-serif text-sm text-brand-ink/80 leading-relaxed font-light">
+                                    
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- 品牌浮水印 -->
+                        <div class="mt-10 flex justify-between items-end opacity-60 border-t border-brand-ink/10 pt-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 border border-brand-ink/30 rounded-full flex items-center justify-center bg-white shadow-sm">
+                                    <span class="font-serif text-xs italic font-bold text-brand-ink">A.</span>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-[8px] tracking-[0.2em] font-sans text-brand-sage uppercase">Designed by</span>
+                                    <span class="text-[10px] tracking-widest font-sans font-bold text-brand-ink">AMBIENT EDIT STUDIO</span>
+                                </div>
+                            </div>
+                            <!-- 模擬條碼 -->
+                            <div class="flex flex-col items-end gap-1 opacity-50">
+                                <div class="flex gap-[2px] h-6 items-end">
+                                    <div class="w-[2px] h-full bg-brand-ink"></div>
+                                    <div class="w-[1px] h-4 bg-brand-ink"></div>
+                                    <div class="w-[3px] h-5 bg-brand-ink"></div>
+                                    <div class="w-[1px] h-full bg-brand-ink"></div>
+                                    <div class="w-[4px] h-3 bg-brand-ink"></div>
+                                    <div class="w-[2px] h-full bg-brand-ink"></div>
+                                </div>
+                                <span class="text-[8px] font-mono">DEADLINE-TASK</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 紙張紋理層 (確保在最上層但半透明) -->
+                    <div class="absolute inset-0 opacity-30 pointer-events-none mix-blend-multiply" 
+                         style="background-image: url('data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\' opacity=\'0.2\'/%3E%3C/svg%3E');">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 3. 頁尾改為名言佳句 -->
+    <footer class="w-full py-8 text-center z-10 relative mt-auto">
+        <div class="w-full h-[1px] bg-gradient-to-r from-transparent via-brand-sand to-transparent mb-4"></div>
+        <p class="text-sm text-brand-sage/80 font-serif italic tracking-widest hover:text-brand-clay transition-colors cursor-default">
+            "即使是微不足道的日常，也值得被慎重對待。"
+        </p>
+    </footer>
+
+    <script>
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 5. 設定本地存取 - 讀取
+            loadFromStorage();
+            
+            // 設定預設日期為今天
+            if(!document.getElementById('inputDate').value) {
+                document.getElementById('inputDate').valueAsDate = new Date();
+            }
+            
+            updatePreview();
+            handleResponsivePreview();
+        });
+
+        // 監聽視窗變動以調整預覽縮放
+        window.addEventListener('resize', handleResponsivePreview);
+
+        // 任務資料結構
+        let tasks = [
+            { text: '' },
+            { text: '' },
+            { text: '' }
+        ];
+
+        // 切換時間輸入框顯示
+        function toggleTimeInput() {
+            const checkbox = document.getElementById('enableTime');
+            const timeInput = document.getElementById('inputTime');
+            
+            if (checkbox.checked) {
+                timeInput.classList.remove('hidden');
+                // 稍微延遲以觸發 opacity transition
+                setTimeout(() => {
+                    timeInput.classList.remove('opacity-0');
+                }, 10);
+                if (!timeInput.value) timeInput.value = '12:00'; // 預設時間
+            } else {
+                timeInput.classList.add('opacity-0');
+                // 等待 transition 結束再隱藏
+                setTimeout(() => {
+                    timeInput.classList.add('hidden');
+                }, 300);
+            }
+            // 存檔狀態
+            saveToStorage();
+        }
+
+        // 5. 本地存取機制
+        function saveToStorage() {
+            const data = {
+                topic: document.getElementById('inputTopic').value,
+                date: document.getElementById('inputDate').value,
+                enableTime: document.getElementById('enableTime').checked,
+                time: document.getElementById('inputTime').value,
+                reward: document.getElementById('inputReward').value,
+                note: document.getElementById('inputNote').value,
+                tasks: getTaskValues()
+            };
+            localStorage.setItem('ambient_task_data', JSON.stringify(data));
+        }
+
+        function loadFromStorage() {
+            const saved = localStorage.getItem('ambient_task_data');
+            if (saved) {
+                const data = JSON.parse(saved);
+                document.getElementById('inputTopic').value = data.topic || '';
+                document.getElementById('inputDate').value = data.date || '';
+                
+                // 恢復時間設定
+                if (data.enableTime) {
+                    document.getElementById('enableTime').checked = true;
+                    document.getElementById('inputTime').value = data.time || '12:00';
+                    toggleTimeInput();
+                } else {
+                    document.getElementById('enableTime').checked = false;
+                    document.getElementById('inputTime').value = data.time || '';
+                    // 確保隱藏
+                    document.getElementById('inputTime').classList.add('hidden', 'opacity-0');
+                }
+
+                document.getElementById('inputReward').value = data.reward || '';
+                document.getElementById('inputNote').value = data.note || '';
+                
+                if (data.tasks && data.tasks.length > 0) {
+                    tasks = data.tasks.map(t => ({ text: t }));
+                }
+                renderTaskInputs();
+            } else {
+                renderTaskInputs();
+            }
+        }
+
+        // 取得目前輸入框的值
+        function getTaskValues() {
+            const inputs = document.querySelectorAll('.task-input');
+            return Array.from(inputs).map(input => input.value);
+        }
+
+        // 渲染輸入框
+        function renderTaskInputs() {
+            const container = document.getElementById('taskListInputs');
+            container.innerHTML = '';
+            
+            tasks.forEach((task, index) => {
+                const div = document.createElement('div');
+                div.className = 'flex gap-2 items-center group/item';
+                div.innerHTML = `
+                    <span class="text-brand-sage text-xs font-serif italic w-4 text-center group-hover/item:text-brand-clay transition-colors">${index + 1}.</span>
+                    <input type="text" 
+                           class="task-input w-full input-brand py-2 text-brand-ink font-serif" 
+                           value="${task.text}" 
+                           placeholder="輸入任務內容..."
+                           oninput="updatePreview(); saveToStorage()">
+                    <button onclick="removeTask(${index})" class="text-brand-sand hover:text-brand-clay px-2 transition-colors opacity-0 group-hover/item:opacity-100" ${tasks.length <= 1 ? 'disabled style="display:none"' : ''}>
+                        &times;
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function addTaskInput() {
+            // 先儲存當前值
+            const currentValues = getTaskValues();
+            tasks = currentValues.map(v => ({ text: v }));
+            
+            tasks.push({ text: '' });
+            renderTaskInputs();
+            updatePreview();
+            saveToStorage();
+        }
+
+        function removeTask(index) {
+            const currentValues = getTaskValues();
+            tasks = currentValues.map(v => ({ text: v }));
+            
+            if (tasks.length > 1) {
+                tasks.splice(index, 1);
+                renderTaskInputs();
+                updatePreview();
+                saveToStorage();
+            }
+        }
+
+        // 更新預覽
+        function updatePreview() {
+            const topic = document.getElementById('inputTopic').value || '日常任務';
+            const dateStr = document.getElementById('inputDate').value;
+            const enableTime = document.getElementById('enableTime').checked;
+            const timeStr = document.getElementById('inputTime').value;
+            const reward = document.getElementById('inputReward').value || '尚未設定獎勵';
+            const note = document.getElementById('inputNote').value || '';
+            
+            // 格式化日期
+            let formattedDate = '2026.01.01';
+            if (dateStr) {
+                const d = new Date(dateStr);
+                formattedDate = `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+            }
+
+            // 更新印章內容
+            document.getElementById('previewDate').innerText = formattedDate;
+            const previewTime = document.getElementById('previewTime');
+            if (enableTime && timeStr) {
+                previewTime.innerText = timeStr;
+                previewTime.classList.remove('hidden');
+            } else {
+                previewTime.classList.add('hidden');
+            }
+
+            // 更新其他 DOM
+            document.getElementById('previewTopic').innerText = topic;
+            document.getElementById('previewReward').innerText = reward;
+            document.getElementById('previewNote').innerText = note;
+
+            // 更新列表
+            const previewList = document.getElementById('previewList');
+            previewList.innerHTML = '';
+            
+            const currentTasks = getTaskValues();
+            currentTasks.forEach(text => {
+                if (text.trim() !== '') {
+                    const li = document.createElement('li');
+                    li.className = 'flex items-start py-3 border-b border-dashed border-brand-sand/50 last:border-0';
+                    li.innerHTML = `
+                        <div class="w-6 h-6 border border-brand-ink/30 mr-4 mt-1 rounded-sm bg-white shadow-sm flex-shrink-0"></div>
+                        <span class="text-xl font-serif text-brand-ink leading-tight break-all">${text}</span>
+                    `;
+                    previewList.appendChild(li);
+                }
+            });
+
+            // 存檔
+            saveToStorage();
+        }
+
+        // 處理預覽區塊的縮放 (為了在手機上顯示完整的 600px 寬度卡片)
+        function handleResponsivePreview() {
+            const container = document.getElementById('previewContainer');
+            const captureArea = document.getElementById('captureArea');
+            const parentWidth = container.parentElement.offsetWidth; // 父層寬度
+            
+            const originalWidth = 600; // 我們的目標寬度
+            
+            // 計算縮放比例
+            let scale = 1;
+            // 如果父層比卡片窄，就要縮小
+            // 留一點邊距 (parentWidth - 32)
+            if ((parentWidth - 32) < originalWidth) {
+                scale = (parentWidth - 32) / originalWidth;
+            }
+
+            // 應用縮放
+            container.style.width = `${originalWidth * scale}px`;
+            container.style.height = `${captureArea.offsetHeight * scale}px`;
+            
+            captureArea.style.transform = `scale(${scale})`;
+            captureArea.style.transformOrigin = 'top left';
+            captureArea.style.width = `${originalWidth}px`; // 強制固定寬度
+        }
+        
+        // 觀察內容變化以重新計算高度
+        const observer = new ResizeObserver(() => {
+            handleResponsivePreview();
+        });
+        observer.observe(document.getElementById('captureArea'));
+
+        // 隨機靈感功能
+        function fillRandomData() {
+            const topics = ['週日緩慢時光', '工作室整理日', '靈感採集計畫', '自我對話練習', '雨天閱讀清單', '植物照顧日'];
+            const randomTasks = [
+                ['整理電腦桌面檔案', '手沖一杯熱咖啡', '閱讀 30 分鐘', '散步去買花'],
+                ['備份手機照片', '寫下三個感謝的人', '聽一張完整的專輯', '擦拭植物葉片'],
+                ['整理書櫃', '刪除不需要的 App', '練習冥想 10 分鐘', '為晚餐做一道菜'],
+                ['整理錢包發票', '更新播放清單', '觀察雲的形狀', '寫日記']
+            ];
+            const rewards = ['看一部電影', '一塊起司蛋糕', '完全放空的一小時', '買一本新雜誌', '點一個香氛蠟燭', '泡個熱水澡'];
+            const notes = ['今天不追求完美，只求安穩。', '慢慢來，比較快。', '專注在當下的呼吸。', '生活是自己的，與他人無關。', '感受時間的流動。'];
+
+            const randIndex = Math.floor(Math.random() * topics.length);
+            
+            document.getElementById('inputTopic').value = topics[randIndex];
+            document.getElementById('inputReward').value = rewards[Math.floor(Math.random() * rewards.length)];
+            document.getElementById('inputNote').value = notes[Math.floor(Math.random() * notes.length)];
+            document.getElementById('inputDate').valueAsDate = new Date();
+            
+            // 隨機決定是否開啟時間
+            const enableTime = Math.random() > 0.5;
+            document.getElementById('enableTime').checked = enableTime;
+            toggleTimeInput();
+            if(enableTime) {
+                const hour = String(Math.floor(Math.random() * 24)).padStart(2, '0');
+                const minute = String(Math.floor(Math.random() * 4) * 15).padStart(2, '0'); // 00, 15, 30, 45
+                document.getElementById('inputTime').value = `${hour}:${minute}`;
+            }
+
+            tasks = randomTasks[Math.floor(Math.random() * randomTasks.length)].map(t => ({text: t}));
+            renderTaskInputs();
+            updatePreview();
+        }
+
+        // 匯出圖片
+        function downloadImage() {
+            const element = document.getElementById('captureArea');
+            
+            // 顯示 Loading
+            const btn = document.querySelector('button[onclick="downloadImage()"]');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<span class="animate-pulse">製作中...</span>';
+            btn.disabled = true;
+
+            // 確保字體載入
+            document.fonts.ready.then(() => {
+                html2canvas(element, {
+                    scale: 2, // 2倍解析度
+                    useCORS: true,
+                    backgroundColor: '#fdfbf7',
+                    logging: false,
+                    windowWidth: 600,
+                    onclone: (clonedDoc) => {
+                        // 在截圖時可以對複製的 DOM 做特殊處理
+                    }
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    const topic = document.getElementById('inputTopic').value || 'Task';
+                    const date = document.getElementById('inputDate').value || 'Date';
+                    
+                    link.download = `常溫任務_${date}_${topic}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+
+                    // 恢復按鈕
+                    btn.innerHTML = originalContent;
+                    btn.disabled = false;
+                }).catch(err => {
+                    console.error(err);
+                    alert('圖片製作失敗，請稍後再試');
+                    btn.innerHTML = originalContent;
+                    btn.disabled = false;
+                });
+            });
+        }
+    </script>
+</body>
+</html>

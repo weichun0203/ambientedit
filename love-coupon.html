@@ -11,7 +11,7 @@
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #f8fafc; /* 更加柔和的背景色 */
         }
         /* Ticket Serrated Edge Effect using radial gradients */
         .ticket-mask-left {
@@ -23,13 +23,6 @@
             mask-image: radial-gradient(circle at right, transparent 10px, black 11px);
         }
         
-        .dashed-line {
-            background-image: linear-gradient(to bottom, #333 33%, rgba(255,255,255,0) 0%);
-            background-position: right;
-            background-size: 2px 10px;
-            background-repeat: repeat-y;
-        }
-
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
@@ -38,187 +31,246 @@
             background: #f1f1f1; 
         }
         ::-webkit-scrollbar-thumb {
-            background: #888; 
+            background: #cbd5e1; 
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #555; 
+            background: #94a3b8; 
+        }
+
+        /* Modal Animation */
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .modal-exit {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .modal-exit-active {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: opacity 0.3s, transform 0.3s;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center py-10 px-4">
+<body class="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6">
 
     <!-- Header -->
     <header class="text-center mb-8">
-        <h1 class="text-3xl md:text-4xl font-black text-gray-800 tracking-wider mb-2">
-            <i class="fa-solid fa-ticket text-pink-500 mr-2"></i>兌換券設計工廠
+        <h1 class="text-2xl md:text-4xl font-black text-gray-700 tracking-wider mb-2">
+            <i class="fa-solid fa-ticket text-rose-400 mr-2"></i>兌換券設計工廠
         </h1>
-        <p class="text-gray-600">製作專屬的男友券、或是任何趣味票卷，並匯出成圖片！</p>
+        <p class="text-gray-500 text-sm md:text-base">製作專屬的男友券、趣味票卷，並分享給最愛的人！</p>
     </header>
 
     <main class="w-full max-w-6xl flex flex-col lg:flex-row gap-8 items-start">
         
         <!-- Controls Section -->
-        <section class="w-full lg:w-1/3 bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
-            <h2 class="text-xl font-bold mb-4 text-gray-700 flex items-center">
-                <i class="fa-solid fa-sliders mr-2"></i> 設計您的票卷
+        <section class="w-full lg:w-1/3 bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
+            <h2 class="text-lg font-bold mb-4 text-gray-600 flex items-center">
+                <i class="fa-solid fa-sliders mr-2 opacity-70"></i> 設計您的票卷
             </h2>
             
             <div class="space-y-4">
                 <!-- Theme Color -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">票卷顏色</label>
+                    <label class="block text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">票卷色系</label>
                     <div class="flex gap-2 flex-wrap" id="color-picker">
-                        <button class="w-8 h-8 rounded-full bg-pink-200 border-2 border-pink-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-300" onclick="updateColor('bg-pink-200', 'text-pink-800', 'border-pink-400')"></button>
-                        <button class="w-8 h-8 rounded-full bg-blue-200 border-2 border-blue-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-300" onclick="updateColor('bg-blue-200', 'text-blue-800', 'border-blue-400')"></button>
-                        <button class="w-8 h-8 rounded-full bg-yellow-200 border-2 border-yellow-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-300" onclick="updateColor('bg-yellow-200', 'text-yellow-800', 'border-yellow-400')"></button>
-                        <button class="w-8 h-8 rounded-full bg-green-200 border-2 border-green-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-300" onclick="updateColor('bg-green-200', 'text-green-800', 'border-green-400')"></button>
-                        <button class="w-8 h-8 rounded-full bg-purple-200 border-2 border-purple-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-300" onclick="updateColor('bg-purple-200', 'text-purple-800', 'border-purple-400')"></button>
-                        <button class="w-8 h-8 rounded-full bg-gray-200 border-2 border-gray-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-300" onclick="updateColor('bg-gray-200', 'text-gray-800', 'border-gray-400')"></button>
+                        <button class="w-8 h-8 rounded-full bg-pink-200 border-2 border-pink-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-200 transition-all" onclick="updateColor('bg-pink-200', 'text-pink-800', 'border-pink-400')"></button>
+                        <button class="w-8 h-8 rounded-full bg-blue-200 border-2 border-blue-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-200 transition-all" onclick="updateColor('bg-blue-200', 'text-blue-800', 'border-blue-400')"></button>
+                        <button class="w-8 h-8 rounded-full bg-amber-100 border-2 border-amber-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-200 transition-all" onclick="updateColor('bg-amber-100', 'text-amber-800', 'border-amber-400')"></button>
+                        <button class="w-8 h-8 rounded-full bg-emerald-100 border-2 border-emerald-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-200 transition-all" onclick="updateColor('bg-emerald-100', 'text-emerald-800', 'border-emerald-400')"></button>
+                        <button class="w-8 h-8 rounded-full bg-purple-200 border-2 border-purple-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-200 transition-all" onclick="updateColor('bg-purple-200', 'text-purple-800', 'border-purple-400')"></button>
+                        <button class="w-8 h-8 rounded-full bg-gray-200 border-2 border-gray-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-200 transition-all" onclick="updateColor('bg-gray-200', 'text-gray-800', 'border-gray-400')"></button>
                     </div>
                 </div>
 
                 <!-- Icon Select -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">裝飾圖示</label>
-                    <select id="icon-select" onchange="updateIcon()" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-transparent">
-                        <option value="fa-heart">愛心 ❤</option>
-                        <option value="fa-gift">禮物 🎁</option>
-                        <option value="fa-mug-hot">咖啡 ☕</option>
-                        <option value="fa-utensils">大餐 🍽</option>
-                        <option value="fa-hand-holding-heart">給予愛 🤲</option>
-                        <option value="fa-gamepad">遊戲 🎮</option>
-                        <option value="fa-plane">旅遊 ✈</option>
-                        <option value="fa-bed">休息 🛏</option>
-                        <option value="fa-broom">家事 🧹</option>
-                        <option value="fa-star">星星 ⭐</option>
-                        <option value="fa-ticket">票根 🎫</option>
-                    </select>
+                    <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">裝飾圖示</label>
+                    <div class="relative">
+                        <select id="icon-select" onchange="updateIcon()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:ring-2 focus:ring-rose-200 focus:border-rose-300 focus:outline-none appearance-none">
+                            <option value="fa-heart">❤ 愛心 Heart</option>
+                            <option value="fa-gift">🎁 禮物 Gift</option>
+                            <option value="fa-mug-hot">☕ 咖啡 Coffee</option>
+                            <option value="fa-utensils">🍽 大餐 Meal</option>
+                            <option value="fa-hand-holding-heart">🤲 給予愛 Care</option>
+                            <option value="fa-gamepad">🎮 遊戲 Game</option>
+                            <option value="fa-plane">✈ 旅遊 Travel</option>
+                            <option value="fa-bed">🛏 休息 Rest</option>
+                            <option value="fa-broom">🧹 家事 Chores</option>
+                            <option value="fa-star">⭐ 星星 Star</option>
+                            <option value="fa-ticket">🎫 票根 Ticket</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Text Inputs -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">票卷編號 (Ticket No.)</label>
-                    <input type="text" id="input-no" value="05201314" oninput="updateText()" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none placeholder-gray-300" placeholder="例如：VIP888">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">標題 (Title)</label>
-                    <input type="text" id="input-title" value="專屬兌換券" oninput="updateText()" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">內容描述 (Description)</label>
-                    <textarea id="input-desc" rows="2" oninput="updateText()" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none">憑此券可兌換一次任性撒嬌的機會，不得拒絕。</textarea>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">簽發人 (From)</label>
-                        <input type="text" id="input-from" value="愛你的寶寶" oninput="updateText()" class="w-full p-2 border border-gray-300 rounded-lg">
+                        <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">票卷編號 (Ticket No.)</label>
+                        <input type="text" id="input-no" value="05201314" oninput="updateText()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-200 focus:border-rose-300 focus:outline-none text-gray-700" placeholder="例如：VIP888">
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">持有者 (To)</label>
-                        <input type="text" id="input-to" value="親愛的腦公" oninput="updateText()" class="w-full p-2 border border-gray-300 rounded-lg">
-                    </div>
-                </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">有效期限 (Valid Until)</label>
-                    <input type="text" id="input-date" value="永久有效" oninput="updateText()" class="w-full p-2 border border-gray-300 rounded-lg">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">標題 (Title)</label>
+                        <input type="text" id="input-title" value="專屬兌換券" oninput="updateText()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-200 focus:border-rose-300 focus:outline-none text-gray-700">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">內容描述 (Description)</label>
+                        <textarea id="input-desc" rows="2" oninput="updateText()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-200 focus:border-rose-300 focus:outline-none text-gray-700 leading-relaxed">憑此券可兌換一次任性撒嬌的機會，不得拒絕。</textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">簽發人 (From)</label>
+                            <input type="text" id="input-from" value="愛你的寶寶" oninput="updateText()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-200 focus:border-rose-300 focus:outline-none text-gray-700">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">持有者 (To)</label>
+                            <input type="text" id="input-to" value="親愛的腦公" oninput="updateText()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-200 focus:border-rose-300 focus:outline-none text-gray-700">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">有效期限 (Valid Until)</label>
+                        <input type="text" id="input-date" value="永久有效" oninput="updateText()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-200 focus:border-rose-300 focus:outline-none text-gray-700">
+                    </div>
                 </div>
             </div>
 
-            <div class="mt-6 pt-6 border-t border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button onclick="downloadTicket()" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform transition hover:-translate-y-1 flex justify-center items-center gap-2">
-                    <i class="fa-solid fa-download"></i> 下載 (PNG)
+            <!-- Buttons: Improved colors for less visual shock -->
+            <div class="mt-8 pt-6 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button onclick="downloadTicket()" class="w-full bg-slate-500 hover:bg-slate-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transform transition hover:-translate-y-0.5 active:scale-95 flex justify-center items-center gap-2 text-sm">
+                    <i class="fa-solid fa-download"></i> 圖片存檔
                 </button>
-                <button onclick="shareTicket()" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform transition hover:-translate-y-1 flex justify-center items-center gap-2">
-                    <i class="fa-solid fa-share-nodes"></i> 分享圖片
+                <button onclick="shareTicket()" class="w-full bg-rose-400 hover:bg-rose-500 text-white font-bold py-3 px-4 rounded-xl shadow-md transform transition hover:-translate-y-0.5 active:scale-95 flex justify-center items-center gap-2 text-sm">
+                    <i class="fa-solid fa-share-nodes"></i> 傳送給他/她
                 </button>
             </div>
         </section>
 
         <!-- Preview Section -->
-        <section class="w-full lg:w-2/3 flex flex-col items-center justify-center bg-gray-200 rounded-2xl p-8 border-2 border-dashed border-gray-300 min-h-[400px]">
-            <h3 class="text-gray-400 font-medium mb-4 uppercase tracking-widest text-sm">Preview</h3>
+        <!-- Added id="preview-section" for JS width calculation -->
+        <section id="preview-section" class="w-full lg:w-2/3 flex flex-col items-center justify-start bg-gray-100 rounded-2xl p-4 sm:p-8 border border-dashed border-gray-300 min-h-[400px] overflow-hidden relative">
             
-            <!-- Ticket Container (This is what gets captured) -->
-            <div id="ticket-container" class="relative w-full max-w-[600px] shadow-2xl transform transition-all duration-300">
-                
-                <!-- The Ticket -->
-                <div id="ticket-body" class="flex w-full h-64 bg-pink-200 rounded-2xl overflow-hidden relative">
+            <h3 class="text-gray-400 font-medium mb-6 uppercase tracking-widest text-xs">Live Preview</h3>
+            
+            <!-- Scale Wrapper: This handles the responsive scaling -->
+            <div id="scale-wrapper" class="origin-top transition-transform duration-200 ease-out">
+                <!-- Ticket Container: Fixed width 600px always -->
+                <div id="ticket-container" class="relative w-[600px] shadow-2xl bg-transparent">
                     
-                    <!-- Decorative Circles (Notches) -->
-                    <div class="absolute top-1/2 -left-4 w-8 h-8 bg-gray-200 rounded-full transform -translate-y-1/2 z-10"></div>
-                    <div class="absolute top-1/2 -right-4 w-8 h-8 bg-gray-200 rounded-full transform -translate-y-1/2 z-10"></div>
-
-                    <!-- Left Side (Main Content) -->
-                    <div class="flex-1 p-6 sm:p-8 flex flex-col justify-between relative border-r-2 border-dashed border-black/10">
-                        <!-- Header -->
-                        <div class="flex justify-between items-start">
-                            <div class="text-sm font-bold uppercase tracking-wider opacity-60 text-pink-800" id="preview-header">TICKET NO. 05201314</div>
-                            <i id="preview-icon" class="fa-solid fa-heart text-4xl text-pink-800 opacity-20"></i>
-                        </div>
-
-                        <!-- Main Text -->
-                        <div class="flex flex-row items-center gap-4 my-2">
-                            <div class="bg-white/40 p-3 rounded-full flex-shrink-0">
-                                <i id="preview-main-icon" class="fa-solid fa-heart text-3xl text-pink-800"></i>
-                            </div>
-                            <div>
-                                <h2 id="preview-title" class="text-3xl font-black text-pink-800 leading-tight">專屬兌換券</h2>
-                                <p class="text-sm font-medium opacity-70 mt-1">COUPON VOUCHER</p>
-                            </div>
-                        </div>
-
-                        <!-- Description -->
-                        <div class="bg-white/30 rounded-lg p-3 backdrop-blur-sm">
-                            <p id="preview-desc" class="text-pink-900 font-medium text-sm sm:text-base leading-snug">
-                                憑此券可兌換一次任性撒嬌的機會，不得拒絕。
-                            </p>
-                        </div>
+                    <!-- The Ticket Body -->
+                    <div id="ticket-body" class="flex w-full h-64 bg-pink-200 rounded-2xl overflow-hidden relative shadow-sm">
                         
-                        <!-- Footer Info -->
-                         <div class="flex justify-between items-end mt-2 text-xs sm:text-sm font-semibold text-pink-900 opacity-80">
-                            <div>From: <span id="preview-from">愛你的寶寶</span></div>
-                            <div>To: <span id="preview-to">親愛的腦公</span></div>
-                        </div>
-                    </div>
+                        <!-- Decorative Circles (Notches) -->
+                        <div class="absolute top-1/2 -left-4 w-8 h-8 bg-gray-100 rounded-full transform -translate-y-1/2 z-10 box-border border-r border-black/5"></div>
+                        <div class="absolute top-1/2 -right-4 w-8 h-8 bg-gray-100 rounded-full transform -translate-y-1/2 z-10 box-border border-l border-black/5"></div>
 
-                    <!-- Right Side (Stub) -->
-                    <div class="w-32 sm:w-40 flex flex-col justify-center items-center p-4 bg-black/5 relative">
-                        <!-- Barcode Simulation -->
-                        <div class="w-full h-12 flex justify-center items-end gap-[2px] opacity-60 mb-4 overflow-hidden">
-                            <!-- Just random bars for visual effect -->
-                            <div class="w-1 h-full bg-black"></div><div class="w-2 h-3/4 bg-black"></div>
-                            <div class="w-1 h-full bg-black"></div><div class="w-3 h-1/2 bg-black"></div>
-                            <div class="w-1 h-full bg-black"></div><div class="w-2 h-full bg-black"></div>
-                            <div class="w-4 h-3/4 bg-black"></div><div class="w-1 h-1/2 bg-black"></div>
-                            <div class="w-2 h-full bg-black"></div><div class="w-1 h-full bg-black"></div>
-                        </div>
-                        
-                        <div class="text-center rotate-0">
-                            <p class="text-[10px] uppercase tracking-wider opacity-60 font-bold mb-1">VALID UNTIL</p>
-                            <h4 id="preview-date" class="text-lg font-black text-pink-800 leading-none">永久有效</h4>
+                        <!-- Left Side (Main Content) -->
+                        <div class="flex-1 p-8 flex flex-col justify-between relative border-r-2 border-dashed border-black/10">
+                            <!-- Header -->
+                            <div class="flex justify-between items-start">
+                                <div class="text-sm font-bold uppercase tracking-wider opacity-60 text-pink-800" id="preview-header">TICKET NO. 05201314</div>
+                                <i id="preview-icon" class="fa-solid fa-heart text-4xl text-pink-800 opacity-10"></i>
+                            </div>
+
+                            <!-- Main Text -->
+                            <div class="flex flex-row items-center gap-5 my-1">
+                                <div class="bg-white/40 w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
+                                    <i id="preview-main-icon" class="fa-solid fa-heart text-2xl text-pink-800"></i>
+                                </div>
+                                <div>
+                                    <h2 id="preview-title" class="text-3xl font-black text-pink-800 leading-none tracking-tight">專屬兌換券</h2>
+                                    <p class="text-xs font-bold opacity-50 mt-1 tracking-[0.2em] text-pink-900">OFFICIAL VOUCHER</p>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="bg-white/30 rounded-lg p-3 backdrop-blur-sm border border-white/20">
+                                <p id="preview-desc" class="text-pink-900 font-medium text-base leading-snug line-clamp-2">
+                                    憑此券可兌換一次任性撒嬌的機會，不得拒絕。
+                                </p>
+                            </div>
+                            
+                            <!-- Footer Info -->
+                            <div class="flex justify-between items-end mt-1 text-sm font-semibold text-pink-900 opacity-70">
+                                <div class="flex items-center gap-1"><i class="fa-regular fa-user text-xs"></i> <span id="preview-from">愛你的寶寶</span></div>
+                                <div class="flex items-center gap-1">To: <span id="preview-to">親愛的腦公</span></div>
+                            </div>
                         </div>
 
-                        <div class="mt-4 opacity-30">
-                            <i class="fa-solid fa-stamp text-4xl transform -rotate-12"></i>
+                        <!-- Right Side (Stub) -->
+                        <div class="w-40 flex flex-col justify-center items-center p-4 bg-black/5 relative">
+                            <!-- Barcode Simulation -->
+                            <div class="w-full h-10 flex justify-center items-end gap-[2px] opacity-60 mb-5 overflow-hidden mix-blend-multiply">
+                                <div class="w-1 h-full bg-black"></div><div class="w-2 h-3/4 bg-black"></div>
+                                <div class="w-1 h-full bg-black"></div><div class="w-3 h-1/2 bg-black"></div>
+                                <div class="w-1 h-full bg-black"></div><div class="w-2 h-full bg-black"></div>
+                                <div class="w-4 h-3/4 bg-black"></div><div class="w-1 h-1/2 bg-black"></div>
+                                <div class="w-2 h-full bg-black"></div><div class="w-1 h-full bg-black"></div>
+                                <div class="w-1 h-full bg-black"></div><div class="w-2 h-3/4 bg-black"></div>
+                            </div>
+                            
+                            <div class="text-center rotate-0">
+                                <p class="text-[9px] uppercase tracking-[0.2em] opacity-50 font-bold mb-1 text-black">VALID UNTIL</p>
+                                <h4 id="preview-date" class="text-lg font-black text-pink-800 leading-none whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">永久有效</h4>
+                            </div>
+
+                            <div class="mt-5 opacity-20">
+                                <i class="fa-solid fa-stamp text-5xl transform -rotate-12 text-black"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <p class="mt-6 text-sm text-gray-500 text-center">
-                <i class="fa-solid fa-circle-info mr-1"></i> 提示：下載後可直接用 Line 傳送給對方！
+            <p class="mt-8 text-xs text-gray-400 text-center max-w-sm">
+                <i class="fa-solid fa-mobile-screen mr-1"></i> 預覽畫面僅供參考，實際匯出時將為高解析度圖片。
             </p>
         </section>
     </main>
 
-    <footer class="mt-12 text-center text-gray-400 text-sm">
-        <p>&copy; 2024 Ticket Maker. Make Love Fun.</p>
+    <footer class="mt-12 text-center text-gray-400 text-xs py-4">
+        <p>&copy; 2024 Ticket Maker. Design for Love.</p>
     </footer>
+
+    <!-- Result Modal (Hidden by default) -->
+    <div id="result-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex justify-center items-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 flex flex-col items-center shadow-2xl relative animate-fade-in">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            
+            <div class="text-center mb-4">
+                <div class="w-12 h-12 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <i class="fa-solid fa-check text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800">製作完成！</h3>
+                <p class="text-sm text-gray-500 mt-1">請長按下方圖片並選擇「儲存圖片」</p>
+            </div>
+
+            <!-- Image Container -->
+            <div class="w-full bg-gray-100 rounded-lg p-2 mb-4 flex justify-center border border-gray-200">
+                <img id="generated-image" class="max-w-full h-auto rounded shadow-sm" alt="Generated Ticket">
+            </div>
+
+            <button onclick="closeModal()" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl hover:bg-gray-900 transition-colors">
+                關閉
+            </button>
+        </div>
+    </div>
 
     <script>
         // State
@@ -238,10 +290,40 @@
             iconMain: document.getElementById('preview-main-icon'),
             iconBg: document.getElementById('preview-icon'),
             ticketBody: document.getElementById('ticket-body'),
-            previewHeader: document.getElementById('preview-header') // Added for color sync
+            previewHeader: document.getElementById('preview-header')
         };
 
-        // Update Text Content
+        // --- Resize Logic for Mobile Preview ---
+        function resizePreview() {
+            const container = document.getElementById('preview-section');
+            const wrapper = document.getElementById('scale-wrapper');
+            const ticketWidth = 600; // Fixed width of the ticket
+            const padding = 32; // Total horizontal padding of container
+            
+            const availableWidth = container.offsetWidth - padding;
+            
+            // Calculate scale
+            let scale = availableWidth / ticketWidth;
+            if (scale > 1) scale = 1; // Don't scale up, only down
+            
+            wrapper.style.transform = `scale(${scale})`;
+            // Adjust height of wrapper to match scaled content so it doesn't take up empty space
+            // 256 is the height (h-64 = 16rem = 256px)
+            const scaledHeight = 256 * scale;
+            wrapper.style.height = `${scaledHeight}px`;
+            wrapper.style.marginBottom = '20px';
+        }
+
+        // Listen for window resize
+        window.addEventListener('resize', resizePreview);
+        // Call once on load
+        window.addEventListener('load', resizePreview);
+        // Call periodically just in case fonts load late
+        setTimeout(resizePreview, 500);
+
+
+        // --- Update Functions ---
+
         function updateText() {
             elements.title.textContent = document.getElementById('input-title').value || '兌換券';
             elements.desc.textContent = document.getElementById('input-desc').value;
@@ -249,17 +331,14 @@
             elements.to.textContent = document.getElementById('input-to').value;
             elements.date.textContent = document.getElementById('input-date').value;
             
-            // Update Ticket Number
             const ticketNo = document.getElementById('input-no').value || '000000';
             elements.previewHeader.textContent = `TICKET NO. ${ticketNo}`;
         }
 
-        // Update Icon
         function updateIcon() {
             const selectedIcon = document.getElementById('icon-select').value;
             state.icon = selectedIcon;
             
-            // Remove old classes starting with fa-
             const removeIconClasses = (el) => {
                 const classes = el.className.split(" ").filter(c => !c.startsWith("fa-"));
                 el.className = classes.join(" ");
@@ -268,19 +347,15 @@
             removeIconClasses(elements.iconMain);
             removeIconClasses(elements.iconBg);
 
-            // Add new classes
-            elements.iconMain.classList.add('fa-solid', selectedIcon, 'text-3xl', state.textColor);
-            elements.iconBg.classList.add('fa-solid', selectedIcon, 'text-4xl', state.textColor, 'opacity-20');
+            elements.iconMain.classList.add('fa-solid', selectedIcon, 'text-2xl', state.textColor);
+            elements.iconBg.classList.add('fa-solid', selectedIcon, 'text-4xl', state.textColor, 'opacity-10');
         }
 
-        // Update Color Scheme
         function updateColor(bgClass, textClass, borderClass) {
-            // Remove old background classes
-            const bgClasses = ['bg-pink-200', 'bg-blue-200', 'bg-yellow-200', 'bg-green-200', 'bg-purple-200', 'bg-gray-200'];
+            const bgClasses = ['bg-pink-200', 'bg-blue-200', 'bg-amber-100', 'bg-emerald-100', 'bg-purple-200', 'bg-gray-200'];
             elements.ticketBody.classList.remove(...bgClasses);
             elements.ticketBody.classList.add(bgClass);
 
-            // Update Text Colors
             const textElements = [
                 elements.title, 
                 elements.date, 
@@ -289,15 +364,11 @@
                 elements.previewHeader
             ];
 
-            // Helper to swap text color classes
-            const oldTextClass = state.textColor;
-            state.textColor = textClass;
+            const colorPrefixes = ['text-pink-', 'text-blue-', 'text-amber-', 'text-emerald-', 'text-purple-', 'text-gray-'];
             
+            state.textColor = textClass;
+
             textElements.forEach(el => {
-                // For simplicity, we just replace the class string in the classList if it exists, 
-                // but a cleaner way is to remove known color classes and add the new one.
-                // Let's do a robust removal of common Tailwind text colors.
-                const colorPrefixes = ['text-pink-', 'text-blue-', 'text-yellow-', 'text-green-', 'text-purple-', 'text-gray-'];
                 el.classList.forEach(cls => {
                     if (colorPrefixes.some(prefix => cls.startsWith(prefix))) {
                         el.classList.remove(cls);
@@ -305,140 +376,128 @@
                 });
                 el.classList.add(textClass);
             });
+
+            // Handle darker text for body/footer (approximate matching)
+            const textBaseColor = textClass.split('-')[1]; // e.g., 'pink'
+            const darkTextClass = `text-${textBaseColor}-900`;
             
-            // Update Description and Footer Text (darker variant logic is usually handled by keeping them specific colors, 
-            // but here we synced them to text-pink-900 equivalent logic. 
-            // For simplicity in this generator, we will keep the "body text" slightly darker/neutral 
-            // or let them inherit the hue but darker.
-            // Let's explicitly set the desc text to a darker shade of the theme
-            const descEl = document.getElementById('preview-desc');
-            descEl.className = descEl.className.replace(/text-\w+-900/, textClass.replace('800', '900'));
+            const darkTextElements = [elements.desc, elements.from, elements.to];
+            // Remove old dark text classes
+            darkTextElements.forEach(el => {
+                 // Simple regex replacement for class text-*-900
+                 el.className = el.className.replace(/text-\w+-900/g, darkTextClass);
+            });
             
+            // Specifically for the "OFFICIAL VOUCHER" subtext if needed, currently hardcoded or using opacity
+            const subTitle = document.querySelector('#preview-title + p');
+            if(subTitle) subTitle.className = subTitle.className.replace(/text-\w+-900/g, darkTextClass);
+
             state.bgColor = bgClass;
         }
 
-        // Download Function
-        function downloadTicket() {
+
+        // --- Generator Functions ---
+
+        function generateCanvas(callback) {
             const ticketContainer = document.getElementById('ticket-container');
             
-            // Visual feedback
-            const btn = document.querySelector('button[onclick="downloadTicket()"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 處理中...';
-            
-            // CLONE STRATEGY: 
-            // Clone the element, force it to a fixed desktop width (600px), 
-            // render it off-screen, capture it, then remove it.
-            // This ensures mobile width doesn't affect the output layout.
+            // Clone for rendering
             const clone = ticketContainer.cloneNode(true);
             
-            // Style the clone to be fixed width and hidden
-            clone.style.width = "600px"; // The standard desktop width
+            // Reset transforms on clone to ensure clean render at full size
+            clone.style.transform = 'none';
+            clone.style.width = "600px";
             clone.style.position = "absolute";
             clone.style.left = "-9999px";
             clone.style.top = "0";
-            // Ensure no responsive scaling affects the clone content
-            clone.classList.remove('w-full', 'max-w-[600px]'); 
-            clone.style.maxWidth = "none";
+            clone.classList.remove('w-full', 'max-w-[600px]');
             
             document.body.appendChild(clone);
 
-            // To ensure high quality and correct cutout rendering
             html2canvas(clone, {
-                scale: 3, // Higher resolution
-                backgroundColor: null, // Transparent background outside the ticket
+                scale: 3, // High resolution
+                backgroundColor: null,
                 logging: false,
-                useCORS: true
+                useCORS: true,
+                allowTaint: true
             }).then(canvas => {
-                // Create download link
-                const link = document.createElement('a');
-                link.download = `ticket-${Date.now()}.png`;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-
-                // Restore button
-                btn.innerHTML = originalText;
-                
-                // Remove clone
                 document.body.removeChild(clone);
+                callback(canvas);
             }).catch(err => {
                 console.error(err);
-                alert("圖片產生失敗，請稍後再試。");
-                btn.innerHTML = originalText;
-                if(document.body.contains(clone)) {
-                    document.body.removeChild(clone);
-                }
+                document.body.removeChild(clone);
+                alert("圖片產生失敗");
+                // Reset buttons
+                resetButtons();
             });
         }
 
-        // Share Function
+        function downloadTicket() {
+            const btn = document.querySelector('button[onclick="downloadTicket()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 處理中...';
+
+            generateCanvas(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                
+                // Show Modal instead of auto-download for better mobile support
+                const modal = document.getElementById('result-modal');
+                const imgEl = document.getElementById('generated-image');
+                imgEl.src = imgData;
+                
+                modal.classList.remove('hidden');
+                btn.innerHTML = originalText;
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').classList.add('hidden');
+        }
+
         function shareTicket() {
-            const ticketContainer = document.getElementById('ticket-container');
-            
-            // Visual feedback
             const btn = document.querySelector('button[onclick="shareTicket()"]');
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            
-            // CLONE STRATEGY (Same as download to ensure layout)
-            const clone = ticketContainer.cloneNode(true);
-            
-            clone.style.width = "600px"; 
-            clone.style.position = "absolute";
-            clone.style.left = "-9999px";
-            clone.style.top = "0";
-            clone.classList.remove('w-full', 'max-w-[600px]'); 
-            clone.style.maxWidth = "none";
-            
-            document.body.appendChild(clone);
 
-            html2canvas(clone, {
-                scale: 3,
-                backgroundColor: null,
-                logging: false,
-                useCORS: true
-            }).then(canvas => {
+            generateCanvas(canvas => {
                 canvas.toBlob(async (blob) => {
-                    if (!blob) {
-                        alert("圖片產生失敗");
-                        return;
-                    }
+                    if (!blob) return;
 
                     const file = new File([blob], `ticket-${Date.now()}.png`, { type: "image/png" });
 
-                    // Check if the browser supports sharing files
                     if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
                         try {
                             await navigator.share({
                                 files: [file],
-                                title: '送你一張兌換券！',
+                                title: '送你一張兌換券',
                                 text: '這是專屬於你的兌換券，請查收 ❤️'
                             });
                         } catch (err) {
-                            if (err.name !== 'AbortError') {
-                                console.error('Share failed:', err);
-                            }
+                            console.log('Share closed');
                         }
                     } else {
-                        alert("您的瀏覽器不支援直接分享圖片，請使用下載功能。");
+                        // Fallback to modal if share not supported
+                        const modal = document.getElementById('result-modal');
+                        const imgEl = document.getElementById('generated-image');
+                        imgEl.src = canvas.toDataURL('image/png');
+                        modal.classList.remove('hidden');
+                        alert("您的裝置不支援直接分享，請長按圖片儲存後再發送。");
                     }
-
-                    // Restore button & Clean up
                     btn.innerHTML = originalText;
-                    document.body.removeChild(clone);
                 }, 'image/png');
-            }).catch(err => {
-                console.error(err);
-                alert("圖片產生失敗，請稍後再試。");
-                btn.innerHTML = originalText;
-                if(document.body.contains(clone)) {
-                    document.body.removeChild(clone);
-                }
             });
         }
 
-        // Initialize with default color to ensure classes are correct
+        function resetButtons() {
+            const btns = document.querySelectorAll('button');
+             // Simplistic reset, in a real app would target specific IDs
+             // here we rely on the functions finishing to reset their own text
+        }
+
+        // Initialize
         updateColor('bg-pink-200', 'text-pink-800', 'border-pink-400');
+        // Trigger initial resize
+        resizePreview();
     </script>
 </body>
 </html>

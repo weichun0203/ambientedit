@@ -76,9 +76,35 @@
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #e6e2dd; border-radius: 10px; }
+
+        /* Capture container to avoid scaling issues on mobile */
+        #capture-container {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            width: 600px;
+        }
+        
+        /* Loading Overlay */
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(253, 251, 247, 0.8);
+            backdrop-blur: 5px;
+            z-index: 100;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col py-8 px-4 sm:px-12">
+
+    <div id="loading-overlay">
+        <div class="w-8 h-8 border-4 border-brand-sage border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="text-xs font-bold tracking-widest text-brand-sage uppercase">正在生成票券...</p>
+    </div>
 
     <!-- Header Section -->
     <header class="w-full max-w-6xl mx-auto mb-12 border-b border-brand-sand pb-8">
@@ -207,10 +233,10 @@
 
             <!-- Action Buttons -->
             <div class="mt-10 pt-6 border-t border-brand-sand grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button onclick="downloadTicket()" class="w-full bg-brand-ink hover:bg-black text-brand-paper font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95 flex justify-center items-center gap-2 text-xs tracking-widest">
+                <button onclick="downloadTicket()" id="download-btn" class="w-full bg-brand-ink hover:bg-black text-brand-paper font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95 flex justify-center items-center gap-2 text-xs tracking-widest disabled:opacity-50">
                     <i class="fa-solid fa-download"></i> 圖片存檔
                 </button>
-                <button onclick="shareTicket()" class="w-full bg-brand-sage hover:bg-[#7a8f86] text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95 flex justify-center items-center gap-2 text-xs tracking-widest">
+                <button onclick="shareTicket()" id="share-btn" class="w-full bg-brand-sage hover:bg-[#7a8f86] text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95 flex justify-center items-center gap-2 text-xs tracking-widest disabled:opacity-50">
                     <i class="fa-solid fa-paper-plane"></i> 傳送心意
                 </button>
             </div>
@@ -301,6 +327,9 @@
         </div>
     </footer>
 
+    <!-- Hidden Capture Container -->
+    <div id="capture-container"></div>
+
     <!-- Result Modal -->
     <div id="result-modal" class="fixed inset-0 bg-brand-ink/90 z-50 hidden flex justify-center items-center p-4 backdrop-blur-md">
         <div class="bg-brand-paper rounded-3xl max-w-md w-full p-8 flex flex-col items-center shadow-soft relative modal-enter" id="modal-content">
@@ -343,7 +372,8 @@
             previewHeader: document.getElementById('preview-header'),
             ticketBody: document.getElementById('ticket-body'),
             modal: document.getElementById('result-modal'),
-            modalContent: document.getElementById('modal-content')
+            modalContent: document.getElementById('modal-content'),
+            loading: document.getElementById('loading-overlay')
         };
 
         const templates = {
@@ -426,6 +456,11 @@
             }
             saveAndRefresh();
             resizePreview();
+            
+            // Wait for fonts
+            document.fonts.ready.then(() => {
+                console.log('Fonts loaded');
+            });
         };
 
         function saveAndRefresh() {
@@ -493,31 +528,93 @@
 
         window.addEventListener('resize', resizePreview);
 
-        function downloadTicket() {
-            const target = document.getElementById('ticket-container');
-            html2canvas(target, { scale: 3, backgroundColor: null }).then(canvas => {
-                const img = canvas.toDataURL('image/png');
-                document.getElementById('generated-image').src = img;
-                elements.modal.classList.remove('hidden');
-                setTimeout(() => elements.modalContent.classList.add('modal-active'), 10);
-            });
+        /**
+         * Core Image Generation Logic
+         * Optimized for Mobile: Render in a hidden full-size container to avoid CSS scale bugs.
+         */
+        async function generateVoucherCanvas() {
+            elements.loading.style.display = 'flex';
+            
+            const captureArea = document.getElementById('capture-container');
+            const source = document.getElementById('ticket-container');
+            
+            // Clean and prepare capture area
+            captureArea.innerHTML = '';
+            const clone = source.cloneNode(true);
+            
+            // Reset transforms and ensure visibility for html2canvas
+            clone.style.transform = 'none';
+            clone.style.position = 'relative';
+            clone.style.margin = '0';
+            clone.style.boxShadow = 'none'; // Avoid blurry shadow rendering
+            
+            captureArea.appendChild(clone);
+            
+            // Ensure fonts are ready before taking the shot
+            await document.fonts.ready;
+
+            try {
+                const canvas = await html2canvas(clone, {
+                    scale: 2, // 2 is optimal for mobile performance and clarity
+                    backgroundColor: null,
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
+                    width: 600,
+                    height: 288
+                });
+                
+                captureArea.innerHTML = '';
+                elements.loading.style.display = 'none';
+                return canvas;
+            } catch (err) {
+                console.error('Generation failed:', err);
+                elements.loading.style.display = 'none';
+                return null;
+            }
+        }
+
+        async function downloadTicket() {
+            const canvas = await generateVoucherCanvas();
+            if (!canvas) return;
+            
+            const img = canvas.toDataURL('image/png');
+            document.getElementById('generated-image').src = img;
+            elements.modal.classList.remove('hidden');
+            setTimeout(() => elements.modalContent.classList.add('modal-active'), 10);
         }
 
         async function shareTicket() {
-            const target = document.getElementById('ticket-container');
-            const canvas = await html2canvas(target, { scale: 3 });
+            const canvas = await generateVoucherCanvas();
+            if (!canvas) return;
+            
             canvas.toBlob(async (blob) => {
-                const file = new File([blob], 'my-voucher.png', { type: 'image/png' });
-                if (navigator.share && navigator.canShare({ files: [file] })) {
-                    await navigator.share({
-                        files: [file],
-                        title: '送你一張兌換券',
-                        text: '這是一份來自遠方的心意，請查收。'
-                    });
+                const file = new File([blob], 'ambient-voucher.png', { type: 'image/png' });
+                
+                // Check if the device supports native sharing
+                if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: '送你一張常溫兌換券',
+                            text: '這是一份心意，請查收。'
+                        });
+                    } catch (err) {
+                        console.log('Share canceled or failed');
+                        // Fallback to modal if sharing fails/cancels
+                        const img = canvas.toDataURL('image/png');
+                        document.getElementById('generated-image').src = img;
+                        elements.modal.classList.remove('hidden');
+                        setTimeout(() => elements.modalContent.classList.add('modal-active'), 10);
+                    }
                 } else {
-                    downloadTicket();
+                    // Fallback for devices without native share
+                    const img = canvas.toDataURL('image/png');
+                    document.getElementById('generated-image').src = img;
+                    elements.modal.classList.remove('hidden');
+                    setTimeout(() => elements.modalContent.classList.add('modal-active'), 10);
                 }
-            });
+            }, 'image/png');
         }
 
         function closeModal() {

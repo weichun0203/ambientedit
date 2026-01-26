@@ -3,501 +3,527 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>客製化兌換券產生器</title>
+    <title>常溫兌換券設計工廠｜Ambient Voucher Studio</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="常溫編集所提供的客製化兌換券產生器，為生活增添一點儀式感。">
+    <meta name="author" content="常溫編集所 Ambient Edit Studio">
+    
+    <!-- JSON-LD for Brand -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "常溫兌換券設計工廠",
+      "alternateName": "Ambient Voucher Studio",
+      "url": "https://weichun0203.github.io/ambientedit/",
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      }
+    }
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #f8fafc; /* 更加柔和的背景色 */
+            background-color: #fdfbf7;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            color: #4a4a4a;
         }
-        /* Ticket Serrated Edge Effect using radial gradients */
-        .ticket-mask-left {
-            background: radial-gradient(circle at left, transparent 10px, inherit 10px);
-            mask-image: radial-gradient(circle at left, transparent 10px, black 11px);
-        }
-        .ticket-mask-right {
-            background: radial-gradient(circle at right, transparent 10px, inherit 10px);
-            mask-image: radial-gradient(circle at right, transparent 10px, black 11px);
-        }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; 
-        }
+
+        .font-serif { font-family: 'Noto Serif TC', serif; }
 
         /* Modal Animation */
-        .modal-enter {
-            opacity: 0;
-            transform: scale(0.9);
-        }
-        .modal-enter-active {
-            opacity: 1;
-            transform: scale(1);
-            transition: opacity 0.3s, transform 0.3s;
-        }
-        .modal-exit {
-            opacity: 1;
-            transform: scale(1);
-        }
-        .modal-exit-active {
-            opacity: 0;
-            transform: scale(0.9);
-            transition: opacity 0.3s, transform 0.3s;
-        }
+        .modal-enter { opacity: 0; transform: scale(0.9); }
+        .modal-active { opacity: 1; transform: scale(1); transition: opacity 0.3s, transform 0.3s; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e6e2dd; border-radius: 10px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center py-8 px-4 sm:px-6">
+<body class="min-h-screen flex flex-col py-8 px-4 sm:px-12">
 
-    <!-- Header -->
-    <header class="text-center mb-8">
-        <h1 class="text-2xl md:text-4xl font-black text-gray-700 tracking-wider mb-2">
-            <i class="fa-solid fa-ticket text-rose-400 mr-2"></i>兌換券設計工廠
-        </h1>
-        <p class="text-gray-500 text-sm md:text-base">製作專屬的男友券、趣味票卷，並分享給最愛的人！</p>
+    <!-- Header Section -->
+    <header class="w-full max-w-6xl mx-auto mb-12 border-b border-brand-sand pb-8">
+        <div class="flex flex-col md:flex-row justify-between items-end gap-6">
+            <div class="flex flex-col flex-1">
+                <span class="text-brand-sage font-bold tracking-[0.3em] text-xs mb-2 uppercase">常溫編集所 Ambient Edit Studio</span>
+                <h1 class="text-3xl md:text-5xl font-serif text-brand-ink tracking-tight flex items-center">
+                    兌換券設計工廠
+                </h1>
+                <p class="mt-4 text-brand-sage/80 text-sm max-w-md font-medium">
+                    將生活中的溫潤承諾，轉化為一份可以握在手中的溫暖。製作專屬的票券，傳遞最細膩的心意。
+                </p>
+            </div>
+            
+            <div class="flex-shrink-0">
+                <a href="https://weichun0203.github.io/ambientedit/" 
+                   class="group inline-flex items-center px-6 py-2.5 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+                   aria-label="返回常溫首頁"
+                   style="text-decoration: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                        常溫首頁
+                    </span>
+                </a>
+            </div>
+        </div>
     </header>
 
-    <main class="w-full max-w-6xl flex flex-col lg:flex-row gap-8 items-start">
+    <main class="w-full max-w-6xl mx-auto flex flex-col lg:flex-row gap-12 items-start flex-grow">
         
         <!-- Controls Section -->
-        <section class="w-full lg:w-1/3 bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
-            <h2 class="text-lg font-bold mb-4 text-gray-600 flex items-center">
-                <i class="fa-solid fa-sliders mr-2 opacity-70"></i> 設計您的票卷
+        <section class="w-full lg:w-1/3 bg-white/80 backdrop-blur-md p-6 rounded-2xl shadow-soft border border-brand-sand">
+            <h2 class="text-sm font-bold mb-6 text-brand-sage flex items-center tracking-widest uppercase">
+                <i class="fa-solid fa-sliders mr-2"></i> 設定票券細節
             </h2>
-            
-            <div class="space-y-4">
-                <!-- Theme Color -->
-                <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-2 uppercase tracking-wide">票卷色系</label>
-                    <div class="flex gap-2 flex-wrap" id="color-picker">
-                        <button class="w-8 h-8 rounded-full bg-pink-200 border-2 border-pink-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-200 transition-all" onclick="updateColor('bg-pink-200', 'text-pink-800', 'border-pink-400')"></button>
-                        <button class="w-8 h-8 rounded-full bg-blue-200 border-2 border-blue-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-200 transition-all" onclick="updateColor('bg-blue-200', 'text-blue-800', 'border-blue-400')"></button>
-                        <button class="w-8 h-8 rounded-full bg-amber-100 border-2 border-amber-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-200 transition-all" onclick="updateColor('bg-amber-100', 'text-amber-800', 'border-amber-400')"></button>
-                        <button class="w-8 h-8 rounded-full bg-emerald-100 border-2 border-emerald-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-200 transition-all" onclick="updateColor('bg-emerald-100', 'text-emerald-800', 'border-emerald-400')"></button>
-                        <button class="w-8 h-8 rounded-full bg-purple-200 border-2 border-purple-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-200 transition-all" onclick="updateColor('bg-purple-200', 'text-purple-800', 'border-purple-400')"></button>
-                        <button class="w-8 h-8 rounded-full bg-gray-200 border-2 border-gray-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-200 transition-all" onclick="updateColor('bg-gray-200', 'text-gray-800', 'border-gray-400')"></button>
-                    </div>
-                </div>
 
-                <!-- Icon Select -->
+            <!-- Quick Templates Grid -->
+            <div class="mb-8">
+                <label class="block text-[10px] font-bold text-brand-sage/60 mb-3 uppercase tracking-widest">快速靈感模板</label>
+                <div class="grid grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1 custom-scrollbar">
+                    <button onclick="applyTemplate('bf')" class="text-[11px] bg-brand-sand/30 hover:bg-brand-clay/10 text-brand-ink p-2 rounded-lg transition-all border border-transparent hover:border-brand-clay/20 flex items-center gap-2">
+                        <i class="fa-solid fa-heart text-brand-clay"></i> 超級男友券
+                    </button>
+                    <button onclick="applyTemplate('massage')" class="text-[11px] bg-brand-sand/30 hover:bg-brand-sage/10 text-brand-ink p-2 rounded-lg transition-all border border-transparent hover:border-brand-sage/20 flex items-center gap-2">
+                        <i class="fa-solid fa-hand-holding-heart text-brand-sage"></i> 專屬按摩券
+                    </button>
+                    <button onclick="applyTemplate('food')" class="text-[11px] bg-brand-sand/30 hover:bg-amber-100/50 text-brand-ink p-2 rounded-lg transition-all border border-transparent hover:border-amber-200 flex items-center gap-2">
+                        <i class="fa-solid fa-utensils text-amber-600"></i> 大餐請客券
+                    </button>
+                    <button onclick="applyTemplate('chores')" class="text-[11px] bg-brand-sand/30 hover:bg-gray-100 text-brand-ink p-2 rounded-lg transition-all border border-transparent hover:border-gray-200 flex items-center gap-2">
+                        <i class="fa-solid fa-broom text-gray-500"></i> 免做家事券
+                    </button>
+                    <button onclick="applyTemplate('trip')" class="text-[11px] bg-brand-sand/30 hover:bg-purple-100/50 text-brand-ink p-2 rounded-lg transition-all border border-transparent hover:border-purple-200 flex items-center gap-2">
+                        <i class="fa-solid fa-plane text-purple-600"></i> 說走就走券
+                    </button>
+                    <button onclick="applyTemplate('breakup')" class="text-[11px] bg-brand-clay/20 hover:bg-brand-clay/30 text-brand-ink p-2 rounded-lg transition-all border border-transparent hover:border-brand-clay flex items-center gap-2">
+                        <i class="fa-solid fa-wind text-brand-clay"></i> 分手安慰券
+                    </button>
+                    <button onclick="applyTemplate('drink')" class="text-[11px] bg-brand-sand/30 hover:bg-brand-sand/60 text-brand-ink p-2 rounded-lg transition-all border border-transparent hover:border-brand-sage flex items-center gap-2">
+                        <i class="fa-solid fa-wine-glass text-brand-ink"></i> 酒精消愁券
+                    </button>
+                    <button onclick="applyTemplate('restart')" class="text-[11px] bg-brand-sage/20 hover:bg-brand-sage/30 text-brand-ink p-2 rounded-lg transition-all border border-transparent hover:border-brand-sage flex items-center gap-2">
+                        <i class="fa-solid fa-seedling text-brand-sage"></i> 重新開始券
+                    </button>
+                    <button onclick="applyTemplate('cry')" class="text-[11px] bg-blue-100/30 hover:bg-blue-100/60 text-brand-ink p-2 rounded-lg transition-all border border-transparent hover:border-blue-300 flex items-center gap-2">
+                        <i class="fa-solid fa-droplet text-blue-500"></i> 無上限陪哭券
+                    </button>
+                    <button onclick="applyTemplate('forgive')" class="text-[11px] bg-brand-sand/30 hover:bg-blue-100/50 text-brand-ink p-2 rounded-lg transition-all border border-transparent hover:border-blue-200 flex items-center gap-2">
+                        <i class="fa-solid fa-flag text-blue-600"></i> 無條件原諒
+                    </button>
+                </div>
+            </div>
+            
+            <div class="space-y-6">
+                <!-- Color -->
                 <div>
-                    <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">裝飾圖示</label>
-                    <div class="relative">
-                        <select id="icon-select" onchange="updateIcon()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-700 focus:ring-2 focus:ring-rose-200 focus:border-rose-300 focus:outline-none appearance-none">
-                            <option value="fa-heart">❤ 愛心 Heart</option>
-                            <option value="fa-gift">🎁 禮物 Gift</option>
-                            <option value="fa-mug-hot">☕ 咖啡 Coffee</option>
-                            <option value="fa-utensils">🍽 大餐 Meal</option>
-                            <option value="fa-hand-holding-heart">🤲 給予愛 Care</option>
-                            <option value="fa-gamepad">🎮 遊戲 Game</option>
-                            <option value="fa-plane">✈ 旅遊 Travel</option>
-                            <option value="fa-bed">🛏 休息 Rest</option>
-                            <option value="fa-broom">🧹 家事 Chores</option>
-                            <option value="fa-star">⭐ 星星 Star</option>
-                            <option value="fa-ticket">🎫 票根 Ticket</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
-                            <i class="fa-solid fa-chevron-down text-xs"></i>
-                        </div>
+                    <label class="block text-[10px] font-bold text-brand-sage/60 mb-3 uppercase tracking-widest">選擇氛圍色系</label>
+                    <div class="flex gap-3 flex-wrap" id="color-picker">
+                        <button class="w-6 h-6 rounded-full bg-[#fce7f3] border border-pink-200" onclick="updateColor('bg-[#fce7f3]', 'text-pink-800')"></button>
+                        <button class="w-6 h-6 rounded-full bg-[#e0f2fe] border border-blue-200" onclick="updateColor('bg-[#e0f2fe]', 'text-blue-800')"></button>
+                        <button class="w-6 h-6 rounded-full bg-[#fef3c7] border border-amber-200" onclick="updateColor('bg-[#fef3c7]', 'text-amber-800')"></button>
+                        <button class="w-6 h-6 rounded-full bg-[#dcfce7] border border-emerald-200" onclick="updateColor('bg-[#dcfce7]', 'text-emerald-800')"></button>
+                        <button class="w-6 h-6 rounded-full bg-[#f3e8ff] border border-purple-200" onclick="updateColor('bg-[#f3e8ff]', 'text-purple-800')"></button>
+                        <button class="w-6 h-6 rounded-full bg-[#e5e7eb] border border-gray-300" onclick="updateColor('bg-[#e5e7eb]', 'text-gray-800')"></button>
                     </div>
                 </div>
 
                 <!-- Text Inputs -->
-                <div class="grid grid-cols-1 gap-4">
+                <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">票卷編號 (Ticket No.)</label>
-                        <input type="text" id="input-no" value="05201314" oninput="updateText()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-200 focus:border-rose-300 focus:outline-none text-gray-700" placeholder="例如：VIP888">
+                        <label class="block text-[10px] font-bold text-brand-sage/60 mb-1.5 uppercase tracking-widest">標題 Title</label>
+                        <input type="text" id="input-title" oninput="saveAndRefresh()" class="w-full p-3 bg-brand-paper border border-brand-sand rounded-xl focus:ring-1 focus:ring-brand-sage focus:outline-none text-sm text-brand-ink">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">標題 (Title)</label>
-                        <input type="text" id="input-title" value="專屬兌換券" oninput="updateText()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-200 focus:border-rose-300 focus:outline-none text-gray-700">
+                        <label class="block text-[10px] font-bold text-brand-sage/60 mb-1.5 uppercase tracking-widest">描述內容 Description</label>
+                        <textarea id="input-desc" rows="2" oninput="saveAndRefresh()" class="w-full p-3 bg-brand-paper border border-brand-sand rounded-xl focus:ring-1 focus:ring-brand-sage focus:outline-none text-sm text-brand-ink leading-relaxed"></textarea>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">內容描述 (Description)</label>
-                        <textarea id="input-desc" rows="2" oninput="updateText()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-200 focus:border-rose-300 focus:outline-none text-gray-700 leading-relaxed">憑此券可兌換一次任性撒嬌的機會，不得拒絕。</textarea>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">簽發人 (From)</label>
-                            <input type="text" id="input-from" value="愛你的寶寶" oninput="updateText()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-200 focus:border-rose-300 focus:outline-none text-gray-700">
+                            <label class="block text-[10px] font-bold text-brand-sage/60 mb-1.5 uppercase tracking-widest">簽發人 From</label>
+                            <input type="text" id="input-from" oninput="saveAndRefresh()" class="w-full p-3 bg-brand-paper border border-brand-sand rounded-xl focus:ring-1 focus:ring-brand-sage focus:outline-none text-sm text-brand-ink">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">持有者 (To)</label>
-                            <input type="text" id="input-to" value="親愛的腦公" oninput="updateText()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-200 focus:border-rose-300 focus:outline-none text-gray-700">
+                            <label class="block text-[10px] font-bold text-brand-sage/60 mb-1.5 uppercase tracking-widest">持有者 To</label>
+                            <input type="text" id="input-to" oninput="saveAndRefresh()" class="w-full p-3 bg-brand-paper border border-brand-sand rounded-xl focus:ring-1 focus:ring-brand-sage focus:outline-none text-sm text-brand-ink">
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">有效期限 (Valid Until)</label>
-                        <input type="text" id="input-date" value="永久有效" oninput="updateText()" class="w-full p-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-200 focus:border-rose-300 focus:outline-none text-gray-700">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-brand-sage/60 mb-1.5 uppercase tracking-widest">票號 No.</label>
+                            <input type="text" id="input-no" oninput="saveAndRefresh()" class="w-full p-3 bg-brand-paper border border-brand-sand rounded-xl focus:ring-1 focus:ring-brand-sage focus:outline-none text-sm text-brand-ink">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-brand-sage/60 mb-1.5 uppercase tracking-widest">效期 Valid Until</label>
+                            <input type="text" id="input-date" oninput="saveAndRefresh()" class="w-full p-3 bg-brand-paper border border-brand-sand rounded-xl focus:ring-1 focus:ring-brand-sage focus:outline-none text-sm text-brand-ink">
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Buttons: Improved colors for less visual shock -->
-            <div class="mt-8 pt-6 border-t border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <button onclick="downloadTicket()" class="w-full bg-slate-500 hover:bg-slate-600 text-white font-bold py-3 px-4 rounded-xl shadow-md transform transition hover:-translate-y-0.5 active:scale-95 flex justify-center items-center gap-2 text-sm">
+            <!-- Action Buttons -->
+            <div class="mt-10 pt-6 border-t border-brand-sand grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button onclick="downloadTicket()" class="w-full bg-brand-ink hover:bg-black text-brand-paper font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95 flex justify-center items-center gap-2 text-xs tracking-widest">
                     <i class="fa-solid fa-download"></i> 圖片存檔
                 </button>
-                <button onclick="shareTicket()" class="w-full bg-rose-400 hover:bg-rose-500 text-white font-bold py-3 px-4 rounded-xl shadow-md transform transition hover:-translate-y-0.5 active:scale-95 flex justify-center items-center gap-2 text-sm">
-                    <i class="fa-solid fa-share-nodes"></i> 傳送給他/她
+                <button onclick="shareTicket()" class="w-full bg-brand-sage hover:bg-[#7a8f86] text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-95 flex justify-center items-center gap-2 text-xs tracking-widest">
+                    <i class="fa-solid fa-paper-plane"></i> 傳送心意
                 </button>
             </div>
         </section>
 
         <!-- Preview Section -->
-        <!-- Added id="preview-section" for JS width calculation -->
-        <section id="preview-section" class="w-full lg:w-2/3 flex flex-col items-center justify-start bg-gray-100 rounded-2xl p-4 sm:p-8 border border-dashed border-gray-300 min-h-[400px] overflow-hidden relative">
+        <section id="preview-section" class="w-full lg:w-2/3 flex flex-col items-center justify-start bg-brand-sand/20 rounded-3xl p-6 sm:p-12 border border-dashed border-brand-sand min-h-[500px] relative overflow-hidden">
+            <h3 class="text-brand-sage/40 font-bold mb-8 uppercase tracking-[0.4em] text-[10px]">Instant Preview</h3>
             
-            <h3 class="text-gray-400 font-medium mb-6 uppercase tracking-widest text-xs">Live Preview</h3>
-            
-            <!-- Scale Wrapper: This handles the responsive scaling -->
-            <div id="scale-wrapper" class="origin-top transition-transform duration-200 ease-out">
-                <!-- Ticket Container: Fixed width 600px always -->
-                <div id="ticket-container" class="relative w-[600px] shadow-2xl bg-transparent">
-                    
-                    <!-- The Ticket Body -->
-                    <div id="ticket-body" class="flex w-full h-64 bg-pink-200 rounded-2xl overflow-hidden relative shadow-sm">
+            <div id="scale-wrapper" class="origin-top transition-transform duration-300">
+                <!-- Ticket Container (Generic Design) -->
+                <div id="ticket-container" class="relative w-[600px] shadow-2xl rounded-2xl overflow-hidden">
+                    <div id="ticket-body" class="flex w-full h-72 bg-white rounded-2xl overflow-hidden relative">
                         
-                        <!-- Decorative Circles (Notches) -->
-                        <div class="absolute top-1/2 -left-4 w-8 h-8 bg-gray-100 rounded-full transform -translate-y-1/2 z-10 box-border border-r border-black/5"></div>
-                        <div class="absolute top-1/2 -right-4 w-8 h-8 bg-gray-100 rounded-full transform -translate-y-1/2 z-10 box-border border-l border-black/5"></div>
+                        <!-- Notches -->
+                        <div class="absolute top-1/2 -left-4 w-8 h-8 bg-brand-paper rounded-full transform -translate-y-1/2 z-10 border-r border-black/5"></div>
+                        <div class="absolute top-1/2 -right-4 w-8 h-8 bg-brand-paper rounded-full transform -translate-y-1/2 z-10 border-l border-black/5"></div>
 
-                        <!-- Left Side (Main Content) -->
-                        <div class="flex-1 p-8 flex flex-col justify-between relative border-r-2 border-dashed border-black/10">
-                            <!-- Header -->
+                        <!-- Left Main Part -->
+                        <div class="flex-1 p-10 flex flex-col justify-between relative border-r border-dashed border-black/10">
                             <div class="flex justify-between items-start">
-                                <div class="text-sm font-bold uppercase tracking-wider opacity-60 text-pink-800" id="preview-header">TICKET NO. 05201314</div>
-                                <i id="preview-icon" class="fa-solid fa-heart text-4xl text-pink-800 opacity-10"></i>
+                                <div class="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 text-brand-ink" id="preview-header">TICKET NO. 000000</div>
+                                <div class="text-[10px] font-bold opacity-30 tracking-widest uppercase" id="ticket-top-right">Voucher Official</div>
                             </div>
 
-                            <!-- Main Text -->
-                            <div class="flex flex-row items-center gap-5 my-1">
-                                <div class="bg-white/40 w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
-                                    <i id="preview-main-icon" class="fa-solid fa-heart text-2xl text-pink-800"></i>
+                            <div class="flex flex-row items-center gap-6 my-4">
+                                <div class="bg-white/40 w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 backdrop-blur-sm border border-white/50">
+                                    <i id="preview-main-icon" class="fa-solid fa-ticket text-3xl opacity-80"></i>
                                 </div>
-                                <div>
-                                    <h2 id="preview-title" class="text-3xl font-black text-pink-800 leading-none tracking-tight">專屬兌換券</h2>
-                                    <p class="text-xs font-bold opacity-50 mt-1 tracking-[0.2em] text-pink-900">OFFICIAL VOUCHER</p>
+                                <div class="flex-1">
+                                    <h2 id="preview-title" class="text-4xl font-serif text-brand-ink leading-none tracking-tight">兌換券標題</h2>
+                                    <p class="text-[10px] font-black opacity-30 mt-2 tracking-[0.3em] uppercase">Voucher Invitation</p>
                                 </div>
                             </div>
 
-                            <!-- Description -->
-                            <div class="bg-white/30 rounded-lg p-3 backdrop-blur-sm border border-white/20">
-                                <p id="preview-desc" class="text-pink-900 font-medium text-base leading-snug line-clamp-2">
-                                    憑此券可兌換一次任性撒嬌的機會，不得拒絕。
+                            <div class="bg-white/40 rounded-xl p-4 backdrop-blur-sm border border-white/30">
+                                <p id="preview-desc" class="text-brand-ink/80 font-medium text-sm leading-relaxed italic">
+                                    在此輸入想要承諾的內容...
                                 </p>
                             </div>
                             
-                            <!-- Footer Info -->
-                            <div class="flex justify-between items-end mt-1 text-sm font-semibold text-pink-900 opacity-70">
-                                <div class="flex items-center gap-1"><i class="fa-regular fa-user text-xs"></i> <span id="preview-from">愛你的寶寶</span></div>
-                                <div class="flex items-center gap-1">To: <span id="preview-to">親愛的腦公</span></div>
+                            <div class="flex justify-between items-end mt-4 text-[11px] font-bold text-brand-ink/60 tracking-wider">
+                                <div class="flex items-center gap-2"><span class="opacity-40">FROM:</span> <span id="preview-from">簽發人</span></div>
+                                <div class="flex items-center gap-2"><span class="opacity-40">TO:</span> <span id="preview-to">持有者</span></div>
                             </div>
                         </div>
 
-                        <!-- Right Side (Stub) -->
-                        <div class="w-40 flex flex-col justify-center items-center p-4 bg-black/5 relative">
-                            <!-- Barcode Simulation -->
-                            <div class="w-full h-10 flex justify-center items-end gap-[2px] opacity-60 mb-5 overflow-hidden mix-blend-multiply">
-                                <div class="w-1 h-full bg-black"></div><div class="w-2 h-3/4 bg-black"></div>
-                                <div class="w-1 h-full bg-black"></div><div class="w-3 h-1/2 bg-black"></div>
-                                <div class="w-1 h-full bg-black"></div><div class="w-2 h-full bg-black"></div>
-                                <div class="w-4 h-3/4 bg-black"></div><div class="w-1 h-1/2 bg-black"></div>
-                                <div class="w-2 h-full bg-black"></div><div class="w-1 h-full bg-black"></div>
-                                <div class="w-1 h-full bg-black"></div><div class="w-2 h-3/4 bg-black"></div>
+                        <!-- Right Stub Part -->
+                        <div class="w-44 flex flex-col justify-center items-center p-6 bg-black/5 relative">
+                            <!-- Generic Barcode -->
+                            <div class="w-full flex justify-center items-center opacity-40 mb-6 grayscale">
+                                <div class="w-full h-12 flex items-end gap-[1px]">
+                                    <div class="flex-grow h-full bg-brand-ink"></div>
+                                    <div class="flex-grow h-3/4 bg-brand-ink"></div>
+                                    <div class="flex-grow h-full bg-brand-ink"></div>
+                                    <div class="flex-grow h-1/2 bg-brand-ink"></div>
+                                    <div class="flex-grow h-full bg-brand-ink"></div>
+                                    <div class="flex-grow h-2/3 bg-brand-ink"></div>
+                                    <div class="flex-grow h-full bg-brand-ink"></div>
+                                    <div class="flex-grow h-1/3 bg-brand-ink"></div>
+                                </div>
                             </div>
                             
-                            <div class="text-center rotate-0">
-                                <p class="text-[9px] uppercase tracking-[0.2em] opacity-50 font-bold mb-1 text-black">VALID UNTIL</p>
-                                <h4 id="preview-date" class="text-lg font-black text-pink-800 leading-none whitespace-nowrap overflow-hidden text-ellipsis max-w-[120px]">永久有效</h4>
+                            <div class="text-center relative z-10">
+                                <p class="text-[9px] uppercase tracking-[0.3em] opacity-40 font-black mb-1">Expiration</p>
+                                <h4 id="preview-date" class="text-sm font-black text-brand-ink leading-tight">永久有效</h4>
                             </div>
 
-                            <div class="mt-5 opacity-20">
-                                <i class="fa-solid fa-stamp text-5xl transform -rotate-12 text-black"></i>
+                            <div class="mt-8 opacity-10">
+                                <i class="fa-solid fa-stamp text-5xl transform -rotate-12"></i>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <p class="mt-8 text-xs text-gray-400 text-center max-w-sm">
-                <i class="fa-solid fa-mobile-screen mr-1"></i> 預覽畫面僅供參考，實際匯出時將為高解析度圖片。
+            <p class="mt-8 text-[10px] text-brand-sage/40 tracking-widest uppercase">
+                Designed for Shared Moments
             </p>
         </section>
     </main>
 
-    <footer class="mt-12 text-center text-gray-400 text-xs py-4">
-        <p>&copy; 2024 Ticket Maker. Design for Love.</p>
+    <!-- Footer -->
+    <footer class="mt-16 text-center text-brand-sage/60 text-[10px] py-8 border-t border-brand-sand tracking-widest">
+        <p>2026 常溫編集所 Ambient Edit Studio.</p>
+        <div class="mt-4 flex justify-center gap-6">
+            <a href="https://line.me/R/ti/p/@890mvlvl" target="_blank" class="hover:text-brand-ink transition-colors">LINE@</a>
+            <a href="https://www.instagram.com/ambientedit_" target="_blank" class="hover:text-brand-ink transition-colors">INSTAGRAM</a>
+        </div>
     </footer>
 
-    <!-- Result Modal (Hidden by default) -->
-    <div id="result-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex justify-center items-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 flex flex-col items-center shadow-2xl relative animate-fade-in">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+    <!-- Result Modal -->
+    <div id="result-modal" class="fixed inset-0 bg-brand-ink/90 z-50 hidden flex justify-center items-center p-4 backdrop-blur-md">
+        <div class="bg-brand-paper rounded-3xl max-w-md w-full p-8 flex flex-col items-center shadow-soft relative modal-enter" id="modal-content">
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-brand-sage hover:text-brand-ink transition-colors">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
             
-            <div class="text-center mb-4">
-                <div class="w-12 h-12 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-2">
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-brand-sage/10 text-brand-sage rounded-full flex items-center justify-center mx-auto mb-3">
                     <i class="fa-solid fa-check text-xl"></i>
                 </div>
-                <h3 class="text-lg font-bold text-gray-800">製作完成！</h3>
-                <p class="text-sm text-gray-500 mt-1">請長按下方圖片並選擇「儲存圖片」</p>
+                <h3 class="text-lg font-serif text-brand-ink">票券已就緒</h3>
+                <p class="text-xs text-brand-sage mt-2">請長按圖片儲存，或直接分享給對方。</p>
             </div>
 
-            <!-- Image Container -->
-            <div class="w-full bg-gray-100 rounded-lg p-2 mb-4 flex justify-center border border-gray-200">
-                <img id="generated-image" class="max-w-full h-auto rounded shadow-sm" alt="Generated Ticket">
+            <div class="w-full bg-white rounded-xl p-2 mb-6 shadow-sm border border-brand-sand">
+                <img id="generated-image" class="max-w-full h-auto rounded" alt="Generated Ticket">
             </div>
 
-            <button onclick="closeModal()" class="w-full bg-gray-800 text-white font-bold py-3 rounded-xl hover:bg-gray-900 transition-colors">
-                關閉
+            <button onclick="closeModal()" class="w-full bg-brand-ink text-brand-paper font-bold py-3.5 rounded-xl hover:bg-black transition-colors text-xs tracking-widest">
+                返回編輯
             </button>
         </div>
     </div>
 
     <script>
-        // State
-        const state = {
-            bgColor: 'bg-pink-200',
-            textColor: 'text-pink-800',
-            icon: 'fa-heart'
-        };
-
-        // DOM Elements
+        const STORAGE_KEY = 'ambient_voucher_data_v3';
         const elements = {
-            title: document.getElementById('preview-title'),
-            desc: document.getElementById('preview-desc'),
-            from: document.getElementById('preview-from'),
-            to: document.getElementById('preview-to'),
-            date: document.getElementById('preview-date'),
-            iconMain: document.getElementById('preview-main-icon'),
-            iconBg: document.getElementById('preview-icon'),
+            inputTitle: document.getElementById('input-title'),
+            inputDesc: document.getElementById('input-desc'),
+            inputFrom: document.getElementById('input-from'),
+            inputTo: document.getElementById('input-to'),
+            inputNo: document.getElementById('input-no'),
+            inputDate: document.getElementById('input-date'),
+            previewTitle: document.getElementById('preview-title'),
+            previewDesc: document.getElementById('preview-desc'),
+            previewFrom: document.getElementById('preview-from'),
+            previewTo: document.getElementById('preview-to'),
+            previewDate: document.getElementById('preview-date'),
+            previewHeader: document.getElementById('preview-header'),
             ticketBody: document.getElementById('ticket-body'),
-            previewHeader: document.getElementById('preview-header')
+            modal: document.getElementById('result-modal'),
+            modalContent: document.getElementById('modal-content')
         };
 
-        // --- Resize Logic for Mobile Preview ---
+        const templates = {
+            'bf': {
+                title: '超級男友券',
+                desc: '憑此券可兌換一日完美男友體驗，包含拎包、剝蝦與無限耐心。',
+                from: '愛妳的寶寶', to: '最美的女友', no: '5201314', date: '永久有效',
+                color: 'bg-[#fce7f3]', text: 'text-pink-800'
+            },
+            'massage': {
+                title: '專屬按摩券',
+                desc: '憑此券可兌換肩頸/全身按摩 30 分鐘，力度與手法由您指定。',
+                from: '專屬技師', to: '尊貴客戶', no: 'SPA-999', date: '本月有效',
+                color: 'bg-[#dcfce7]', text: 'text-emerald-800'
+            },
+            'food': {
+                title: '大餐請客券',
+                desc: '憑此券可指定任何一間餐廳，我買單！(預算請手下留情)',
+                from: '你的飯票', to: '美食家', no: 'YUMMY888', date: '本月有效',
+                color: 'bg-[#fef3c7]', text: 'text-amber-800'
+            },
+            'chores': {
+                title: '免做家事券',
+                desc: '憑此券可抵銷一次家事（洗碗、倒垃圾、掃地），通通交給我。',
+                from: '家事小精靈', to: '一家之主', no: 'CLEAN001', date: '今日限定',
+                color: 'bg-[#e5e7eb]', text: 'text-gray-800'
+            },
+            'trip': {
+                title: '說走就走券',
+                desc: '憑此券可兌換一次週末小旅行，地點由你決定，我負責規劃。',
+                from: '專屬司機', to: '旅伴', no: 'TRIP-GO', date: '近期出發',
+                color: 'bg-[#f3e8ff]', text: 'text-purple-800'
+            },
+            'breakup': {
+                title: '分手安慰券',
+                desc: '憑此券可兌換「無限次垃圾話傾聽」與「不問原因的擁抱」。你不必獨自承擔。',
+                from: '鐵桿好友', to: '值得更好的你', no: 'HEAL-01', date: '你需要時',
+                color: 'bg-[#fdfbf7]', text: 'text-brand-clay'
+            },
+            'drink': {
+                title: '酒精消愁券',
+                desc: '憑此券可兌換一晚不醉不歸。酒錢我出，故事你說，吐了我清。',
+                from: '陪喝專員', to: '酒鬼戰友', no: 'BEER-99', date: '今晚有效',
+                color: 'bg-[#e5e7eb]', text: 'text-brand-ink'
+            },
+            'restart': {
+                title: '重新開始券',
+                desc: '憑此券可兌換「剪髮、買新衣、換心情」一日行程。昨日種種，今日已死。',
+                from: '轉身小幫手', to: '全新的自己', no: 'NEW-LIFE', date: '現在開始',
+                color: 'bg-[#dcfce7]', text: 'text-brand-sage'
+            },
+            'cry': {
+                title: '無上限陪哭券',
+                desc: '憑此券可兌換衛生紙無限供應及「我就在這裡」的陪伴。哭完我們再說。',
+                from: '衛生紙商', to: '愛哭包', no: 'TEAR-88', date: '哭完為止',
+                color: 'bg-[#e0f2fe]', text: 'text-blue-800'
+            },
+            'forgive': {
+                title: '無條件原諒',
+                desc: '無論我犯了什麼小錯，出示此券，必須無條件原諒我一次！',
+                from: '知錯的人', to: '寬容的你', no: 'SORRY-1', date: '永久有效',
+                color: 'bg-[#e0f2fe]', text: 'text-blue-800'
+            }
+        };
+
+        let state = { bgColor: 'bg-white', textColor: 'text-brand-ink' };
+
+        window.onload = () => {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const data = JSON.parse(saved);
+                Object.keys(data).forEach(key => {
+                    if (elements[`input${key.charAt(0).toUpperCase() + key.slice(1)}`]) {
+                        elements[`input${key.charAt(0).toUpperCase() + key.slice(1)}`].value = data[key];
+                    }
+                });
+                if(data.color) updateColor(data.color.bg, data.color.text);
+            } else {
+                applyTemplate('bf');
+            }
+            saveAndRefresh();
+            resizePreview();
+        };
+
+        function saveAndRefresh() {
+            const data = {
+                title: elements.inputTitle.value,
+                desc: elements.inputDesc.value,
+                from: elements.inputFrom.value,
+                to: elements.inputTo.value,
+                no: elements.inputNo.value,
+                date: elements.inputDate.value,
+                color: { bg: state.bgColor, text: state.textColor }
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            
+            elements.previewTitle.textContent = data.title || '兌換券標題';
+            elements.previewDesc.textContent = data.desc || '請輸入內容描述...';
+            elements.previewFrom.textContent = data.from || '簽發人';
+            elements.previewTo.textContent = data.to || '持有者';
+            elements.previewDate.textContent = data.date || '有效日期';
+            elements.previewHeader.textContent = `TICKET NO. ${data.no || '000000'}`;
+        }
+
+        function updateColor(bgClass, textClass) {
+            elements.ticketBody.className = `flex w-full h-72 rounded-2xl overflow-hidden relative ${bgClass}`;
+            
+            const colorTargets = [elements.previewTitle, elements.previewDate, elements.previewHeader];
+            colorTargets.forEach(el => {
+                el.className = el.className.replace(/text-\w+-\d+/g, textClass);
+                el.className = el.className.replace(/text-brand-\w+/g, textClass);
+                if(!el.className.includes(textClass)) el.classList.add(textClass);
+            });
+            
+            const icon = document.getElementById('preview-main-icon');
+            icon.className = icon.className.replace(/text-\w+-\d+/g, textClass);
+            icon.className = icon.className.replace(/text-brand-\w+/g, textClass);
+            if(!icon.className.includes(textClass)) icon.classList.add(textClass);
+
+            state.bgColor = bgClass;
+            state.textColor = textClass;
+            saveAndRefresh();
+        }
+
+        function applyTemplate(key) {
+            const t = templates[key];
+            elements.inputTitle.value = t.title;
+            elements.inputDesc.value = t.desc;
+            elements.inputFrom.value = t.from;
+            elements.inputTo.value = t.to;
+            elements.inputNo.value = t.no;
+            elements.inputDate.value = t.date;
+            updateColor(t.color, t.text);
+            saveAndRefresh();
+        }
+
         function resizePreview() {
             const container = document.getElementById('preview-section');
             const wrapper = document.getElementById('scale-wrapper');
-            const ticketWidth = 600; // Fixed width of the ticket
-            const padding = 32; // Total horizontal padding of container
-            
-            const availableWidth = container.offsetWidth - padding;
-            
-            // Calculate scale
-            let scale = availableWidth / ticketWidth;
-            if (scale > 1) scale = 1; // Don't scale up, only down
-            
+            if(!container || !wrapper) return;
+            const availableWidth = container.offsetWidth - 48;
+            let scale = availableWidth / 600;
+            if (scale > 1) scale = 1;
             wrapper.style.transform = `scale(${scale})`;
-            // Adjust height of wrapper to match scaled content so it doesn't take up empty space
-            // 256 is the height (h-64 = 16rem = 256px)
-            const scaledHeight = 256 * scale;
-            wrapper.style.height = `${scaledHeight}px`;
-            wrapper.style.marginBottom = '20px';
+            wrapper.style.height = `${288 * scale}px`;
         }
 
-        // Listen for window resize
         window.addEventListener('resize', resizePreview);
-        // Call once on load
-        window.addEventListener('load', resizePreview);
-        // Call periodically just in case fonts load late
-        setTimeout(resizePreview, 500);
-
-
-        // --- Update Functions ---
-
-        function updateText() {
-            elements.title.textContent = document.getElementById('input-title').value || '兌換券';
-            elements.desc.textContent = document.getElementById('input-desc').value;
-            elements.from.textContent = document.getElementById('input-from').value;
-            elements.to.textContent = document.getElementById('input-to').value;
-            elements.date.textContent = document.getElementById('input-date').value;
-            
-            const ticketNo = document.getElementById('input-no').value || '000000';
-            elements.previewHeader.textContent = `TICKET NO. ${ticketNo}`;
-        }
-
-        function updateIcon() {
-            const selectedIcon = document.getElementById('icon-select').value;
-            state.icon = selectedIcon;
-            
-            const removeIconClasses = (el) => {
-                const classes = el.className.split(" ").filter(c => !c.startsWith("fa-"));
-                el.className = classes.join(" ");
-            };
-
-            removeIconClasses(elements.iconMain);
-            removeIconClasses(elements.iconBg);
-
-            elements.iconMain.classList.add('fa-solid', selectedIcon, 'text-2xl', state.textColor);
-            elements.iconBg.classList.add('fa-solid', selectedIcon, 'text-4xl', state.textColor, 'opacity-10');
-        }
-
-        function updateColor(bgClass, textClass, borderClass) {
-            const bgClasses = ['bg-pink-200', 'bg-blue-200', 'bg-amber-100', 'bg-emerald-100', 'bg-purple-200', 'bg-gray-200'];
-            elements.ticketBody.classList.remove(...bgClasses);
-            elements.ticketBody.classList.add(bgClass);
-
-            const textElements = [
-                elements.title, 
-                elements.date, 
-                elements.iconMain,
-                elements.iconBg,
-                elements.previewHeader
-            ];
-
-            const colorPrefixes = ['text-pink-', 'text-blue-', 'text-amber-', 'text-emerald-', 'text-purple-', 'text-gray-'];
-            
-            state.textColor = textClass;
-
-            textElements.forEach(el => {
-                el.classList.forEach(cls => {
-                    if (colorPrefixes.some(prefix => cls.startsWith(prefix))) {
-                        el.classList.remove(cls);
-                    }
-                });
-                el.classList.add(textClass);
-            });
-
-            // Handle darker text for body/footer (approximate matching)
-            const textBaseColor = textClass.split('-')[1]; // e.g., 'pink'
-            const darkTextClass = `text-${textBaseColor}-900`;
-            
-            const darkTextElements = [elements.desc, elements.from, elements.to];
-            // Remove old dark text classes
-            darkTextElements.forEach(el => {
-                 // Simple regex replacement for class text-*-900
-                 el.className = el.className.replace(/text-\w+-900/g, darkTextClass);
-            });
-            
-            // Specifically for the "OFFICIAL VOUCHER" subtext if needed, currently hardcoded or using opacity
-            const subTitle = document.querySelector('#preview-title + p');
-            if(subTitle) subTitle.className = subTitle.className.replace(/text-\w+-900/g, darkTextClass);
-
-            state.bgColor = bgClass;
-        }
-
-
-        // --- Generator Functions ---
-
-        function generateCanvas(callback) {
-            const ticketContainer = document.getElementById('ticket-container');
-            
-            // Clone for rendering
-            const clone = ticketContainer.cloneNode(true);
-            
-            // Reset transforms on clone to ensure clean render at full size
-            clone.style.transform = 'none';
-            clone.style.width = "600px";
-            clone.style.position = "absolute";
-            clone.style.left = "-9999px";
-            clone.style.top = "0";
-            clone.classList.remove('w-full', 'max-w-[600px]');
-            
-            document.body.appendChild(clone);
-
-            html2canvas(clone, {
-                scale: 3, // High resolution
-                backgroundColor: null,
-                logging: false,
-                useCORS: true,
-                allowTaint: true
-            }).then(canvas => {
-                document.body.removeChild(clone);
-                callback(canvas);
-            }).catch(err => {
-                console.error(err);
-                document.body.removeChild(clone);
-                alert("圖片產生失敗");
-                // Reset buttons
-                resetButtons();
-            });
-        }
 
         function downloadTicket() {
-            const btn = document.querySelector('button[onclick="downloadTicket()"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 處理中...';
+            const target = document.getElementById('ticket-container');
+            html2canvas(target, { scale: 3, backgroundColor: null }).then(canvas => {
+                const img = canvas.toDataURL('image/png');
+                document.getElementById('generated-image').src = img;
+                elements.modal.classList.remove('hidden');
+                setTimeout(() => elements.modalContent.classList.add('modal-active'), 10);
+            });
+        }
 
-            generateCanvas(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                
-                // Show Modal instead of auto-download for better mobile support
-                const modal = document.getElementById('result-modal');
-                const imgEl = document.getElementById('generated-image');
-                imgEl.src = imgData;
-                
-                modal.classList.remove('hidden');
-                btn.innerHTML = originalText;
+        async function shareTicket() {
+            const target = document.getElementById('ticket-container');
+            const canvas = await html2canvas(target, { scale: 3 });
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], 'my-voucher.png', { type: 'image/png' });
+                if (navigator.share && navigator.canShare({ files: [file] })) {
+                    await navigator.share({
+                        files: [file],
+                        title: '送你一張兌換券',
+                        text: '這是一份來自遠方的心意，請查收。'
+                    });
+                } else {
+                    downloadTicket();
+                }
             });
         }
 
         function closeModal() {
-            document.getElementById('result-modal').classList.add('hidden');
+            elements.modalContent.classList.remove('modal-active');
+            setTimeout(() => elements.modal.classList.add('hidden'), 300);
         }
-
-        function shareTicket() {
-            const btn = document.querySelector('button[onclick="shareTicket()"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-
-            generateCanvas(canvas => {
-                canvas.toBlob(async (blob) => {
-                    if (!blob) return;
-
-                    const file = new File([blob], `ticket-${Date.now()}.png`, { type: "image/png" });
-
-                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                        try {
-                            await navigator.share({
-                                files: [file],
-                                title: '送你一張兌換券',
-                                text: '這是專屬於你的兌換券，請查收 ❤️'
-                            });
-                        } catch (err) {
-                            console.log('Share closed');
-                        }
-                    } else {
-                        // Fallback to modal if share not supported
-                        const modal = document.getElementById('result-modal');
-                        const imgEl = document.getElementById('generated-image');
-                        imgEl.src = canvas.toDataURL('image/png');
-                        modal.classList.remove('hidden');
-                        alert("您的裝置不支援直接分享，請長按圖片儲存後再發送。");
-                    }
-                    btn.innerHTML = originalText;
-                }, 'image/png');
-            });
-        }
-
-        function resetButtons() {
-            const btns = document.querySelectorAll('button');
-             // Simplistic reset, in a real app would target specific IDs
-             // here we rely on the functions finishing to reset their own text
-        }
-
-        // Initialize
-        updateColor('bg-pink-200', 'text-pink-800', 'border-pink-400');
-        // Trigger initial resize
-        resizePreview();
     </script>
 </body>
 </html>

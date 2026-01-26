@@ -480,6 +480,16 @@
         </p>
     </footer>
 
+    <!-- 通知提示 (Toast) -->
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-brand-ink/90 backdrop-blur text-white px-6 py-3 rounded-full shadow-xl transition-all duration-300 opacity-0 -translate-y-full pointer-events-none z-50 flex items-center gap-3">
+        <div id="toastIcon" class="w-5 h-5 rounded-full bg-brand-sage flex items-center justify-center text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+        </div>
+        <span class="font-serif tracking-widest text-sm" id="toastMessage">圖片已成功匯出</span>
+    </div>
+
     <script>
         // 初始化
         document.addEventListener('DOMContentLoaded', () => {
@@ -742,6 +752,31 @@
             updatePreview();
         }
 
+        // 顯示 Toast 通知
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const msg = document.getElementById('toastMessage');
+            const icon = document.getElementById('toastIcon');
+            
+            msg.innerText = message;
+            
+            if (type === 'success') {
+                icon.className = "w-5 h-5 rounded-full bg-brand-sage flex items-center justify-center text-white";
+                icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>`;
+            } else {
+                icon.className = "w-5 h-5 rounded-full bg-brand-clay flex items-center justify-center text-white";
+                icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>`;
+            }
+            
+            // 顯示
+            toast.classList.remove('opacity-0', '-translate-y-full');
+            
+            // 3秒後隱藏
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-full');
+            }, 3000);
+        }
+
         // 匯出圖片
         function downloadImage() {
             const element = document.getElementById('captureArea');
@@ -775,9 +810,15 @@
                     // 恢復按鈕
                     btn.innerHTML = originalContent;
                     btn.disabled = false;
+
+                    // 顯示成功通知
+                    showToast('圖片已儲存！請查看相簿', 'success');
+
                 }).catch(err => {
                     console.error(err);
-                    alert('圖片製作失敗，請稍後再試');
+                    // 顯示失敗通知
+                    showToast('圖片製作失敗，請稍後再試', 'error');
+                    
                     btn.innerHTML = originalContent;
                     btn.disabled = false;
                 });

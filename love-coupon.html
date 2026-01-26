@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客製化兌換券產生器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* Ticket Serrated Edge Effect using radial gradients */
+        .ticket-mask-left {
+            background: radial-gradient(circle at left, transparent 10px, inherit 10px);
+            mask-image: radial-gradient(circle at left, transparent 10px, black 11px);
+        }
+        .ticket-mask-right {
+            background: radial-gradient(circle at right, transparent 10px, inherit 10px);
+            mask-image: radial-gradient(circle at right, transparent 10px, black 11px);
+        }
+        
+        .dashed-line {
+            background-image: linear-gradient(to bottom, #333 33%, rgba(255,255,255,0) 0%);
+            background-position: right;
+            background-size: 2px 10px;
+            background-repeat: repeat-y;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-10 px-4">
+
+    <!-- Header -->
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-black text-gray-800 tracking-wider mb-2">
+            <i class="fa-solid fa-ticket text-pink-500 mr-2"></i>兌換券設計工廠
+        </h1>
+        <p class="text-gray-600">製作專屬的男友券、或是任何趣味票卷，並匯出成圖片！</p>
+    </header>
+
+    <main class="w-full max-w-6xl flex flex-col lg:flex-row gap-8 items-start">
+        
+        <!-- Controls Section -->
+        <section class="w-full lg:w-1/3 bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+            <h2 class="text-xl font-bold mb-4 text-gray-700 flex items-center">
+                <i class="fa-solid fa-sliders mr-2"></i> 設計您的票卷
+            </h2>
+            
+            <div class="space-y-4">
+                <!-- Theme Color -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">票卷顏色</label>
+                    <div class="flex gap-2 flex-wrap" id="color-picker">
+                        <button class="w-8 h-8 rounded-full bg-pink-200 border-2 border-pink-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-300" onclick="updateColor('bg-pink-200', 'text-pink-800', 'border-pink-400')"></button>
+                        <button class="w-8 h-8 rounded-full bg-blue-200 border-2 border-blue-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-300" onclick="updateColor('bg-blue-200', 'text-blue-800', 'border-blue-400')"></button>
+                        <button class="w-8 h-8 rounded-full bg-yellow-200 border-2 border-yellow-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-300" onclick="updateColor('bg-yellow-200', 'text-yellow-800', 'border-yellow-400')"></button>
+                        <button class="w-8 h-8 rounded-full bg-green-200 border-2 border-green-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-300" onclick="updateColor('bg-green-200', 'text-green-800', 'border-green-400')"></button>
+                        <button class="w-8 h-8 rounded-full bg-purple-200 border-2 border-purple-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-300" onclick="updateColor('bg-purple-200', 'text-purple-800', 'border-purple-400')"></button>
+                        <button class="w-8 h-8 rounded-full bg-gray-200 border-2 border-gray-400 focus:outline-none ring-2 ring-offset-1 ring-transparent hover:ring-gray-300" onclick="updateColor('bg-gray-200', 'text-gray-800', 'border-gray-400')"></button>
+                    </div>
+                </div>
+
+                <!-- Icon Select -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">裝飾圖示</label>
+                    <select id="icon-select" onchange="updateIcon()" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-transparent">
+                        <option value="fa-heart">愛心 ❤</option>
+                        <option value="fa-gift">禮物 🎁</option>
+                        <option value="fa-mug-hot">咖啡 ☕</option>
+                        <option value="fa-utensils">大餐 🍽</option>
+                        <option value="fa-hand-holding-heart">給予愛 🤲</option>
+                        <option value="fa-gamepad">遊戲 🎮</option>
+                        <option value="fa-plane">旅遊 ✈</option>
+                        <option value="fa-bed">休息 🛏</option>
+                        <option value="fa-broom">家事 🧹</option>
+                        <option value="fa-star">星星 ⭐</option>
+                        <option value="fa-ticket">票根 🎫</option>
+                    </select>
+                </div>
+
+                <!-- Text Inputs -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">票卷編號 (Ticket No.)</label>
+                    <input type="text" id="input-no" value="05201314" oninput="updateText()" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none placeholder-gray-300" placeholder="例如：VIP888">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">標題 (Title)</label>
+                    <input type="text" id="input-title" value="專屬兌換券" oninput="updateText()" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">內容描述 (Description)</label>
+                    <textarea id="input-desc" rows="2" oninput="updateText()" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:outline-none">憑此券可兌換一次任性撒嬌的機會，不得拒絕。</textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">簽發人 (From)</label>
+                        <input type="text" id="input-from" value="愛你的寶寶" oninput="updateText()" class="w-full p-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">持有者 (To)</label>
+                        <input type="text" id="input-to" value="親愛的腦公" oninput="updateText()" class="w-full p-2 border border-gray-300 rounded-lg">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">有效期限 (Valid Until)</label>
+                    <input type="text" id="input-date" value="永久有效" oninput="updateText()" class="w-full p-2 border border-gray-300 rounded-lg">
+                </div>
+            </div>
+
+            <div class="mt-6 pt-6 border-t border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button onclick="downloadTicket()" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform transition hover:-translate-y-1 flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-download"></i> 下載 (PNG)
+                </button>
+                <button onclick="shareTicket()" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transform transition hover:-translate-y-1 flex justify-center items-center gap-2">
+                    <i class="fa-solid fa-share-nodes"></i> 分享圖片
+                </button>
+            </div>
+        </section>
+
+        <!-- Preview Section -->
+        <section class="w-full lg:w-2/3 flex flex-col items-center justify-center bg-gray-200 rounded-2xl p-8 border-2 border-dashed border-gray-300 min-h-[400px]">
+            <h3 class="text-gray-400 font-medium mb-4 uppercase tracking-widest text-sm">Preview</h3>
+            
+            <!-- Ticket Container (This is what gets captured) -->
+            <div id="ticket-container" class="relative w-full max-w-[600px] shadow-2xl transform transition-all duration-300">
+                
+                <!-- The Ticket -->
+                <div id="ticket-body" class="flex w-full h-64 bg-pink-200 rounded-2xl overflow-hidden relative">
+                    
+                    <!-- Decorative Circles (Notches) -->
+                    <div class="absolute top-1/2 -left-4 w-8 h-8 bg-gray-200 rounded-full transform -translate-y-1/2 z-10"></div>
+                    <div class="absolute top-1/2 -right-4 w-8 h-8 bg-gray-200 rounded-full transform -translate-y-1/2 z-10"></div>
+
+                    <!-- Left Side (Main Content) -->
+                    <div class="flex-1 p-6 sm:p-8 flex flex-col justify-between relative border-r-2 border-dashed border-black/10">
+                        <!-- Header -->
+                        <div class="flex justify-between items-start">
+                            <div class="text-sm font-bold uppercase tracking-wider opacity-60 text-pink-800" id="preview-header">TICKET NO. 05201314</div>
+                            <i id="preview-icon" class="fa-solid fa-heart text-4xl text-pink-800 opacity-20"></i>
+                        </div>
+
+                        <!-- Main Text -->
+                        <div class="flex flex-row items-center gap-4 my-2">
+                            <div class="bg-white/40 p-3 rounded-full flex-shrink-0">
+                                <i id="preview-main-icon" class="fa-solid fa-heart text-3xl text-pink-800"></i>
+                            </div>
+                            <div>
+                                <h2 id="preview-title" class="text-3xl font-black text-pink-800 leading-tight">專屬兌換券</h2>
+                                <p class="text-sm font-medium opacity-70 mt-1">COUPON VOUCHER</p>
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="bg-white/30 rounded-lg p-3 backdrop-blur-sm">
+                            <p id="preview-desc" class="text-pink-900 font-medium text-sm sm:text-base leading-snug">
+                                憑此券可兌換一次任性撒嬌的機會，不得拒絕。
+                            </p>
+                        </div>
+                        
+                        <!-- Footer Info -->
+                         <div class="flex justify-between items-end mt-2 text-xs sm:text-sm font-semibold text-pink-900 opacity-80">
+                            <div>From: <span id="preview-from">愛你的寶寶</span></div>
+                            <div>To: <span id="preview-to">親愛的腦公</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Right Side (Stub) -->
+                    <div class="w-32 sm:w-40 flex flex-col justify-center items-center p-4 bg-black/5 relative">
+                        <!-- Barcode Simulation -->
+                        <div class="w-full h-12 flex justify-center items-end gap-[2px] opacity-60 mb-4 overflow-hidden">
+                            <!-- Just random bars for visual effect -->
+                            <div class="w-1 h-full bg-black"></div><div class="w-2 h-3/4 bg-black"></div>
+                            <div class="w-1 h-full bg-black"></div><div class="w-3 h-1/2 bg-black"></div>
+                            <div class="w-1 h-full bg-black"></div><div class="w-2 h-full bg-black"></div>
+                            <div class="w-4 h-3/4 bg-black"></div><div class="w-1 h-1/2 bg-black"></div>
+                            <div class="w-2 h-full bg-black"></div><div class="w-1 h-full bg-black"></div>
+                        </div>
+                        
+                        <div class="text-center rotate-0">
+                            <p class="text-[10px] uppercase tracking-wider opacity-60 font-bold mb-1">VALID UNTIL</p>
+                            <h4 id="preview-date" class="text-lg font-black text-pink-800 leading-none">永久有效</h4>
+                        </div>
+
+                        <div class="mt-4 opacity-30">
+                            <i class="fa-solid fa-stamp text-4xl transform -rotate-12"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <p class="mt-6 text-sm text-gray-500 text-center">
+                <i class="fa-solid fa-circle-info mr-1"></i> 提示：下載後可直接用 Line 傳送給對方！
+            </p>
+        </section>
+    </main>
+
+    <footer class="mt-12 text-center text-gray-400 text-sm">
+        <p>&copy; 2024 Ticket Maker. Make Love Fun.</p>
+    </footer>
+
+    <script>
+        // State
+        const state = {
+            bgColor: 'bg-pink-200',
+            textColor: 'text-pink-800',
+            icon: 'fa-heart'
+        };
+
+        // DOM Elements
+        const elements = {
+            title: document.getElementById('preview-title'),
+            desc: document.getElementById('preview-desc'),
+            from: document.getElementById('preview-from'),
+            to: document.getElementById('preview-to'),
+            date: document.getElementById('preview-date'),
+            iconMain: document.getElementById('preview-main-icon'),
+            iconBg: document.getElementById('preview-icon'),
+            ticketBody: document.getElementById('ticket-body'),
+            previewHeader: document.getElementById('preview-header') // Added for color sync
+        };
+
+        // Update Text Content
+        function updateText() {
+            elements.title.textContent = document.getElementById('input-title').value || '兌換券';
+            elements.desc.textContent = document.getElementById('input-desc').value;
+            elements.from.textContent = document.getElementById('input-from').value;
+            elements.to.textContent = document.getElementById('input-to').value;
+            elements.date.textContent = document.getElementById('input-date').value;
+            
+            // Update Ticket Number
+            const ticketNo = document.getElementById('input-no').value || '000000';
+            elements.previewHeader.textContent = `TICKET NO. ${ticketNo}`;
+        }
+
+        // Update Icon
+        function updateIcon() {
+            const selectedIcon = document.getElementById('icon-select').value;
+            state.icon = selectedIcon;
+            
+            // Remove old classes starting with fa-
+            const removeIconClasses = (el) => {
+                const classes = el.className.split(" ").filter(c => !c.startsWith("fa-"));
+                el.className = classes.join(" ");
+            };
+
+            removeIconClasses(elements.iconMain);
+            removeIconClasses(elements.iconBg);
+
+            // Add new classes
+            elements.iconMain.classList.add('fa-solid', selectedIcon, 'text-3xl', state.textColor);
+            elements.iconBg.classList.add('fa-solid', selectedIcon, 'text-4xl', state.textColor, 'opacity-20');
+        }
+
+        // Update Color Scheme
+        function updateColor(bgClass, textClass, borderClass) {
+            // Remove old background classes
+            const bgClasses = ['bg-pink-200', 'bg-blue-200', 'bg-yellow-200', 'bg-green-200', 'bg-purple-200', 'bg-gray-200'];
+            elements.ticketBody.classList.remove(...bgClasses);
+            elements.ticketBody.classList.add(bgClass);
+
+            // Update Text Colors
+            const textElements = [
+                elements.title, 
+                elements.date, 
+                elements.iconMain,
+                elements.iconBg,
+                elements.previewHeader
+            ];
+
+            // Helper to swap text color classes
+            const oldTextClass = state.textColor;
+            state.textColor = textClass;
+            
+            textElements.forEach(el => {
+                // For simplicity, we just replace the class string in the classList if it exists, 
+                // but a cleaner way is to remove known color classes and add the new one.
+                // Let's do a robust removal of common Tailwind text colors.
+                const colorPrefixes = ['text-pink-', 'text-blue-', 'text-yellow-', 'text-green-', 'text-purple-', 'text-gray-'];
+                el.classList.forEach(cls => {
+                    if (colorPrefixes.some(prefix => cls.startsWith(prefix))) {
+                        el.classList.remove(cls);
+                    }
+                });
+                el.classList.add(textClass);
+            });
+            
+            // Update Description and Footer Text (darker variant logic is usually handled by keeping them specific colors, 
+            // but here we synced them to text-pink-900 equivalent logic. 
+            // For simplicity in this generator, we will keep the "body text" slightly darker/neutral 
+            // or let them inherit the hue but darker.
+            // Let's explicitly set the desc text to a darker shade of the theme
+            const descEl = document.getElementById('preview-desc');
+            descEl.className = descEl.className.replace(/text-\w+-900/, textClass.replace('800', '900'));
+            
+            state.bgColor = bgClass;
+        }
+
+        // Download Function
+        function downloadTicket() {
+            const ticketContainer = document.getElementById('ticket-container');
+            
+            // Visual feedback
+            const btn = document.querySelector('button[onclick="downloadTicket()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 處理中...';
+            
+            // CLONE STRATEGY: 
+            // Clone the element, force it to a fixed desktop width (600px), 
+            // render it off-screen, capture it, then remove it.
+            // This ensures mobile width doesn't affect the output layout.
+            const clone = ticketContainer.cloneNode(true);
+            
+            // Style the clone to be fixed width and hidden
+            clone.style.width = "600px"; // The standard desktop width
+            clone.style.position = "absolute";
+            clone.style.left = "-9999px";
+            clone.style.top = "0";
+            // Ensure no responsive scaling affects the clone content
+            clone.classList.remove('w-full', 'max-w-[600px]'); 
+            clone.style.maxWidth = "none";
+            
+            document.body.appendChild(clone);
+
+            // To ensure high quality and correct cutout rendering
+            html2canvas(clone, {
+                scale: 3, // Higher resolution
+                backgroundColor: null, // Transparent background outside the ticket
+                logging: false,
+                useCORS: true
+            }).then(canvas => {
+                // Create download link
+                const link = document.createElement('a');
+                link.download = `ticket-${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+                // Restore button
+                btn.innerHTML = originalText;
+                
+                // Remove clone
+                document.body.removeChild(clone);
+            }).catch(err => {
+                console.error(err);
+                alert("圖片產生失敗，請稍後再試。");
+                btn.innerHTML = originalText;
+                if(document.body.contains(clone)) {
+                    document.body.removeChild(clone);
+                }
+            });
+        }
+
+        // Share Function
+        function shareTicket() {
+            const ticketContainer = document.getElementById('ticket-container');
+            
+            // Visual feedback
+            const btn = document.querySelector('button[onclick="shareTicket()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            // CLONE STRATEGY (Same as download to ensure layout)
+            const clone = ticketContainer.cloneNode(true);
+            
+            clone.style.width = "600px"; 
+            clone.style.position = "absolute";
+            clone.style.left = "-9999px";
+            clone.style.top = "0";
+            clone.classList.remove('w-full', 'max-w-[600px]'); 
+            clone.style.maxWidth = "none";
+            
+            document.body.appendChild(clone);
+
+            html2canvas(clone, {
+                scale: 3,
+                backgroundColor: null,
+                logging: false,
+                useCORS: true
+            }).then(canvas => {
+                canvas.toBlob(async (blob) => {
+                    if (!blob) {
+                        alert("圖片產生失敗");
+                        return;
+                    }
+
+                    const file = new File([blob], `ticket-${Date.now()}.png`, { type: "image/png" });
+
+                    // Check if the browser supports sharing files
+                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: '送你一張兌換券！',
+                                text: '這是專屬於你的兌換券，請查收 ❤️'
+                            });
+                        } catch (err) {
+                            if (err.name !== 'AbortError') {
+                                console.error('Share failed:', err);
+                            }
+                        }
+                    } else {
+                        alert("您的瀏覽器不支援直接分享圖片，請使用下載功能。");
+                    }
+
+                    // Restore button & Clean up
+                    btn.innerHTML = originalText;
+                    document.body.removeChild(clone);
+                }, 'image/png');
+            }).catch(err => {
+                console.error(err);
+                alert("圖片產生失敗，請稍後再試。");
+                btn.innerHTML = originalText;
+                if(document.body.contains(clone)) {
+                    document.body.removeChild(clone);
+                }
+            });
+        }
+
+        // Initialize with default color to ensure classes are correct
+        updateColor('bg-pink-200', 'text-pink-800', 'border-pink-400');
+    </script>
+</body>
+</html>

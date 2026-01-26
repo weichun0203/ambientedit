@@ -85,6 +85,14 @@
             width: 600px;
         }
         
+        /* Fix for FontAwesome vertical alignment in html2canvas */
+        .fa-icon-fix {
+            display: inline-block;
+            line-height: 1 !important;
+            vertical-align: middle;
+            text-align: center;
+        }
+        
         /* Loading Overlay */
         #loading-overlay {
             display: none;
@@ -195,6 +203,33 @@
                     </div>
                 </div>
 
+                <!-- Icon Selection (New) -->
+                <div>
+                    <label class="block text-[10px] font-bold text-brand-sage/60 mb-3 uppercase tracking-widest">選擇裝飾圖示</label>
+                    <div class="relative">
+                        <select id="input-icon" onchange="updateIcon(this.value)" class="w-full p-3 bg-brand-paper border border-brand-sand rounded-xl focus:ring-1 focus:ring-brand-sage focus:outline-none text-sm text-brand-ink appearance-none cursor-pointer">
+                            <option value="fa-ticket">🎫 票根 Ticket</option>
+                            <option value="fa-heart">❤ 愛心 Heart</option>
+                            <option value="fa-hand-holding-heart">🤲 給予 Care</option>
+                            <option value="fa-gift">🎁 禮物 Gift</option>
+                            <option value="fa-utensils">🍽 餐具 Utensils</option>
+                            <option value="fa-broom">🧹 掃把 Broom</option>
+                            <option value="fa-plane">✈ 飛機 Plane</option>
+                            <option value="fa-wind">🍃 風 Wind</option>
+                            <option value="fa-wine-glass">🍷 酒杯 Wine</option>
+                            <option value="fa-seedling">🌱 幼苗 Seedling</option>
+                            <option value="fa-droplet">💧 水滴 Droplet</option>
+                            <option value="fa-flag">🚩 旗幟 Flag</option>
+                            <option value="fa-star">⭐ 星星 Star</option>
+                            <option value="fa-music">🎵 音樂 Music</option>
+                            <option value="fa-camera">📷 相機 Camera</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-brand-sage">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Text Inputs -->
                 <div class="space-y-4">
                     <div>
@@ -264,7 +299,8 @@
 
                             <div class="flex flex-row items-center gap-6 my-4">
                                 <div class="bg-white/40 w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 backdrop-blur-sm border border-white/50">
-                                    <i id="preview-main-icon" class="fa-solid fa-ticket text-3xl opacity-80"></i>
+                                    <!-- Updated Icon Structure for alignment stability -->
+                                    <i id="preview-main-icon" class="fa-solid fa-ticket text-3xl opacity-80 fa-icon-fix leading-none"></i>
                                 </div>
                                 <div class="flex-1">
                                     <h2 id="preview-title" class="text-4xl font-serif text-brand-ink leading-none tracking-tight">兌換券標題</h2>
@@ -356,7 +392,7 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'ambient_voucher_data_v3';
+        const STORAGE_KEY = 'ambient_voucher_data_v4';
         const elements = {
             inputTitle: document.getElementById('input-title'),
             inputDesc: document.getElementById('input-desc'),
@@ -364,6 +400,7 @@
             inputTo: document.getElementById('input-to'),
             inputNo: document.getElementById('input-no'),
             inputDate: document.getElementById('input-date'),
+            inputIcon: document.getElementById('input-icon'),
             previewTitle: document.getElementById('preview-title'),
             previewDesc: document.getElementById('preview-desc'),
             previewFrom: document.getElementById('preview-from'),
@@ -371,6 +408,7 @@
             previewDate: document.getElementById('preview-date'),
             previewHeader: document.getElementById('preview-header'),
             ticketBody: document.getElementById('ticket-body'),
+            previewIcon: document.getElementById('preview-main-icon'),
             modal: document.getElementById('result-modal'),
             modalContent: document.getElementById('modal-content'),
             loading: document.getElementById('loading-overlay')
@@ -381,83 +419,91 @@
                 title: '超級男友券',
                 desc: '憑此券可兌換一日完美男友體驗，包含拎包、剝蝦與無限耐心。',
                 from: '愛妳的寶寶', to: '最美的女友', no: '5201314', date: '永久有效',
-                color: 'bg-[#fce7f3]', text: 'text-pink-800'
+                color: 'bg-[#fce7f3]', text: 'text-pink-800', icon: 'fa-heart'
             },
             'massage': {
                 title: '專屬按摩券',
                 desc: '憑此券可兌換肩頸/全身按摩 30 分鐘，力度與手法由您指定。',
                 from: '專屬技師', to: '尊貴客戶', no: 'SPA-999', date: '本月有效',
-                color: 'bg-[#dcfce7]', text: 'text-emerald-800'
+                color: 'bg-[#dcfce7]', text: 'text-emerald-800', icon: 'fa-hand-holding-heart'
             },
             'food': {
                 title: '大餐請客券',
                 desc: '憑此券可指定任何一間餐廳，我買單！(預算請手下留情)',
                 from: '你的飯票', to: '美食家', no: 'YUMMY888', date: '本月有效',
-                color: 'bg-[#fef3c7]', text: 'text-amber-800'
+                color: 'bg-[#fef3c7]', text: 'text-amber-800', icon: 'fa-utensils'
             },
             'chores': {
                 title: '免做家事券',
                 desc: '憑此券可抵銷一次家事（洗碗、倒垃圾、掃地），通通交給我。',
                 from: '家事小精靈', to: '一家之主', no: 'CLEAN001', date: '今日限定',
-                color: 'bg-[#e5e7eb]', text: 'text-gray-800'
+                color: 'bg-[#e5e7eb]', text: 'text-gray-800', icon: 'fa-broom'
             },
             'trip': {
                 title: '說走就走券',
                 desc: '憑此券可兌換一次週末小旅行，地點由你決定，我負責規劃。',
                 from: '專屬司機', to: '旅伴', no: 'TRIP-GO', date: '近期出發',
-                color: 'bg-[#f3e8ff]', text: 'text-purple-800'
+                color: 'bg-[#f3e8ff]', text: 'text-purple-800', icon: 'fa-plane'
             },
             'breakup': {
                 title: '分手安慰券',
                 desc: '憑此券可兌換「無限次垃圾話傾聽」與「不問原因的擁抱」。你不必獨自承擔。',
                 from: '鐵桿好友', to: '值得更好的你', no: 'HEAL-01', date: '你需要時',
-                color: 'bg-[#fdfbf7]', text: 'text-brand-clay'
+                color: 'bg-[#fdfbf7]', text: 'text-brand-clay', icon: 'fa-wind'
             },
             'drink': {
                 title: '酒精消愁券',
                 desc: '憑此券可兌換一晚不醉不歸。酒錢我出，故事你說，吐了我清。',
                 from: '陪喝專員', to: '酒鬼戰友', no: 'BEER-99', date: '今晚有效',
-                color: 'bg-[#e5e7eb]', text: 'text-brand-ink'
+                color: 'bg-[#e5e7eb]', text: 'text-brand-ink', icon: 'fa-wine-glass'
             },
             'restart': {
                 title: '重新開始券',
                 desc: '憑此券可兌換「剪髮、買新衣、換心情」一日行程。昨日種種，今日已死。',
                 from: '轉身小幫手', to: '全新的自己', no: 'NEW-LIFE', date: '現在開始',
-                color: 'bg-[#dcfce7]', text: 'text-brand-sage'
+                color: 'bg-[#dcfce7]', text: 'text-brand-sage', icon: 'fa-seedling'
             },
             'cry': {
                 title: '無上限陪哭券',
                 desc: '憑此券可兌換衛生紙無限供應及「我就在這裡」的陪伴。哭完我們再說。',
                 from: '衛生紙商', to: '愛哭包', no: 'TEAR-88', date: '哭完為止',
-                color: 'bg-[#e0f2fe]', text: 'text-blue-800'
+                color: 'bg-[#e0f2fe]', text: 'text-blue-800', icon: 'fa-droplet'
             },
             'forgive': {
                 title: '無條件原諒',
                 desc: '無論我犯了什麼小錯，出示此券，必須無條件原諒我一次！',
                 from: '知錯的人', to: '寬容的你', no: 'SORRY-1', date: '永久有效',
-                color: 'bg-[#e0f2fe]', text: 'text-blue-800'
+                color: 'bg-[#e0f2fe]', text: 'text-blue-800', icon: 'fa-flag'
             }
         };
 
-        let state = { bgColor: 'bg-white', textColor: 'text-brand-ink' };
+        let state = { bgColor: 'bg-white', textColor: 'text-brand-ink', icon: 'fa-ticket' };
 
         window.onload = () => {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) {
                 const data = JSON.parse(saved);
                 Object.keys(data).forEach(key => {
+                    // Skip if key is color/icon object wrapper, handle separately
                     if (elements[`input${key.charAt(0).toUpperCase() + key.slice(1)}`]) {
                         elements[`input${key.charAt(0).toUpperCase() + key.slice(1)}`].value = data[key];
                     }
                 });
-                if(data.color) updateColor(data.color.bg, data.color.text);
+                
+                // Restore icon explicitly
+                if(data.icon) {
+                    state.icon = data.icon;
+                    if(elements.inputIcon) elements.inputIcon.value = data.icon;
+                    updateIcon(data.icon, false); // false to avoid double save
+                }
+
+                if(data.color) updateColor(data.color.bg, data.color.text, false);
             } else {
                 applyTemplate('bf');
             }
             saveAndRefresh();
             resizePreview();
             
-            // Wait for fonts
             document.fonts.ready.then(() => {
                 console.log('Fonts loaded');
             });
@@ -471,6 +517,7 @@
                 to: elements.inputTo.value,
                 no: elements.inputNo.value,
                 date: elements.inputDate.value,
+                icon: state.icon,
                 color: { bg: state.bgColor, text: state.textColor }
             };
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -483,7 +530,7 @@
             elements.previewHeader.textContent = `TICKET NO. ${data.no || '000000'}`;
         }
 
-        function updateColor(bgClass, textClass) {
+        function updateColor(bgClass, textClass, save = true) {
             elements.ticketBody.className = `flex w-full h-72 rounded-2xl overflow-hidden relative ${bgClass}`;
             
             const colorTargets = [elements.previewTitle, elements.previewDate, elements.previewHeader];
@@ -493,14 +540,32 @@
                 if(!el.className.includes(textClass)) el.classList.add(textClass);
             });
             
-            const icon = document.getElementById('preview-main-icon');
+            const icon = elements.previewIcon;
             icon.className = icon.className.replace(/text-\w+-\d+/g, textClass);
             icon.className = icon.className.replace(/text-brand-\w+/g, textClass);
             if(!icon.className.includes(textClass)) icon.classList.add(textClass);
 
             state.bgColor = bgClass;
             state.textColor = textClass;
-            saveAndRefresh();
+            if(save) saveAndRefresh();
+        }
+
+        function updateIcon(iconClass, save = true) {
+            // Remove existing fa-* classes from preview icon
+            const icon = elements.previewIcon;
+            const classList = icon.className.split(' ');
+            const newClassList = classList.filter(c => !c.startsWith('fa-'));
+            
+            icon.className = newClassList.join(' ');
+            icon.classList.add('fa-solid', iconClass);
+            
+            // Sync select input if updated via template
+            if(elements.inputIcon.value !== iconClass) {
+                elements.inputIcon.value = iconClass;
+            }
+            
+            state.icon = iconClass;
+            if(save) saveAndRefresh();
         }
 
         function applyTemplate(key) {
@@ -511,7 +576,9 @@
             elements.inputTo.value = t.to;
             elements.inputNo.value = t.no;
             elements.inputDate.value = t.date;
-            updateColor(t.color, t.text);
+            
+            updateIcon(t.icon, false);
+            updateColor(t.color, t.text, false);
             saveAndRefresh();
         }
 
@@ -528,40 +595,45 @@
 
         window.addEventListener('resize', resizePreview);
 
-        /**
-         * Core Image Generation Logic
-         * Optimized for Mobile: Render in a hidden full-size container to avoid CSS scale bugs.
-         */
         async function generateVoucherCanvas() {
             elements.loading.style.display = 'flex';
             
             const captureArea = document.getElementById('capture-container');
             const source = document.getElementById('ticket-container');
             
-            // Clean and prepare capture area
             captureArea.innerHTML = '';
             const clone = source.cloneNode(true);
             
-            // Reset transforms and ensure visibility for html2canvas
             clone.style.transform = 'none';
             clone.style.position = 'relative';
             clone.style.margin = '0';
-            clone.style.boxShadow = 'none'; // Avoid blurry shadow rendering
+            clone.style.boxShadow = 'none';
             
             captureArea.appendChild(clone);
             
-            // Ensure fonts are ready before taking the shot
             await document.fonts.ready;
+            
+            // Give icon a moment to settle style-wise if needed
+            await new Promise(resolve => setTimeout(resolve, 50));
 
             try {
                 const canvas = await html2canvas(clone, {
-                    scale: 2, // 2 is optimal for mobile performance and clarity
+                    scale: 2,
                     backgroundColor: null,
                     useCORS: true,
                     allowTaint: true,
                     logging: false,
                     width: 600,
-                    height: 288
+                    height: 288,
+                    // Force text rendering to be precise
+                    onclone: (clonedDoc) => {
+                        const icons = clonedDoc.querySelectorAll('.fa-icon-fix');
+                        icons.forEach(icon => {
+                            icon.style.lineHeight = '1';
+                            icon.style.display = 'inline-block';
+                            icon.style.textAlign = 'center';
+                        });
+                    }
                 });
                 
                 captureArea.innerHTML = '';
@@ -591,7 +663,6 @@
             canvas.toBlob(async (blob) => {
                 const file = new File([blob], 'ambient-voucher.png', { type: 'image/png' });
                 
-                // Check if the device supports native sharing
                 if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
                     try {
                         await navigator.share({
@@ -601,14 +672,12 @@
                         });
                     } catch (err) {
                         console.log('Share canceled or failed');
-                        // Fallback to modal if sharing fails/cancels
                         const img = canvas.toDataURL('image/png');
                         document.getElementById('generated-image').src = img;
                         elements.modal.classList.remove('hidden');
                         setTimeout(() => elements.modalContent.classList.add('modal-active'), 10);
                     }
                 } else {
-                    // Fallback for devices without native share
                     const img = canvas.toDataURL('image/png');
                     document.getElementById('generated-image').src = img;
                     elements.modal.classList.remove('hidden');

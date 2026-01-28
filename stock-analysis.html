@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="常溫定期定額分析工具，協助投資者視覺化長期持股成本，在理性的數據中找到投資的平靜。">
+    
+    <!-- 6. Title 規則 -->
+    <title>常溫股票成本分佈｜Ambient Stock Analysis</title>
+
+    <!-- 4. JSON-LD 結構化資料 -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "常溫股票成本分佈",
+      "alternateName": "Ambient Stock Analysis",
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      },
+      "description": "視覺化定期定額成本的工具，協助長期投資者分析買入點位與平均成本，支援多檔股票管理。",
+      "applicationCategory": "FinanceApplication"
+    }
+    </script>
+
+    <!-- 1. GA4 追蹤碼 -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
+    <!-- 字體 Noto Serif TC & Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+    <!-- 品牌色配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                            dark: '#2c2c2c'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'inner-light': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.02)',
+                        'raised': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 品牌質感效果 */
+        body {
+            background-color: #fdfbf7;
+            color: #4a4a4a;
+            /* 模擬紙張纖維質感 */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+        
+        /* 自定義下拉選單樣式 */
+        .custom-select-wrapper {
+            position: relative;
+        }
+        .custom-select-wrapper::after {
+            content: '';
+            position: absolute;
+            right: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0.8rem;
+            height: 0.8rem;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238da399' stroke-width='3'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7' /%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-size: contain;
+            pointer-events: none;
+        }
+
+        /* 表單元素焦點效果 */
+        input:focus, select:focus {
+            outline: none;
+            border-color: #8da399;
+            box-shadow: 0 0 0 4px rgba(141, 163, 153, 0.15);
+        }
+
+        /* 按鈕點擊效果 */
+        .btn-press:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        /* 隱藏數字輸入框的箭頭 */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+
+        /* Modal 動畫 */
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease-in-out;
+        }
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+        
+        /* Table Row Hover Effect for Delete Button */
+        tr.group:hover .delete-btn {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        .delete-btn {
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+        }
+        /* On mobile, always show delete button but make it subtle */
+        @media (max-width: 768px) {
+            .delete-btn {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen font-sans selection:bg-brand-sage selection:text-white pb-12 flex flex-col">
+
+    <!-- Header Section -->
+    <header class="pt-8 pb-8 px-6 relative">
+        <div class="max-w-4xl mx-auto w-full relative">
+            
+            <!-- 品牌名 (置中) -->
+            <div class="text-center font-serif text-brand-sage tracking-[0.2em] text-sm uppercase pt-2 font-medium mb-6">
+                常溫編集所 Ambient Edit Studio
+            </div>
+
+            <!-- Title & Button Container (Relative for positioning) -->
+            <div class="relative flex flex-col md:flex-row items-center md:items-end justify-center mb-8">
+                
+                <!-- Main Title (Centered) -->
+                <h1 class="text-3xl md:text-5xl font-serif font-bold text-brand-ink tracking-wide leading-tight drop-shadow-sm text-center">
+                    常溫股票成本分佈
+                    <span class="block text-lg md:text-2xl font-light mt-2 opacity-70 tracking-wider">Ambient Stock Analysis</span>
+                </h1>
+
+                <!-- 返回常溫首頁 (Desktop: Absolute Right & Bottom Aligned, Mobile: Stacked) -->
+                <div class="mt-6 md:mt-0 md:absolute md:right-0 md:bottom-2">
+                    <a href="https://weichun0203.github.io/ambientedit/" 
+                       class="group inline-flex items-center px-5 py-2.5 rounded-full border border-brand-sand bg-white/80 backdrop-blur hover:bg-white hover:border-brand-sage transition-all duration-300 shadow-sm hover:shadow-md"
+                       aria-label="返回常溫首頁"
+                       style="text-decoration: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        <span class="hidden sm:block ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                            常溫首頁
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 引言 -->
+            <p class="mt-6 text-brand-ink/70 max-w-lg mx-auto leading-relaxed font-serif text-sm border-l-2 border-brand-sage/30 pl-4 text-left md:text-center md:border-l-0 md:pl-0 italic">
+                「每一次的投入，都是對未來的輕聲許諾。<br class="hidden md:block">
+                在這裡記錄您的定期定額足跡，讓時間複利與理性數據，成為生活最溫柔的後盾。」
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 md:px-6 w-full flex-grow">
+        
+        <!-- Portfolio Management Control Bar -->
+        <div class="bg-white rounded-2xl p-2 md:p-3 border border-brand-sand shadow-raised mb-10 flex flex-col md:flex-row items-center justify-between gap-3">
+            
+            <!-- Selector Area -->
+            <div class="w-full md:w-auto flex-grow flex items-center gap-3">
+                <div class="custom-select-wrapper w-full relative flex-grow">
+                    <select id="stockSelector" class="w-full appearance-none bg-brand-paper border-2 border-brand-sand text-brand-ink py-3 pl-5 pr-10 rounded-xl focus:border-brand-sage transition-all font-serif font-bold text-lg cursor-pointer shadow-inner-light hover:bg-white">
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+                
+                <!-- Add Button (Primary Action) -->
+                <button onclick="openAddModal()" class="btn-press flex-shrink-0 flex items-center justify-center bg-brand-sage text-white w-12 h-12 rounded-xl hover:bg-brand-ink transition-colors shadow-sm" title="新增股票">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Edit/Delete Actions (Secondary Group) -->
+            <div class="w-full md:w-auto flex items-center justify-end gap-2 pl-0 md:pl-4 border-t md:border-t-0 md:border-l border-brand-sand pt-3 md:pt-0">
+                 <!-- Rename Button -->
+                 <button onclick="openRenameModal()" class="btn-press flex items-center justify-center text-gray-400 hover:text-brand-sage hover:bg-brand-sand/30 px-4 py-2 rounded-lg transition-all" title="重新命名目前股票">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    <span class="text-sm font-medium">編輯名稱</span>
+                </button>
+                
+                <!-- Delete Button -->
+                <button onclick="openDeleteStockModal()" class="btn-press flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 px-4 py-2 rounded-lg transition-colors" title="刪除此股票">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <!-- Card 1 -->
+            <div class="bg-white rounded-2xl p-5 border border-brand-sand shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-brand-sage transition-colors duration-300">
+                <div class="absolute top-0 left-0 w-1 h-full bg-brand-sage/50"></div>
+                <span class="text-brand-sage text-xs font-bold tracking-widest uppercase mb-1">平均成本 (Average)</span>
+                <span id="displayAvgPrice" class="text-3xl font-serif font-bold text-brand-ink">--</span>
+                <span class="text-xs text-gray-400 mt-1">NTD / 股</span>
+            </div>
+            <!-- Card 2 -->
+            <div class="bg-white rounded-2xl p-5 border border-brand-sand shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-brand-sage transition-colors duration-300">
+                <div class="absolute top-0 left-0 w-1 h-full bg-brand-ink/20"></div>
+                <span class="text-brand-sage text-xs font-bold tracking-widest uppercase mb-1">累積股數 (Shares)</span>
+                <span id="displayTotalShares" class="text-3xl font-serif font-bold text-brand-ink">--</span>
+                <span class="text-xs text-gray-400 mt-1">股</span>
+            </div>
+            <!-- Card 3 -->
+            <div class="bg-white rounded-2xl p-5 border border-brand-sand shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-brand-clay transition-colors duration-300">
+                <div class="absolute top-0 left-0 w-1 h-full bg-brand-clay/50"></div>
+                <span class="text-brand-sage text-xs font-bold tracking-widest uppercase mb-1">總投入成本 (Total Cost)</span>
+                <span id="displayTotalCost" class="text-3xl font-serif font-bold text-brand-clay">--</span>
+                <span class="text-xs text-gray-400 mt-1">NTD</span>
+            </div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="bg-white rounded-3xl p-6 md:p-8 border border-brand-sand shadow-raised mb-10 relative z-10">
+            <h2 class="text-xl font-serif font-bold text-brand-ink mb-6 flex items-center">
+                <span class="w-2 h-2 bg-brand-sage rounded-full mr-3 shadow-sm"></span>
+                新增交易紀錄
+            </h2>
+            <form id="stockForm" class="grid grid-cols-1 md:grid-cols-12 gap-5 items-end">
+                
+                <!-- Date -->
+                <div class="md:col-span-3">
+                    <label for="date" class="block text-xs font-bold text-gray-500 mb-2 tracking-wide uppercase">交易日期</label>
+                    <input type="date" id="date" required 
+                           class="w-full bg-brand-paper border-2 border-brand-sand/50 rounded-xl px-4 py-3 text-brand-ink focus:border-brand-sage transition-all text-base shadow-inner-light">
+                </div>
+
+                <!-- Price -->
+                <div class="md:col-span-3">
+                    <label for="price" class="block text-xs font-bold text-gray-500 mb-2 tracking-wide uppercase">成交單價 (元)</label>
+                    <input type="number" id="price" step="0.01" min="0" required placeholder="0.00"
+                           class="w-full bg-brand-paper border-2 border-brand-sand/50 rounded-xl px-4 py-3 text-brand-ink focus:border-brand-sage transition-all text-base font-serif font-medium shadow-inner-light">
+                </div>
+
+                <!-- Shares -->
+                <div class="md:col-span-3">
+                    <label for="shares" class="block text-xs font-bold text-gray-500 mb-2 tracking-wide uppercase">成交股數 (股)</label>
+                    <input type="number" id="shares" step="1" min="1" required placeholder="0"
+                           class="w-full bg-brand-paper border-2 border-brand-sand/50 rounded-xl px-4 py-3 text-brand-ink focus:border-brand-sage transition-all text-base font-serif font-medium shadow-inner-light">
+                </div>
+
+                <!-- Submit Button -->
+                <div class="md:col-span-3">
+                    <button type="submit" 
+                            class="btn-press w-full bg-brand-sage hover:bg-brand-ink text-white font-bold py-3.5 px-6 rounded-xl transition-all duration-300 shadow-md transform hover:-translate-y-0.5 text-sm tracking-widest flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        加入紀錄
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="bg-white rounded-3xl p-6 md:p-8 border border-brand-sand shadow-soft mb-10 relative overflow-hidden">
+             <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-brand-sand via-brand-sage to-brand-clay opacity-40"></div>
+             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
+                <h2 class="text-xl font-serif font-bold text-brand-ink flex items-center">
+                    <span class="w-1.5 h-6 bg-brand-clay mr-3 rounded-full"></span>
+                    成本分佈散佈圖
+                </h2>
+                <div class="text-xs text-gray-500 bg-brand-paper px-3 py-1 rounded-full border border-brand-sand/50">
+                    <span class="inline-flex items-center mr-3"><span class="w-2.5 h-2.5 rounded-full bg-brand-sage mr-1.5"></span>買入點</span>
+                    <span class="inline-flex items-center"><span class="w-5 h-0.5 bg-brand-clay mr-1.5"></span>平均成本線</span>
+                </div>
+             </div>
+             <div class="w-full h-[400px]">
+                <canvas id="costChart"></canvas>
+             </div>
+        </div>
+
+        <!-- Data Table Section -->
+        <div class="bg-white rounded-3xl p-6 md:p-8 border border-brand-sand shadow-soft mb-16">
+            <h2 class="text-xl font-serif font-bold text-brand-ink mb-6 flex items-center justify-between">
+                <div class="flex items-center">
+                    <span class="w-1.5 h-6 bg-brand-ink/10 mr-3 rounded-full"></span>
+                    交易明細
+                </div>
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-brand-sand text-xs font-bold text-gray-500 tracking-wider uppercase">
+                            <th class="py-4 px-4 whitespace-nowrap bg-brand-paper/50 rounded-tl-lg">日期</th>
+                            <th class="py-4 px-4 whitespace-nowrap bg-brand-paper/50">單價</th>
+                            <th class="py-4 px-4 whitespace-nowrap bg-brand-paper/50">股數</th>
+                            <th class="py-4 px-4 whitespace-nowrap bg-brand-paper/50">總金額</th>
+                            <th class="py-4 px-4 text-right whitespace-nowrap bg-brand-paper/50 rounded-tr-lg">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordList" class="text-sm text-brand-ink">
+                        <!-- JS renders rows here -->
+                    </tbody>
+                </table>
+                <div id="emptyState" class="hidden text-center py-16">
+                    <div class="text-brand-sage/30 mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                        </svg>
+                    </div>
+                    <p class="text-gray-400 font-serif">尚未有交易紀錄<br><span class="text-xs opacity-60">請在上方新增您的第一筆投資</span></p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-brand-sand/50 pt-8 pb-12 text-center mt-auto bg-brand-paper/50">
+        <!-- 3. 頁尾必須置入的版權設定文字 -->
+        <p class="text-xs text-brand-ink/40 font-serif tracking-widest">
+            2026 常溫編集所 Ambient Edit Studio.
+        </p>
+    </footer>
+
+    <!-- MODAL 1: Add Stock Modal -->
+    <div id="addStockModal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-ink/20 backdrop-blur-sm">
+        <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 border border-brand-sand">
+            <h3 class="text-xl font-serif font-bold text-brand-ink mb-4 flex items-center">
+                <span class="w-1.5 h-6 bg-brand-sage mr-3 rounded-full"></span>
+                新增股票標的
+            </h3>
+            <p class="text-gray-500 text-sm mb-4">請輸入您想追蹤的股票代號或名稱。</p>
+            
+            <input type="text" id="newStockNameInput" 
+                   class="w-full bg-brand-paper border-2 border-brand-sand rounded-xl px-4 py-3 text-brand-ink focus:border-brand-sage transition-all text-lg font-serif mb-6"
+                   placeholder="例如: 0050, 台積電..." onkeydown="handleAddEnter(event)">
+            
+            <div class="flex gap-3 justify-end">
+                <button onclick="closeAddModal()" class="px-5 py-2 rounded-xl text-gray-500 hover:bg-gray-100 transition-colors">
+                    取消
+                </button>
+                <button onclick="submitNewStock()" class="px-6 py-2 rounded-xl bg-brand-sage text-white font-bold hover:bg-brand-ink transition-colors shadow-sm">
+                    確認新增
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Rename Stock Modal -->
+    <div id="renameStockModal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-ink/20 backdrop-blur-sm">
+        <div class="modal-content bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 border border-brand-sand">
+            <h3 class="text-xl font-serif font-bold text-brand-ink mb-4 flex items-center">
+                <span class="w-1.5 h-6 bg-brand-sage mr-3 rounded-full"></span>
+                編輯股票名稱
+            </h3>
+            <p class="text-gray-500 text-sm mb-4">請輸入新的股票顯示名稱。</p>
+            
+            <input type="text" id="renameStockInput" 
+                   class="w-full bg-brand-paper border-2 border-brand-sand rounded-xl px-4 py-3 text-brand-ink focus:border-brand-sage transition-all text-lg font-serif mb-6"
+                   onkeydown="handleRenameEnter(event)">
+            
+            <div class="flex gap-3 justify-end">
+                <button onclick="closeRenameModal()" class="px-5 py-2 rounded-xl text-gray-500 hover:bg-gray-100 transition-colors">
+                    取消
+                </button>
+                <button onclick="confirmRenameStock()" class="px-6 py-2 rounded-xl bg-brand-sage text-white font-bold hover:bg-brand-ink transition-colors shadow-sm">
+                    確認修改
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Delete Stock Modal -->
+    <div id="deleteStockModal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-ink/20 backdrop-blur-sm">
+        <div class="modal-content bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 border border-brand-sand">
+            <h3 class="text-xl font-serif font-bold text-brand-ink mb-4 flex items-center text-red-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                確認刪除股票
+            </h3>
+            <p class="text-gray-600 text-sm mb-6 leading-relaxed">
+                您確定要刪除目前的股票清單嗎？<br>此動作將會移除<span class="font-bold text-brand-ink">所有相關的交易紀錄</span>且<span class="text-red-500 font-bold">無法復原</span>。
+            </p>
+            
+            <div class="flex gap-3 justify-end">
+                <button onclick="closeDeleteStockModal()" class="px-5 py-2 rounded-xl text-gray-500 hover:bg-gray-100 transition-colors">
+                    保留
+                </button>
+                <button onclick="confirmDeleteStock()" class="px-6 py-2 rounded-xl bg-red-400 text-white font-bold hover:bg-red-600 transition-colors shadow-sm">
+                    確認刪除
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: Delete Record Modal -->
+    <div id="deleteRecordModal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-ink/20 backdrop-blur-sm">
+        <div class="modal-content bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 border border-brand-sand">
+            <h3 class="text-lg font-serif font-bold text-brand-ink mb-3 flex items-center">
+                <span class="w-1.5 h-5 bg-brand-clay mr-3 rounded-full"></span>
+                刪除交易紀錄
+            </h3>
+            <p class="text-gray-500 text-sm mb-6">
+                確定要移除這筆紀錄嗎？移除後將會重新計算平均成本。
+            </p>
+            
+            <div class="flex gap-3 justify-end">
+                <button onclick="closeDeleteRecordModal()" class="px-4 py-2 rounded-xl text-gray-500 hover:bg-gray-100 transition-colors text-sm">
+                    取消
+                </button>
+                <button onclick="confirmDeleteRecord()" class="px-5 py-2 rounded-xl bg-brand-ink text-white font-bold hover:bg-brand-sage transition-colors shadow-sm text-sm">
+                    移除
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic Script -->
+    <script>
+        // 5. 本地存取設定 (LocalStorage Key)
+        const STORAGE_KEY = 'ambient_stock_data_v2'; 
+        const LEGACY_KEY = 'ambient_stock_data'; 
+
+        // State Structure
+        let appData = {
+            currentStockId: null,
+            stocks: []
+        };
+        
+        // Temp State for Modals
+        let recordToDeleteId = null;
+
+        // DOM Elements
+        const form = document.getElementById('stockForm');
+        const dateInput = document.getElementById('date');
+        const recordList = document.getElementById('recordList');
+        const emptyState = document.getElementById('emptyState');
+        const stockSelector = document.getElementById('stockSelector');
+        
+        // Modal Elements
+        const addStockModal = document.getElementById('addStockModal');
+        const newStockNameInput = document.getElementById('newStockNameInput');
+        
+        const renameStockModal = document.getElementById('renameStockModal');
+        const renameStockInput = document.getElementById('renameStockInput');
+        
+        const deleteStockModal = document.getElementById('deleteStockModal');
+        const deleteRecordModal = document.getElementById('deleteRecordModal');
+        
+        // Display Elements
+        const displayAvgPrice = document.getElementById('displayAvgPrice');
+        const displayTotalShares = document.getElementById('displayTotalShares');
+        const displayTotalCost = document.getElementById('displayTotalCost');
+
+        // Chart Instance
+        let costChart = null;
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set default date to today
+            dateInput.valueAsDate = new Date();
+            
+            // Load and migrate data
+            loadData();
+            
+            // Init Chart
+            initChart();
+            
+            // Initial Render
+            refreshUI();
+        });
+
+        // Event Listener: Stock Selector Change
+        stockSelector.addEventListener('change', (e) => {
+            appData.currentStockId = e.target.value;
+            saveData();
+            refreshUI();
+        });
+
+        // Event Listener: Add Record
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if (!appData.currentStockId) {
+                // Open modal instead of prompt
+                openAddModal();
+                return;
+            }
+
+            const date = document.getElementById('date').value;
+            const price = parseFloat(document.getElementById('price').value);
+            const shares = parseInt(document.getElementById('shares').value);
+
+            if (!date || isNaN(price) || isNaN(shares)) return;
+
+            const newRecord = {
+                id: Date.now(),
+                date: date,
+                price: price,
+                shares: shares
+            };
+
+            // Find current stock
+            const stock = appData.stocks.find(s => s.id === appData.currentStockId);
+            if (stock) {
+                stock.records.push(newRecord);
+                stock.records.sort((a, b) => new Date(a.date) - new Date(b.date));
+                
+                saveData();
+                refreshUI();
+                form.reset();
+                dateInput.valueAsDate = new Date(); // Reset date
+            }
+        });
+
+        // --- Data Management Functions ---
+
+        function loadData() {
+            const storedV2 = localStorage.getItem(STORAGE_KEY);
+            const storedLegacy = localStorage.getItem(LEGACY_KEY);
+
+            if (storedV2) {
+                appData = JSON.parse(storedV2);
+                if (!appData.currentStockId && appData.stocks.length > 0) {
+                    appData.currentStockId = appData.stocks[0].id;
+                }
+            } else if (storedLegacy) {
+                const legacyRecords = JSON.parse(storedLegacy);
+                const newId = generateId();
+                appData = {
+                    currentStockId: newId,
+                    stocks: [{
+                        id: newId,
+                        name: '我的持股',
+                        records: legacyRecords
+                    }]
+                };
+                saveData();
+            } else {
+                // Fresh Start - Create a default empty stock
+                const newId = generateId();
+                appData = {
+                    currentStockId: newId,
+                    stocks: [{
+                        id: newId,
+                        name: '我的第一支股票',
+                        records: []
+                    }]
+                };
+                saveData();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        }
+
+        function generateId() {
+            return 'stock_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // --- Modal Logic : Add Stock ---
+        function openAddModal() {
+            addStockModal.classList.add('active');
+            newStockNameInput.value = ''; 
+            setTimeout(() => newStockNameInput.focus(), 100);
+        }
+
+        function closeAddModal() {
+            addStockModal.classList.remove('active');
+        }
+
+        function submitNewStock() {
+            const name = newStockNameInput.value;
+            if (name && name.trim() !== "") {
+                const newId = generateId();
+                appData.stocks.push({
+                    id: newId,
+                    name: name.trim(),
+                    records: []
+                });
+                appData.currentStockId = newId; 
+                saveData();
+                refreshUI();
+                closeAddModal();
+            } else {
+                alert("請輸入股票名稱");
+            }
+        }
+        
+        function handleAddEnter(e) {
+            if (e.key === 'Enter') {
+                submitNewStock();
+            }
+        }
+
+        // --- Modal Logic : Rename Stock ---
+        function openRenameModal() {
+            const stock = getCurrentStock();
+            if (!stock) return;
+            
+            renameStockInput.value = stock.name;
+            renameStockModal.classList.add('active');
+            setTimeout(() => renameStockInput.focus(), 100);
+        }
+
+        function closeRenameModal() {
+            renameStockModal.classList.remove('active');
+        }
+
+        function confirmRenameStock() {
+            const stock = getCurrentStock();
+            if (!stock) return;
+
+            const newName = renameStockInput.value;
+            if (newName && newName.trim() !== "") {
+                stock.name = newName.trim();
+                saveData();
+                refreshUI(); 
+                closeRenameModal();
+            } else {
+                alert("名稱不能為空");
+            }
+        }
+
+        function handleRenameEnter(e) {
+            if (e.key === 'Enter') {
+                confirmRenameStock();
+            }
+        }
+        
+        // Backwards compatibility for the button call if needed, but we updated HTML onclick
+        function promptRenameStock() {
+            openRenameModal();
+        }
+
+        // --- Modal Logic : Delete Stock ---
+        function openDeleteStockModal() {
+            if (appData.stocks.length <= 1) {
+                alert("您至少需要保留一支股票。\n您可以選擇「重新命名」來更改目前股票的名稱。");
+                return;
+            }
+            deleteStockModal.classList.add('active');
+        }
+
+        function closeDeleteStockModal() {
+            deleteStockModal.classList.remove('active');
+        }
+
+        function confirmDeleteStock() {
+            // Logic moved from deleteCurrentStock
+            appData.stocks = appData.stocks.filter(s => s.id !== appData.currentStockId);
+            appData.currentStockId = appData.stocks[0].id; // Switch to another
+            saveData();
+            refreshUI();
+            closeDeleteStockModal();
+        }
+        
+        // Alias for HTML button
+        function deleteCurrentStock() {
+            openDeleteStockModal();
+        }
+
+
+        // --- Modal Logic : Delete Record ---
+        function openDeleteRecordModal(id) {
+            recordToDeleteId = id;
+            deleteRecordModal.classList.add('active');
+        }
+
+        function closeDeleteRecordModal() {
+            recordToDeleteId = null;
+            deleteRecordModal.classList.remove('active');
+        }
+
+        function confirmDeleteRecord() {
+            if (recordToDeleteId === null) return;
+            
+            const stock = getCurrentStock();
+            if (stock) {
+                stock.records = stock.records.filter(r => r.id !== recordToDeleteId);
+                saveData();
+                refreshUI();
+            }
+            closeDeleteRecordModal();
+        }
+        
+        // Alias for HTML button
+        function deleteRecord(id) {
+            openDeleteRecordModal(id);
+        }
+
+        // --- Helpers ---
+        function getCurrentStock() {
+            return appData.stocks.find(s => s.id === appData.currentStockId);
+        }
+
+        // --- UI Rendering Functions ---
+
+        function refreshUI() {
+            renderStockSelector();
+            
+            const stock = getCurrentStock();
+            if (stock) {
+                const stats = calculateStats(stock.records);
+                updateDashboard(stats);
+                renderTable(stock.records);
+                updateChart(stock.records, stats);
+            }
+        }
+
+        function renderStockSelector() {
+            stockSelector.innerHTML = '';
+            appData.stocks.forEach(stock => {
+                const option = document.createElement('option');
+                option.value = stock.id;
+                option.textContent = stock.name;
+                option.selected = stock.id === appData.currentStockId;
+                stockSelector.appendChild(option);
+            });
+            // Ensure select value matches state (fix for UI sync)
+            if(appData.currentStockId) {
+                stockSelector.value = appData.currentStockId;
+            }
+        }
+
+        function calculateStats(records) {
+            let totalCost = 0;
+            let totalShares = 0;
+
+            records.forEach(r => {
+                totalCost += r.price * r.shares;
+                totalShares += r.shares;
+            });
+
+            const avgPrice = totalShares > 0 ? (totalCost / totalShares) : 0;
+
+            return {
+                totalCost,
+                totalShares,
+                avgPrice
+            };
+        }
+
+        function updateDashboard(stats) {
+            const fmt = new Intl.NumberFormat('zh-TW');
+            const fmtCurrency = new Intl.NumberFormat('zh-TW', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            displayAvgPrice.textContent = fmtCurrency.format(stats.avgPrice);
+            displayTotalShares.textContent = fmt.format(stats.totalShares);
+            displayTotalCost.textContent = fmt.format(stats.totalCost);
+        }
+
+        function renderTable(records) {
+            recordList.innerHTML = '';
+            
+            if (records.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                
+                // Display Newest First
+                const displayRecords = [...records].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                displayRecords.forEach(r => {
+                    const row = document.createElement('tr');
+                    // Add group class for hover effect target
+                    row.className = 'border-b border-brand-sand/30 hover:bg-brand-sand/10 transition-colors group';
+                    row.innerHTML = `
+                        <td class="py-4 px-4 font-serif text-gray-600 whitespace-nowrap">${r.date}</td>
+                        <td class="py-4 px-4 font-medium whitespace-nowrap text-brand-ink">${r.price.toFixed(2)}</td>
+                        <td class="py-4 px-4 text-gray-600 whitespace-nowrap">${r.shares.toLocaleString()}</td>
+                        <td class="py-4 px-4 text-gray-600 whitespace-nowrap">${(r.price * r.shares).toLocaleString()}</td>
+                        <td class="py-4 px-4 text-right whitespace-nowrap">
+                            <button onclick="deleteRecord(${r.id})" class="delete-btn text-gray-400 hover:text-red-500 transition-all p-2 rounded-full hover:bg-red-50" title="刪除">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </td>
+                    `;
+                    recordList.appendChild(row);
+                });
+            }
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('costChart').getContext('2d');
+            
+            Chart.defaults.font.family = '"Noto Sans TC", sans-serif';
+            Chart.defaults.color = '#8da399'; 
+
+            costChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: '買入點位',
+                            data: [],
+                            backgroundColor: 'rgba(141, 163, 153, 0.6)', 
+                            borderColor: '#8da399',
+                            borderWidth: 1,
+                            pointHoverRadius: 8,
+                            order: 2
+                        },
+                        {
+                            label: '平均成本',
+                            data: [],
+                            type: 'line',
+                            borderColor: '#d4a59a', 
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false,
+                            tension: 0,
+                            order: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear', 
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: '單筆成交股數 (Shares)',
+                                font: {
+                                    family: '"Noto Serif TC"',
+                                    size: 13
+                                },
+                                color: '#8da399'
+                            },
+                            grid: {
+                                color: 'rgba(230, 226, 221, 0.5)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#aaa'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: '成交單價 (Price)',
+                                font: {
+                                    family: '"Noto Serif TC"',
+                                    size: 13
+                                },
+                                color: '#8da399'
+                            },
+                            grid: {
+                                color: 'rgba(230, 226, 221, 0.5)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#aaa'
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#4a4a4a',
+                            bodyColor: '#4a4a4a',
+                            borderColor: '#8da399',
+                            borderWidth: 1,
+                            padding: 12,
+                            titleFont: { family: '"Noto Serif TC"', size: 14 },
+                            bodyFont: { size: 13 },
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.datasetIndex === 0) {
+                                        const point = context.raw;
+                                        return [
+                                            `日期: ${point.date}`,
+                                            `買入: ${point.y}元`,
+                                            `股數: ${point.x}股`
+                                        ];
+                                    }
+                                    return `平均成本: ${context.raw.y.toFixed(2)}元`;
+                                }
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                font: {
+                                    family: '"Noto Serif TC"'
+                                },
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChart(records, stats) {
+            if (!costChart) return;
+
+            const maxShares = records.length > 0 ? Math.max(...records.map(i=>i.shares)) : 1;
+            const minShares = 0; 
+
+            // Update Average Line Label with price
+            const avgPriceFormatted = stats.avgPrice.toFixed(2);
+            costChart.data.datasets[1].label = `平均成本: ${avgPriceFormatted}`;
+
+            // Map data: X = shares, Y = price
+            const scatterData = records.map(r => ({
+                x: r.shares,  
+                y: r.price,   
+                date: r.date, 
+                r: Math.max(5, Math.min(20, (r.shares / maxShares) * 20)) 
+            }));
+
+            const lineData = [];
+            if (records.length > 0) {
+                lineData.push({ x: 0, y: stats.avgPrice });
+                lineData.push({ x: maxShares * 1.1, y: stats.avgPrice });
+            }
+
+            costChart.data.datasets[0].data = scatterData;
+            costChart.data.datasets[0].pointRadius = scatterData.map(d => d.r);
+            costChart.data.datasets[1].data = lineData;
+            
+            costChart.update();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常溫QR Code 生成器｜Ambient QR Code Generator</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="常溫編集所提供的專業 QR Code 生成工具，支援透明背景下載與品牌質感設計。">
+    <meta name="author" content="常溫編集所 Ambient Edit Studio">
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "常溫QR Code 生成器",
+      "operatingSystem": "Web",
+      "applicationCategory": "UtilityApplication",
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      }
+    }
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
+    <!-- Tailwind CSS & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #fdfbf7;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            color: #4a4a4a;
+        }
+        .paper-texture {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
+        }
+        #qrcode img, #qrcode canvas {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body class="font-sans min-h-screen flex flex-col items-center p-6 md:p-12">
+
+    <!-- Header Group: Professional Style (Left Aligned) -->
+    <header class="w-full max-w-2xl mb-12 relative">
+        <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-brand-sand pb-6">
+            <div class="flex-1">
+                <span class="text-brand-clay font-bold tracking-[0.2em] text-sm mb-1 block uppercase">
+                    常溫編集所 Ambient Edit Studio
+                </span>
+                <h1 class="text-3xl md:text-4xl font-serif font-bold text-brand-ink mb-2">
+                    QR Code 生成器
+                </h1>
+                <p class="text-brand-sage text-sm italic">
+                    快速生成具質感的二維碼，支援透明背景下載。
+                </p>
+            </div>
+            
+            <!-- Back Home Button -->
+            <div class="mt-6 md:mt-0 flex items-end h-full">
+                <a href="https://weichun0203.github.io/ambientedit/" 
+                   class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+                   aria-label="返回常溫首頁"
+                   style="text-decoration: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                        常溫首頁
+                    </span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="w-full max-w-2xl bg-white/80 backdrop-blur-md p-8 rounded-2xl shadow-soft paper-texture border border-white/50">
+        
+        <!-- Input Section -->
+        <div class="space-y-6">
+            <div>
+                <label for="qrInput" class="block text-sm font-bold text-brand-ink mb-2 tracking-widest">
+                    輸入網址或內容
+                </label>
+                <input type="text" id="qrInput" 
+                       placeholder="https://ambientedit.com"
+                       class="w-full px-4 py-3 rounded-xl border border-brand-sand bg-brand-paper/50 focus:outline-none focus:ring-2 focus:ring-brand-sage/30 focus:border-brand-sage transition-all text-brand-ink">
+            </div>
+
+            <!-- Settings -->
+            <div class="flex flex-wrap gap-4 items-center bg-brand-paper p-4 rounded-xl border border-brand-sand/50 text-sm">
+                <label class="flex items-center cursor-pointer group">
+                    <input type="checkbox" id="transparentCheck" class="sr-only peer">
+                    <div class="w-5 h-5 border-2 border-brand-sand rounded mr-2 peer-checked:bg-brand-sage peer-checked:border-brand-sage transition-all flex items-center justify-center">
+                        <svg class="w-3 h-3 text-white scale-0 peer-checked:scale-100 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <span class="text-brand-ink group-hover:text-brand-sage transition-colors">下載時去除白色背景 (去背)</span>
+                </label>
+            </div>
+
+            <!-- QR Preview Container -->
+            <div class="flex flex-col items-center justify-center py-8 bg-brand-paper/30 rounded-2xl border-2 border-dashed border-brand-sand">
+                <div id="qrcode" class="p-4 bg-white rounded-lg shadow-sm border border-brand-sand"></div>
+                <p id="statusMsg" class="mt-4 text-xs text-brand-sage tracking-widest font-medium"></p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-1 gap-3">
+                <button id="downloadBtn" 
+                        class="w-full bg-brand-ink hover:bg-black text-white font-bold py-4 px-6 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center justify-center space-x-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                    <span>下載 PNG 圖片</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- History (LocalStorage) -->
+        <div id="historySection" class="mt-10 pt-6 border-t border-brand-sand hidden">
+            <h3 class="text-xs font-bold text-brand-clay tracking-[0.2em] mb-4 uppercase">最近生成紀錄</h3>
+            <div id="historyList" class="space-y-2"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto py-12 text-center">
+        <p class="text-brand-sage text-xs tracking-[0.2em]">
+            &copy; 2026 常溫編集所 Ambient Edit Studio.
+        </p>
+    </footer>
+
+    <!-- Custom Toast -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full bg-brand-ink text-white text-xs tracking-widest font-bold shadow-2xl opacity-0 pointer-events-none transition-all duration-300"></div>
+
+    <script>
+        let qrcode = null;
+        const qrInput = document.getElementById('qrInput');
+        const qrcodeContainer = document.getElementById('qrcode');
+        const statusMsg = document.getElementById('statusMsg');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const transparentCheck = document.getElementById('transparentCheck');
+        const toast = document.getElementById('toast');
+        const historyList = document.getElementById('historyList');
+        const historySection = document.getElementById('historySection');
+
+        // Initialize App
+        function init() {
+            const lastData = localStorage.getItem('ambient_qr_last') || 'https://ambientedit.com';
+            qrInput.value = lastData;
+            
+            generate(lastData);
+            loadHistory();
+
+            qrInput.addEventListener('input', (e) => {
+                const val = e.target.value.trim();
+                if(val) {
+                    generate(val);
+                    saveToHistory(val);
+                }
+            });
+
+            downloadBtn.addEventListener('click', download);
+        }
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.remove('opacity-0', 'translate-y-4');
+            toast.classList.add('opacity-100', '-translate-y-2');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                toast.classList.remove('opacity-100', '-translate-y-2');
+            }, 3000);
+        }
+
+        function generate(text) {
+            qrcodeContainer.innerHTML = '';
+            qrcode = new QRCode(qrcodeContainer, {
+                text: text,
+                width: 256,
+                height: 256,
+                colorDark: "#4a4a4a",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            statusMsg.textContent = "已就緒";
+            localStorage.setItem('ambient_qr_last', text);
+        }
+
+        async function download() {
+            const canvas = qrcodeContainer.querySelector('canvas');
+            if(!canvas) return;
+
+            const isTransparent = transparentCheck.checked;
+            
+            // Create a secondary canvas for processing
+            const outputCanvas = document.createElement('canvas');
+            outputCanvas.width = canvas.width;
+            outputCanvas.height = canvas.height;
+            const ctx = outputCanvas.getContext('2d');
+            
+            ctx.drawImage(canvas, 0, 0);
+
+            if(isTransparent) {
+                const imgData = ctx.getImageData(0, 0, outputCanvas.width, outputCanvas.height);
+                const data = imgData.data;
+                // Loop through pixels and set white/near-white to transparent
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i];
+                    const g = data[i+1];
+                    const b = data[i+2];
+                    // If pixel is very close to white, make it transparent
+                    if (r > 240 && g > 240 && b > 240) {
+                        data[i + 3] = 0;
+                    }
+                }
+                ctx.putImageData(imgData, 0, 0);
+            }
+
+            try {
+                const dataURL = outputCanvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                const fileName = `AmbientQR_${new Date().getTime()}.png`;
+                link.download = fileName;
+                link.href = dataURL;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast("🎉 下載成功" + (isTransparent ? " (已去背)" : ""));
+            } catch (err) {
+                showToast("❌ 下載失敗");
+                console.error(err);
+            }
+        }
+
+        function saveToHistory(text) {
+            let history = JSON.parse(localStorage.getItem('ambient_qr_history') || '[]');
+            if (history[0] === text) return; // Prevent duplicate consecutive
+            history = [text, ...history.filter(i => i !== text)].slice(0, 5);
+            localStorage.setItem('ambient_qr_history', JSON.stringify(history));
+            loadHistory();
+        }
+
+        function loadHistory() {
+            const history = JSON.parse(localStorage.getItem('ambient_qr_history') || '[]');
+            if (history.length === 0) {
+                historySection.classList.add('hidden');
+                return;
+            }
+            historySection.classList.remove('hidden');
+            historyList.innerHTML = history.map(item => `
+                <div class="flex items-center justify-between group py-2 px-3 hover:bg-white rounded-lg transition-all cursor-pointer border border-transparent hover:border-brand-sand" onclick="useHistory('${item}')">
+                    <span class="text-[10px] text-brand-ink truncate max-w-[80%]">${item}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-brand-sage opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </div>
+            `).join('');
+        }
+
+        window.useHistory = (text) => {
+            qrInput.value = text;
+            generate(text);
+        };
+
+        window.onload = init;
+    </script>
+</body>
+</html>

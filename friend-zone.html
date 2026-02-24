@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- SEO & Title 規則 -->
+    <title>常溫朋友資料庫｜Ambient Friend Database</title>
+    <meta name="description" content="常溫編集所專屬的人際關係紀錄工具，透過九大維度雷達圖與時間軸，溫柔地捕捉每一段關係的真實樣貌。">
+    
+    <!-- GA4 追蹤碼 -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
+    <!-- Google Fonts: Noto Serif TC & Noto Sans TC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd'
+                        },
+                        status: {
+                            red: '#fb7185',   /* rose-400 */
+                            gray: '#9ca3af',  /* gray-400 */
+                            yellow: '#fbbf24',/* amber-400 */
+                            green: '#34d399', /* emerald-400 (已提高亮度) */
+                            blue: '#38bdf8'   /* sky-400 */
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif']
+                    },
+                    boxShadow: {
+                        soft: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        card: '0 10px 30px -5px rgba(141, 163, 153, 0.15)',
+                        nav: '0 -4px 30px rgba(0, 0, 0, 0.04)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- 自訂樣式：紙張紋理與親民的表單細節 -->
+    <style>
+        /* 鎖定水平捲軸，防止畫面在手機上被左右拖曳產生偏移 */
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+        
+        body {
+            background-color: #fdfbf7;
+            color: #4a4a4a;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* 滑桿設計 */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+            padding: 10px 0;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: #d4a59a;
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 2px 8px rgba(212, 165, 154, 0.4);
+            border: 2px solid #fff;
+            transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:active { transform: scale(1.1); }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8px;
+            cursor: pointer;
+            background: #e6e2dd;
+            border-radius: 4px;
+        }
+        input[type=range]:focus { outline: none; }
+        
+        /* 隱藏捲軸 */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 視圖切換動畫 */
+        .view-transition { transition: opacity 0.4s ease, transform 0.4s ease; }
+        .view-hidden {
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            transform: translateY(20px);
+            visibility: hidden;
+        }
+        .view-active {
+            opacity: 1;
+            pointer-events: auto;
+            position: relative;
+            transform: translateY(0);
+            visibility: visible;
+        }
+
+        /* 模態彈窗動畫 */
+        .modal-enter { opacity: 1 !important; pointer-events: auto !important; }
+        .modal-enter-card { transform: scale(1) translateY(0) !important; }
+
+        /* 蘋果瀏海/底部橫條安全區 */
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+    </style>
+</head>
+<body class="font-sans min-h-screen flex flex-col antialiased overflow-x-hidden">
+
+    <!-- 隱藏的 CSV 檔案輸入與提示訊息 (Toast) -->
+    <input type="file" id="csvFileInput" class="hidden" accept=".csv" onchange="handleImportCSV(event)">
+    <div id="toastMessage" class="fixed top-20 left-1/2 transform -translate-x-1/2 -translate-y-4 bg-brand-ink/90 backdrop-blur-sm text-white px-6 py-3 rounded-full shadow-card z-50 transition-all duration-300 opacity-0 pointer-events-none text-sm font-bold tracking-widest text-center flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span id="toastText">訊息</span>
+    </div>
+
+    <!-- 頁首 -->
+    <header class="w-full pt-10 md:pt-16 pb-6 px-4 flex flex-col items-center">
+        <!-- 品牌副標題 -->
+        <span class="font-serif text-brand-sage tracking-[0.2em] text-xs md:text-sm mb-3">常溫編集所 AMBIENT EDIT STUDIO</span>
+        
+        <!-- 標題與桌機版按鈕群組 -->
+        <div class="relative flex justify-center items-end w-full max-w-4xl px-2">
+            <h1 class="font-serif text-3xl md:text-5xl font-bold text-brand-ink text-center">朋友資料庫</h1>
+            
+            <!-- 桌面版：返回常溫首頁按鈕 -->
+            <div class="absolute right-0 bottom-1 hidden md:block">
+                <a href="https://weichun0203.github.io/ambientedit/" 
+                   class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+                   style="text-decoration: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors">常溫首頁</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 引言 -->
+        <p class="mt-6 max-w-xl text-center text-brand-ink/70 leading-relaxed text-sm hidden md:block">
+            每一段關係都有其獨特的形狀。透過同理心、誠實等九個維度的紀錄，我們不在這裡評斷優劣，而是溫柔地看見彼此，找到最舒適的「常溫」。
+        </p>
+    </header>
+
+    <!-- 主要內容區 -->
+    <main class="flex-grow w-full max-w-5xl mx-auto px-4 pb-28 md:pb-12 relative">
+        
+        <!-- ================= [ 視圖 1：卡片牆 (List View) ] ================= -->
+        <section id="view-list" class="view-transition view-active w-full">
+            <div class="flex flex-col mb-6 px-2">
+                <div class="flex justify-between items-end gap-4">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                        <h2 class="font-serif font-bold text-xl text-brand-ink">我的關係卡片</h2>
+                        
+                        <!-- 匯入 / 匯出 按鈕 -->
+                        <div class="flex gap-2">
+                            <button onclick="document.getElementById('csvFileInput').click()" class="px-3 py-1 rounded-full text-[10px] font-bold border border-brand-sand bg-white text-brand-sage hover:bg-brand-sage hover:text-white transition-all shadow-sm flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                匯入 CSV
+                            </button>
+                            <button onclick="exportCSV()" class="px-3 py-1 rounded-full text-[10px] font-bold border border-brand-sand bg-white text-brand-sage hover:bg-brand-sage hover:text-white transition-all shadow-sm flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                匯出 CSV
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 專業品牌化排序下拉選單 -->
+                    <div class="flex items-center">
+                        <span class="text-brand-sage font-bold tracking-widest text-xs mr-2 hidden sm:block">排序</span>
+                        <div class="relative">
+                            <select id="sortSelect" onchange="renderGrid()" class="appearance-none bg-white/80 backdrop-blur-sm border border-brand-sand rounded-full pl-4 pr-9 py-1.5 text-xs font-bold text-brand-ink outline-none focus:border-brand-sage shadow-sm cursor-pointer transition-colors hover:bg-white">
+                                <option value="latest">最新紀錄</option>
+                                <option value="intimacy">親密度</option>
+                                <option value="stroke">姓名筆畫</option>
+                                <option value="temp_desc">溫度 (高至低)</option>
+                                <option value="temp_asc">溫度 (低至高)</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-brand-sage">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 篩選列 (橫向滑動設計) -->
+                <div class="flex gap-2 overflow-x-auto hide-scrollbar pt-4 pb-1 w-full mt-1 items-center">
+                    <button onclick="setFilter('all')" id="filter-all" class="filter-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold border border-brand-sage bg-brand-sage text-white transition-all shadow-sm">全部</button>
+                    <button onclick="setFilter('favorite')" id="filter-favorite" class="filter-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold border border-brand-sand bg-white/80 text-brand-ink/70 hover:bg-white hover:text-brand-ink transition-all shadow-sm">⭐ 最愛</button>
+                    <button onclick="setFilter('green')" id="filter-green" class="filter-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold border border-brand-sand bg-white/80 text-brand-ink/70 hover:bg-white hover:text-brand-ink transition-all shadow-sm flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-status-green"></div>穩定</button>
+                    <button onclick="setFilter('blue')" id="filter-blue" class="filter-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold border border-brand-sand bg-white/80 text-brand-ink/70 hover:bg-white hover:text-brand-ink transition-all shadow-sm flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-status-blue"></div>不常聯絡</button>
+                    <button onclick="setFilter('yellow')" id="filter-yellow" class="filter-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold border border-brand-sand bg-white/80 text-brand-ink/70 hover:bg-white hover:text-brand-ink transition-all shadow-sm flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-status-yellow"></div>認識中</button>
+                    <button onclick="setFilter('gray')" id="filter-gray" class="filter-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold border border-brand-sand bg-white/80 text-brand-ink/70 hover:bg-white hover:text-brand-ink transition-all shadow-sm flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-status-gray"></div>曾經</button>
+                    <button onclick="setFilter('red')" id="filter-red" class="filter-btn flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-bold border border-brand-sand bg-white/80 text-brand-ink/70 hover:bg-white hover:text-brand-ink transition-all shadow-sm flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-status-red"></div>不要</button>
+                </div>
+            </div>
+            
+            <!-- 卡片網格 -->
+            <div id="friendGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                <!-- JS 動態生成卡片 -->
+            </div>
+        </section>
+
+        <!-- ================= [ 視圖 2：編輯手帳 (Edit View) ] ================= -->
+        <section id="view-editor" class="view-transition view-hidden w-full max-w-4xl mx-auto">
+            
+            <!-- 頂部導覽 -->
+            <div class="flex justify-between items-center mb-6">
+                <button onclick="showListView()" class="inline-flex items-center text-brand-sage hover:text-brand-ink transition-colors font-medium text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    收回卡片
+                </button>
+                <button type="button" onclick="openDeleteModal()" class="text-brand-ink/40 hover:text-red-400 transition-colors text-sm flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    刪除
+                </button>
+            </div>
+
+            <!-- 手帳內容區 -->
+            <div class="bg-white/80 backdrop-blur-md rounded-[2rem] p-6 md:p-10 shadow-card border border-brand-sand/50">
+                <input type="hidden" id="friendId">
+                
+                <!-- 標題與最愛區 -->
+                <div class="flex flex-col items-center justify-center mb-6 relative">
+                    <div class="flex items-center gap-3 w-full justify-center">
+                        <input type="text" id="friendName" onchange="autoSave()"
+                               class="w-full max-w-[200px] sm:max-w-xs bg-transparent text-center font-serif text-3xl md:text-4xl text-brand-ink outline-none placeholder:text-brand-sand/60 transition-all focus:border-b focus:border-brand-sage/30 pb-1" 
+                               placeholder="名字或暱稱...">
+                        
+                        <!-- 最愛按鈕 -->
+                        <button id="favBtn" onclick="toggleFavorite()" class="text-brand-sand hover:text-yellow-400 transition-colors p-2 rounded-full hover:bg-yellow-50">
+                            <svg id="favIcon" xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        </button>
+                    </div>
+
+                    <!-- 關係狀態選擇器 -->
+                    <div class="mt-4 flex flex-col items-center">
+                        <span class="text-[10px] font-bold tracking-widest text-brand-sage/80 mb-2">關係狀態</span>
+                        <div class="flex gap-3 bg-brand-paper/50 p-2 rounded-full border border-brand-sand">
+                            <button onclick="setStatus('red')" class="status-btn w-6 h-6 rounded-full bg-status-red border-2 border-transparent transition-all" title="不要聯絡"></button>
+                            <button onclick="setStatus('gray')" class="status-btn w-6 h-6 rounded-full bg-status-gray border-2 border-transparent transition-all" title="曾經聯絡但不聯絡了"></button>
+                            <button onclick="setStatus('yellow')" class="status-btn w-6 h-6 rounded-full bg-status-yellow border-2 border-transparent transition-all" title="還在認識"></button>
+                            <button onclick="setStatus('green')" class="status-btn w-6 h-6 rounded-full bg-status-green border-2 border-transparent transition-all" title="穩定交誼中"></button>
+                            <button onclick="setStatus('blue')" class="status-btn w-6 h-6 rounded-full bg-status-blue border-2 border-transparent transition-all" title="不常聯繫也很好"></button>
+                        </div>
+                        <span id="statusLabel" class="text-xs text-brand-ink/60 mt-2 font-medium">還在認識</span>
+                    </div>
+                </div>
+
+                <!-- 基本資料區塊 -->
+                <div class="w-full max-w-lg mx-auto mb-8 bg-brand-paper/50 rounded-2xl p-5 border border-brand-sand/80 shadow-sm">
+                    <div class="flex items-center gap-2 mb-4 justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <h4 class="text-[10px] font-bold tracking-widest text-brand-sage">基本資料</h4>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input type="tel" id="friendPhone" onchange="autoSave()" placeholder="聯絡電話..." class="bg-white/80 border border-brand-sand rounded-xl px-3 py-2 text-sm text-brand-ink outline-none focus:border-brand-sage transition-colors placeholder:text-brand-sand/80">
+                        <input type="text" id="friendSocial" onchange="autoSave()" placeholder="IG / LINE ID..." class="bg-white/80 border border-brand-sand rounded-xl px-3 py-2 text-sm text-brand-ink outline-none focus:border-brand-sage transition-colors placeholder:text-brand-sand/80">
+                        
+                        <!-- 生日與星座 -->
+                        <div class="sm:col-span-2 flex flex-wrap gap-2 items-center bg-white/50 p-2 rounded-xl border border-brand-sand/50">
+                            <span class="text-xs font-bold text-brand-sage pl-1 shrink-0">生日</span>
+                            <select id="friendBm" onchange="updateZodiacAndSave()" class="bg-white border border-brand-sand rounded-lg px-2 py-1.5 text-sm text-brand-ink outline-none focus:border-brand-sage flex-grow min-w-[3.5rem] cursor-pointer">
+                                <option value="">月</option>
+                            </select>
+                            <span class="text-brand-sand font-bold">/</span>
+                            <select id="friendBd" onchange="updateZodiacAndSave()" class="bg-white border border-brand-sand rounded-lg px-2 py-1.5 text-sm text-brand-ink outline-none focus:border-brand-sage flex-grow min-w-[3.5rem] cursor-pointer">
+                                <option value="">日</option>
+                            </select>
+                            <input type="number" id="friendBy" onchange="autoSave()" placeholder="年(選填)" class="bg-white border border-brand-sand rounded-lg px-2 py-1.5 text-sm text-brand-ink outline-none focus:border-brand-sage w-24">
+                            
+                            <div id="friendZodiacDisplay" class="bg-brand-sage/10 text-brand-sage border border-brand-sage/30 rounded-lg px-3 py-1.5 text-xs font-bold min-w-[4rem] text-center ml-auto">
+                                --
+                            </div>
+                            <input type="hidden" id="friendZodiac">
+                        </div>
+
+                        <!-- 興趣 -->
+                        <input type="text" id="friendInterests" onchange="autoSave()" placeholder="興趣喜好 (例如：攝影、爬山、咖啡...)" class="sm:col-span-2 bg-white/80 border border-brand-sand rounded-xl px-3 py-2 text-sm text-brand-ink outline-none focus:border-brand-sage transition-colors placeholder:text-brand-sand/80">
+                        
+                        <!-- 聯絡地址與地圖按鈕 -->
+                        <div class="sm:col-span-2 relative flex items-center">
+                            <input type="text" id="friendAddress" onchange="autoSave()" placeholder="聯絡地址 (輸入後可點擊右側地圖圖示)" class="w-full bg-white/80 border border-brand-sand rounded-xl pl-3 pr-10 py-2 text-sm text-brand-ink outline-none focus:border-brand-sage transition-colors placeholder:text-brand-sand/80">
+                            <button type="button" onclick="openGoogleMaps()" class="absolute right-1.5 p-1.5 text-brand-sage hover:text-white hover:bg-brand-sage transition-colors bg-white rounded-lg shadow-sm border border-brand-sand/50" title="在地圖中開啟">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-10 border-t border-brand-sand/40 pt-8">
+                    <!-- 左側：雷達圖、對對方的認識、相處時間軸 -->
+                    <div class="w-full md:w-1/2 flex flex-col items-center">
+                        <div class="w-full aspect-square relative mb-6"><canvas id="radarChart"></canvas></div>
+                        
+                        <!-- 對對方的認識 -->
+                        <div class="w-full mb-6">
+                            <label class="block text-xs font-bold tracking-widest text-brand-sage mb-2">對對方的認識</label>
+                            <textarea id="friendNotes" rows="2" onchange="autoSave()"
+                                      class="w-full bg-brand-paper/50 border border-brand-sand rounded-2xl p-4 outline-none focus:ring-2 focus:ring-brand-sage/30 text-sm text-brand-ink resize-none transition-all placeholder:text-brand-sand" 
+                                      placeholder="寫下這個人給你的感覺、基本特質或喜好..."></textarea>
+                        </div>
+
+                        <!-- 相處時間軸 -->
+                        <div class="w-full border-t border-brand-sand/50 pt-6">
+                            <label class="block text-xs font-bold tracking-widest text-brand-sage mb-3">相處時間軸</label>
+                            <div class="flex flex-col gap-3 mb-5 bg-white/50 p-4 rounded-2xl border border-brand-sand/60">
+                                <div class="flex justify-between items-center gap-2">
+                                    <input type="date" id="timelineDate" class="bg-transparent text-sm font-bold text-brand-sage outline-none cursor-pointer">
+                                    <button type="button" onclick="addTimeline()" class="bg-brand-sage text-white rounded-xl px-4 py-1.5 transition-colors hover:bg-brand-ink text-sm font-bold shadow-sm whitespace-nowrap">
+                                        紀錄
+                                    </button>
+                                </div>
+                                <textarea id="timelineText" rows="3" placeholder="發生了什麼特別的事？或者有什麼感受？" 
+                                          class="w-full bg-transparent border-0 text-sm text-brand-ink outline-none resize-none placeholder:text-brand-sand"
+                                          onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); addTimeline(); }"></textarea>
+                            </div>
+                            <div id="timelineList" class="space-y-3 max-h-64 overflow-y-auto pr-2 hide-scrollbar"></div>
+                        </div>
+                    </div>
+
+                    <!-- 右側：九大維度滑桿 -->
+                    <div class="w-full md:w-1/2">
+                        <div class="flex items-center justify-between mb-4 pb-2 border-b border-brand-sand/50">
+                            <label class="block text-xs font-bold tracking-widest text-brand-sage mb-0">特質微調</label>
+                            <button type="button" onclick="openInfoModal()" class="text-brand-sage hover:text-brand-ink transition-colors flex items-center gap-1 group" title="查看特質說明">
+                                <span class="text-[10px] font-bold tracking-widest opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block">特質說明</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            </button>
+                        </div>
+                        <div id="slidersContainer" class="space-y-6"></div>
+                    </div>
+                </div>
+
+                <div class="mt-12 flex justify-center">
+                    <button id="saveBtn" type="button" onclick="manualSave()" class="bg-brand-sage hover:bg-brand-ink text-white px-10 py-3 rounded-full text-sm font-bold tracking-widest transition-all shadow-md hover:shadow-lg transform active:scale-95">
+                        儲存紀錄
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= [ 視圖 3：關係分析 (Analysis View) ] ================= -->
+        <section id="view-analysis" class="view-transition view-hidden w-full max-w-3xl mx-auto">
+            <h2 class="font-serif font-bold text-xl text-brand-ink mb-6 px-2 text-center">關係分析儀表板</h2>
+            
+            <!-- 狀態總覽卡片 -->
+            <div class="bg-white/80 backdrop-blur-md rounded-3xl p-6 shadow-soft border border-brand-sand mb-6">
+                <h3 class="text-sm font-bold tracking-widest text-brand-sage mb-4 border-b border-brand-sand/50 pb-2">關係狀態分布</h3>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4" id="analysisStats">
+                    <!-- 動態生成統計數據 -->
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 最近有接觸 -->
+                <div class="bg-white/60 backdrop-blur-md rounded-3xl p-6 shadow-soft border border-brand-sand">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-2 h-2 rounded-full bg-status-green"></div>
+                        <h3 class="text-sm font-bold tracking-widest text-brand-ink">最近聯絡 (30天內)</h3>
+                    </div>
+                    <div id="recentContacts" class="space-y-3 max-h-60 overflow-y-auto hide-scrollbar"></div>
+                </div>
+
+                <!-- 許久未聯絡 -->
+                <div class="bg-white/60 backdrop-blur-md rounded-3xl p-6 shadow-soft border border-brand-sand">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-2 h-2 rounded-full bg-status-yellow"></div>
+                        <h3 class="text-sm font-bold tracking-widest text-brand-ink">許久未聯絡 (超過30天)</h3>
+                    </div>
+                    <p class="text-[10px] text-brand-ink/50 mb-3 -mt-2">*已排除「不要聯絡」與「不聯絡了」的人</p>
+                    <div id="oldContacts" class="space-y-3 max-h-60 overflow-y-auto hide-scrollbar"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 桌機版頁尾 -->
+    <footer class="hidden md:block text-center py-8 text-xs tracking-widest text-brand-ink/40 font-sans mt-auto border-t border-brand-sand/30">
+        2026 常溫編集所 Ambient Edit Studio.
+    </footer>
+
+    <!-- ================= [ 類 React 手機底部導覽列 (Mobile Tab Bar) ] ================= -->
+    <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-lg border-t border-brand-sand/50 shadow-nav z-40 pb-safe">
+        <div class="flex justify-around items-center h-16 px-2 relative">
+            <!-- 卡片牆 -->
+            <button onclick="switchTab('list')" id="tab-list" class="flex flex-col items-center justify-center w-full h-full text-brand-sage transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <span class="text-[10px] font-bold tracking-widest">卡片牆</span>
+            </button>
+
+            <!-- 新增按鈕 -->
+            <button onclick="createNewFriend()" class="flex flex-col items-center justify-center w-full h-full relative group">
+                <div class="absolute -top-5 bg-brand-sage text-white rounded-full p-3.5 shadow-soft shadow-brand-sage/40 transform group-active:scale-90 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </div>
+                <span class="text-[10px] font-bold tracking-widest text-transparent mt-8">新增</span>
+            </button>
+
+            <!-- 關係分析 (更新) -->
+            <button onclick="switchTab('analysis')" id="tab-analysis" class="flex flex-col items-center justify-center w-full h-full text-brand-sand hover:text-brand-ink transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                <span class="text-[10px] font-bold tracking-widest">分析</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 刪除確認彈窗 -->
+    <div id="deleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-brand-ink/30 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="deleteModalCard" class="bg-brand-paper rounded-3xl p-6 shadow-card w-[85%] max-w-sm transform scale-95 translate-y-4 transition-all duration-300 border border-brand-sand">
+            <div class="flex justify-center mb-4">
+                <div class="bg-red-50 text-status-red rounded-full p-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </div>
+            </div>
+            <h3 class="font-serif font-bold text-xl text-brand-ink text-center mb-2">刪除關係紀錄</h3>
+            <p class="text-sm text-brand-ink/70 text-center mb-6 px-2">確定要刪除這張卡片嗎？<br>曾經紀錄的時光將無法復原喔。</p>
+            <div class="flex gap-3">
+                <button onclick="closeDeleteModal()" class="flex-1 py-3 rounded-2xl text-sm font-bold text-brand-ink bg-white border border-brand-sand hover:bg-brand-sand/30 transition-colors shadow-sm">保留紀錄</button>
+                <button onclick="confirmDelete()" class="flex-1 py-3 rounded-2xl text-sm font-bold text-white bg-status-red hover:bg-red-500 transition-colors shadow-sm">確定刪除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 刪除時間軸確認彈窗 -->
+    <div id="deleteTimelineModal" class="fixed inset-0 z-50 flex items-center justify-center bg-brand-ink/30 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="deleteTimelineModalCard" class="bg-brand-paper rounded-3xl p-6 shadow-card w-[85%] max-w-sm transform scale-95 translate-y-4 transition-all duration-300 border border-brand-sand">
+            <div class="flex justify-center mb-4">
+                <div class="bg-red-50 text-status-red rounded-full p-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                </div>
+            </div>
+            <h3 class="font-serif font-bold text-xl text-brand-ink text-center mb-2">刪除時間軸紀錄</h3>
+            <p class="text-sm text-brand-ink/70 text-center mb-6 px-2">確定要刪除這筆回憶嗎？<br>刪除後將無法復原喔。</p>
+            <div class="flex gap-3">
+                <button onclick="closeDeleteTimelineModal()" class="flex-1 py-3 rounded-2xl text-sm font-bold text-brand-ink bg-white border border-brand-sand hover:bg-brand-sand/30 transition-colors shadow-sm">保留紀錄</button>
+                <button onclick="executeDeleteTimeline()" class="flex-1 py-3 rounded-2xl text-sm font-bold text-white bg-status-red hover:bg-red-500 transition-colors shadow-sm">確定刪除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 特質說明彈窗 (Info Modal) -->
+    <div id="infoModal" class="fixed inset-0 z-50 flex items-center justify-center bg-brand-ink/30 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300">
+        <div id="infoModalCard" class="bg-brand-paper rounded-3xl p-6 md:p-8 shadow-card w-[90%] max-w-lg max-h-[85vh] flex flex-col transform scale-95 translate-y-4 transition-all duration-300 border border-brand-sand">
+            
+            <!-- 標題區 -->
+            <div class="flex justify-between items-center mb-4 pb-3 border-b border-brand-sand/50 shrink-0">
+                <h3 class="font-serif font-bold text-lg text-brand-ink flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-sage" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    關係特質指南
+                </h3>
+                <button onclick="closeInfoModal()" class="text-brand-ink/40 hover:text-brand-ink p-1 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            
+            <!-- 內文滾動區 -->
+            <div class="overflow-y-auto hide-scrollbar flex-grow space-y-5 pr-2 text-sm text-brand-ink/80 leading-relaxed font-sans">
+                <div>
+                    <span class="font-bold text-brand-sage text-base block mb-1">同理心 (Empathy)</span>
+                    能設身處地為對方著想，是愛情的靈魂。具備同理心的人不會只站在自己的角度評斷事情，而是願意去理解你的感受、接納你的脆弱，並在你低潮時提供真正的心理支持。
+                </div>
+                <div>
+                    <span class="font-bold text-brand-sage text-base block mb-1">誠實與透明 (Honesty & Transparency)</span>
+                    沒有誠實，就無法建立信任；沒有信任，愛就無法存活。這不僅僅是不說謊，還包含不刻意隱瞞、不迴避真實的感受。坦誠相待能省去關係中無謂的猜忌與內耗。
+                </div>
+                <div>
+                    <span class="font-bold text-brand-sage text-base block mb-1">情緒穩定 (Emotional Stability)</span>
+                    情緒穩定不代表沒有脾氣，而是指在面對壓力、挫折或雙方發生衝突時，能夠控制自己的行為，不把伴侶當作情緒的沙包或垃圾桶。情緒穩定的人能帶來極大的安全感。
+                </div>
+                <div>
+                    <span class="font-bold text-brand-sage text-base block mb-1">責任感與擔當 (Responsibility & Accountability)</span>
+                    愛情不僅是風花雪月，更多的是柴米油鹽。有責任感的人願意為自己的言行負責（做錯事懂得道歉並改進），也願意與你共同承擔生活中的重擔與未來的規劃，不輕易逃避。
+                </div>
+                <div>
+                    <span class="font-bold text-brand-sage text-base block mb-1">尊重 (Respect)</span>
+                    真正的愛不會試圖去「改造」或「控制」對方。尊重意味著看重對方的界線、獨立性、價值觀和個人空間。一個懂得尊重的人，會把你當作一個完整、獨立的個體來對待。
+                </div>
+                <div>
+                    <span class="font-bold text-brand-sage text-base block mb-1">忠誠與委身 (Loyalty & Commitment)</span>
+                    這是一種「選擇」。在誘惑面前、在關係進入平淡期或遭遇困難時，依然堅定地選擇對方。這份品格讓彼此知道，無論順境逆境，雙方都在同一陣線上。
+                </div>
+                
+                <!-- 加分品格分隔線 -->
+                <div class="pt-4 pb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="flex-grow h-px bg-brand-sand/80"></div>
+                        <span class="text-xs font-bold tracking-widest text-brand-clay px-2 bg-brand-paper rounded-full">讓關係更昇華的加分品格</span>
+                        <div class="flex-grow h-px bg-brand-sand/80"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <span class="font-bold text-brand-clay text-base block mb-1">溝通意願 (Willingness to Communicate)</span>
+                    很多人具備溝通技巧，卻缺乏溝通「意願」。這份品格展現在遇到問題時不冷戰、不逃避，願意坐下來傾聽對方，並用建設性的方式表達自己的需求。
+                </div>
+                <div>
+                    <span class="font-bold text-brand-clay text-base block mb-1">包容與寬恕 (Tolerance & Forgiveness)</span>
+                    人無完人，長久的相處必定會有摩擦與失望。包容是指在非原則性的問題上願意退讓；寬恕則是在雙方解決問題、修復傷害後，願意真正放下，不翻舊帳。
+                </div>
+                <div>
+                    <span class="font-bold text-brand-clay text-base block mb-1">感恩之心 (Gratitude & Appreciation)</span>
+                    在關係中最可怕的殺手之一就是「理所當然」。具備感恩之心的人，會把對方的付出看在眼裡，並經常透過言語或行動表達感謝與欣賞，這能讓愛火持續燃燒。
+                </div>
+            </div>
+            
+            <!-- 底部按鈕 -->
+            <div class="mt-6 pt-4 border-t border-brand-sand/50 shrink-0">
+                <button onclick="closeInfoModal()" class="w-full py-3 rounded-2xl text-sm font-bold text-white bg-brand-sage hover:bg-brand-ink transition-colors shadow-sm transform active:scale-95">
+                    我了解了
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 邏輯腳本 -->
+    <script>
+        const dimensions = [
+            { id: 'empathy', label: '同理心', desc: '接納脆弱與心理支持' },
+            { id: 'honesty', label: '誠實與透明', desc: '坦誠相待不隱瞞' },
+            { id: 'stability', label: '情緒穩定', desc: '壓力下的安全感' },
+            { id: 'responsibility', label: '責任感與擔當', desc: '承擔重擔不逃避' },
+            { id: 'respect', label: '尊重', desc: '看重界線與獨立性' },
+            { id: 'loyalty', label: '忠誠與委身', desc: '順境逆境的堅定選擇' },
+            { id: 'communication', label: '溝通意願', desc: '不冷戰，傾聽與表達' },
+            { id: 'tolerance', label: '包容與寬恕', desc: '退讓與真正放下' },
+            { id: 'gratitude', label: '感恩之心', desc: '欣賞付出不理所當然' }
+        ];
+
+        const statusConfig = {
+            'red': { label: '不要聯絡', colorClass: 'bg-status-red' },
+            'gray': { label: '曾經聯絡但不聯絡了', colorClass: 'bg-status-gray' },
+            'yellow': { label: '還在認識', colorClass: 'bg-status-yellow' },
+            'green': { label: '穩定交誼中', colorClass: 'bg-status-green' },
+            'blue': { label: '不常聯繫也很好', colorClass: 'bg-status-blue' }
+        };
+
+        let friends = [];
+        let currentEditingId = null;
+        let radarChartInstance = null;
+        let friendToDelete = null;
+        let timelineToDelete = null;
+        let currentFilter = 'all';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateDateSelects();
+            loadData();
+            buildSliders();
+            initChart();
+            switchTab('list');
+            document.getElementById('timelineDate').valueAsDate = new Date();
+        });
+
+        function populateDateSelects() {
+            const mSelect = document.getElementById('friendBm');
+            const dSelect = document.getElementById('friendBd');
+            for(let i=1; i<=12; i++) mSelect.innerHTML += `<option value="${i}">${i}月</option>`;
+            for(let i=1; i<=31; i++) dSelect.innerHTML += `<option value="${i}">${i}日</option>`;
+        }
+
+        function getZodiacSign(month, day) {
+            if (!month || !day) return '';
+            const m = parseInt(month, 10);
+            const d = parseInt(day, 10);
+            if ((m === 3 && d >= 21) || (m === 4 && d <= 19)) return '牡羊座';
+            if ((m === 4 && d >= 20) || (m === 5 && d <= 20)) return '金牛座';
+            if ((m === 5 && d >= 21) || (m === 6 && d <= 21)) return '雙子座';
+            if ((m === 6 && d >= 22) || (m === 7 && d <= 22)) return '巨蟹座';
+            if ((m === 7 && d >= 23) || (m === 8 && d <= 22)) return '獅子座';
+            if ((m === 8 && d >= 23) || (m === 9 && d <= 22)) return '處女座';
+            if ((m === 9 && d >= 23) || (m === 10 && d <= 23)) return '天秤座';
+            if ((m === 10 && d >= 24) || (m === 11 && d <= 22)) return '天蠍座';
+            if ((m === 11 && d >= 23) || (m === 12 && d <= 21)) return '射手座';
+            if ((m === 12 && d >= 22) || (m === 1 && d <= 19)) return '摩羯座';
+            if ((m === 1 && d >= 20) || (m === 2 && d <= 18)) return '水瓶座';
+            if ((m === 2 && d >= 19) || (m === 3 && d <= 20)) return '雙魚座';
+            return '';
+        }
+
+        function updateZodiacAndSave() {
+            const m = document.getElementById('friendBm').value;
+            const d = document.getElementById('friendBd').value;
+            const zodiac = getZodiacSign(m, d);
+            document.getElementById('friendZodiacDisplay').innerText = zodiac || '--';
+            document.getElementById('friendZodiac').value = zodiac;
+            autoSave();
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('ambient_friends_db');
+            if (saved) {
+                friends = JSON.parse(saved);
+                // 舊資料相容處理：補上狀態、最愛、基本資料
+                friends.forEach(f => {
+                    if (!f.timeline) f.timeline = [];
+                    if (!f.status) f.status = 'yellow';
+                    if (f.isFavorite === undefined) f.isFavorite = false;
+                    if (!f.basicInfo) f.basicInfo = { phone: '', birthdayMonth: '', birthdayDay: '', birthdayYear: '', zodiac: '', interests: '', social: '', address: '' };
+                    
+                    // 舊版生日相容性 (YYYY-MM-DD -> 拆分)
+                    if (f.basicInfo.birthday && !f.basicInfo.birthdayMonth) {
+                        const parts = f.basicInfo.birthday.split('-');
+                        if (parts.length === 3) {
+                            f.basicInfo.birthdayYear = parts[0];
+                            f.basicInfo.birthdayMonth = parseInt(parts[1], 10).toString();
+                            f.basicInfo.birthdayDay = parseInt(parts[2], 10).toString();
+                            f.basicInfo.zodiac = getZodiacSign(f.basicInfo.birthdayMonth, f.basicInfo.birthdayDay);
+                        }
+                        delete f.basicInfo.birthday; // 移除舊格式
+                    }
+                });
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('ambient_friends_db', JSON.stringify(friends));
+        }
+
+        // --- 視圖與導覽列切換 ---
+        function switchTab(tabName) {
+            ['list', 'editor', 'analysis'].forEach(v => {
+                document.getElementById(`view-${v}`).classList.replace('view-active', 'view-hidden');
+            });
+            
+            document.getElementById('tab-list').classList.replace('text-brand-sage', 'text-brand-sand');
+            document.getElementById('tab-analysis').classList.replace('text-brand-sage', 'text-brand-sand');
+
+            if(tabName === 'list') {
+                document.getElementById('tab-list').classList.replace('text-brand-sand', 'text-brand-sage');
+                renderGrid();
+                currentEditingId = null;
+            } else if (tabName === 'analysis') {
+                document.getElementById('tab-analysis').classList.replace('text-brand-sand', 'text-brand-sage');
+                renderAnalysis();
+                currentEditingId = null;
+            }
+
+            setTimeout(() => {
+                document.getElementById(`view-${tabName}`).classList.replace('view-hidden', 'view-active');
+                window.scrollTo(0, 0);
+            }, 300);
+        }
+
+        function showListView() { switchTab('list'); }
+
+        function showEditorView() {
+            ['list', 'editor', 'analysis'].forEach(v => {
+                document.getElementById(`view-${v}`).classList.replace('view-active', 'view-hidden');
+            });
+            document.getElementById('tab-list').classList.replace('text-brand-sage', 'text-brand-sand');
+            document.getElementById('tab-analysis').classList.replace('text-brand-sage', 'text-brand-sand');
+            
+            setTimeout(() => {
+                document.getElementById('view-editor').classList.replace('view-hidden', 'view-active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (radarChartInstance) radarChartInstance.resize();
+            }, 300);
+        }
+
+        // --- 卡片網格篩選與排序 ---
+        function setFilter(filterType) {
+            currentFilter = filterType;
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('border-brand-sage', 'bg-brand-sage', 'text-white');
+                btn.classList.add('border-brand-sand', 'bg-white/80', 'text-brand-ink/70');
+            });
+            const activeBtn = document.getElementById(`filter-${filterType}`);
+            if(activeBtn) {
+                activeBtn.classList.remove('border-brand-sand', 'bg-white/80', 'text-brand-ink/70');
+                activeBtn.classList.add('border-brand-sage', 'bg-brand-sage', 'text-white');
+            }
+            renderGrid();
+        }
+
+        function renderGrid() {
+            const gridEl = document.getElementById('friendGrid');
+            const sortMode = document.getElementById('sortSelect').value;
+            gridEl.innerHTML = '';
+
+            const addCard = document.createElement('button');
+            addCard.onclick = createNewFriend;
+            addCard.className = 'hidden md:flex aspect-square bg-transparent border-2 border-dashed border-brand-sage/40 rounded-[2rem] flex-col items-center justify-center text-brand-sage hover:bg-brand-sage/5 transition-colors group shadow-sm';
+            addCard.innerHTML = `
+                <div class="w-12 h-12 rounded-full bg-brand-sage/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </div>
+                <span class="font-bold text-sm tracking-widest">新增關係</span>
+            `;
+            gridEl.appendChild(addCard);
+
+            let filteredFriends = friends.filter(f => {
+                if (currentFilter === 'all') return true;
+                if (currentFilter === 'favorite') return f.isFavorite;
+                return f.status === currentFilter;
+            });
+
+            let sortedFriends = [...filteredFriends];
+            sortedFriends.sort((a, b) => {
+                if (a.isFavorite && !b.isFavorite) return -1;
+                if (!a.isFavorite && b.isFavorite) return 1;
+
+                if (sortMode === 'latest') return b.updatedAt - a.updatedAt;
+                else if (sortMode === 'intimacy') {
+                    const intimacyScore = { green: 5, blue: 4, yellow: 3, gray: 2, red: 1 };
+                    const scoreA = intimacyScore[a.status || 'yellow'];
+                    const scoreB = intimacyScore[b.status || 'yellow'];
+                    return scoreB - scoreA;
+                }
+                else if (sortMode === 'stroke') return (a.name || '').localeCompare(b.name || '', 'zh-TW', { collation: 'stroke' });
+                else {
+                    const avgA = Object.values(a.stats).reduce((sum, val) => sum + val, 0);
+                    const avgB = Object.values(b.stats).reduce((sum, val) => sum + val, 0);
+                    return sortMode === 'temp_desc' ? (avgB - avgA) : (avgA - avgB);
+                }
+            });
+            
+            sortedFriends.forEach(friend => {
+                const card = document.createElement('div');
+                card.onclick = () => selectFriend(friend.id);
+                card.className = 'aspect-square bg-white/80 backdrop-blur-sm rounded-[2rem] p-4 flex flex-col items-center justify-center text-center shadow-soft border border-brand-sand cursor-pointer hover:shadow-card hover:-translate-y-1 transition-all relative overflow-hidden group';
+                
+                const avgScore = (Object.values(friend.stats).reduce((a,b)=>a+b,0) / dimensions.length).toFixed(1);
+                const initial = friend.name ? friend.name.charAt(0) : '?';
+                const statusColor = statusConfig[friend.status || 'yellow'].colorClass;
+                
+                const starHtml = friend.isFavorite 
+                    ? `<svg class="absolute top-4 right-4 w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`
+                    : '';
+
+                card.innerHTML = `
+                    <div class="absolute top-0 left-0 w-full h-1.5 ${statusColor} opacity-80 group-hover:opacity-100 transition-opacity"></div>
+                    ${starHtml}
+                    <div class="w-14 h-14 rounded-full bg-brand-paper border-2 border-brand-sand flex items-center justify-center text-xl font-serif text-brand-clay mb-3 shadow-inner mt-2">
+                        ${initial}
+                    </div>
+                    <h3 class="font-serif font-bold text-lg text-brand-ink w-full truncate px-2">${friend.name || '未命名'}</h3>
+                    <div class="mt-2 text-xs font-medium text-brand-sage bg-brand-sage/10 px-3 py-1 rounded-full">溫度 ${avgScore}</div>
+                `;
+                gridEl.appendChild(card);
+            });
+        }
+
+        // --- 分析儀表板邏輯 ---
+        function renderAnalysis() {
+            const stats = { red: 0, gray: 0, yellow: 0, green: 0, blue: 0 };
+            friends.forEach(f => { if(stats[f.status] !== undefined) stats[f.status]++; });
+            
+            const statsEl = document.getElementById('analysisStats');
+            statsEl.innerHTML = '';
+            Object.keys(statusConfig).forEach(key => {
+                statsEl.innerHTML += `
+                    <div class="flex flex-col items-center p-3 bg-brand-paper/50 rounded-2xl border border-brand-sand">
+                        <div class="w-3 h-3 rounded-full ${statusConfig[key].colorClass} mb-2"></div>
+                        <span class="text-xl font-serif font-bold text-brand-ink">${stats[key]}</span>
+                        <span class="text-[10px] text-brand-ink/60 mt-1 truncate w-full text-center">${statusConfig[key].label}</span>
+                    </div>
+                `;
+            });
+
+            const now = new Date();
+            const recent = [];
+            const old = [];
+
+            friends.forEach(f => {
+                let lastContactDate = null;
+                if (f.timeline && f.timeline.length > 0) {
+                    lastContactDate = new Date(f.timeline[0].date);
+                } else if (f.updatedAt) {
+                    lastContactDate = new Date(f.updatedAt);
+                }
+
+                if (lastContactDate) {
+                    const diffTime = Math.abs(now - lastContactDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    const itemData = { friend: f, days: diffDays };
+                    
+                    if (diffDays <= 30) recent.push(itemData);
+                    else if (f.status !== 'red' && f.status !== 'gray') old.push(itemData);
+                } else {
+                    if (f.status !== 'red' && f.status !== 'gray') old.push({ friend: f, days: '∞' });
+                }
+            });
+
+            recent.sort((a, b) => a.days - b.days);
+            old.sort((a, b) => (b.days === '∞' ? 1 : a.days === '∞' ? -1 : b.days - a.days));
+
+            const renderList = (arr, containerId, emptyMsg) => {
+                const container = document.getElementById(containerId);
+                container.innerHTML = '';
+                if(arr.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-brand-ink/40 text-center py-4">${emptyMsg}</p>`;
+                    return;
+                }
+                arr.forEach(item => {
+                    const initial = item.friend.name ? item.friend.name.charAt(0) : '?';
+                    const sColor = statusConfig[item.friend.status].colorClass;
+                    const daysText = item.days === '∞' ? '尚未有紀錄' : `${item.days} 天前`;
+                    
+                    container.innerHTML += `
+                        <div onclick="selectFriend('${item.friend.id}')" class="flex items-center gap-3 p-2 rounded-xl hover:bg-brand-paper cursor-pointer transition-colors border border-transparent hover:border-brand-sand">
+                            <div class="relative">
+                                <div class="w-10 h-10 rounded-full bg-brand-paper border border-brand-sand flex items-center justify-center font-serif text-brand-clay">${initial}</div>
+                                <div class="absolute -bottom-1 -right-1 w-3 h-3 rounded-full ${sColor} border-2 border-white"></div>
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="text-sm font-bold text-brand-ink">${item.friend.name || '未命名'}</h4>
+                                <p class="text-[10px] text-brand-ink/50">${daysText}</p>
+                            </div>
+                            <svg class="w-4 h-4 text-brand-sand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    `;
+                });
+            };
+
+            renderList(recent, 'recentContacts', '最近這一個月還沒有寫下任何紀錄喔。');
+            renderList(old, 'oldContacts', '太棒了！大家最近都有保持溫度的聯繫。');
+        }
+
+        // --- 狀態與最愛設定 ---
+        function setStatus(colorCode) {
+            if (!currentEditingId) return;
+            const friend = friends.find(f => f.id === currentEditingId);
+            if (friend) {
+                friend.status = colorCode;
+                updateStatusUI(colorCode);
+                autoSave();
+            }
+        }
+
+        function updateStatusUI(colorCode) {
+            document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('border-brand-ink', 'scale-110'));
+            const activeBtn = document.querySelector(`.bg-status-${colorCode}`);
+            if(activeBtn) activeBtn.classList.add('border-brand-ink', 'scale-110');
+            document.getElementById('statusLabel').innerText = statusConfig[colorCode].label;
+        }
+
+        function toggleFavorite() {
+            if (!currentEditingId) return;
+            const friend = friends.find(f => f.id === currentEditingId);
+            if (friend) {
+                friend.isFavorite = !friend.isFavorite;
+                updateFavoriteUI(friend.isFavorite);
+                autoSave();
+            }
+        }
+
+        function updateFavoriteUI(isFav) {
+            const icon = document.getElementById('favIcon');
+            const btn = document.getElementById('favBtn');
+            if (isFav) {
+                icon.setAttribute('fill', 'currentColor');
+                btn.classList.add('text-yellow-400');
+                btn.classList.remove('text-brand-sand');
+            } else {
+                icon.setAttribute('fill', 'none');
+                btn.classList.remove('text-yellow-400');
+                btn.classList.add('text-brand-sand');
+            }
+        }
+
+        // --- Google Maps 開啟邏輯 ---
+        function openGoogleMaps() {
+            const addressInput = document.getElementById('friendAddress');
+            const address = addressInput.value.trim();
+            if (address) {
+                window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`, '_blank');
+            } else {
+                // 防呆提示
+                addressInput.focus();
+                addressInput.classList.add('border-status-red');
+                setTimeout(() => addressInput.classList.remove('border-status-red'), 800);
+            }
+        }
+
+        // --- 時間軸與滑桿 ---
+        function renderTimeline(timelineArray) {
+            const listEl = document.getElementById('timelineList');
+            listEl.innerHTML = '';
+            if (!timelineArray || timelineArray.length === 0) {
+                listEl.innerHTML = `<div class="flex flex-col items-center justify-center py-8 text-brand-ink/30 border-2 border-dashed border-brand-sand/50 rounded-2xl"><span class="text-xs tracking-widest">目前還沒有相處紀錄，寫下第一篇吧。</span></div>`;
+                return;
+            }
+            timelineArray.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'flex items-start gap-3 p-4 bg-white/80 rounded-2xl border border-brand-sand/40 group hover:border-brand-sage/40 transition-colors relative shadow-sm';
+                div.innerHTML = `
+                    <div class="text-xs font-bold text-brand-sage whitespace-nowrap pt-0.5">${item.date}</div>
+                    <div class="text-sm text-brand-ink flex-grow leading-relaxed pr-6 whitespace-pre-wrap">${item.text}</div>
+                    <button type="button" onclick="confirmDeleteTimelineUI('${item.id}')" class="absolute right-2 top-3 text-brand-ink/20 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity p-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
+                `;
+                listEl.appendChild(div);
+            });
+        }
+
+        function addTimeline() {
+            if (!currentEditingId) return;
+            const dateInput = document.getElementById('timelineDate');
+            const textInput = document.getElementById('timelineText');
+            const dateVal = dateInput.value;
+            const textVal = textInput.value.trim();
+            if (!textVal) return;
+            
+            const friendIndex = friends.findIndex(f => f.id === currentEditingId);
+            if (friendIndex === -1) return;
+            
+            if (!friends[friendIndex].timeline) friends[friendIndex].timeline = [];
+            friends[friendIndex].timeline.push({ id: Date.now().toString(), date: dateVal || new Date().toISOString().split('T')[0], text: textVal });
+            friends[friendIndex].timeline.sort((a, b) => new Date(b.date) - new Date(a.date));
+            friends[friendIndex].updatedAt = Date.now();
+            
+            saveData();
+            renderTimeline(friends[friendIndex].timeline);
+            textInput.value = ''; 
+        }
+
+        function confirmDeleteTimelineUI(timelineId) {
+            timelineToDelete = timelineId;
+            document.getElementById('deleteTimelineModal').classList.add('modal-enter');
+            document.getElementById('deleteTimelineModalCard').classList.add('modal-enter-card');
+        }
+
+        function closeDeleteTimelineModal() {
+            document.getElementById('deleteTimelineModal').classList.remove('modal-enter');
+            document.getElementById('deleteTimelineModalCard').classList.remove('modal-enter-card');
+            timelineToDelete = null;
+        }
+
+        function executeDeleteTimeline() {
+            if (!timelineToDelete || !currentEditingId) return;
+            const friendIndex = friends.findIndex(f => f.id === currentEditingId);
+            if (friendIndex === -1) return;
+            
+            friends[friendIndex].timeline = friends[friendIndex].timeline.filter(t => t.id !== timelineToDelete);
+            friends[friendIndex].updatedAt = Date.now();
+            saveData();
+            renderTimeline(friends[friendIndex].timeline);
+            closeDeleteTimelineModal();
+        }
+
+        function openInfoModal() {
+            document.getElementById('infoModal').classList.add('modal-enter');
+            document.getElementById('infoModalCard').classList.add('modal-enter-card');
+        }
+
+        function closeInfoModal() {
+            document.getElementById('infoModal').classList.remove('modal-enter');
+            document.getElementById('infoModalCard').classList.remove('modal-enter-card');
+        }
+
+        function buildSliders() {
+            const container = document.getElementById('slidersContainer');
+            dimensions.forEach(dim => {
+                const div = document.createElement('div');
+                div.className = 'flex flex-col gap-2';
+                div.innerHTML = `
+                    <div class="flex justify-between items-end">
+                        <div><span class="text-sm font-bold text-brand-ink">${dim.label}</span><span class="text-[10px] text-brand-ink/50 ml-2 hidden sm:inline-block">${dim.desc}</span></div>
+                        <span id="val_${dim.id}" class="text-brand-clay font-bold text-lg bg-brand-paper px-2 rounded-md border border-brand-sand/50">5</span>
+                    </div>
+                    <input type="range" id="slider_${dim.id}" min="1" max="10" value="5" oninput="updateSliderValue('${dim.id}'); updateChartRealtime();" onchange="autoSave()">
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function updateSliderValue(id) {
+            document.getElementById(`val_${id}`).innerText = document.getElementById(`slider_${id}`).value;
+        }
+
+        // --- 核心互動 ---
+        function createNewFriend() {
+            const newFriend = {
+                id: Date.now().toString(),
+                name: '',
+                notes: '',
+                timeline: [],
+                status: 'yellow',
+                isFavorite: false,
+                basicInfo: { phone: '', birthdayMonth: '', birthdayDay: '', birthdayYear: '', zodiac: '', interests: '', social: '', address: '' },
+                stats: dimensions.reduce((acc, dim) => ({...acc, [dim.id]: 5}), {}),
+                updatedAt: Date.now()
+            };
+            friends.push(newFriend);
+            saveData();
+            selectFriend(newFriend.id);
+        }
+
+        function selectFriend(id) {
+            currentEditingId = id;
+            const friend = friends.find(f => f.id === id);
+            if (!friend) return;
+
+            document.getElementById('friendId').value = friend.id;
+            document.getElementById('friendName').value = friend.name;
+            document.getElementById('friendNotes').value = friend.notes;
+
+            // 基本資料填入
+            document.getElementById('friendPhone').value = friend.basicInfo?.phone || '';
+            document.getElementById('friendBm').value = friend.basicInfo?.birthdayMonth || '';
+            document.getElementById('friendBd').value = friend.basicInfo?.birthdayDay || '';
+            document.getElementById('friendBy').value = friend.basicInfo?.birthdayYear || '';
+            document.getElementById('friendZodiac').value = friend.basicInfo?.zodiac || '';
+            document.getElementById('friendZodiacDisplay').innerText = friend.basicInfo?.zodiac || '--';
+            document.getElementById('friendInterests').value = friend.basicInfo?.interests || '';
+            document.getElementById('friendSocial').value = friend.basicInfo?.social || '';
+            document.getElementById('friendAddress').value = friend.basicInfo?.address || '';
+
+            updateStatusUI(friend.status || 'yellow');
+            updateFavoriteUI(friend.isFavorite || false);
+
+            dimensions.forEach(dim => {
+                const val = friend.stats[dim.id] || 5;
+                const slider = document.getElementById(`slider_${dim.id}`);
+                if(slider) {
+                    slider.value = val;
+                    document.getElementById(`val_${dim.id}`).innerText = val;
+                }
+            });
+
+            renderTimeline(friend.timeline);
+            updateChartRealtime();
+            showEditorView();
+        }
+
+        function openDeleteModal() {
+            if (!currentEditingId) return;
+            friendToDelete = currentEditingId;
+            document.getElementById('deleteModal').classList.add('modal-enter');
+            document.getElementById('deleteModalCard').classList.add('modal-enter-card');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('modal-enter');
+            document.getElementById('deleteModalCard').classList.remove('modal-enter-card');
+            friendToDelete = null;
+        }
+
+        function confirmDelete() {
+            if (!friendToDelete) return;
+            currentEditingId = null; 
+            friends = friends.filter(f => f.id !== friendToDelete);
+            saveData();
+            closeDeleteModal();
+            showListView(); 
+        }
+
+        function autoSave() {
+            if (!currentEditingId) return;
+            const index = friends.findIndex(f => f.id === currentEditingId);
+            if (index === -1) return;
+
+            const newStats = {};
+            dimensions.forEach(dim => {
+                newStats[dim.id] = parseInt(document.getElementById(`slider_${dim.id}`).value, 10);
+            });
+
+            friends[index] = {
+                ...friends[index],
+                name: document.getElementById('friendName').value.trim(),
+                notes: document.getElementById('friendNotes').value.trim(),
+                basicInfo: {
+                    phone: document.getElementById('friendPhone').value.trim(),
+                    birthdayMonth: document.getElementById('friendBm').value,
+                    birthdayDay: document.getElementById('friendBd').value,
+                    birthdayYear: document.getElementById('friendBy').value,
+                    zodiac: document.getElementById('friendZodiac').value,
+                    interests: document.getElementById('friendInterests').value.trim(),
+                    social: document.getElementById('friendSocial').value.trim(),
+                    address: document.getElementById('friendAddress').value.trim()
+                },
+                stats: newStats,
+                updatedAt: Date.now()
+            };
+            saveData();
+        }
+
+        function manualSave() {
+            autoSave();
+            const btn = document.getElementById('saveBtn');
+            const originalText = btn.innerText;
+            btn.innerText = '儲存成功 ✓';
+            btn.classList.replace('bg-brand-sage', 'bg-brand-clay');
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.classList.replace('bg-brand-clay', 'bg-brand-sage');
+                showListView(); 
+            }, 1000);
+        }
+
+        // --- 雷達圖 ---
+        function initChart() {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            Chart.defaults.font.family = '"Noto Sans TC", sans-serif';
+            Chart.defaults.color = '#8da399';
+
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: dimensions.map(d => d.label),
+                    datasets: [{
+                        label: '特質光譜',
+                        data: dimensions.map(() => 5),
+                        backgroundColor: 'rgba(212, 165, 154, 0.2)',
+                        borderColor: '#d4a59a',
+                        pointBackgroundColor: '#8da399',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#8da399',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(230, 226, 221, 0.6)' },
+                            grid: { color: 'rgba(230, 226, 221, 0.6)' },
+                            pointLabels: { font: { size: 10, family: '"Noto Serif TC", serif', weight: 'bold' }, color: '#4a4a4a' },
+                            ticks: { display: false, min: 0, max: 10 }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(74, 74, 74, 0.9)',
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: { label: context => `溫度: ${context.raw}` }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChartRealtime() {
+            if (!radarChartInstance) return;
+            const newData = dimensions.map(dim => {
+                const slider = document.getElementById(`slider_${dim.id}`);
+                return slider ? parseInt(slider.value, 10) : 5;
+            });
+            radarChartInstance.data.datasets[0].data = newData;
+            radarChartInstance.update();
+        }
+
+        // --- CSV 匯出與匯入功能 ---
+        function showToast(message) {
+            const toast = document.getElementById('toastMessage');
+            document.getElementById('toastText').innerHTML = message;
+            toast.classList.remove('opacity-0', '-translate-y-4');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', '-translate-y-4');
+            }, 3000);
+        }
+
+        function exportCSV() {
+            if (friends.length === 0) {
+                showToast('目前沒有資料可以匯出喔！');
+                return;
+            }
+
+            // 定義 CSV 標題
+            const header = ['ID', '姓名', '關係狀態', '最愛', '聯絡電話', '生日_月', '生日_日', '生日_年', '星座', '興趣', '社群', '聯絡地址', '對對方的認識', ...dimensions.map(d => d.label)];
+            const rows = [header];
+
+            // 整理每一行資料
+            friends.forEach(f => {
+                const statusLabel = statusConfig[f.status] ? statusConfig[f.status].label : '還在認識';
+                const isFav = f.isFavorite ? '是' : '否';
+                const basic = f.basicInfo || {};
+                
+                const row = [
+                    f.id,
+                    f.name || '',
+                    statusLabel,
+                    isFav,
+                    basic.phone || '',
+                    basic.birthdayMonth || '',
+                    basic.birthdayDay || '',
+                    basic.birthdayYear || '',
+                    basic.zodiac || '',
+                    basic.interests || '',
+                    basic.social || '',
+                    basic.address || '',
+                    f.notes || '',
+                    ...dimensions.map(d => f.stats[d.id] || 5)
+                ];
+                rows.push(row);
+            });
+
+            // 加入 \uFEFF 解決 Excel UTF-8 中文亂碼問題
+            const csvContent = "\uFEFF" + rows.map(r => 
+                r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')
+            ).join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `常溫朋友資料庫_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function handleImportCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                processCSVData(text);
+                event.target.value = ''; // 允許重新上傳相同檔案
+            };
+            reader.readAsText(file);
+        }
+
+        // CSV 字串解析器（可正確處理 Excel 用引號包覆的換行文字）
+        function parseCSV(str) {
+            const arr = [];
+            let quote = false;
+            let row = 0, col = 0;
+            for (let c = 0; c < str.length; c++) {
+                let cc = str[c], nc = str[c+1];
+                arr[row] = arr[row] || [];
+                arr[row][col] = arr[row][col] || '';
+
+                if (cc === '"' && quote && nc === '"') { arr[row][col] += cc; ++c; continue; }
+                if (cc === '"') { quote = !quote; continue; }
+                if (cc === ',' && !quote) { ++col; continue; }
+                if (cc === '\r' && nc === '\n' && !quote) { ++row; col = 0; ++c; continue; }
+                if (cc === '\n' && !quote) { ++row; col = 0; continue; }
+                if (cc === '\r' && !quote) { ++row; col = 0; continue; }
+
+                arr[row][col] += cc;
+            }
+            return arr;
+        }
+
+        function processCSVData(csvText) {
+            const arr = parseCSV(csvText);
+            if (arr.length < 2) {
+                showToast('CSV 檔案沒有內容或格式錯誤。');
+                return;
+            }
+
+            const headers = arr[0];
+            let updatedCount = 0;
+            let addedCount = 0;
+
+            // 狀態文字轉回 ID 代碼
+            const statusLabelToKey = {};
+            Object.keys(statusConfig).forEach(k => {
+                statusLabelToKey[statusConfig[k].label] = k;
+            });
+
+            for (let i = 1; i < arr.length; i++) {
+                const row = arr[i];
+                if (row.length === 1 && row[0].trim() === '') continue; // 略過空行
+
+                const id = row[headers.indexOf('ID')]?.trim();
+                const name = row[headers.indexOf('姓名')]?.trim() || '';
+                const statusLabel = row[headers.indexOf('關係狀態')]?.trim();
+                const favStr = row[headers.indexOf('最愛')]?.trim();
+                const phone = row[headers.indexOf('聯絡電話')]?.trim() || '';
+                
+                let bm = row[headers.indexOf('生日_月')]?.trim() || '';
+                let bd = row[headers.indexOf('生日_日')]?.trim() || '';
+                let by = row[headers.indexOf('生日_年')]?.trim() || '';
+                const oldBirthday = row[headers.indexOf('生日')]?.trim() || '';
+                if (oldBirthday && !bm) {
+                    const parts = oldBirthday.split('-');
+                    if (parts.length === 3) {
+                        by = parts[0]; bm = parseInt(parts[1], 10).toString(); bd = parseInt(parts[2], 10).toString();
+                    }
+                }
+                
+                let zodiac = row[headers.indexOf('星座')]?.trim() || '';
+                if (!zodiac && bm && bd) zodiac = getZodiacSign(bm, bd);
+                
+                const interests = row[headers.indexOf('興趣')]?.trim() || '';
+                const social = row[headers.indexOf('社群')]?.trim() || '';
+                const address = row[headers.indexOf('聯絡地址')]?.trim() || '';
+                const notes = row[headers.indexOf('對對方的認識')]?.trim() || '';
+
+                const status = statusLabelToKey[statusLabel] || 'yellow';
+                const isFavorite = (favStr === '是' || favStr === 'true' || favStr === '1');
+
+                const stats = {};
+                dimensions.forEach(d => {
+                    const idx = headers.indexOf(d.label);
+                    if (idx !== -1 && row[idx]) {
+                        const val = parseInt(row[idx], 10);
+                        stats[d.id] = (isNaN(val) || val < 1 || val > 10) ? 5 : val;
+                    } else {
+                        stats[d.id] = 5;
+                    }
+                });
+
+                let friend = friends.find(f => f.id === id);
+                if (friend) {
+                    // ID已存在 -> 更新資料
+                    friend.name = name;
+                    friend.status = status;
+                    friend.isFavorite = isFavorite;
+                    friend.basicInfo = { phone, birthdayMonth: bm, birthdayDay: bd, birthdayYear: by, zodiac, interests, social, address };
+                    friend.notes = notes;
+                    friend.stats = stats;
+                    friend.updatedAt = Date.now();
+                    updatedCount++;
+                } else {
+                    // ID不存在 -> 新增資料
+                    friends.push({
+                        id: id || Date.now().toString() + Math.random().toString(36).substring(2, 7),
+                        name: name,
+                        notes: notes,
+                        timeline: [], // 保留空白時間軸
+                        status: status,
+                        isFavorite: isFavorite,
+                        basicInfo: { phone, birthdayMonth: bm, birthdayDay: bd, birthdayYear: by, zodiac, interests, social, address },
+                        stats: stats,
+                        updatedAt: Date.now()
+                    });
+                    addedCount++;
+                }
+            }
+
+            saveData();
+            renderGrid();
+            if (document.getElementById('view-analysis').classList.contains('view-active')) {
+                renderAnalysis();
+            }
+            
+            showToast(`成功匯入！<br>更新 ${updatedCount} 筆，新增 ${addedCount} 筆。`);
+        }
+    </script>
+</body>

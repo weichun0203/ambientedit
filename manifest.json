@@ -1,0 +1,26 @@
+{
+  "name": "常溫編集所 Ambient Edit Studio",
+  "short_name": "常溫編集所",
+  "description": "提供溫暖且專業的行銷與品牌設計服務，陪你找回品牌的常溫狀態。",
+  "start_url": "/ambientedit/",
+  "scope": "/ambientedit/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fdfbf7",
+  "theme_color": "#d4a59a",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["design", "business", "lifestyle"]
+}

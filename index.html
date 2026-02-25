@@ -518,5 +518,20 @@
         document.head.appendChild(styleSheet);
 
     </script>
+    <script>
+      // 註冊 PWA Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          // 注意這裡的路徑是 './sw.js'，對應根目錄
+          navigator.serviceWorker.register('./sw.js')
+            .then(registration => {
+              console.log('常溫 PWA ServiceWorker 註冊成功！');
+            })
+            .catch(err => {
+              console.log('ServiceWorker 註冊失敗: ', err);
+            });
+        });
+      }
+    </script>
 </body>
 </html>

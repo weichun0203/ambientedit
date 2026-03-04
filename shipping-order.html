@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常溫訂購單小幫手｜Ambient Order Helper</title>
+    <meta name="description" content="常溫編集所專屬訂購單小幫手，快速勾選顏色與數量，一鍵產生可複製的訂單文字。">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS (via CDN for single file) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Configuration & Brand Guidelines -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Noto Serif TC"', 'serif'],
+                    },
+                    boxShadow: {
+                        soft: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            background-color: #fdfbf7; /* brand-paper */
+            color: #4a4a4a; /* brand-ink */
+        }
+        .bg-noise {
+            /* 模擬紙張纖維質感的微噪點 SVG */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            background-attachment: fixed;
+        }
+        /* 隱藏預設的數字輸入框箭頭 */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        /* 自訂 Radio 按鈕顏色 */
+        input[type="radio"]:checked {
+            accent-color: #8da399; /* brand-sage */
+        }
+    </style>
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "常溫訂購單小幫手",
+      "alternateName": "Ambient Order Helper",
+      "url": "https://weichun0203.github.io/ambientedit/",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "All",
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio",
+        "url": "https://www.instagram.com/ambientedit_"
+      }
+    }
+    </script>
+</head>
+<body class="bg-noise min-h-screen flex flex-col font-sans selection:bg-brand-sage selection:text-white pb-10">
+
+    <main class="flex-grow p-4 md:p-8 max-w-5xl mx-auto w-full space-y-8">
+        
+        <!-- Header Section -->
+        <header class="mb-10 mt-4 relative">
+            <!-- 品牌副標題 -->
+            <div class="text-brand-sage font-serif tracking-widest text-sm mb-2 opacity-80">
+                常溫編集所 Ambient Edit Studio
+            </div>
+            
+            <!-- 標題與返回按鈕 (Bottom Alignment & Right Layout) -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-brand-sand pb-4">
+                <h1 class="text-3xl md:text-4xl font-bold font-serif text-brand-ink flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-clay"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                    訂購單小幫手
+                </h1>
+                
+                <a href="https://weichun0203.github.io/ambientedit/" 
+                   class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-brand-paper transition-all duration-300 shadow-sm hover:shadow-soft bg-white/70 backdrop-blur-sm self-start md:self-auto"
+                   aria-label="返回常溫首頁"
+                   style="text-decoration: none;">
+                    <!-- Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <!-- Text -->
+                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                        常溫首頁
+                    </span>
+                </a>
+            </div>
+            
+            <!-- 引言 -->
+            <p class="mt-4 text-brand-ink/70 text-sm md:text-base leading-relaxed max-w-2xl">
+                快速勾選顏色與數量，一鍵產生可複製的訂單文字。<br>
+                系統會自動為您計算總額並保留您的選擇紀錄，讓每一次的購買體驗都像呼吸般自然。
+            </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- 左側：商品選單 -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <!-- 運送方式區塊 -->
+                <section class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-soft border border-brand-sand space-y-5">
+                    <h2 class="text-lg font-bold text-brand-ink border-l-4 border-brand-sage pl-3 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-sage"><rect width="16" height="16" x="4" y="4" rx="2"/><path d="M4 12h16"/><path d="M12 4v16"/></svg>
+                        運送方式 <span class="text-sm font-normal text-brand-ink/50 ml-1">Delivery Method</span>
+                    </h2>
+                    
+                    <div class="space-y-3">
+                        <label class="delivery-label flex items-center p-4 rounded-xl cursor-pointer transition-all duration-300 border border-transparent hover:bg-brand-paper">
+                            <input type="radio" name="delivery" value="711" checked class="w-5 h-5 text-brand-sage focus:ring-brand-sage">
+                            <span class="ml-3 font-medium text-brand-ink">
+                                7-11 寄送 Shipping <span class="text-brand-ink/50 text-sm ml-1">($38)</span>
+                            </span>
+                        </label>
+
+                        <label class="delivery-label flex items-center p-4 rounded-xl cursor-pointer transition-all duration-300 border border-transparent hover:bg-brand-paper">
+                            <input type="radio" name="delivery" value="in-person" class="w-5 h-5 text-brand-sage focus:ring-brand-sage">
+                            <span class="ml-3 font-medium text-brand-ink">
+                                面交 In-person <span class="text-brand-ink/50 text-sm ml-1">(免運費 Free)</span>
+                            </span>
+                        </label>
+
+                        <div id="in-person-details" class="hidden ml-11 mt-2 space-y-3 transition-all duration-300">
+                            <div class="flex gap-2 flex-wrap">
+                                <button type="button" onclick="setMeetupLocation('金華街 Jin Hua Chapel')" class="px-4 py-2 text-sm bg-brand-paper text-brand-ink border border-brand-sand rounded-lg hover:border-brand-sage hover:text-brand-sage transition-all duration-200">
+                                    📍 金華街 Jin Hua Chapel
+                                </button>
+                            </div>
+                            <input type="text" id="meetup-location" placeholder="請輸入面交地點或點擊上方選項..." class="w-full p-3 bg-white/50 border border-brand-sand rounded-lg focus:ring-1 focus:ring-brand-sage focus:border-brand-sage outline-none text-sm transition-all text-brand-ink placeholder:text-brand-ink/30">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 領帶區塊 -->
+                <section class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-soft border border-brand-sand">
+                    <div class="flex flex-col mb-5">
+                        <h2 class="text-lg font-bold text-brand-ink border-l-4 border-brand-clay pl-3 flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-clay"><path d="M12 2v20"/><path d="m4.93 10.93 14.14-14.14"/><path d="m2 22 14.14-14.14"/><path d="m13.07 19.07 5.05-5.05"/></svg>
+                            領帶 <span class="text-sm font-normal text-brand-ink/50 ml-1">Ties ($350/個)</span>
+                        </h2>
+                        <span class="text-xs text-brand-ink/50 ml-6 mt-1 tracking-wider">Weight: 44g</span>
+                    </div>
+                    
+                    <div id="ties-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- JavaScript 會在這裡生成 Counter 元件 -->
+                    </div>
+                </section>
+
+                <!-- 卷軸區塊 -->
+                <section class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-soft border border-brand-sand space-y-5">
+                    <h2 class="text-lg font-bold text-brand-ink border-l-4 border-brand-ink pl-3 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-ink"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+                        其他 <span class="text-sm font-normal text-brand-ink/50 ml-1">Others ($650/個)</span>
+                    </h2>
+                    
+                    <div class="flex items-center justify-between p-4 bg-brand-paper/50 border border-brand-sand rounded-xl hover:border-brand-sage transition-colors">
+                        <span class="font-medium text-brand-ink flex-1 pr-2">卷軸 Scrolls</span>
+                        <div class="flex items-center gap-3">
+                            <button onclick="updateScroll(-1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-white border border-brand-sand text-brand-ink hover:bg-brand-sand transition-colors">-</button>
+                            <input type="number" id="scroll-input" min="0" value="0" class="w-12 text-center p-1 border-none bg-transparent font-semibold text-brand-ink focus:ring-0 focus:outline-none" onchange="handleScrollInput(this.value)">
+                            <button onclick="updateScroll(1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-brand-sage text-white shadow-sm hover:bg-brand-sage/80 transition-colors">+</button>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- 右側：預覽與結果 -->
+            <div class="lg:col-span-5 relative">
+                <div class="bg-white/90 backdrop-blur-md p-6 lg:p-8 rounded-2xl shadow-soft border border-brand-sand sticky top-8">
+                    <h2 class="text-lg font-bold text-brand-ink mb-5 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-sage"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        訂單預覽 <span class="text-sm font-normal text-brand-ink/50">Order Preview</span>
+                    </h2>
+                    
+                    <div id="order-preview" class="bg-brand-paper rounded-xl p-5 font-mono text-sm text-brand-ink whitespace-pre-wrap min-h-[200px] border border-brand-sand leading-relaxed">
+                        尚未選擇商品
+                    </div>
+
+                    <div class="mt-8 border-t border-brand-sand pt-6">
+                        <div class="flex justify-between items-end mb-6">
+                            <span class="text-brand-ink/70 font-medium tracking-wide">總計金額 Total</span>
+                            <span class="text-3xl font-bold font-serif text-brand-clay" id="total-price">$0</span>
+                        </div>
+                        
+                        <button id="copy-btn" onclick="copyToClipboard()" disabled
+                            class="w-full py-4 px-4 rounded-xl flex items-center justify-center gap-2 font-bold tracking-widest transition-all duration-300 bg-brand-sand/50 text-brand-ink/40 cursor-not-allowed">
+                            <svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span id="copy-text">一鍵複製訂單</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 py-6 text-center text-brand-ink/50 text-xs tracking-widest font-serif border-t border-brand-sand/50 max-w-5xl mx-auto w-full">
+        &copy; 2026 常溫編集所 Ambient Edit Studio.
+    </footer>
+
+    <!-- Application Logic -->
+    <script>
+        // 設定資料
+        const colors = [
+            '紅 Red', '紫 Purple', '粉 Pink', 
+            '黃 Yellow', '淺藍 Light Blue', '深藍 Navy Blue', 
+            '灰 Grey', '白 White', '黑 Black'
+        ];
+        
+        const TIE_PRICE = 350;
+        const SCROLL_PRICE = 650;
+        const SHIPPING_PRICE = 38;
+
+        // 狀態管理 (預設值)
+        let state = {
+            ties: {},
+            scrolls: 0,
+            delivery: '711',
+            location: ''
+        };
+
+        colors.forEach(c => state.ties[c] = 0);
+
+        // 初始化 Local Storage 存取
+        const STORAGE_KEY = 'ambient_order_state';
+        
+        function loadState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    // 確保讀取的資料結構正確
+                    state.scrolls = parsed.scrolls || 0;
+                    state.delivery = parsed.delivery || '711';
+                    state.location = parsed.location || '';
+                    if (parsed.ties) {
+                        colors.forEach(c => {
+                            state.ties[c] = parsed.ties[c] || 0;
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error("Local storage load error", e);
+            }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            } catch (e) {
+                console.error("Local storage save error", e);
+            }
+        }
+
+        // DOM 元素生成與綁定
+        function renderTies() {
+            const container = document.getElementById('ties-container');
+            container.innerHTML = '';
+            
+            colors.forEach(color => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-3 bg-brand-paper/50 border border-brand-sand rounded-xl hover:border-brand-sage transition-colors';
+                
+                div.innerHTML = `
+                    <span class="font-medium text-brand-ink text-sm flex-1 pr-2">${color}</span>
+                    <div class="flex items-center gap-2">
+                        <button onclick="updateTie('${color}', -1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-white border border-brand-sand text-brand-ink hover:bg-brand-sand transition-colors">-</button>
+                        <input type="number" min="0" value="${state.ties[color]}" onchange="handleTieInput('${color}', this.value)" class="w-10 text-center p-0 border-none bg-transparent font-semibold text-brand-ink focus:ring-0 focus:outline-none text-sm">
+                        <button onclick="updateTie('${color}', 1)" class="w-8 h-8 flex items-center justify-center rounded-full bg-brand-sage text-white shadow-sm hover:bg-brand-sage/80 transition-colors">+</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // 更新邏輯
+        function updateTie(color, delta) {
+            let newVal = state.ties[color] + delta;
+            if (newVal < 0) newVal = 0;
+            state.ties[color] = newVal;
+            saveState();
+            updateUI();
+        }
+
+        function handleTieInput(color, val) {
+            let newVal = parseInt(val) || 0;
+            if (newVal < 0) newVal = 0;
+            state.ties[color] = newVal;
+            saveState();
+            updateUI();
+        }
+
+        function updateScroll(delta) {
+            let newVal = state.scrolls + delta;
+            if (newVal < 0) newVal = 0;
+            state.scrolls = newVal;
+            saveState();
+            updateUI();
+        }
+
+        function handleScrollInput(val) {
+            let newVal = parseInt(val) || 0;
+            if (newVal < 0) newVal = 0;
+            state.scrolls = newVal;
+            saveState();
+            updateUI();
+        }
+
+        function setMeetupLocation(loc) {
+            state.location = loc;
+            document.getElementById('meetup-location').value = loc;
+            saveState();
+            updateUI();
+        }
+
+        // 綁定運送方式事件
+        document.querySelectorAll('input[name="delivery"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                state.delivery = e.target.value;
+                saveState();
+                updateUI();
+            });
+        });
+
+        document.getElementById('meetup-location').addEventListener('input', (e) => {
+            state.location = e.target.value;
+            saveState();
+            updateUI();
+        });
+
+        // UI 更新與計算
+        let currentOrderText = '';
+
+        function updateUI() {
+            // 1. 更新輸入框數值
+            renderTies(); // 重新渲染領帶區確保數值正確
+            document.getElementById('scroll-input').value = state.scrolls;
+            document.getElementById('meetup-location').value = state.location;
+
+            // 2. 更新運送方式 UI
+            document.querySelectorAll('input[name="delivery"]').forEach(radio => {
+                const label = radio.closest('label');
+                if (radio.value === state.delivery) {
+                    radio.checked = true;
+                    label.classList.add('bg-brand-paper', 'border-brand-sage/30');
+                    label.classList.remove('border-transparent');
+                } else {
+                    label.classList.remove('bg-brand-paper', 'border-brand-sage/30');
+                    label.classList.add('border-transparent');
+                }
+            });
+
+            const inPersonDetails = document.getElementById('in-person-details');
+            if (state.delivery === 'in-person') {
+                inPersonDetails.classList.remove('hidden');
+                setTimeout(() => inPersonDetails.style.opacity = '1', 10);
+            } else {
+                inPersonDetails.classList.add('hidden');
+                inPersonDetails.style.opacity = '0';
+            }
+
+            // 3. 計算總價與生成文字
+            let tiesCount = 0;
+            const activeTies = [];
+            
+            colors.forEach(c => {
+                if (state.ties[c] > 0) {
+                    tiesCount += state.ties[c];
+                    activeTies.push(`${c}*${state.ties[c]}`);
+                }
+            });
+
+            const shippingCost = state.delivery === '711' ? SHIPPING_PRICE : 0;
+            const total = (tiesCount * TIE_PRICE) + (state.scrolls * SCROLL_PRICE) + shippingCost;
+            
+            document.getElementById('total-price').innerText = `$${total}`;
+
+            const parts = [];
+            
+            if (activeTies.length > 0) {
+                parts.push(`【領帶 Ties】${activeTies.join(', ')}`);
+            }
+            
+            if (state.scrolls > 0) {
+                parts.push(`【卷軸 Scrolls】${state.scrolls}個`);
+            }
+            
+            if (state.delivery === '711') {
+                parts.push(`【運送 Delivery】7-11 (+${SHIPPING_PRICE})`);
+            } else {
+                parts.push(`【運送 Delivery】面交 In-person`);
+                if (state.location.trim()) {
+                    parts.push(`【地點 Location】${state.location.trim()}`);
+                }
+            }
+            
+            parts.push(`------------------`);
+            parts.push(`【總計 Total】$${total}`);
+
+            const previewEl = document.getElementById('order-preview');
+            const copyBtn = document.getElementById('copy-btn');
+
+            if (activeTies.length === 0 && state.scrolls === 0) {
+                currentOrderText = '尚未選擇商品';
+                previewEl.innerText = currentOrderText;
+                previewEl.classList.add('text-brand-ink/50');
+                
+                // 停用按鈕
+                copyBtn.disabled = true;
+                copyBtn.className = "w-full py-4 px-4 rounded-xl flex items-center justify-center gap-2 font-bold tracking-widest transition-all duration-300 bg-brand-sand/50 text-brand-ink/40 cursor-not-allowed";
+            } else {
+                currentOrderText = parts.join('\n');
+                previewEl.innerText = currentOrderText;
+                previewEl.classList.remove('text-brand-ink/50');
+                
+                // 啟用按鈕
+                copyBtn.disabled = false;
+                copyBtn.className = "w-full py-4 px-4 rounded-xl flex items-center justify-center gap-2 font-bold tracking-widest transition-all duration-300 bg-brand-sage text-white hover:bg-brand-ink hover:shadow-soft active:scale-[0.98] cursor-pointer";
+            }
+        }
+
+        // 複製功能
+        function copyToClipboard() {
+            if (currentOrderText === '尚未選擇商品') return;
+
+            const textArea = document.createElement("textarea");
+            textArea.value = currentOrderText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                
+                // UI 回饋
+                const copyBtn = document.getElementById('copy-btn');
+                const copyText = document.getElementById('copy-text');
+                const copyIcon = document.getElementById('copy-icon');
+                
+                copyBtn.className = "w-full py-4 px-4 rounded-xl flex items-center justify-center gap-2 font-bold tracking-widest transition-all duration-300 bg-brand-clay text-white shadow-soft";
+                copyText.innerText = "已複製到剪貼簿！";
+                copyIcon.innerHTML = `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>`;
+
+                setTimeout(() => {
+                    updateUI(); // 恢復按鈕原本狀態
+                    copyText.innerText = "一鍵複製訂單";
+                    copyIcon.innerHTML = `<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>`;
+                }, 2000);
+
+            } catch (err) {
+                console.error('複製失敗', err);
+                // 替代 Alert 的做法，使用 UI 顯示錯誤
+                const copyText = document.getElementById('copy-text');
+                copyText.innerText = "複製失敗，請手動選取上方文字";
+                setTimeout(() => {
+                    copyText.innerText = "一鍵複製訂單";
+                }, 3000);
+            } finally {
+                document.body.removeChild(textArea);
+            }
+        }
+
+        // 頁面載入時初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            updateUI();
+        });
+
+    </script>
+</body>
+</html>

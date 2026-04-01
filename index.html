@@ -218,11 +218,12 @@
                 CONNECT
             </div>
             
-            <div class="text-center max-w-2xl mx-auto">
+            <div class="text-center w-full max-w-4xl mx-auto">
                 <h3 class="text-xl font-serif text-ink mb-2 tracking-widest">關於我</h3>
-                <p class="text-gray-500 text-sm font-light mb-8">在這裡找到更多關於我的故事與分享</p>
+                <p class="text-gray-500 text-sm font-light mb-6">在這裡找到更多關於我的故事與分享</p>
                 
-                <div id="social-container" class="flex flex-wrap justify-center gap-3 md:gap-4">
+                <!-- 修改為可橫向滑動的容器 -->
+                <div id="social-container" class="flex overflow-x-auto no-scrollbar gap-3 px-4 pb-4 -mx-4 md:mx-0 md:px-0 md:justify-center snap-x">
                     <!-- JS 動態插入社群連結 -->
                 </div>
             </div>
@@ -419,12 +420,13 @@
             const btn = document.createElement('a');
             btn.href = item.link;
             btn.target = "_blank";
+            // 改為不壓縮 (flex-shrink-0) 的圓角矩形樣式
             btn.className = `
-                btn-hover inline-flex items-center justify-center gap-2 px-4 py-2 md:px-6 md:py-3 
-                border border-gray-300 rounded-full md:rounded-sm text-xs md:text-sm tracking-widest text-gray-600
-                bg-transparent w-[calc(50%-0.5rem)] md:w-auto
+                btn-hover inline-flex flex-shrink-0 items-center justify-center gap-2 px-6 py-3.5 
+                border border-gray-200 rounded-2xl text-[13px] md:text-sm tracking-widest text-gray-600
+                bg-white shadow-sm transition-all duration-300 snap-center
             `;
-            btn.innerHTML = `<i class="${item.icon} text-base md:text-lg"></i><span>${item.title}</span>`;
+            btn.innerHTML = `<i class="${item.icon} text-lg md:text-xl"></i><span>${item.title}</span>`;
             socialContainer.appendChild(btn);
         });
 

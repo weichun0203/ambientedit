@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常溫現金流四象限｜Ambient Cashflow Quadrant</title>
+    
+    <!-- Meta Tags -->
+    <meta name="description" content="透過常溫編集所的互動式引導，探索富爸爸現金流四象限（ESBI），釐清您的財務位置，規劃邁向財務自由的路徑。">
+    <meta name="keywords" content="現金流四象限, ESBI, 財務自由, 被動收入, 常溫編集所, Ambient Edit Studio, 財商教育">
+    
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "常溫現金流四象限｜Ambient Cashflow Quadrant",
+      "description": "互動式探索現金流四象限，協助使用者釐清財務現狀與目標。",
+      "publisher": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      }
+    }
+    </script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Config for Brand Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Noto Serif TC"', 'serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    },
+                    backgroundImage: {
+                        'noise': "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E\")",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #fdfbf7;
+            color: #4a4a4a;
+        }
+        .bg-noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+        /* Hide scrollbar for clean look but allow scrolling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdfbf7; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e6e2dd; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4a59a; 
+        }
+        .quadrant-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .quadrant-card.active {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+        }
+        /* Custom styling for inputs */
+        .input-group label {
+            transition: color 0.3s;
+        }
+        .input-group:focus-within label {
+            color: #4a4a4a;
+        }
+        .fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="font-sans antialiased relative min-h-screen flex flex-col">
+    <!-- GA4 Tracking Code -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+    <!-- End GA4 Tracking Code -->
+
+    <div class="bg-noise-overlay"></div>
+
+    <!-- Main Content Wrapper -->
+    <div class="relative z-10 flex-grow px-6 py-12 md:py-20">
+        
+        <!-- Header & Nav -->
+        <header class="max-w-4xl mx-auto mb-10 relative">
+            <!-- Brand Nav Button (Absolute Right) -->
+            <nav class="absolute right-0 top-0 md:top-2 z-20">
+                <a href="https://weichun0203.github.io/ambientedit/" 
+                   class="group inline-flex items-center px-3 py-2 md:px-4 md:py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+                   aria-label="返回常溫首頁">
+                    <!-- Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <!-- Text (手機版隱藏文字以避免與標題重疊) -->
+                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300 hidden sm:inline">常溫首頁</span>
+                </a>
+            </nav>
+
+            <div class="fade-in text-center pt-14 md:pt-0" style="animation-delay: 0.1s;">
+                <h1 class="font-serif text-3xl md:text-5xl text-brand-ink mb-3 tracking-wide">現金流四象限</h1>
+                <p class="text-brand-sage font-serif italic text-lg tracking-wider">常溫編集所｜CASHFLOW Quadrant</p>
+                <div class="w-12 h-1 bg-brand-clay mx-auto mt-6 rounded-full opacity-60"></div>
+                <p class="mt-6 text-brand-ink/80 max-w-2xl mx-auto leading-relaxed text-sm md:text-base mb-8">
+                    用行銷的眼睛看世界，用投資的腦袋過生活。<br>
+                    真正的財富不是數字，而是你對生活的選擇權。
+                </p>
+            </div>
+        </header>
+
+        <!-- Main Interactive Area -->
+        <main class="max-w-4xl mx-auto">
+            
+            <!-- Tabs -->
+            <div class="flex justify-center mb-10 fade-in" style="animation-delay: 0.2s;">
+                <div class="inline-flex bg-brand-sand/30 p-1 rounded-full">
+                    <button onclick="switchTab('learn')" id="btn-learn" class="px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-white shadow-soft text-brand-ink">探索象限</button>
+                    <button onclick="switchTab('assess')" id="btn-assess" class="px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 text-brand-ink/60 hover:text-brand-ink">深度檢測</button>
+                </div>
+            </div>
+
+            <!-- Tab Content: Learn -->
+            <div id="tab-learn" class="fade-in transition-opacity duration-300" style="animation-delay: 0.3s;">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+                    <!-- Center decorative line for desktop -->
+                    <div class="hidden md:block absolute top-1/2 left-0 w-full h-px bg-brand-sand -z-10"></div>
+                    <div class="hidden md:block absolute top-0 left-1/2 w-px h-full bg-brand-sand -z-10"></div>
+
+                    <!-- E Quadrant (Top Left) - Sage Color - Bar Left -->
+                    <div onclick="showDetail('E')" class="quadrant-card group cursor-pointer bg-white p-6 rounded-2xl border border-brand-sand hover:border-brand-sage relative overflow-hidden h-64 flex flex-col justify-center items-center text-center">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-brand-sage opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <span class="text-6xl font-serif text-brand-sand group-hover:text-brand-sage/20 transition-colors absolute top-4 right-6 font-bold">E</span>
+                        <h3 class="text-xl font-serif text-brand-ink mb-2">Employee</h3>
+                        <div class="mb-4 flex items-center justify-center">
+                            <span class="text-brand-sage text-sm font-bold tracking-widest">雇員</span>
+                            <span class="text-brand-sage/60 text-xs font-bold tracking-wider border-l border-brand-sage/30 pl-2 ml-2">安全性 VS 自由</span>
+                        </div>
+                        <p class="text-brand-ink/70 text-sm">你的時間被標價了嗎？<br>每天販售 8 小時的自由</p>
+                    </div>
+
+                    <!-- B Quadrant (Top Right) - Clay Color - Bar Left -->
+                    <div onclick="showDetail('B')" class="quadrant-card group cursor-pointer bg-white p-6 rounded-2xl border border-brand-sand hover:border-brand-clay relative overflow-hidden h-64 flex flex-col justify-center items-center text-center">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-brand-clay opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <span class="text-6xl font-serif text-brand-sand group-hover:text-brand-clay/20 transition-colors absolute top-4 right-6 font-bold">B</span>
+                        <h3 class="text-xl font-serif text-brand-ink mb-2">Business Owner</h3>
+                        <div class="mb-4 flex items-center justify-center">
+                            <span class="text-brand-clay text-sm font-bold tracking-widest">企業主</span>
+                            <span class="text-brand-clay/60 text-xs font-bold tracking-wider border-l border-brand-clay/30 pl-2 ml-2">系統 VS 人力</span>
+                        </div>
+                        <p class="text-brand-ink/70 text-sm">去度假，收入依然進帳<br>擁有系統，而非擁有工作</p>
+                    </div>
+
+                    <!-- S Quadrant (Bottom Left) - Sage Color - Bar Right -->
+                    <div onclick="showDetail('S')" class="quadrant-card group cursor-pointer bg-white p-6 rounded-2xl border border-brand-sand hover:border-brand-sage relative overflow-hidden h-64 flex flex-col justify-center items-center text-center">
+                        <div class="absolute top-0 right-0 w-1 h-full bg-brand-sage opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <span class="text-6xl font-serif text-brand-sand group-hover:text-brand-sage/20 transition-colors absolute top-4 right-6 font-bold">S</span>
+                        <h3 class="text-xl font-serif text-brand-ink mb-2">Self-Employed</h3>
+                        <div class="mb-4 flex items-center justify-center">
+                            <span class="text-brand-sage text-sm font-bold tracking-widest">自雇者</span>
+                            <span class="text-brand-sage/60 text-xs font-bold tracking-wider border-l border-brand-sage/30 pl-2 ml-2">專業 VS 系統</span>
+                        </div>
+                        <p class="text-brand-ink/70 text-sm">是老闆，還是最累的員工？<br>手停口停的才華陷阱</p>
+                    </div>
+
+                    <!-- I Quadrant (Bottom Right) - Clay Color - Bar Right -->
+                    <div onclick="showDetail('I')" class="quadrant-card group cursor-pointer bg-white p-6 rounded-2xl border border-brand-sand hover:border-brand-clay relative overflow-hidden h-64 flex flex-col justify-center items-center text-center">
+                        <div class="absolute top-0 right-0 w-1 h-full bg-brand-clay opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <span class="text-6xl font-serif text-brand-sand group-hover:text-brand-clay/20 transition-colors absolute top-4 right-6 font-bold">I</span>
+                        <h3 class="text-xl font-serif text-brand-ink mb-2">Investor</h3>
+                        <div class="mb-4 flex items-center justify-center">
+                            <span class="text-brand-clay text-sm font-bold tracking-widest">投資者</span>
+                            <span class="text-brand-clay/60 text-xs font-bold tracking-wider border-l border-brand-clay/30 pl-2 ml-2">複利 VS 勞力</span>
+                        </div>
+                        <p class="text-brand-ink/70 text-sm">讓錢生出子子孫孫<br>最忠誠的 24 小時員工</p>
+                    </div>
+                </div>
+
+                <!-- Detail Modal / Info Area -->
+                <div id="quadrant-info" class="mt-8 bg-brand-paper border border-brand-sand rounded-2xl p-6 md:p-8 hidden shadow-soft">
+                    <h4 id="info-title" class="text-2xl font-serif text-brand-ink mb-2"></h4>
+                    <p id="info-subtitle" class="text-brand-ink font-bold text-sm tracking-widest mb-4 uppercase opacity-50"></p>
+                    <div class="w-full h-px bg-brand-sand mb-6"></div>
+                    
+                    <!-- 1. 目前說明 -->
+                    <p id="info-desc" class="text-brand-ink/80 leading-relaxed mb-8"></p>
+                    
+                    <!-- 2. 優缺點 (Pros & Cons) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-white p-5 rounded-xl border border-brand-sand shadow-sm">
+                            <h5 class="text-brand-sage font-bold text-sm tracking-widest mb-3 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                象限優勢 (Pros)
+                            </h5>
+                            <ul id="info-pros" class="space-y-2 text-sm text-brand-ink/70"></ul>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl border border-brand-sand shadow-sm">
+                            <h5 class="text-brand-clay font-bold text-sm tracking-widest mb-3 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                潛在挑戰 (Cons)
+                            </h5>
+                            <ul id="info-cons" class="space-y-2 text-sm text-brand-ink/70"></ul>
+                        </div>
+                    </div>
+
+                    <!-- 3. 下一步優化 -->
+                    <div class="mb-8 bg-brand-sand/10 p-5 rounded-xl border border-brand-sand/50">
+                        <h5 class="text-brand-ink font-bold text-sm tracking-widest mb-2 flex items-center">
+                            <svg class="w-4 h-4 text-brand-ink/50 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                            下一步優化方向
+                        </h5>
+                        <p id="info-optimization" class="text-sm text-brand-ink/80 leading-relaxed"></p>
+                    </div>
+
+                    <!-- 4. 行動計畫 -->
+                    <div class="bg-brand-sand/40 rounded-xl p-5 border-l-4 border-brand-sage">
+                        <span class="text-xs text-brand-ink font-bold uppercase tracking-widest block mb-2 opacity-60">常溫思考：Action Plan</span>
+                        <p id="info-advice" class="text-sm text-brand-ink font-medium leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: Deep Assess -->
+            <div id="tab-assess" class="hidden fade-in" style="animation-delay: 0.1s;">
+                <div class="bg-white p-6 md:p-10 rounded-2xl shadow-soft border border-brand-sand">
+                    <div class="text-center mb-8">
+                        <h3 class="text-xl font-serif text-brand-ink mb-2">深度財務健檢</h3>
+                        <p class="text-sm text-brand-ink/60">我們不只看錢，更看時間。真正的富裕是「選擇權」。</p>
+                    </div>
+                    
+                    <div class="space-y-8">
+                        <!-- Step 1: Income Structure -->
+                        <div class="border-b border-brand-sand/50 pb-6">
+                            <h4 class="text-brand-ink font-bold text-base mb-4 flex items-center">
+                                <span class="w-6 h-6 rounded-full bg-brand-sand text-brand-ink text-xs flex items-center justify-center mr-2">1</span>
+                                收入來源 (每月)
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <div class="bg-brand-sage/5 p-4 rounded-lg border border-brand-sage/20">
+                                        <div class="flex justify-between items-center mb-3">
+                                            <p class="text-xs text-brand-sage font-bold tracking-widest">主動收入 (左側)</p>
+                                            <div class="bg-white border border-brand-sand rounded-full p-0.5 flex text-[10px] shadow-sm">
+                                                <button onclick="setActivePeriod('monthly')" id="btn-active-monthly" class="px-3 py-0.5 rounded-full bg-brand-sage text-white transition-colors">月收</button>
+                                                <button onclick="setActivePeriod('yearly')" id="btn-active-yearly" class="px-3 py-0.5 rounded-full text-brand-ink/60 hover:text-brand-ink transition-colors">年收</button>
+                                            </div>
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <label id="label-e" class="block text-xs text-brand-ink/50 mb-1">E 薪資收入 (月)</label>
+                                            <input type="number" id="input-e" placeholder="0" class="w-full bg-white border border-brand-sand rounded px-3 py-2 text-brand-ink text-sm focus:outline-none focus:border-brand-sage transition-all duration-300">
+                                        </div>
+                                        <div class="input-group">
+                                            <label id="label-s" class="block text-xs text-brand-ink/50 mb-1">S 接案/業務收入 (月)</label>
+                                            <input type="number" id="input-s" placeholder="0" class="w-full bg-white border border-brand-sand rounded px-3 py-2 text-brand-ink text-sm focus:outline-none focus:border-brand-sage transition-all duration-300">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="space-y-4">
+                                    <div class="bg-brand-clay/5 p-4 rounded-lg border border-brand-clay/20">
+                                        <div class="flex justify-between items-center mb-3">
+                                            <p class="text-xs text-brand-clay font-bold tracking-widest">被動/系統收入 (右側)</p>
+                                            <div class="bg-white border border-brand-sand rounded-full p-0.5 flex text-[10px] shadow-sm">
+                                                <button onclick="setPassivePeriod('monthly')" id="btn-passive-monthly" class="px-3 py-0.5 rounded-full bg-brand-clay text-white transition-colors">月收</button>
+                                                <button onclick="setPassivePeriod('yearly')" id="btn-passive-yearly" class="px-3 py-0.5 rounded-full text-brand-ink/60 hover:text-brand-ink transition-colors">年收</button>
+                                            </div>
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <label id="label-b" class="block text-xs text-brand-ink/50 mb-1">B 系統自動賺的錢 (月)</label>
+                                            <input type="number" id="input-b" placeholder="0" class="w-full bg-white border border-brand-sand rounded px-3 py-2 text-brand-ink text-sm focus:outline-none focus:border-brand-clay transition-all duration-300">
+                                        </div>
+                                        <div class="input-group">
+                                            <label id="label-i" class="block text-xs text-brand-ink/50 mb-1">I 股息/房租/利息 (月)</label>
+                                            <input type="number" id="input-i" placeholder="0" class="w-full bg-white border border-brand-sand rounded px-3 py-2 text-brand-ink text-sm focus:outline-none focus:border-brand-clay transition-all duration-300">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Time & Cost -->
+                        <div class="border-b border-brand-sand/50 pb-6">
+                            <h4 class="text-brand-ink font-bold text-base mb-4 flex items-center">
+                                <span class="w-6 h-6 rounded-full bg-brand-sand text-brand-ink text-xs flex items-center justify-center mr-2">2</span>
+                                時間與生存成本
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <div class="flex justify-between items-end mb-1">
+                                        <label class="block text-xs text-brand-ink/60">每週投入「主動工作」時數</label>
+                                        <button onclick="document.getElementById('input-hours').value = 40;" class="text-[10px] text-brand-sage hover:text-brand-ink border border-brand-sage/50 hover:border-brand-ink rounded px-2 py-0.5 transition-colors">
+                                            8小時×5天=40
+                                        </button>
+                                    </div>
+                                    <p class="text-[10px] text-brand-ink/50 mb-2">包含 <span class="text-brand-clay font-bold bg-brand-clay/10 px-1 rounded">通勤、加班、回覆工作訊息</span> 的時間</p>
+                                    <input type="number" id="input-hours" placeholder="例如: 50" class="w-full bg-brand-paper border border-brand-sand rounded px-3 py-2 text-brand-ink focus:outline-none focus:border-brand-sage">
+                                </div>
+                                <div>
+                                    <div class="flex justify-between items-end mb-1">
+                                        <label class="block text-xs text-brand-ink/60">每月最低「生存開銷」</label>
+                                        <button onclick="toggleExpensesDetail()" class="text-[10px] text-brand-clay hover:text-brand-ink border border-brand-clay/50 hover:border-brand-ink rounded px-2 py-0.5 transition-colors flex items-center">
+                                            <span>展開試算</span>
+                                            <svg id="expenses-chevron" class="w-3 h-3 ml-1 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                        </button>
+                                    </div>
+                                    <p class="text-[10px] text-brand-ink/40 mb-2">房租、飲食、保險、基本生活費</p>
+                                    <input type="number" id="input-expenses" placeholder="例如: 30000" class="w-full bg-brand-paper border border-brand-sand rounded px-3 py-2 text-brand-ink focus:outline-none focus:border-brand-clay transition-all" oninput="clearExpensesDetail()">
+                                    
+                                    <!-- Expandable detail area -->
+                                    <div id="expenses-detail" class="hidden bg-brand-sand/10 border border-brand-sand rounded-lg p-3 mt-3 space-y-2">
+                                        <div class="flex items-center text-xs">
+                                            <label class="w-16 text-brand-ink/70">居住/房貸</label>
+                                            <input type="number" class="expense-item flex-1 bg-white border border-brand-sand rounded px-2 py-1 text-brand-ink focus:outline-none focus:border-brand-clay" placeholder="0" oninput="sumExpenses()">
+                                        </div>
+                                        <div class="flex items-center text-xs">
+                                            <label class="w-16 text-brand-ink/70">伙食/日用</label>
+                                            <input type="number" class="expense-item flex-1 bg-white border border-brand-sand rounded px-2 py-1 text-brand-ink focus:outline-none focus:border-brand-clay" placeholder="0" oninput="sumExpenses()">
+                                        </div>
+                                        <div class="flex items-center text-xs">
+                                            <label class="w-16 text-brand-ink/70">水電/電信</label>
+                                            <input type="number" class="expense-item flex-1 bg-white border border-brand-sand rounded px-2 py-1 text-brand-ink focus:outline-none focus:border-brand-clay" placeholder="0" oninput="sumExpenses()">
+                                        </div>
+                                        <div class="flex items-center text-xs">
+                                            <label class="w-16 text-brand-ink/70">交通/通勤</label>
+                                            <input type="number" class="expense-item flex-1 bg-white border border-brand-sand rounded px-2 py-1 text-brand-ink focus:outline-none focus:border-brand-clay" placeholder="0" oninput="sumExpenses()">
+                                        </div>
+                                        <div class="flex items-center text-xs">
+                                            <label class="w-16 text-brand-ink/70">保險/其他</label>
+                                            <input type="number" class="expense-item flex-1 bg-white border border-brand-sand rounded px-2 py-1 text-brand-ink focus:outline-none focus:border-brand-clay" placeholder="0" oninput="sumExpenses()">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button onclick="calculateDeepResult()" class="bg-brand-sage hover:bg-brand-ink text-white px-8 py-3 rounded-full transition-all duration-300 shadow-md hover:shadow-lg font-medium tracking-wide">
+                                診斷我的財務體質
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Deep Result Area -->
+                    <div id="deep-result-area" class="hidden mt-10 space-y-8 animate-pulse">
+                        
+                        <!-- Metric Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Metric 1: Structure -->
+                            <div class="bg-brand-paper border border-brand-sand p-4 rounded-xl flex flex-col justify-center">
+                                <p class="text-xs text-center text-brand-ink/50 mb-2">收入結構對比</p>
+                                <div class="flex justify-between items-center w-full px-1 mb-2">
+                                    <div class="text-left">
+                                        <span class="text-[10px] text-brand-sage block leading-none mb-1 font-bold tracking-widest">主動</span>
+                                        <span class="text-xl font-serif text-brand-sage font-bold leading-none" id="res-active">0%</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-[10px] text-brand-clay block leading-none mb-1 font-bold tracking-widest">被動</span>
+                                        <span class="text-xl font-serif text-brand-clay font-bold leading-none" id="res-passive">0%</span>
+                                    </div>
+                                </div>
+                                <div class="w-full h-1.5 bg-brand-sand rounded-full overflow-hidden flex">
+                                    <div id="progress-active" class="bg-brand-sage h-full transition-all duration-700 ease-out" style="width: 50%"></div>
+                                    <div id="progress-passive" class="bg-brand-clay h-full transition-all duration-700 ease-out" style="width: 50%"></div>
+                                </div>
+                            </div>
+                            <!-- Metric 2: Freedom -->
+                            <div class="bg-brand-paper border border-brand-sand p-4 rounded-xl text-center">
+                                <p class="text-xs text-brand-ink/50 mb-1">財富自由度</p>
+                                <div class="text-2xl font-serif text-brand-ink font-bold" id="res-freedom">0%</div>
+                                <p class="text-[10px] text-brand-ink/40 mt-1">被動收入覆蓋開銷比例</p>
+                            </div>
+                            <!-- Metric 3: Real Wage -->
+                            <div class="bg-brand-paper border border-brand-sand p-4 rounded-xl text-center">
+                                <p class="text-xs text-brand-ink/50 mb-1">真實時薪</p>
+                                <div class="text-2xl font-serif text-brand-ink font-bold" id="res-wage">$0</div>
+                                <p class="text-[10px] text-brand-ink/40 mt-1">你的時間實際價值</p>
+                            </div>
+                        </div>
+
+                        <!-- Analysis Text -->
+                        <div class="bg-brand-sand/20 p-6 rounded-xl border border-brand-sage/20">
+                            <h5 class="font-serif text-lg text-brand-ink mb-3 flex items-center">
+                                <svg class="w-4 h-4 text-brand-sage mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                                常溫診斷報告
+                            </h5>
+                            <p id="deep-analysis" class="text-sm text-brand-ink/80 leading-relaxed whitespace-pre-line"></p>
+                        </div>
+                        
+                        <!-- Goal Setting (LocalStorage) -->
+                        <div class="border-t border-brand-sand pt-6">
+                            <h5 class="font-serif text-brand-ink mb-2 text-sm">給未來的承諾</h5>
+                            <textarea id="goal-input" rows="2" class="w-full bg-white border border-brand-sand rounded-lg p-3 text-brand-ink text-sm focus:ring-1 focus:ring-brand-sage mb-3" placeholder="看過真實數據後，我想在2026年改變的是..."></textarea>
+                            <div class="flex justify-end">
+                                <button onclick="saveGoal()" class="text-xs font-bold text-white bg-brand-sage px-4 py-2 rounded-full transition-colors hover:bg-brand-ink">
+                                    儲存目標
+                                </button>
+                            </div>
+                            <span id="save-status" class="block text-right text-[10px] text-brand-sage italic opacity-0 transition-opacity mt-1">已記錄</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative z-10 py-8 text-center border-t border-brand-sand/50 mt-auto">
+        <p class="text-xs text-brand-ink/40 font-serif tracking-widest">
+            2026 常溫編集所 Ambient Edit Studio.
+        </p>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Data for Quadrants
+        const quadrantData = {
+            'E': {
+                title: 'Employee (雇員)',
+                subtitle: '安全性 VS 自由',
+                desc: '你習慣每個月5號看到薪水入帳的安心感，但代價是必須依照別人的規則生活。最大的風險不是失業，而是「依賴」。',
+                pros: ['穩定可預期的現金流', '享有公司福利與勞健保保障', '下班後時間相對自由，無營運壓力'],
+                cons: ['收入天花板明顯，難以指數型成長', '時間與地點受制於人', '稅務劣勢（合法節稅空間極小）'],
+                optimization: '提升職場不可取代性以增加主動收入，同時將部分薪水轉化為能產生現金流的資產。',
+                advice: '【行動】今晚回家，計算你的「生存成本」。嘗試每個月強制存下薪水的 10% 作為「自由基金」，這筆錢唯一的用途是購買資產，絕不用於消費。',
+                colorClass: 'text-brand-sage'
+            },
+            'S': {
+                title: 'Self-Employed (自雇者)',
+                subtitle: '專業 VS 系統',
+                desc: '醫師、律師、自由接案者。你看似自由，其實是隨傳隨到的超級員工。如果你的收入在你停止工作那一刻也跟著停止，那你只是買了一份昂貴的工作。',
+                pros: ['高度掌控自己的時間與工作內容', '收入取決於努力程度，無硬性天花板', '能將個人熱情與專業完美結合'],
+                cons: ['手停口停（缺乏系統性被動收入）', '需承擔所有營運與市場風險', '容易陷入過勞危機（校長兼撞鐘）'],
+                optimization: '將個人專業技能「標準化」與「流程化」(SOP)，準備將低價值工作外包，釋放自己的時間。',
+                advice: '【行動】挑選你工作中的一項重複性任務，寫下標準作業流程 (SOP)，並試著外包給助理或數位工具。這是你邁向 B 象限的第一步。',
+                colorClass: 'text-brand-sage'
+            },
+            'B': {
+                title: 'Business Owner (企業主)',
+                subtitle: '系統 VS 人力',
+                desc: '麥當勞之所以強大，不是因為漢堡最好吃，而是因為它的系統能讓任何人都能做出一樣的漢堡。真正的 B 象限，是在你離開一年後，公司運作得比你在的時候更好。',
+                pros: ['收入完全脫離個人時間限制', '善用 OPT(他人時間)與 OPM(他人金錢)產生巨大槓桿', '企業主享有極大的稅務規劃優勢'],
+                cons: ['前期建置成本高，面臨較大的失敗風險', '需要強大的領導、管理與系統建構能力', '初期需投入難以想像的心血與時間'],
+                optimization: '確保系統在沒有你的情況下依然能高效運轉，建立穩健的管理層，並尋找下一個增長引擎。',
+                advice: '【行動】思考如何從「親力親為」轉向「授權管理」。尋找一個即使你睡覺時也能自動運作的商業模式（例如：數位產品、加盟體系、軟體訂閱）。',
+                colorClass: 'text-brand-clay'
+            },
+            'I': {
+                title: 'Investor (投資者)',
+                subtitle: '複利 VS 勞力',
+                desc: '這是遊戲的終極關卡。在這裡，你不需要推銷、不需要管理員工。你的金錢會自我繁殖，生出「利息子孫」。這不是關於有多少錢，而是關於錢流向哪裡。',
+                pros: ['真正的被動收入，實現財富與時間自由', '時間成為盟友，享受複利效應(錢滾錢)', '資本利得通常享有較低的稅率優勢'],
+                cons: ['需要具備高度金融知識與情緒控管能力', '存在資本損失的市場風險', '需要極大的耐心等待複利發酵'],
+                optimization: '定期檢視資產配置與風險管理，讓投資組合具備抗跌與抗通膨的韌性，確保長期穩健。',
+                advice: '【行動】不要等「有錢」才投資。現在就開立證券戶，設定每月自動扣款買入大盤指數 ETF。複利是世界第八大奇蹟，但它需要「時間」作為燃料。',
+                colorClass: 'text-brand-clay'
+            }
+        };
+
+        // UI Interactions
+        function switchTab(tabName) {
+            document.getElementById('tab-learn').classList.add('hidden');
+            document.getElementById('tab-assess').classList.add('hidden');
+            
+            document.getElementById('btn-learn').className = 'px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 text-brand-ink/60 hover:text-brand-ink';
+            document.getElementById('btn-assess').className = 'px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 text-brand-ink/60 hover:text-brand-ink';
+
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            document.getElementById(`btn-${tabName}`).className = 'px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 bg-white shadow-soft text-brand-ink';
+        }
+
+        function showDetail(type) {
+            const infoBox = document.getElementById('quadrant-info');
+            const data = quadrantData[type];
+            
+            document.getElementById('info-title').textContent = data.title;
+            document.getElementById('info-subtitle').textContent = data.subtitle;
+            document.getElementById('info-subtitle').className = `font-bold text-sm tracking-widest mb-4 uppercase ${data.colorClass}`;
+            document.getElementById('info-desc').textContent = data.desc;
+            
+            // Render Pros & Cons
+            const prosList = document.getElementById('info-pros');
+            prosList.innerHTML = data.pros.map(pro => `<li class="flex items-start"><span class="mr-2 opacity-50 mt-0.5">•</span><span>${pro}</span></li>`).join('');
+            
+            const consList = document.getElementById('info-cons');
+            consList.innerHTML = data.cons.map(con => `<li class="flex items-start"><span class="mr-2 opacity-50 mt-0.5">•</span><span>${con}</span></li>`).join('');
+            
+            // Render Optimization & Advice
+            document.getElementById('info-optimization').textContent = data.optimization;
+            document.getElementById('info-advice').textContent = data.advice;
+
+            infoBox.classList.remove('hidden');
+            infoBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+            document.querySelectorAll('.quadrant-card').forEach(card => card.classList.remove('active', 'border-brand-sage', 'border-brand-clay'));
+            
+            const activeColorBorder = (type === 'E' || type === 'S') ? 'border-brand-sage' : 'border-brand-clay';
+            event.currentTarget.classList.add('active', activeColorBorder);
+        }
+
+        // --- 收入週期切換功能 ---
+        let activePeriod = 'monthly';
+        let passivePeriod = 'monthly';
+
+        function setActivePeriod(period) {
+            activePeriod = period;
+            const btnMonthly = document.getElementById('btn-active-monthly');
+            const btnYearly = document.getElementById('btn-active-yearly');
+            const labelE = document.getElementById('label-e');
+            const labelS = document.getElementById('label-s');
+            
+            // 視覺回饋：讓輸入框閃爍一下
+            const inputE = document.getElementById('input-e');
+            const inputS = document.getElementById('input-s');
+            inputE.classList.add('bg-brand-sage/10');
+            inputS.classList.add('bg-brand-sage/10');
+            setTimeout(() => {
+                inputE.classList.remove('bg-brand-sage/10');
+                inputS.classList.remove('bg-brand-sage/10');
+            }, 300);
+
+            if (period === 'monthly') {
+                btnMonthly.className = 'px-3 py-0.5 rounded-full bg-brand-sage text-white transition-colors';
+                btnYearly.className = 'px-3 py-0.5 rounded-full text-brand-ink/60 hover:text-brand-ink transition-colors';
+                labelE.textContent = 'E 薪資收入 (月)';
+                labelS.textContent = 'S 接案/業務收入 (月)';
+            } else {
+                btnYearly.className = 'px-3 py-0.5 rounded-full bg-brand-sage text-white transition-colors';
+                btnMonthly.className = 'px-3 py-0.5 rounded-full text-brand-ink/60 hover:text-brand-ink transition-colors';
+                labelE.textContent = 'E 薪資收入 (年)';
+                labelS.textContent = 'S 接案/業務收入 (年)';
+            }
+        }
+
+        function setPassivePeriod(period) {
+            passivePeriod = period;
+            const btnMonthly = document.getElementById('btn-passive-monthly');
+            const btnYearly = document.getElementById('btn-passive-yearly');
+            const labelB = document.getElementById('label-b');
+            const labelI = document.getElementById('label-i');
+            
+            // 視覺回饋：讓輸入框閃爍一下
+            const inputB = document.getElementById('input-b');
+            const inputI = document.getElementById('input-i');
+            inputB.classList.add('bg-brand-clay/10');
+            inputI.classList.add('bg-brand-clay/10');
+            setTimeout(() => {
+                inputB.classList.remove('bg-brand-clay/10');
+                inputI.classList.remove('bg-brand-clay/10');
+            }, 300);
+
+            if (period === 'monthly') {
+                btnMonthly.className = 'px-3 py-0.5 rounded-full bg-brand-clay text-white transition-colors';
+                btnYearly.className = 'px-3 py-0.5 rounded-full text-brand-ink/60 hover:text-brand-ink transition-colors';
+                labelB.textContent = 'B 系統自動賺的錢 (月)';
+                labelI.textContent = 'I 股息/房租/利息 (月)';
+            } else {
+                btnYearly.className = 'px-3 py-0.5 rounded-full bg-brand-clay text-white transition-colors';
+                btnMonthly.className = 'px-3 py-0.5 rounded-full text-brand-ink/60 hover:text-brand-ink transition-colors';
+                labelB.textContent = 'B 系統自動賺的錢 (年)';
+                labelI.textContent = 'I 股息/房租/利息 (年)';
+            }
+        }
+
+        // --- 展開式記帳本試算功能 ---
+        function toggleExpensesDetail() {
+            const detailDiv = document.getElementById('expenses-detail');
+            const chevron = document.getElementById('expenses-chevron');
+            if (detailDiv.classList.contains('hidden')) {
+                detailDiv.classList.remove('hidden');
+                chevron.classList.add('rotate-180');
+            } else {
+                detailDiv.classList.add('hidden');
+                chevron.classList.remove('rotate-180');
+            }
+        }
+
+        function sumExpenses() {
+            const items = document.querySelectorAll('.expense-item');
+            let total = 0;
+            items.forEach(item => {
+                total += Number(item.value) || 0;
+            });
+            
+            const totalInput = document.getElementById('input-expenses');
+            totalInput.value = total || '';
+            
+            // 讓總金額欄位閃爍一下，提示使用者數字已自動更新
+            totalInput.classList.add('bg-brand-clay/20');
+            setTimeout(() => {
+                totalInput.classList.remove('bg-brand-clay/20');
+            }, 300);
+        }
+
+        function clearExpensesDetail() {
+            // 如果使用者直接手動修改總金額，清空細項避免混淆
+            const items = document.querySelectorAll('.expense-item');
+            items.forEach(item => {
+                item.value = '';
+            });
+        }
+        // ------------------------------
+
+        function calculateDeepResult() {
+            // 1. Get Values
+            let e = Number(document.getElementById('input-e').value) || 0;
+            let s = Number(document.getElementById('input-s').value) || 0;
+            let b = Number(document.getElementById('input-b').value) || 0;
+            let i = Number(document.getElementById('input-i').value) || 0;
+            
+            // 處理主動收入週期轉換 (如果是輸入年收，需除以12轉化為月化現金流)
+            if (activePeriod === 'yearly') {
+                e = e / 12;
+                s = s / 12;
+            }
+
+            // 處理被動收入週期轉換 (如果是輸入年收，需除以12轉化為月化現金流)
+            if (passivePeriod === 'yearly') {
+                b = b / 12;
+                i = i / 12;
+            }
+            
+            let hoursPerWeek = Number(document.getElementById('input-hours').value) || 0;
+            let expenses = Number(document.getElementById('input-expenses').value) || 0;
+
+            // 防呆處理：如果作為分母的數值是 0 或負數，自動轉為 1 避免計算錯誤 (Infinity/NaN)
+            if (hoursPerWeek <= 0) hoursPerWeek = 1;
+            if (expenses <= 0) expenses = 1;
+
+            const activeIncome = e + s;
+            const passiveIncome = b + i;
+            const totalIncome = activeIncome + passiveIncome;
+
+            if (totalIncome <= 0) {
+                alert('請至少填寫一項收入來源，才能為您進行深度的財務體質診斷喔！');
+                return;
+            }
+
+            // 2. Calculations
+            // Metric 1: Active vs Passive Ratio
+            const passiveRatio = Math.round((passiveIncome / totalIncome) * 100);
+            const activeRatio = 100 - passiveRatio;
+            
+            // Metric 2: Freedom Ratio (Passive / Expenses)
+            let freedomRatio = 0;
+            if (expenses > 0) {
+                freedomRatio = Math.round((passiveIncome / expenses) * 100);
+            }
+
+            // Metric 3: Real Wage (Total Income / (Hours * 4.3))
+            // Assume 4.3 weeks per month
+            let realWage = 0;
+            if (hoursPerWeek > 0) {
+                const totalHours = hoursPerWeek * 4.3;
+                realWage = Math.round(totalIncome / totalHours);
+            }
+
+            // 3. Update UI
+            document.getElementById('res-active').textContent = `${activeRatio}%`;
+            document.getElementById('res-passive').textContent = `${passiveRatio}%`;
+            document.getElementById('progress-active').style.width = `${activeRatio}%`;
+            document.getElementById('progress-passive').style.width = `${passiveRatio}%`;
+            
+            document.getElementById('res-freedom').textContent = `${freedomRatio}%`;
+            
+            document.getElementById('res-wage').textContent = `$${realWage.toLocaleString()}`;
+
+            // 4. Generate Analysis
+            let analysis = "";
+            
+            // Logic for Freedom
+            if (freedomRatio >= 100) {
+                analysis += "🏆 **財務自由達成**\n太驚人了！您的被動收入已經大於生活開銷。您工作的每一分鐘都是因為「想做」，而不是「必須做」。\n\n";
+            } else if (freedomRatio >= 50) {
+                analysis += "🌱 **半自由狀態**\n您的資產已經能負擔一半的生活。這是最舒服也最危險的階段，請小心「生活水準通膨」，別讓開銷吃掉您的自由。\n\n";
+            } else {
+                analysis += "🏗️ **累積階段**\n目前您仍需要工作來維持生活。這很正常，但請將目標鎖定在提高「右側象限收入」，而不僅僅是加薪。\n\n";
+            }
+
+            // Logic for Real Wage & Structure
+            if (activeIncome > 0 && hoursPerWeek > 50 && realWage < 300) {
+                analysis += "⚠️ **時間警訊**\n您的工時過長，稀釋了您的時薪。您可能陷入了「窮忙」的陷阱。請思考：有什麼工作是可以外包或自動化的？";
+            } else if (passiveRatio < 10) {
+                analysis += "💡 **常溫建議**\n您高度依賴主動收入。風險在於「手停口停」。試著將每個月收入的 20% 強制轉移到投資帳戶，這是建立護城河的唯一方法。";
+            } else if (passiveRatio >= 30) {
+                analysis += "✨ **優質結構**\n您的收入結構很健康，擁有不錯的抗風險能力。繼續保持複利效應，時間是您最好的朋友。";
+            }
+
+            document.getElementById('deep-analysis').textContent = analysis;
+
+            // Show Result
+            const resultArea = document.getElementById('deep-result-area');
+            resultArea.classList.remove('hidden');
+            resultArea.classList.remove('animate-pulse');
+        }
+
+        // LocalStorage Logic
+        function loadGoal() {
+            const savedGoal = localStorage.getItem('ambient_cashflow_goal');
+            if (savedGoal) {
+                document.getElementById('goal-input').value = savedGoal;
+            }
+        }
+
+        function saveGoal() {
+            const goal = document.getElementById('goal-input').value;
+            localStorage.setItem('ambient_cashflow_goal', goal);
+            
+            const status = document.getElementById('save-status');
+            status.classList.remove('opacity-0');
+            setTimeout(() => {
+                status.classList.add('opacity-0');
+            }, 2000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGoal();
+        });
+
+    </script>
+</body>
+</html>

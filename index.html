@@ -30,12 +30,12 @@
     <meta property="og:description" content="把複雜的計算交給程式，將時間留給生活中的美好事物。">
     <meta property="og:site_name" content="常溫編集所 Ambient Edit Studio">
     <meta property="og:locale" content="zh_TW">
-    <!-- PWA設定嵌入 -->
+    <!-- PWA設定 -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#d4a59a">
     <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <!-- PWA設定嵌入結束 -->
+    
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -51,7 +51,6 @@
     </script>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -129,7 +128,6 @@
             border-color: #8da399;
         }
 
-        /* 隱藏滾動條但保持可滾動 */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -138,7 +136,6 @@
             scrollbar-width: none;
         }
 
-        /* 開場動畫專用樣式 */
         .no-scroll {
             overflow: hidden;
         }
@@ -183,7 +180,7 @@
 
     <main class="flex-grow w-full max-w-6xl mx-auto px-4 md:px-6 pb-20">
         
-        <!-- 搜尋與篩選列 (加入 sticky 吸頂與毛玻璃效果) -->
+        <!-- 搜尋與篩選列 -->
         <div class="sticky top-0 z-40 bg-paper/90 backdrop-blur-md pt-4 md:pt-6 mb-6 md:mb-8 flex flex-col gap-4 border-b border-sand pb-4 md:pb-6 -mx-4 px-4 md:-mx-6 md:px-6">
             
             <!-- 搜尋框 -->
@@ -193,19 +190,17 @@
                     class="search-input w-full pl-9 pr-4 py-2 bg-transparent border-b border-gray-200 text-ink placeholder-gray-400 text-sm tracking-wide focus:border-sage transition-colors">
             </div>
 
-            <!-- 分類按鈕 (手機版支援左右滑動) -->
+            <!-- 分類按鈕 (自定義排序將反映在此) -->
             <div id="filter-buttons" class="flex overflow-x-auto no-scrollbar gap-2 pb-2 md:pb-0 md:flex-wrap md:justify-center">
                 <button onclick="filterTools('all')" class="filter-btn active px-4 py-1.5 rounded-full text-[13px] md:text-sm tracking-wide bg-ink text-paper border border-ink flex-shrink-0">
                     全部
                 </button>
-                <!-- JS 動態插入分類 -->
             </div>
             
         </div>
         
-        <!-- 網格容器：手機版 3 欄，平板 4 欄，電腦 5 欄 -->
+        <!-- 網格容器 -->
         <div id="tool-container" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6 mb-20">
-            <!-- JS 動態插入工具卡片 -->
         </div>
 
         <div id="empty-state" class="hidden text-center py-20 text-gray-400 font-light">
@@ -222,9 +217,7 @@
                 <h3 class="text-xl font-serif text-ink mb-2 tracking-widest">關於我</h3>
                 <p class="text-gray-500 text-sm font-light mb-6">在這裡找到更多關於我的故事與分享</p>
                 
-                <!-- 修改為可橫向滑動的容器 -->
                 <div id="social-container" class="flex overflow-x-auto no-scrollbar gap-3 px-4 pb-4 -mx-4 md:mx-0 md:px-0 md:justify-center snap-x">
-                    <!-- JS 動態插入社群連結 -->
                 </div>
             </div>
         </div>
@@ -237,53 +230,62 @@
 
     <script>
         // ==========================================
-        // 0. 開場動畫邏輯 (Splash Screen Logic)
+        // 0. 開場動畫邏輯
         // ==========================================
         window.addEventListener('load', () => {
             const splash = document.getElementById('splash-screen');
-            
-            // 延遲 0.8 秒後開始淡出開場畫面
             setTimeout(() => {
                 splash.classList.add('opacity-0', 'pointer-events-none');
-                
-                // 動畫結束後徹底移除元素，並解鎖背景滾動
                 setTimeout(() => {
                     splash.remove();
                     document.body.classList.remove('no-scroll');
-                }, 500); // 這裡的 500 對應 CSS 裡的 duration-500
+                }, 500);
             }, 800);
         });
 
         // ==========================================
-        // 1. 工具列表設定 (Tools Data)
+        // 1. 工具列表與排序設定
         // ==========================================
+        
+        // 【自定義排序設定】在此調整分類出現的先後順序
+        const tagOrder = [
+            "Invest",   // 理財投資
+            "Business", // 商務工具
+            "Planning", // 規劃分析
+            "Product",  // 產品應用
+            "Growth",   // 自我成長
+            "Daily",    // 生活日常
+            "Design",   // 設計美感
+            "Tool"      // 實用工具
+        ];
+
         const toolsData = [
-            { title: "運費成本報價", desc: "精算跨境物流開銷，掌握每一分成本與利潤。", link: "shipping-fee-calculator.html", tag: "Business", icon: "ph-truck", color: "text-stone-600" },
-            { title: "存股加薪計算", desc: "預見未來的被動收入，規劃溫柔的財富藍圖。", link: "dividend-investing.html", tag: "Invest", icon: "ph-plant", color: "text-emerald-700" },
-            { title: "薪資分配計算", desc: "或是儲蓄或是享受，找到收支的完美平衡。", link: "daily-budget.html", tag: "Invest", icon: "ph-wallet", color: "text-amber-700" },
-            { title: "複利股價計算", desc: "時間是投資最好的朋友，見證複利的力量。", link: "compound-interest.html", tag: "Invest", icon: "ph-trend-up", color: "text-blue-800" },
-            { title: "時間價值換算", desc: "每筆支出，都是一段生命的交換。", link: "time-value-of-money.html", tag: "Invest", icon: "ph-clock", color: "text-blue-800" },
-            { title: "決策矩陣分析", desc: "透過理性權重梳理，輔助感性的選擇。", link: "decision-matrix-analysis.html", tag: "Planning", icon: "ph-matrix-logo", color: "text-amber-700" },
-            { title: "曼陀羅九宮格", desc: "分析問題核心、完整思考，讓理想落地。", link: "mandala-chart.html", tag: "Planning", icon: "ph-squares-four", color: "text-amber-700" },
-            { title: "LOGO設計思考", desc: "建立基礎LOGO設計認知，開始打造品牌。", link: "logo-design.html", tag: "Design", icon: "ph-pen-nib", color: "text-amber-700" },
-            { title: "職涯探索羅盤", desc: "透過喜好與耐心，記錄你的天賦熱情。", link: "career-exploration.html", tag: "Growth", icon: "ph-compass", color: "text-amber-700" },
-            { title: "食間・菜單", desc: "解決選擇障礙，今天要吃什麼？", link: "taiwanese-food.html", tag: "Daily", icon: "ph-bowl-food", color: "text-amber-700" },
-            { title: "愛的基礎原型", desc: "愛的六色輪 - 探索情感基礎理論。", link: "love-style.html", tag: "Growth", icon: "ph-heart", color: "text-rose-700" },
-            { title: "理財金字塔", desc: "建立完整基礎的財務知識結構。", link: "money-stack.html", tag: "Invest", icon: "ph-pyramid", color: "text-amber-700" },
-            { title: "生活任務小卡", desc: "讓簡單的任務重整生活的平靜。", link: "daily-task.html", tag: "Daily", icon: "ph-check-square-offset", color: "text-teal-700" },
-            { title: "病人照護APP", desc: "醫院照顧紀錄使用", link: "patient-care-log.html", tag: "Product", icon: "ph-bed", color: "text-blue-600" },
-            { title: "時間記帳APP", desc: "覺察與分析日常的時間流", link: "time-expenses.html", tag: "Product", icon: "ph-hourglass", color: "text-indigo-600" },
-            { title: "貼心票卷產生", desc: "讓生活儀式感充滿活力", link: "love-coupon.html", tag: "Product", icon: "ph-ticket", color: "text-pink-600" },
-            { title: "任務懸賞產生", desc: "活潑的方式解決日常任務", link: "task-generator.html", tag: "Product", icon: "ph-scroll", color: "text-amber-800" },
-            { title: "愛的六種方式", desc: "愛的實際行動與表達形式", link: "love-language.html", tag: "Growth", icon: "ph-hand-heart", color: "text-rose-600" },
-            { title: "定期定額成本", desc: "為資產穩定增值，訂下策略資產增值", link: "stock-analysis.html", tag: "Invest", icon: "ph-chart-line-up", color: "text-emerald-700" },
-            { title: "QR-code產生", desc: "即時生成 QR Code，一鍵下載無需等待。", link: "qr-code.html", tag: "Tool", icon: "ph-qr-code", color: "text-gray-700" },
-            { title: "朋友圈APP", desc: "管理你的交友圈，時時維繫重要的人", link: "friend-zone.html", tag: "Product", icon: "ph-users-three", color: "text-emerald-600" },
-            { title: "訂購單APP", desc: "建立訂購單，快速產生專業印象", link: "shipping-order.html", tag: "Product", icon: "ph-receipt", color: "text-blue-700" },
+            { title: "運費成本報價", desc: "精算跨境物流開銷，掌握每一分成本與利潤。", link: "shipping-fee-calculator.html", tag: "Business", icon: "ph-truck" },
+            { title: "存股加薪計算", desc: "預見未來的被動收入，規劃溫柔的財富藍圖。", link: "dividend-investing.html", tag: "Invest", icon: "ph-plant" },
+            { title: "薪資分配計算", desc: "或是儲蓄或是享受，找到收支的完美平衡。", link: "daily-budget.html", tag: "Invest", icon: "ph-wallet" },
+            { title: "複利股價計算", desc: "時間是投資最好的朋友，見證複利的力量。", link: "compound-interest.html", tag: "Invest", icon: "ph-trend-up" },
+            { title: "時間價值換算", desc: "每筆支出，都是一段生命的交換。", link: "time-value-of-money.html", tag: "Invest", icon: "ph-clock" },
+            { title: "決策矩陣分析", desc: "透過理性權重梳理，輔助感性的選擇。", link: "decision-matrix-analysis.html", tag: "Planning", icon: "ph-matrix-logo" },
+            { title: "曼陀羅九宮格", desc: "分析問題核心、完整思考，讓理想落地。", link: "mandala-chart.html", tag: "Planning", icon: "ph-squares-four" },
+            { title: "LOGO設計思考", desc: "建立基礎LOGO設計認知，開始打造品牌。", link: "logo-design.html", tag: "Design", icon: "ph-pen-nib" },
+            { title: "職涯探索羅盤", desc: "透過喜好與耐心，記錄你的天賦熱情。", link: "career-exploration.html", tag: "Growth", icon: "ph-compass" },
+            { title: "食間・菜單", desc: "解決選擇障礙，今天要吃什麼？", link: "taiwanese-food.html", tag: "Daily", icon: "ph-bowl-food" },
+            { title: "愛的基礎原型", desc: "愛的六色輪 - 探索情感基礎理論。", link: "love-style.html", tag: "Growth", icon: "ph-heart" },
+            { title: "理財金字塔", desc: "建立完整基礎的財務知識結構。", link: "money-stack.html", tag: "Invest", icon: "ph-pyramid" },
+            { title: "生活任務小卡", desc: "讓簡單的任務重整生活的平靜。", link: "daily-task.html", tag: "Daily", icon: "ph-check-square-offset" },
+            { title: "病人照護APP", desc: "醫院照顧紀錄使用", link: "patient-care-log.html", tag: "Product", icon: "ph-bed" },
+            { title: "時間記帳APP", desc: "覺察與分析日常的時間流", link: "time-expenses.html", tag: "Product", icon: "ph-hourglass" },
+            { title: "貼心票卷產生", desc: "讓生活儀式感充滿活力", link: "love-coupon.html", tag: "Product", icon: "ph-ticket" },
+            { title: "任務懸賞產生", desc: "活潑的方式解決日常任務", link: "task-generator.html", tag: "Product", icon: "ph-scroll" },
+            { title: "愛的六種方式", desc: "愛的實際行動與表達形式", link: "love-language.html", tag: "Growth", icon: "ph-hand-heart" },
+            { title: "定期定額成本", desc: "為資產穩定增值，訂下策略資產增值", link: "stock-analysis.html", tag: "Invest", icon: "ph-chart-line-up" },
+            { title: "QR-code產生", desc: "即時生成 QR Code，一鍵下載無需等待。", link: "qr-code.html", tag: "Tool", icon: "ph-qr-code" },
+            { title: "朋友圈APP", desc: "管理你的交友圈，時時維繫重要的人", link: "friend-zone.html", tag: "Product", icon: "ph-users-three" },
+            { title: "訂購單APP", desc: "建立訂購單，快速產生專業印象", link: "shipping-order.html", tag: "Product", icon: "ph-receipt" },
         ];
         
         // ==========================================
-        // 2. 關於我連結設定
+        // 2. 關於我連結
         // ==========================================
         const socialData = [
             { title: "Instagram", link: "https://www.instagram.com/ambientedit_", icon: "ph-instagram-logo" },
@@ -305,12 +307,25 @@
         let currentFilter = 'all';
         let currentSearch = '';
 
-        // A. 初始化：產生分類按鈕
+        // A. 初始化：產生「自定義排序」的分類按鈕
         function initFilterButtons() {
-            // 使用 Set 取得不重複的標籤，並排序
-            const tags = [...new Set(toolsData.map(item => item.tag))].sort();
+            // 取得數據中所有不重複的標籤
+            const availableTags = [...new Set(toolsData.map(item => item.tag))];
             
-            tags.forEach(tag => {
+            // 根據 tagOrder 進行排序
+            const sortedTags = availableTags.sort((a, b) => {
+                let indexA = tagOrder.indexOf(a);
+                let indexB = tagOrder.indexOf(b);
+                
+                // 如果 tag 不在 tagOrder 中，將其排到最後
+                if (indexA === -1) indexA = 999;
+                if (indexB === -1) indexB = 999;
+                
+                return indexA - indexB;
+            });
+            
+            // 渲染按鈕
+            sortedTags.forEach(tag => {
                 const btn = document.createElement('button');
                 btn.className = `filter-btn flex-shrink-0 px-4 py-1.5 rounded-full text-[13px] md:text-sm tracking-wide bg-transparent text-gray-500 border border-transparent hover:bg-gray-100 hover:text-ink`;
                 btn.textContent = tag;
@@ -323,45 +338,36 @@
         function filterTools(tag, btnElement = null) {
             if (tag) currentFilter = tag;
             
-            if (btnElement || tag === 'all') {
-                const allBtns = document.querySelectorAll('.filter-btn');
-                allBtns.forEach(b => {
-                    b.classList.remove('active', 'bg-ink', 'text-paper', 'border-ink');
-                    b.classList.add('bg-transparent', 'text-gray-500', 'border-transparent');
-                });
+            const allBtns = document.querySelectorAll('.filter-btn');
+            allBtns.forEach(b => {
+                b.classList.remove('active', 'bg-ink', 'text-paper', 'border-ink');
+                b.classList.add('bg-transparent', 'text-gray-500', 'border-transparent');
+            });
 
-                const activeBtn = btnElement || document.querySelector('.filter-btn');
-                activeBtn.classList.remove('bg-transparent', 'text-gray-500', 'border-transparent');
-                activeBtn.classList.add('active', 'bg-ink', 'text-paper', 'border-ink');
-            }
+            const activeBtn = btnElement || document.querySelector('.filter-btn');
+            activeBtn.classList.remove('bg-transparent', 'text-gray-500', 'border-transparent');
+            activeBtn.classList.add('active', 'bg-ink', 'text-paper', 'border-ink');
 
             renderTools();
 
-            // 點擊篩選後，如果畫面已經往下捲動超過主內容區，則自動平滑捲動回第一列
+            // 平滑捲動回頂部
             const mainElement = document.querySelector('main');
             if (mainElement && window.scrollY > mainElement.offsetTop) {
-                window.scrollTo({
-                    top: mainElement.offsetTop,
-                    behavior: 'smooth'
-                });
+                window.scrollTo({ top: mainElement.offsetTop - 20, behavior: 'smooth' });
             }
         }
 
-        // C. 搜尋功能監聽
+        // C. 搜尋功能
         searchInput.addEventListener('input', (e) => {
             currentSearch = e.target.value.toLowerCase();
             renderTools();
         });
 
-        // D. 渲染工具卡片 (極簡文字與浮水印風格)
+        // D. 渲染工具卡片
         function renderTools() {
             container.innerHTML = '';
             
-            // 移除資料中完全重複的項目並進行過濾
-            const uniqueTools = Array.from(new Set(toolsData.map(t => t.title)))
-                .map(title => toolsData.find(t => t.title === title));
-
-            const filteredData = uniqueTools.filter(tool => {
+            const filteredData = toolsData.filter(tool => {
                 const matchTag = currentFilter === 'all' || tool.tag === currentFilter;
                 const matchSearch = tool.title.toLowerCase().includes(currentSearch);
                 return matchTag && matchSearch;
@@ -377,33 +383,24 @@
                 filteredData.forEach(tool => {
                     const card = document.createElement('a');
                     card.href = tool.link;
-                    // 卡片主體樣式設計：增加 overflow-hidden 避免浮水印超出範圍
                     card.className = `
                         group flex flex-col items-center justify-center bg-white p-4 md:p-6 border border-sand/50
                         rounded-2xl md:rounded-3xl shadow-soft card-hover relative overflow-hidden
-                        cursor-pointer animate-fade-in text-center min-h-[6.5rem] md:min-h-[9rem] h-full
+                        cursor-pointer text-center min-h-[6.5rem] md:min-h-[9rem] h-full
                     `;
-                    card.style.animation = "fadeIn 0.5s ease-out";
+                    card.style.animation = "fadeIn 0.5s ease-out forwards";
                     
                     card.innerHTML = `
-                        <!-- 背景浮水大寫英文字母 (預設顯示，hover 時微微放大並加深) -->
                         <div class="absolute -right-2 -bottom-4 md:-right-4 md:-bottom-6 text-7xl md:text-9xl text-sand opacity-40 group-hover:opacity-70 group-hover:scale-110 transition-all duration-500 pointer-events-none select-none font-serif font-bold z-0">
                             ${tool.tag.charAt(0)}
                         </div>
-                        
-                        <!-- 內容容器 -->
                         <div class="relative z-10 w-full flex flex-col items-center">
-                            <!-- 英文分類小字 -->
                             <div class="text-[9px] md:text-[10px] tracking-[0.2em] uppercase text-gray-400 mb-1.5 md:mb-2.5 font-sans transition-colors duration-300 group-hover:text-sage/70">
                                 ${tool.tag}
                             </div>
-                            
-                            <!-- 標題 (限制最多兩行) -->
                             <h2 class="text-[12px] md:text-[15px] font-sans md:font-serif font-medium text-ink/90 group-hover:text-sage transition-colors duration-300 line-clamp-2 leading-snug w-full px-1">
                                 ${tool.title}
                             </h2>
-                            
-                            <!-- 說明文字 (手機版隱藏，平板/電腦版顯示) -->
                             <p class="hidden md:block text-[11px] md:text-xs text-gray-400 mt-2 line-clamp-2 font-light leading-relaxed px-2">
                                 ${tool.desc}
                             </p>
@@ -415,26 +412,28 @@
         }
 
         // E. 渲染社群連結
-        const socialContainer = document.getElementById('social-container');
-        socialData.forEach(item => {
-            const btn = document.createElement('a');
-            btn.href = item.link;
-            btn.target = "_blank";
-            // 改為不壓縮 (flex-shrink-0) 的圓角矩形樣式
-            btn.className = `
-                btn-hover inline-flex flex-shrink-0 items-center justify-center gap-2 px-6 py-3.5 
-                border border-gray-200 rounded-2xl text-[13px] md:text-sm tracking-widest text-gray-600
-                bg-white shadow-sm transition-all duration-300 snap-center
-            `;
-            btn.innerHTML = `<i class="${item.icon} text-lg md:text-xl"></i><span>${item.title}</span>`;
-            socialContainer.appendChild(btn);
-        });
+        function initSocial() {
+            const socialContainer = document.getElementById('social-container');
+            socialData.forEach(item => {
+                const btn = document.createElement('a');
+                btn.href = item.link;
+                btn.target = "_blank";
+                btn.className = `
+                    btn-hover inline-flex flex-shrink-0 items-center justify-center gap-2 px-6 py-3.5 
+                    border border-gray-200 rounded-2xl text-[13px] md:text-sm tracking-widest text-gray-600
+                    bg-white shadow-sm transition-all duration-300 snap-center
+                `;
+                btn.innerHTML = `<i class="${item.icon} text-lg md:text-xl"></i><span>${item.title}</span>`;
+                socialContainer.appendChild(btn);
+            });
+        }
 
         // F. 啟動
         initFilterButtons();
         renderTools();
+        initSocial();
 
-        // 注入動畫樣式
+        // 注入動畫
         const styleSheet = document.createElement("style");
         styleSheet.textContent = `
             @keyframes fadeIn {
@@ -446,16 +445,10 @@
 
     </script>
     <script>
-      // 註冊 PWA Service Worker
+      // 註冊 Service Worker
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js')
-            .then(registration => {
-              console.log('常溫 PWA ServiceWorker 註冊成功！');
-            })
-            .catch(err => {
-              console.log('ServiceWorker 註冊失敗: ', err);
-            });
+          navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));
         });
       }
     </script>

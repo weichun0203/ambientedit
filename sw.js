@@ -1,5 +1,5 @@
 // 定義快取的名稱與版本，未來如果網站有大更新，可以更改版本號 (例如改為 v2)
-const CACHE_NAME = 'ambient-toolbox-v2';
+const CACHE_NAME = 'ambient-toolbox-v3';
 
 // 告訴管家有哪些檔案是必須要「記住」的 (離線時需要用到的資源)
 // 這裡使用相對路徑 './'，以確保在 GitHub Pages 上能順利運作

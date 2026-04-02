@@ -190,7 +190,7 @@
                     class="search-input w-full pl-9 pr-4 py-2 bg-transparent border-b border-gray-200 text-ink placeholder-gray-400 text-sm tracking-wide focus:border-sage transition-colors">
             </div>
 
-            <!-- 分類按鈕 (自定義排序將反映在此) -->
+            <!-- 分類按鈕 -->
             <div id="filter-buttons" class="flex overflow-x-auto no-scrollbar gap-2 pb-2 md:pb-0 md:flex-wrap md:justify-center">
                 <button onclick="filterTools('all')" class="filter-btn active px-4 py-1.5 rounded-full text-[13px] md:text-sm tracking-wide bg-ink text-paper border border-ink flex-shrink-0">
                     全部
@@ -217,7 +217,8 @@
                 <h3 class="text-xl font-serif text-ink mb-2 tracking-widest">關於我</h3>
                 <p class="text-gray-500 text-sm font-light mb-6">在這裡找到更多關於我的故事與分享</p>
                 
-                <div id="social-container" class="flex overflow-x-auto no-scrollbar gap-3 px-4 pb-4 -mx-4 md:mx-0 md:px-0 md:justify-center snap-x">
+                <!-- 修改：手機版設定為 flex-wrap 並置中 -->
+                <div id="social-container" class="flex flex-wrap justify-center gap-2 md:gap-4 px-4 pb-4">
                 </div>
             </div>
         </div>
@@ -247,16 +248,8 @@
         // 1. 工具列表與排序設定
         // ==========================================
         
-        // 【自定義排序設定】在此調整分類出現的先後順序
         const tagOrder = [
-            "Invest",   // 理財投資
-            "Business", // 商務工具
-            "Planning", // 規劃分析
-            "Product",  // 產品應用
-            "Growth",   // 自我成長
-            "Daily",    // 生活日常
-            "Design",   // 設計美感
-            "Tool"      // 實用工具
+            "Invest", "Business", "Planning", "Product", "Growth", "Daily", "Design", "Tool"
         ];
 
         const toolsData = [
@@ -284,9 +277,6 @@
             { title: "訂購單APP", desc: "建立訂購單，快速產生專業印象", link: "shipping-order.html", tag: "Product", icon: "ph-receipt" },
         ];
         
-        // ==========================================
-        // 2. 關於我連結
-        // ==========================================
         const socialData = [
             { title: "Instagram", link: "https://www.instagram.com/ambientedit_", icon: "ph-instagram-logo" },
             { title: "Facebook", link: "https://www.facebook.com/weichun0203/?locale=zh_TW", icon: "ph-facebook-logo" },
@@ -307,24 +297,16 @@
         let currentFilter = 'all';
         let currentSearch = '';
 
-        // A. 初始化：產生「自定義排序」的分類按鈕
         function initFilterButtons() {
-            // 取得數據中所有不重複的標籤
             const availableTags = [...new Set(toolsData.map(item => item.tag))];
-            
-            // 根據 tagOrder 進行排序
             const sortedTags = availableTags.sort((a, b) => {
                 let indexA = tagOrder.indexOf(a);
                 let indexB = tagOrder.indexOf(b);
-                
-                // 如果 tag 不在 tagOrder 中，將其排到最後
                 if (indexA === -1) indexA = 999;
                 if (indexB === -1) indexB = 999;
-                
                 return indexA - indexB;
             });
             
-            // 渲染按鈕
             sortedTags.forEach(tag => {
                 const btn = document.createElement('button');
                 btn.className = `filter-btn flex-shrink-0 px-4 py-1.5 rounded-full text-[13px] md:text-sm tracking-wide bg-transparent text-gray-500 border border-transparent hover:bg-gray-100 hover:text-ink`;
@@ -334,39 +316,30 @@
             });
         }
 
-        // B. 過濾功能
         function filterTools(tag, btnElement = null) {
             if (tag) currentFilter = tag;
-            
             const allBtns = document.querySelectorAll('.filter-btn');
             allBtns.forEach(b => {
                 b.classList.remove('active', 'bg-ink', 'text-paper', 'border-ink');
                 b.classList.add('bg-transparent', 'text-gray-500', 'border-transparent');
             });
-
             const activeBtn = btnElement || document.querySelector('.filter-btn');
             activeBtn.classList.remove('bg-transparent', 'text-gray-500', 'border-transparent');
             activeBtn.classList.add('active', 'bg-ink', 'text-paper', 'border-ink');
-
             renderTools();
-
-            // 平滑捲動回頂部
             const mainElement = document.querySelector('main');
             if (mainElement && window.scrollY > mainElement.offsetTop) {
                 window.scrollTo({ top: mainElement.offsetTop - 20, behavior: 'smooth' });
             }
         }
 
-        // C. 搜尋功能
         searchInput.addEventListener('input', (e) => {
             currentSearch = e.target.value.toLowerCase();
             renderTools();
         });
 
-        // D. 渲染工具卡片
         function renderTools() {
             container.innerHTML = '';
-            
             const filteredData = toolsData.filter(tool => {
                 const matchTag = currentFilter === 'all' || tool.tag === currentFilter;
                 const matchSearch = tool.title.toLowerCase().includes(currentSearch);
@@ -379,7 +352,6 @@
             } else {
                 container.classList.remove('hidden');
                 emptyState.classList.add('hidden');
-                
                 filteredData.forEach(tool => {
                     const card = document.createElement('a');
                     card.href = tool.link;
@@ -389,7 +361,6 @@
                         cursor-pointer text-center min-h-[6.5rem] md:min-h-[9rem] h-full
                     `;
                     card.style.animation = "fadeIn 0.5s ease-out forwards";
-                    
                     card.innerHTML = `
                         <div class="absolute -right-2 -bottom-4 md:-right-4 md:-bottom-6 text-7xl md:text-9xl text-sand opacity-40 group-hover:opacity-70 group-hover:scale-110 transition-all duration-500 pointer-events-none select-none font-serif font-bold z-0">
                             ${tool.tag.charAt(0)}
@@ -411,29 +382,31 @@
             }
         }
 
-        // E. 渲染社群連結
+        // E. 渲染社群連結 (修正對齊問題)
         function initSocial() {
             const socialContainer = document.getElementById('social-container');
             socialData.forEach(item => {
                 const btn = document.createElement('a');
                 btn.href = item.link;
                 btn.target = "_blank";
+                // 修正：移除 tracking-widest，改為內部的文字置中處理，並確保 gap 均衡
                 btn.className = `
-                    btn-hover inline-flex flex-shrink-0 items-center justify-center gap-2 px-6 py-3.5 
-                    border border-gray-200 rounded-2xl text-[13px] md:text-sm tracking-widest text-gray-600
-                    bg-white shadow-sm transition-all duration-300 snap-center
+                    btn-hover flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2.5 p-3 sm:px-6 sm:py-3.5 
+                    border border-gray-200 rounded-2xl text-gray-600
+                    bg-white shadow-sm transition-all duration-300 w-[calc(32%-0.25rem)] sm:w-auto
                 `;
-                btn.innerHTML = `<i class="${item.icon} text-lg md:text-xl"></i><span>${item.title}</span>`;
+                btn.innerHTML = `
+                    <i class="${item.icon} text-lg md:text-xl flex-shrink-0"></i>
+                    <span class="text-[10px] sm:text-sm tracking-wide text-center font-medium leading-tight">${item.title}</span>
+                `;
                 socialContainer.appendChild(btn);
             });
         }
 
-        // F. 啟動
         initFilterButtons();
         renderTools();
         initSocial();
 
-        // 注入動畫
         const styleSheet = document.createElement("style");
         styleSheet.textContent = `
             @keyframes fadeIn {
@@ -442,10 +415,8 @@
             }
         `;
         document.head.appendChild(styleSheet);
-
     </script>
     <script>
-      // 註冊 Service Worker
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));

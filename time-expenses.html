@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     
     <!-- Title -->
     <title>常溫時光編集｜Ambient Time Tracker</title>
@@ -44,7 +44,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Tailwind 設定 (品牌色) -->
+    <!-- Tailwind 設定 -->
     <script>
         tailwind.config = {
             theme: {
@@ -69,11 +69,13 @@
                         card: '0 2px 10px rgba(0, 0, 0, 0.02)',
                         inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.05)',
                         modal: '0 20px 50px -10px rgba(0, 0, 0, 0.1)',
+                        nav: '0 -4px 20px rgba(0, 0, 0, 0.03)',
                     },
                     animation: {
                         'fade-in': 'fadeIn 0.3s ease-out',
                         'slide-up': 'slideUp 0.4s ease-out',
                         'scale-in': 'scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                        'title-enter': 'slideUp 0.8s ease-out forwards',
                     },
                     keyframes: {
                         fadeIn: {
@@ -81,7 +83,7 @@
                             '100%': { opacity: '1' },
                         },
                         slideUp: {
-                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '0%': { transform: 'translateY(15px)', opacity: '0' },
                             '100%': { transform: 'translateY(0)', opacity: '1' },
                         },
                         scaleIn: {
@@ -102,15 +104,15 @@
             background-color: #fdfbf7;
             color: #4a4a4a;
             -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
         }
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #e6e2dd; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #d4a59a; }
         
-        /* Tab Active State */
         .tab-active {
-            background-color: #8da399; /* brand-sage */
+            background-color: #8da399; 
             color: white;
             box-shadow: 0 4px 12px rgba(141, 163, 153, 0.3);
         }
@@ -123,15 +125,32 @@
             border-color: #8da399;
             color: #8da399;
         }
-        /* Utility for hiding elements but keeping layout */
         .hidden-visually {
             display: none !important;
+        }
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
         }
     </style>
 </head>
 <body class="bg-noise min-h-screen flex flex-col font-sans selection:bg-brand-sage selection:text-white relative">
 
-    <!-- Success Overlay (Hidden by default) -->
+    <!-- 首頁右上角按鈕 -->
+    <div class="absolute top-4 right-4 md:top-8 md:right-8 z-50">
+        <a href="https://weichun0203.github.io/ambientedit/" 
+           class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+           aria-label="返回常溫首頁" style="text-decoration: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 md:h-4 md:w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span class="ml-1.5 text-[10px] md:text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                常溫首頁
+            </span>
+        </a>
+    </div>
+
+    <!-- Success Overlay -->
     <div id="successOverlay" class="fixed inset-0 z-[60] hidden flex items-center justify-center bg-brand-paper/80 backdrop-blur-md transition-opacity duration-500 opacity-0">
         <div class="text-center animate-scale-in">
             <div class="w-20 h-20 mx-auto bg-brand-sage rounded-full flex items-center justify-center shadow-lg shadow-brand-sage/30 mb-6">
@@ -144,321 +163,512 @@
         </div>
     </div>
 
-    <!-- Confirm Modal (New Feature) -->
-    <div id="confirmModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center bg-brand-ink/20 backdrop-blur-sm transition-opacity duration-300">
-        <div class="bg-brand-paper w-full max-w-sm mx-6 rounded-2xl shadow-modal p-6 border border-brand-white relative animate-slide-up bg-noise">
+    <!-- Confirm Modal -->
+    <div id="confirmModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center bg-brand-ink/20 backdrop-blur-sm transition-opacity duration-300 px-4">
+        <div class="bg-brand-paper w-full max-w-sm rounded-2xl shadow-modal p-6 border border-brand-white relative animate-slide-up bg-noise">
             <div class="text-center mb-6">
-                <div id="confirmIcon" class="w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-4 transition-colors">
-                    <!-- Icon will be injected by JS -->
-                </div>
+                <div id="confirmIcon" class="w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-4 transition-colors"></div>
                 <h3 id="confirmTitle" class="font-serif text-xl font-bold text-brand-ink mb-2">確認動作</h3>
                 <p id="confirmMessage" class="text-sm text-brand-ink/60 font-sans leading-relaxed">請確認是否執行此動作？</p>
             </div>
             <div class="flex gap-3">
-                <button onclick="closeConfirmModal()" id="confirmCancelBtn" class="flex-1 py-2.5 rounded-lg border border-brand-sand text-brand-ink/60 font-bold text-sm hover:bg-brand-sand/20 transition-all">
-                    取消
-                </button>
-                <button id="confirmActionBtn" class="flex-1 py-2.5 rounded-lg text-white font-bold text-sm transition-all shadow-md">
-                    確認執行
-                </button>
+                <button onclick="closeConfirmModal()" id="confirmCancelBtn" class="flex-1 py-2.5 rounded-lg border border-brand-sand text-brand-ink/60 font-bold text-sm hover:bg-brand-sand/20 transition-all">取消</button>
+                <button id="confirmActionBtn" class="flex-1 py-2.5 rounded-lg text-white font-bold text-sm transition-all shadow-md">確認執行</button>
             </div>
         </div>
     </div>
 
-    <!-- Edit Modal (Hidden by default) -->
-    <div id="editModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-brand-ink/20 backdrop-blur-sm transition-opacity duration-300">
-        <div class="bg-brand-paper w-full max-w-md mx-4 rounded-2xl shadow-modal p-8 border border-brand-white relative animate-slide-up bg-noise max-h-[90vh] overflow-y-auto">
-            <button onclick="closeEditModal()" class="absolute top-4 right-4 text-brand-ink/30 hover:text-brand-clay transition-colors">
+    <!-- Add Record Modal -->
+    <div id="addModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-brand-ink/20 backdrop-blur-sm transition-opacity duration-300 px-4 py-8">
+        <div id="addModalContainer" class="bg-brand-paper w-full max-w-md rounded-2xl shadow-modal p-6 md:p-8 border border-brand-white relative animate-slide-up bg-noise max-h-full overflow-y-auto">
+            <button onclick="closeAddModal()" class="absolute top-4 right-4 text-brand-ink/30 hover:text-brand-clay transition-colors p-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
             
-            <h3 class="font-serif text-xl font-bold text-brand-ink mb-6 text-center">編輯時光紀錄</h3>
+            <div class="text-center mb-6 mt-2">
+                <h3 class="font-serif text-xl font-bold text-brand-ink">紀錄當下</h3>
+                <span class="text-[10px] text-brand-sage font-bold tracking-widest uppercase mt-1 block">New Entry</span>
+            </div>
             
+            <form id="timeForm" class="space-y-6">
+                <!-- 動態分類選單 -->
+                <div class="group relative z-50">
+                    <label class="block text-xs font-bold text-brand-ink/50 mb-2 tracking-wider group-focus-within:text-brand-sage transition-colors">分類</label>
+                    <div class="relative w-full">
+                        <button type="button" id="addCategoryBtn" class="w-full bg-white border-b-2 border-brand-sand rounded-t-lg px-4 py-3 text-left focus:outline-none focus:border-brand-sage transition-all text-brand-ink flex justify-between items-center cursor-pointer">
+                            <span id="addCategoryText"></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-ink/40 transition-transform duration-300 custom-dropdown-icon" id="addCategoryIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                        </button>
+                        <ul id="addCategoryList" class="absolute top-full left-0 w-full bg-white border border-brand-sand/50 rounded-b-lg shadow-lg hidden max-h-48 overflow-y-auto z-[60] py-1 custom-dropdown-list">
+                            <!-- JS Inject -->
+                        </ul>
+                        <input type="hidden" id="category" value="">
+                    </div>
+                </div>
+
+                <div class="group">
+                    <label class="block text-xs font-bold text-brand-ink/50 mb-2 tracking-wider group-focus-within:text-brand-sage transition-colors">事項名稱</label>
+                    <input type="text" id="taskName" placeholder="例如：閱讀品牌書籍、整理花園..." required
+                           class="w-full bg-white border-b-2 border-brand-sand rounded-t-lg px-4 py-3 focus:outline-none focus:border-brand-sage focus:bg-white transition-all placeholder:text-brand-ink/20 text-brand-ink text-lg font-serif">
+                </div>
+                
+                <div class="border-t border-brand-sand/50 pt-4 mt-2">
+                    <p class="text-xs font-bold text-brand-sage mb-3 tracking-widest uppercase">時光回溯</p>
+                    <div class="group mb-4">
+                        <label class="block text-xs font-bold text-brand-ink/50 mb-2 tracking-wider group-focus-within:text-brand-sage transition-colors">日期</label>
+                        <input type="date" id="addDate" required class="w-full bg-white border-b-2 border-brand-sand rounded-t-lg px-4 py-3 focus:outline-none focus:border-brand-sage focus:bg-white transition-all text-brand-ink font-mono text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 md:gap-6 mb-4">
+                        <div class="group">
+                            <label class="block text-xs font-bold text-brand-ink/50 mb-2 tracking-wider group-focus-within:text-brand-sage transition-colors">開始時間</label>
+                            <input type="time" id="addStartTime" required class="w-full bg-white border-b-2 border-brand-sand rounded-t-lg px-4 py-3 focus:outline-none focus:border-brand-sage focus:bg-white transition-all text-brand-ink font-mono text-sm">
+                        </div>
+                        <div class="group">
+                            <label class="block text-xs font-bold text-brand-ink/50 mb-2 tracking-wider group-focus-within:text-brand-sage transition-colors">結束時間</label>
+                            <input type="time" id="addEndTime" required class="w-full bg-white border-b-2 border-brand-sand rounded-t-lg px-4 py-3 focus:outline-none focus:border-brand-sage focus:bg-white transition-all text-brand-ink font-mono text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full bg-brand-sage text-white font-bold py-4 rounded-xl hover:bg-brand-ink active:scale-[0.98] transition-all duration-300 shadow-lg shadow-brand-sage/20 tracking-widest flex justify-center items-center gap-2">
+                        <span>寫入時光</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    </button>
+                    
+                    <div class="mt-6 text-center border-t border-brand-sand/30 pt-4">
+                        <p class="text-xs text-brand-clay/80 font-serif italic tracking-wider leading-relaxed">
+                            「有意識的休息是生活的留白，<br>無意識的空白才是時間的浪費。」
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-brand-ink/20 backdrop-blur-sm transition-opacity duration-300 px-4 py-8">
+        <div id="editModalContainer" class="bg-brand-paper w-full max-w-md rounded-2xl shadow-modal p-6 md:p-8 border border-brand-white relative animate-slide-up bg-noise max-h-full overflow-y-auto">
+            <button onclick="closeEditModal()" class="absolute top-4 right-4 text-brand-ink/30 hover:text-brand-clay transition-colors p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <h3 class="font-serif text-xl font-bold text-brand-ink mb-6 text-center mt-2">編輯時光紀錄</h3>
             <form id="editForm" class="space-y-5">
                 <input type="hidden" id="editId">
-                
+                <div class="space-y-1 relative z-50">
+                    <label class="text-xs font-bold text-brand-ink/50 tracking-wider">分類</label>
+                    <div class="relative w-full">
+                        <button type="button" id="editCategoryBtn" class="w-full bg-white border border-brand-sand rounded-lg px-4 py-2 text-left focus:outline-none focus:border-brand-sage transition-all text-brand-ink flex justify-between items-center cursor-pointer">
+                            <span id="editCategoryText"></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-ink/40 transition-transform duration-300 custom-dropdown-icon" id="editCategoryIcon" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                        </button>
+                        <ul id="editCategoryList" class="absolute top-full left-0 w-full bg-white border border-brand-sand/50 rounded-b-lg shadow-lg hidden max-h-48 overflow-y-auto z-[60] py-1 custom-dropdown-list">
+                            <!-- JS Inject -->
+                        </ul>
+                        <input type="hidden" id="editCategory" value="">
+                    </div>
+                </div>
+
                 <div class="space-y-1">
                     <label class="text-xs font-bold text-brand-ink/50 tracking-wider">事項名稱</label>
                     <input type="text" id="editTaskName" required class="w-full bg-white border border-brand-sand rounded-lg px-4 py-2 focus:outline-none focus:border-brand-sage transition-all text-brand-ink">
                 </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label class="text-xs font-bold text-brand-ink/50 tracking-wider">分類</label>
-                        <select id="editCategory" class="w-full bg-white border border-brand-sand rounded-lg px-4 py-2 focus:outline-none focus:border-brand-sage transition-all text-brand-ink">
-                             <option value="工作">工作 Work</option>
-                             <option value="學習">學習 Growth</option>
-                             <option value="休息">休息 Rest</option>
-                             <option value="生活">生活 Life</option>
-                             <option value="浪費">浪費 Waste</option>
-                        </select>
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-xs font-bold text-brand-ink/50 tracking-wider">時間 (min)</label>
-                        <input type="number" id="editDuration" min="1" required class="w-full bg-white border border-brand-sand rounded-lg px-4 py-2 focus:outline-none focus:border-brand-sage transition-all text-brand-ink">
-                    </div>
-                </div>
-
-                <!-- New Date & Time Inputs -->
                 <div class="border-t border-brand-sand/50 pt-4 mt-2">
                     <p class="text-xs font-bold text-brand-sage mb-3 tracking-widest uppercase">時光回溯</p>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1 mb-4">
+                        <label class="text-xs font-bold text-brand-ink/50 tracking-wider">日期</label>
+                        <input type="date" id="editDate" required class="w-full bg-white border border-brand-sand rounded-lg px-4 py-2 focus:outline-none focus:border-brand-sage transition-all text-brand-ink font-mono text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
                         <div class="space-y-1">
-                            <label class="text-xs font-bold text-brand-ink/50 tracking-wider">日期</label>
-                            <input type="date" id="editDate" required class="w-full bg-white border border-brand-sand rounded-lg px-4 py-2 focus:outline-none focus:border-brand-sage transition-all text-brand-ink font-mono text-sm">
+                            <label class="text-xs font-bold text-brand-ink/50 tracking-wider">開始時間</label>
+                            <input type="time" id="editStartTime" required class="w-full bg-white border border-brand-sand rounded-lg px-4 py-2 focus:outline-none focus:border-brand-sage transition-all text-brand-ink font-mono text-sm">
                         </div>
                         <div class="space-y-1">
-                            <label class="text-xs font-bold text-brand-ink/50 tracking-wider">時間</label>
-                            <input type="time" id="editTime" required class="w-full bg-white border border-brand-sand rounded-lg px-4 py-2 focus:outline-none focus:border-brand-sage transition-all text-brand-ink font-mono text-sm">
+                            <label class="text-xs font-bold text-brand-ink/50 tracking-wider">結束時間</label>
+                            <input type="time" id="editEndTime" required class="w-full bg-white border border-brand-sand rounded-lg px-4 py-2 focus:outline-none focus:border-brand-sage transition-all text-brand-ink font-mono text-sm">
                         </div>
                     </div>
                 </div>
-
                 <div class="pt-4 flex gap-3">
-                    <button type="button" onclick="closeEditModal()" class="flex-1 py-2.5 rounded-lg border border-brand-sand text-brand-ink/60 font-bold text-sm hover:bg-brand-sand/20 transition-all">
-                        取消
-                    </button>
-                    <button type="submit" class="flex-1 py-2.5 rounded-lg bg-brand-sage text-white font-bold text-sm hover:bg-brand-ink transition-all shadow-md shadow-brand-sage/20">
-                        儲存變更
-                    </button>
+                    <button type="button" onclick="closeEditModal()" class="flex-1 py-2.5 rounded-lg border border-brand-sand text-brand-ink/60 font-bold text-sm hover:bg-brand-sand/20 transition-all">取消</button>
+                    <button type="submit" class="flex-1 py-2.5 rounded-lg bg-brand-sage text-white font-bold text-sm hover:bg-brand-ink transition-all shadow-md shadow-brand-sage/20">儲存變更</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Header Section -->
-    <header class="w-full max-w-5xl mx-auto pt-16 pb-6 px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row items-end justify-between relative border-b border-brand-sand pb-6">
-            <div class="hidden md:block w-32"></div>
-            <div class="text-center w-full md:w-auto mx-auto relative z-10">
-                <p class="text-brand-sage font-bold tracking-[0.2em] text-xs mb-3 uppercase">Ambient Edit Studio</p>
-                <h1 class="text-4xl md:text-5xl font-serif font-bold text-brand-ink mb-4 tracking-wider leading-tight">
-                    常溫時光編集
-                </h1>
-                <p class="text-brand-ink/60 font-serif italic text-sm md:text-base tracking-wide">
-                    「將時間輕輕摺疊，收藏在日子的扉頁裡。」
-                </p>
-            </div>
-            <div class="mt-8 md:mt-0 w-full md:w-auto flex justify-center md:justify-end">
-                <a href="https://weichun0203.github.io/ambientedit/" 
-                   class="group inline-flex items-center px-5 py-2.5 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-500 shadow-sm hover:shadow-soft bg-white/40 backdrop-blur-md"
-                   aria-label="返回常溫首頁"
-                   style="text-decoration: none;">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                        <polyline points="9 22 9 12 15 12 15 22"/>
-                    </svg>
-                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
-                        常溫首頁
-                    </span>
-                </a>
-            </div>
+    <header class="w-full max-w-2xl mx-auto pt-20 md:pt-24 pb-6 px-6 relative z-10">
+        <div class="flex flex-col items-center relative border-b border-brand-sand pb-6 text-center opacity-0 animate-title-enter">
+            <p class="text-brand-sage font-bold tracking-[0.2em] text-xs mb-3 uppercase">Ambient Edit Studio</p>
+            <h1 class="text-3xl md:text-4xl font-serif font-bold text-brand-ink mb-3 tracking-wider leading-tight">
+                常溫時光編集
+            </h1>
+            <p class="text-brand-ink/60 font-serif italic text-xs md:text-sm tracking-wide">
+                「將時間輕輕摺疊，收藏在日子的扉頁裡。」
+            </p>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-grow w-full max-w-5xl mx-auto px-6 lg:px-8 py-8">
+    <!-- Main Content Area -->
+    <main class="flex-grow w-full max-w-2xl mx-auto px-4 md:px-6 pb-32">
         
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            <!-- 左側：輸入與列表區 (佔 7 欄) -->
-            <div class="lg:col-span-7 space-y-8">
-                
-                <!-- Input Card -->
-                <section class="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-soft border border-brand-white hover:border-brand-sand transition-colors duration-500">
-                    <div class="flex justify-between items-baseline mb-6">
-                        <h2 class="font-serif text-2xl font-bold text-brand-ink">紀錄當下</h2>
-                        <span class="text-xs text-brand-sage font-bold tracking-widest uppercase">New Entry</span>
-                    </div>
-                    
-                    <form id="timeForm" class="space-y-6">
-                        <div class="group">
-                            <label class="block text-xs font-bold text-brand-ink/50 mb-2 tracking-wider group-focus-within:text-brand-sage transition-colors">事項名稱</label>
-                            <input type="text" id="taskName" placeholder="例如：閱讀品牌書籍、整理花園..." required
-                                   class="w-full bg-brand-paper/50 border-b-2 border-brand-sand rounded-t-lg px-4 py-3 focus:outline-none focus:border-brand-sage focus:bg-white transition-all placeholder:text-brand-ink/20 text-brand-ink text-lg font-serif">
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-6">
-                            <div class="group">
-                                <label class="block text-xs font-bold text-brand-ink/50 mb-2 tracking-wider group-focus-within:text-brand-sage transition-colors">分類</label>
-                                <div class="relative">
-                                    <select id="category" class="appearance-none w-full bg-brand-paper/50 border-b-2 border-brand-sand rounded-t-lg px-4 py-3 focus:outline-none focus:border-brand-sage focus:bg-white transition-all text-brand-ink cursor-pointer">
-                                        <option value="工作">工作 Work</option>
-                                        <option value="學習">學習 Growth</option>
-                                        <option value="休息">休息 Rest</option>
-                                        <option value="生活">生活 Life</option>
-                                        <option value="浪費">浪費 Waste</option>
-                                    </select>
-                                    <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-brand-ink/40">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="group">
-                                <label class="block text-xs font-bold text-brand-ink/50 mb-2 tracking-wider group-focus-within:text-brand-sage transition-colors">時間長度 (分鐘)</label>
-                                <input type="number" id="duration" placeholder="30" min="1" required
-                                   class="w-full bg-brand-paper/50 border-b-2 border-brand-sand rounded-t-lg px-4 py-3 focus:outline-none focus:border-brand-sage focus:bg-white transition-all placeholder:text-brand-ink/20 text-brand-ink font-mono">
-                            </div>
-                        </div>
-
-                        <div class="pt-2">
-                            <button type="submit" 
-                                    class="w-full bg-brand-sage text-white font-bold py-3.5 rounded-xl hover:bg-brand-ink hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 shadow-lg shadow-brand-sage/20 tracking-widest flex justify-center items-center gap-2">
-                                <span>寫入時光</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                </svg>
-                            </button>
-                            
-                            <div class="mt-6 text-center border-t border-brand-sand/30 pt-4">
-                                <p class="text-xs text-brand-clay/80 font-serif italic tracking-wider leading-relaxed">
-                                    「有意識的休息是生活的留白，<br class="md:hidden">無意識的空白才是時間的浪費。」
-                                </p>
-                            </div>
-                        </div>
-                    </form>
-                </section>
-
-                <!-- List Section (With Integrated View Switcher) -->
-                <section class="relative">
-                    <!-- Integrated Header & Tabs -->
-                    <div class="flex flex-col md:flex-row md:justify-between md:items-end mb-6 gap-4">
-                        <div class="flex-1">
+        <!-- TAB 1: 足跡列表 (List View) -->
+        <div id="tab-record" class="main-tab-content animate-fade-in space-y-6">
+            <section class="relative">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-end mb-6 gap-4">
+                    <div class="flex-1 flex justify-between items-end md:block">
+                        <div>
                             <h2 id="listTitle" class="font-serif text-2xl font-bold text-brand-ink">今日足跡</h2>
                             <p id="listSubtitle" class="text-xs text-brand-ink/40 mt-1">Today's Footprint</p>
                         </div>
-                        
-                        <!-- View Switcher Grouped with Header -->
-                        <div class="flex items-center gap-4">
-                             <div class="bg-white/50 backdrop-blur-sm p-1 rounded-full border border-brand-sand shadow-inner flex space-x-1">
-                                <button onclick="switchView('day')" id="btn-day" class="px-4 py-1.5 rounded-full text-xs font-bold tracking-widest transition-all duration-300 tab-active">
-                                    今日
-                                </button>
-                                <button onclick="switchView('week')" id="btn-week" class="px-4 py-1.5 rounded-full text-xs font-bold tracking-widest transition-all duration-300 tab-inactive">
-                                    本週
-                                </button>
-                                <button onclick="switchView('month')" id="btn-month" class="px-4 py-1.5 rounded-full text-xs font-bold tracking-widest transition-all duration-300 tab-inactive">
-                                    本月
-                                </button>
-                            </div>
-                            
-                            <!-- Export CSV Button (Triggers Modal) -->
-                            <button onclick="askExport()" class="text-brand-ink/30 hover:text-brand-sage transition-colors p-2 rounded-full hover:bg-brand-sand/20" title="匯出 CSV">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                    <polyline points="7 10 12 15 17 10"></polyline>
-                                    <line x1="12" y1="15" x2="12" y2="3"></line>
-                                </svg>
-                            </button>
-                        </div>
                     </div>
                     
-                    <div id="recordList" class="space-y-6 max-h-[600px] overflow-y-auto pr-2 pb-4 scroll-smooth">
-                        <!-- Content will be injected by JS -->
-                    </div>
-                </section>
-            </div>
+                    <div class="flex items-center gap-2 md:gap-3 w-full md:w-auto">
+                        <div class="bg-white/60 backdrop-blur-sm p-1 rounded-xl border border-brand-sand shadow-inner flex flex-1 md:flex-none">
+                            <button onclick="switchView('day')" id="btn-day" class="flex-1 px-3 py-1.5 md:py-2 rounded-lg text-xs font-bold tracking-widest transition-all duration-300 tab-active">今日</button>
+                            <button onclick="switchView('week')" id="btn-week" class="flex-1 px-3 py-1.5 md:py-2 rounded-lg text-xs font-bold tracking-widest transition-all duration-300 tab-inactive">本週</button>
+                            <button onclick="switchView('month')" id="btn-month" class="flex-1 px-3 py-1.5 md:py-2 rounded-lg text-xs font-bold tracking-widest transition-all duration-300 tab-inactive">本月</button>
+                        </div>
+                        
+                        <button onclick="openAddModal()" class="bg-brand-sage hover:bg-brand-ink text-white px-3 md:px-4 py-2 md:py-2.5 rounded-xl text-xs font-bold tracking-widest transition-all shadow-md flex items-center justify-center gap-1.5 shrink-0" title="寫入時光">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            <span class="hidden md:inline">寫入</span>
+                        </button>
 
-            <!-- 右側：圖表與洞察 (佔 5 欄) -->
-            <div class="lg:col-span-5 space-y-8">
-                
-                <!-- Summary Card -->
-                <section class="bg-brand-ink text-brand-paper rounded-2xl p-6 shadow-xl shadow-brand-ink/10 flex justify-between items-center relative overflow-hidden transition-all duration-500">
-                    <div class="relative z-10">
-                        <p id="summaryTitle" class="text-brand-sage text-xs font-bold tracking-widest mb-1">今日專注總計</p>
-                        <p class="text-4xl font-serif font-bold" id="totalTimeDisplay">0 <span class="text-sm font-sans font-normal opacity-60">min</span></p>
+                        <button onclick="askExport()" class="text-brand-ink/40 hover:text-brand-sage bg-white shadow-sm border border-brand-sand transition-colors p-2 md:p-2.5 rounded-xl hover:bg-brand-sand/20 flex items-center justify-center shrink-0" title="匯出 CSV">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        </button>
                     </div>
-                    <div class="relative z-10 text-right">
-                         <p class="text-xs opacity-50 mb-1">紀錄筆數</p>
-                         <p class="text-xl font-bold" id="totalCountDisplay">0</p>
-                    </div>
-                    <div class="absolute -right-6 -bottom-10 w-32 h-32 bg-brand-sage/10 rounded-full blur-2xl"></div>
-                </section>
-
-                <!-- Radar Chart Card -->
-                <section class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-brand-sand">
-                    <div class="mb-4 text-center">
-                        <h2 class="font-serif text-lg font-bold text-brand-ink">生活平衡</h2>
-                        <div class="h-0.5 w-8 bg-brand-sage mx-auto mt-2 opacity-50"></div>
-                    </div>
-                    <div class="relative h-64 w-full">
-                        <canvas id="radarChart"></canvas>
-                    </div>
-                </section>
-
-                <!-- Bar Chart Card -->
-                <section class="bg-white/60 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-brand-sand">
-                    <div class="mb-4 text-center">
-                        <h2 class="font-serif text-lg font-bold text-brand-ink">時數分佈</h2>
-                        <div class="h-0.5 w-8 bg-brand-clay mx-auto mt-2 opacity-50"></div>
-                    </div>
-                    <div class="relative h-48 w-full">
-                        <canvas id="barChart"></canvas>
-                    </div>
-                </section>
-
-            </div>
+                </div>
+                <div id="recordList" class="space-y-5 pb-8 min-h-[40vh]"></div>
+            </section>
         </div>
 
+        <!-- TAB 2: 洞察 (Insights) -->
+        <div id="tab-insight" class="main-tab-content hidden animate-fade-in space-y-6">
+            
+            <!-- Insight Switcher -->
+            <div class="flex justify-center mb-2">
+                <div class="bg-white/60 backdrop-blur-sm p-1 rounded-xl border border-brand-sand shadow-inner flex w-full max-w-sm">
+                    <button onclick="switchView('day')" id="insight-btn-day" class="flex-1 py-2 rounded-lg text-xs font-bold tracking-widest transition-all duration-300 tab-active">今日</button>
+                    <button onclick="switchView('week')" id="insight-btn-week" class="flex-1 py-2 rounded-lg text-xs font-bold tracking-widest transition-all duration-300 tab-inactive">本週</button>
+                    <button onclick="switchView('month')" id="insight-btn-month" class="flex-1 py-2 rounded-lg text-xs font-bold tracking-widest transition-all duration-300 tab-inactive">本月</button>
+                </div>
+            </div>
+
+            <!-- Summary Card -->
+            <section class="bg-brand-ink text-brand-paper rounded-2xl p-6 shadow-xl shadow-brand-ink/10 flex justify-between items-center relative overflow-hidden transition-all duration-500">
+                <div class="relative z-10">
+                    <p id="summaryTitle" class="text-brand-sage text-[10px] md:text-xs font-bold tracking-widest mb-1">今日專注總計</p>
+                    <p class="text-3xl md:text-4xl font-serif font-bold flex items-baseline" id="totalTimeDisplay">
+                        0 <span class="text-sm md:text-base font-sans font-normal opacity-60 ml-1">分鐘</span>
+                    </p>
+                </div>
+                <div class="relative z-10 text-right">
+                     <p class="text-[10px] md:text-xs opacity-50 mb-1">紀錄筆數</p>
+                     <p class="text-xl font-bold" id="totalCountDisplay">0</p>
+                </div>
+                <div class="absolute -right-6 -bottom-10 w-32 h-32 bg-brand-sage/10 rounded-full blur-2xl"></div>
+            </section>
+
+            <!-- Bar Chart Card (對比圖) -->
+            <section class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-brand-sand">
+                <div class="mb-4 text-center">
+                    <h2 class="font-serif text-lg font-bold text-brand-ink">時數分佈比較</h2>
+                    <div class="h-0.5 w-8 bg-brand-clay mx-auto mt-2 opacity-50"></div>
+                </div>
+                <div class="relative h-56 w-full">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Radar Chart Card -->
+            <section class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-soft border border-brand-sand">
+                <div class="mb-4 text-center">
+                    <h2 class="font-serif text-lg font-bold text-brand-ink">生活平衡</h2>
+                    <div class="h-0.5 w-8 bg-brand-sage mx-auto mt-2 opacity-50"></div>
+                </div>
+                <div class="relative h-64 w-full">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB 3: 設定 (Settings) -->
+        <div id="tab-settings" class="main-tab-content hidden animate-fade-in space-y-6">
+            <div class="mb-6">
+                <h2 class="font-serif text-2xl font-bold text-brand-ink">系統設定</h2>
+                <p class="text-xs text-brand-ink/40 mt-1">Preferences & Personalization</p>
+            </div>
+
+            <!-- 設定區塊 1: 預設時間長度 -->
+            <section class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-soft border border-brand-sand">
+                <h3 class="font-serif text-lg font-bold text-brand-ink mb-4 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-sage"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    預設時間區塊
+                </h3>
+                <p class="text-xs text-brand-ink/60 mb-4 leading-relaxed">設定在新增紀錄時，自動推算的預設經過時間 (單位：分鐘)。這能幫助您更快速地建立標準任務。</p>
+                <div class="flex items-center gap-4">
+                    <input type="number" id="settingDefaultDuration" min="1" max="1440" class="w-32 bg-brand-paper border border-brand-sand rounded-lg px-4 py-2 focus:outline-none focus:border-brand-sage transition-all text-brand-ink font-mono">
+                    <span class="text-sm font-bold text-brand-ink/50">分鐘</span>
+                    <button onclick="saveDefaultDuration()" class="ml-auto px-4 py-2 bg-brand-sand/30 hover:bg-brand-sage text-brand-ink hover:text-white rounded-lg text-xs font-bold transition-all">儲存變更</button>
+                </div>
+                <p id="durationSaveMsg" class="text-xs text-brand-sage font-bold mt-2 opacity-0 transition-opacity">已儲存成功！</p>
+            </section>
+
+            <!-- 設定區塊 2: 分類管理 -->
+            <section class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-soft border border-brand-sand">
+                <h3 class="font-serif text-lg font-bold text-brand-ink mb-4 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-sage"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                    分類標籤管理
+                </h3>
+                <p class="text-xs text-brand-ink/60 mb-4 leading-relaxed">自由定義您的時光分類。雷達圖與長條圖也會根據您的自訂分類進行分析。</p>
+                
+                <div class="flex gap-2 mb-6">
+                    <input type="text" id="newCategoryInput" placeholder="輸入新分類名稱 (例：運動)" class="flex-1 bg-brand-paper border border-brand-sand rounded-lg px-4 py-2 focus:outline-none focus:border-brand-sage transition-all text-brand-ink text-sm">
+                    <button onclick="addNewCategory()" class="px-4 py-2 bg-brand-sage text-white rounded-lg text-xs font-bold transition-all hover:bg-brand-ink whitespace-nowrap">新增</button>
+                </div>
+
+                <div class="bg-brand-paper/50 rounded-xl border border-brand-sand/50 p-4">
+                    <ul id="settingsCategoryList" class="space-y-2">
+                        <!-- JS 渲染分類列表 -->
+                    </ul>
+                </div>
+            </section>
+
+        </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="mt-12 py-8 border-t border-brand-sand/30 text-center bg-white/30">
-        <p class="text-xs text-brand-ink/40 font-sans tracking-widest font-medium">
-            &copy; 2026 常溫編集所 Ambient Edit Studio.
-        </p>
-    </footer>
+    <!-- Bottom Navigation Bar (三欄式) -->
+    <nav class="fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-xl border-t border-brand-sand shadow-[0_-4px_20px_rgba(0,0,0,0.03)] z-40 pb-safe md:bottom-6 md:left-1/2 md:-translate-x-1/2 md:w-auto md:rounded-full md:border md:px-4 md:pb-0 transition-all duration-300">
+        <div class="flex justify-center items-center px-4 py-2 md:py-1.5 gap-4 md:gap-8 max-w-md mx-auto">
+            
+            <button id="nav-record" onclick="switchMainTab('record')" class="flex flex-col items-center justify-center w-16 h-12 md:h-14 rounded-xl transition-all duration-300 text-brand-sage bg-brand-sage/10">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                <span class="text-[10px] font-bold tracking-wider">時光</span>
+            </button>
+            
+            <button id="nav-insight" onclick="switchMainTab('insight')" class="flex flex-col items-center justify-center w-16 h-12 md:h-14 rounded-xl transition-all duration-300 text-brand-ink/40 hover:text-brand-ink/80">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+                <span class="text-[10px] font-bold tracking-wider">洞察</span>
+            </button>
+
+            <button id="nav-settings" onclick="switchMainTab('settings')" class="flex flex-col items-center justify-center w-16 h-12 md:h-14 rounded-xl transition-all duration-300 text-brand-ink/40 hover:text-brand-ink/80">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                <span class="text-[10px] font-bold tracking-wider">設定</span>
+            </button>
+            
+        </div>
+    </nav>
 
     <!-- Logic Script -->
     <script>
-        // Data Store & Migration
+        // --- 核心資料狀態 ---
         let rawRecords = JSON.parse(localStorage.getItem('ambientTimeRecords')) || [];
-        
-        // Migration: ensure all records have recordTime
         let records = rawRecords.map(r => ({
             ...r,
-            recordTime: r.recordTime || r.id // Default to ID if no recordTime exists
+            recordTime: r.recordTime || r.id 
         }));
         
-        // State
+        let ambientCategories = JSON.parse(localStorage.getItem('ambientCategories')) || ['工作 Work', '學習 Growth', '休息 Rest', '生活 Life', '浪費 Waste'];
+        let ambientDefaultDuration = parseInt(localStorage.getItem('ambientDefaultDuration')) || 30;
+
         let currentView = 'day'; 
         let editingRecordId = null; 
+        let pendingAction = null; 
         
-        // Confirm Modal State
-        let pendingAction = null; // { type: 'delete' | 'export', id?: number }
-        
-        // Chart Instances
         let radarChartInstance = null;
         let barChartInstance = null;
 
-        // Colors
         const colors = {
-            sage: '#8da399',
-            clay: '#d4a59a',
-            ink: '#4a4a4a',
-            sand: '#e6e2dd',
-            paper: '#fdfbf7',
-            sageTransparent: 'rgba(141, 163, 153, 0.5)'
+            sage: '#8da399', clay: '#d4a59a', ink: '#4a4a4a',
+            sand: '#e6e2dd', paper: '#fdfbf7', sageTransparent: 'rgba(141, 163, 153, 0.5)'
+        };
+
+        // 降飽和度的標籤顏色
+        const badgeColorList = [
+            'bg-brand-sage/15 text-brand-sage',
+            'bg-brand-clay/15 text-brand-clay',
+            'bg-stone-100 text-stone-500',
+            'bg-slate-100 text-slate-500',
+            'bg-brand-sand/50 text-brand-ink/60',
+            'bg-zinc-100 text-zinc-500'
+        ];
+
+        // --- Helper: 計算持續時間 (支援跨越午夜) ---
+        function calculateDurationMinutes(dateStr, startStr, endStr) {
+            const start = new Date(`${dateStr}T${startStr}`);
+            const end = new Date(`${dateStr}T${endStr}`);
+            if (end < start) end.setDate(end.getDate() + 1);
+            return Math.round((end - start) / 60000);
+        }
+
+        // --- 設定與選單邏輯 (Settings & Dropdowns) ---
+        function renderDropdowns() {
+            const addList = document.getElementById('addCategoryList');
+            addList.innerHTML = ambientCategories.map(cat => `<li class="px-4 py-2.5 hover:bg-brand-sage/10 cursor-pointer text-sm transition-colors text-brand-ink" data-value="${cat}">${cat}</li>`).join('');
+            if(ambientCategories.length > 0) {
+                document.getElementById('category').value = ambientCategories[0];
+                document.getElementById('addCategoryText').textContent = ambientCategories[0];
+            }
+
+            const editList = document.getElementById('editCategoryList');
+            editList.innerHTML = ambientCategories.map(cat => `<li class="px-4 py-2 hover:bg-brand-sage/10 cursor-pointer text-sm transition-colors text-brand-ink" data-value="${cat}">${cat}</li>`).join('');
+        }
+
+        function setupDropdownDelegation(btnId, listId, inputId, textId, iconId) {
+            const btn = document.getElementById(btnId);
+            const list = document.getElementById(listId);
+            const input = document.getElementById(inputId);
+            const text = document.getElementById(textId);
+            const icon = document.getElementById(iconId);
+
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isHidden = list.classList.contains('hidden');
+                document.querySelectorAll('.custom-dropdown-list').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.custom-dropdown-icon').forEach(el => el.style.transform = 'rotate(0deg)');
+                
+                if (isHidden) {
+                    list.classList.remove('hidden');
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+
+            list.addEventListener('click', (e) => {
+                const li = e.target.closest('li');
+                if(li) {
+                    e.stopPropagation();
+                    input.value = li.getAttribute('data-value');
+                    text.textContent = li.textContent;
+                    list.classList.add('hidden');
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!btn.contains(e.target) && !list.contains(e.target)) {
+                    list.classList.add('hidden');
+                    icon.style.transform = 'rotate(0deg)';
+                }
+            });
+        }
+
+        // --- Settings Page Functions ---
+        function loadSettingsUI() {
+            document.getElementById('settingDefaultDuration').value = ambientDefaultDuration;
+            renderCategoriesSettings();
+        }
+
+        function saveDefaultDuration() {
+            const val = parseInt(document.getElementById('settingDefaultDuration').value);
+            if(val > 0) {
+                ambientDefaultDuration = val;
+                localStorage.setItem('ambientDefaultDuration', ambientDefaultDuration);
+                
+                const msg = document.getElementById('durationSaveMsg');
+                msg.classList.remove('opacity-0');
+                setTimeout(() => msg.classList.add('opacity-0'), 2000);
+            }
+        }
+
+        function renderCategoriesSettings() {
+            const list = document.getElementById('settingsCategoryList');
+            list.innerHTML = '';
+            
+            ambientCategories.forEach((cat, idx) => {
+                const li = document.createElement('li');
+                li.className = 'flex justify-between items-center bg-white px-3 py-2 rounded-lg border border-brand-sand/50 shadow-sm';
+                li.innerHTML = `
+                    <span class="text-sm font-medium text-brand-ink">${cat}</span>
+                    <button onclick="deleteCategory(${idx})" class="text-brand-ink/30 hover:text-brand-clay p-1 rounded-full hover:bg-brand-sand/20 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                `;
+                list.appendChild(li);
+            });
+            renderDropdowns(); 
+            if(barChartInstance) updateCharts(); 
+        }
+
+        function addNewCategory() {
+            const input = document.getElementById('newCategoryInput');
+            const val = input.value.trim();
+            if(val && !ambientCategories.includes(val)) {
+                ambientCategories.push(val);
+                localStorage.setItem('ambientCategories', JSON.stringify(ambientCategories));
+                input.value = '';
+                renderCategoriesSettings();
+            }
+        }
+
+        window.deleteCategory = function(index) {
+            if(ambientCategories.length <= 1) {
+                alert("至少需要保留一個分類喔！");
+                return;
+            }
+            ambientCategories.splice(index, 1);
+            localStorage.setItem('ambientCategories', JSON.stringify(ambientCategories));
+            renderCategoriesSettings();
         };
 
         function init() {
+            renderDropdowns();
+            setupDropdownDelegation('addCategoryBtn', 'addCategoryList', 'category', 'addCategoryText', 'addCategoryIcon');
+            setupDropdownDelegation('editCategoryBtn', 'editCategoryList', 'editCategory', 'editCategoryText', 'editCategoryIcon');
+            loadSettingsUI();
+            
             switchView('day');
+            switchMainTab('record');
         }
 
-        // --- Core Logic: View Switching ---
+        // --- Main App Tabs Navigation ---
+        function switchMainTab(tab) {
+            ['record', 'insight', 'settings'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                const btn = document.getElementById(`nav-${t}`);
+                if(btn) {
+                    btn.classList.remove('text-brand-sage', 'bg-brand-sage/10');
+                    btn.classList.add('text-brand-ink/40');
+                }
+            });
+
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`nav-${tab}`);
+            if(activeBtn) {
+                activeBtn.classList.remove('text-brand-ink/40');
+                activeBtn.classList.add('text-brand-sage', 'bg-brand-sage/10');
+            }
+
+            if (tab === 'insight') {
+                updateCharts();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- Sub-View Switching (Day/Week/Month) ---
         function switchView(view) {
             currentView = view;
             
+            // 替換兩個頁籤內的按鈕樣式
             ['day', 'week', 'month'].forEach(v => {
-                const btn = document.getElementById(`btn-${v}`);
-                if (v === view) {
-                    btn.classList.remove('tab-inactive');
-                    btn.classList.add('tab-active');
-                } else {
-                    btn.classList.remove('tab-active');
-                    btn.classList.add('tab-inactive');
-                }
+                const listBtn = document.getElementById(`btn-${v}`);
+                const insightBtn = document.getElementById(`insight-btn-${v}`);
+                
+                [listBtn, insightBtn].forEach(btn => {
+                    if (btn) {
+                        if (v === view) {
+                            btn.classList.remove('tab-inactive');
+                            btn.classList.add('tab-active');
+                        } else {
+                            btn.classList.remove('tab-active');
+                            btn.classList.add('tab-inactive');
+                        }
+                    }
+                });
             });
 
             const titleMap = {
@@ -473,18 +683,16 @@
             refreshDisplay();
         }
 
-        // --- Core Logic: Filtering & Grouping ---
+        // --- Filtering & Rendering ---
         function getFilteredRecords() {
             const now = new Date();
             const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             
             return records.filter(record => {
                 const recordDate = new Date(record.recordTime);
-                
                 if (currentView === 'day') {
                     return recordDate.toDateString() === now.toDateString();
-                } 
-                else if (currentView === 'week') {
+                } else if (currentView === 'week') {
                     const dayOfWeek = now.getDay();
                     const startOfWeek = new Date(startOfDay);
                     startOfWeek.setDate(now.getDate() - dayOfWeek);
@@ -492,24 +700,48 @@
                     endOfWeek.setDate(startOfWeek.getDate() + 6);
                     endOfWeek.setHours(23, 59, 59, 999);
                     return recordDate >= startOfWeek && recordDate <= endOfWeek;
-                } 
-                else if (currentView === 'month') {
-                    return recordDate.getMonth() === now.getMonth() && 
-                           recordDate.getFullYear() === now.getFullYear();
+                } else if (currentView === 'month') {
+                    return recordDate.getMonth() === now.getMonth() && recordDate.getFullYear() === now.getFullYear();
                 }
                 return true;
             });
         }
 
+        // 取得「前一個週期」的資料 (供圖表對比用)
+        function getPreviousFilteredRecords() {
+            const now = new Date();
+            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            return records.filter(record => {
+                const recordDate = new Date(record.recordTime);
+                if (currentView === 'day') {
+                    const yesterday = new Date(now);
+                    yesterday.setDate(now.getDate() - 1);
+                    return recordDate.toDateString() === yesterday.toDateString();
+                } else if (currentView === 'week') {
+                    const dayOfWeek = now.getDay();
+                    const startOfLastWeek = new Date(startOfDay);
+                    startOfLastWeek.setDate(now.getDate() - dayOfWeek - 7);
+                    const endOfLastWeek = new Date(startOfLastWeek);
+                    endOfLastWeek.setDate(startOfLastWeek.getDate() + 6);
+                    endOfLastWeek.setHours(23, 59, 59, 999);
+                    return recordDate >= startOfLastWeek && recordDate <= endOfLastWeek;
+                } else if (currentView === 'month') {
+                    let lastMonth = now.getMonth() - 1;
+                    let year = now.getFullYear();
+                    if (lastMonth < 0) { lastMonth = 11; year--; }
+                    return recordDate.getMonth() === lastMonth && recordDate.getFullYear() === year;
+                }
+                return false;
+            });
+        }
+
         function groupRecordsByDate(filteredRecords) {
             filteredRecords.sort((a, b) => b.recordTime - a.recordTime);
-            
             const groups = {};
             filteredRecords.forEach(record => {
                 const dateKey = new Date(record.recordTime).toDateString();
-                if (!groups[dateKey]) {
-                    groups[dateKey] = [];
-                }
+                if (!groups[dateKey]) { groups[dateKey] = []; }
                 groups[dateKey].push(record);
             });
             return groups;
@@ -518,24 +750,22 @@
         function refreshDisplay() {
             const displayRecords = getFilteredRecords();
             renderList(displayRecords);
-            updateCharts(displayRecords);
             updateSummary(displayRecords);
+            
+            if (!document.getElementById('tab-insight').classList.contains('hidden')) {
+                updateCharts();
+            }
         }
 
-        // --- Core Logic: Confirmation Modal (Delete & Export) ---
-        
+        // --- Confirmation Modal ---
         function askDelete(id) {
             pendingAction = { type: 'delete', id: id };
-            
-            // UI setup for Delete
             const iconContainer = document.getElementById('confirmIcon');
             iconContainer.className = 'w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-4 transition-colors bg-brand-clay/10 text-brand-clay';
             iconContainer.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>';
             
             document.getElementById('confirmTitle').innerText = '刪除確認';
             document.getElementById('confirmMessage').innerText = '這段時光紀錄將被永久移除，確定要執行嗎？';
-            
-            // Show Cancel Button
             document.getElementById('confirmCancelBtn').classList.remove('hidden-visually');
             
             const confirmBtn = document.getElementById('confirmActionBtn');
@@ -547,18 +777,13 @@
 
         function askExport() {
             if (records.length === 0) {
-                // Case: No records, show info modal
                 pendingAction = null; 
-
                 const iconContainer = document.getElementById('confirmIcon');
                 iconContainer.className = 'w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-4 transition-colors bg-brand-ink/10 text-brand-ink/40';
-                // Folder Open / Empty icon
                 iconContainer.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>';
 
                 document.getElementById('confirmTitle').innerText = '尚無資料';
                 document.getElementById('confirmMessage').innerText = '目前沒有任何時光紀錄可供匯出喔，請先寫入一些回憶吧。';
-
-                // Hide Cancel Button
                 document.getElementById('confirmCancelBtn').classList.add('hidden-visually');
 
                 const confirmBtn = document.getElementById('confirmActionBtn');
@@ -569,17 +794,13 @@
                 return;
             }
 
-            // Case: Normal Export
             pendingAction = { type: 'export' };
-
             const iconContainer = document.getElementById('confirmIcon');
             iconContainer.className = 'w-12 h-12 mx-auto rounded-full flex items-center justify-center mb-4 transition-colors bg-brand-sage/10 text-brand-sage';
             iconContainer.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>';
 
             document.getElementById('confirmTitle').innerText = '匯出確認';
             document.getElementById('confirmMessage').innerText = '即將匯出目前的時光紀錄為 CSV 檔案，方便您進行保存與分析。';
-
-            // Show Cancel Button
             document.getElementById('confirmCancelBtn').classList.remove('hidden-visually');
 
             const confirmBtn = document.getElementById('confirmActionBtn');
@@ -602,20 +823,13 @@
             pendingAction = null;
         }
 
-        // Action Triggered
         document.getElementById('confirmActionBtn').addEventListener('click', () => {
             if (pendingAction) {
-                if (pendingAction.type === 'delete') {
-                    performDelete(pendingAction.id);
-                } else if (pendingAction.type === 'export') {
-                    performExport();
-                }
+                if (pendingAction.type === 'delete') performDelete(pendingAction.id);
+                else if (pendingAction.type === 'export') performExport();
             }
-            
             closeConfirmModal();
         });
-
-        // --- Core Logic: Actions ---
 
         function performDelete(id) {
             records = records.filter(r => r.id !== id);
@@ -624,8 +838,7 @@
         }
 
         function performExport() {
-            if (records.length === 0) return; // Double check
-
+            if (records.length === 0) return;
             const headers = ['紀錄ID', '日期', '時間', '事項名稱', '分類', '持續時間(分鐘)'];
             const rows = records.map(r => {
                 const dateObj = new Date(r.recordTime);
@@ -646,14 +859,60 @@
             document.body.removeChild(link);
         }
 
-        // --- Core Logic: Adding & Editing ---
+        // --- Add Modal Logic ---
+        function openAddModal() {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, '0');
+            const dd = String(now.getDate()).padStart(2, '0');
+            document.getElementById('addDate').value = `${yyyy}-${mm}-${dd}`;
+
+            const startHH = String(now.getHours()).padStart(2, '0');
+            const startMin = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('addStartTime').value = `${startHH}:${startMin}`;
+            
+            const later = new Date(now.getTime() + ambientDefaultDuration * 60000);
+            const endHH = String(later.getHours()).padStart(2, '0');
+            const endMin = String(later.getMinutes()).padStart(2, '0');
+            document.getElementById('addEndTime').value = `${endHH}:${endMin}`;
+
+            document.getElementById('taskName').value = '';
+
+            const modal = document.getElementById('addModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            document.getElementById('addModalContainer').scrollTop = 0;
+
+            setTimeout(() => {
+                document.getElementById('addCategoryList').classList.remove('hidden');
+                document.getElementById('addCategoryIcon').style.transform = 'rotate(180deg)';
+            }, 300);
+        }
+
+        function closeAddModal() {
+            const modal = document.getElementById('addModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.getElementById('addCategoryList').classList.add('hidden');
+            document.getElementById('addCategoryIcon').style.transform = 'rotate(0deg)';
+        }
+
+        // --- Adding & Editing ---
         document.getElementById('timeForm').addEventListener('submit', (e) => {
             e.preventDefault();
             const task = document.getElementById('taskName').value;
             const category = document.getElementById('category').value;
-            const duration = parseInt(document.getElementById('duration').value);
 
-            if (task && duration) {
+            const dateVal = document.getElementById('addDate').value;
+            const startVal = document.getElementById('addStartTime').value;
+            const endVal = document.getElementById('addEndTime').value;
+            
+            const duration = calculateDurationMinutes(dateVal, startVal, endVal);
+            const inputDate = new Date(`${dateVal}T${startVal}`);
+
+            if (task && duration > 0) {
+                closeAddModal();
                 const overlay = document.getElementById('successOverlay');
                 overlay.classList.remove('hidden');
                 void overlay.offsetWidth; 
@@ -661,13 +920,15 @@
                 
                 setTimeout(() => {
                     const now = Date.now();
+                    const recordTime = !isNaN(inputDate.getTime()) ? inputDate.getTime() : now;
+                    
                     const record = {
                         id: now,
-                        recordTime: now,
+                        recordTime: recordTime,
                         task,
                         category,
                         duration,
-                        timestamp: new Date().toLocaleString('zh-TW', { hour12: false })
+                        timestamp: new Date(recordTime).toLocaleString('zh-TW', { hour12: false })
                     };
 
                     records.push(record);
@@ -675,7 +936,6 @@
                     refreshDisplay();
                     
                     document.getElementById('timeForm').reset();
-                    document.getElementById('taskName').focus();
 
                     overlay.classList.add('opacity-0');
                     setTimeout(() => {
@@ -683,10 +943,11 @@
                     }, 500);
                     
                 }, 1000);
+            } else if (duration <= 0) {
+                alert("結束時間必須晚於開始時間喔！");
             }
         });
 
-        // Edit Modal Logic
         window.openEditModal = function(id) {
             const record = records.find(r => r.id === id);
             if (!record) return;
@@ -694,8 +955,13 @@
             editingRecordId = id;
             document.getElementById('editId').value = id;
             document.getElementById('editTaskName').value = record.task;
-            document.getElementById('editCategory').value = record.category;
-            document.getElementById('editDuration').value = record.duration;
+            
+            let displayCat = record.category;
+            if(!ambientCategories.includes(displayCat) && ambientCategories.length > 0) {
+                displayCat = ambientCategories[0]; 
+            }
+            document.getElementById('editCategory').value = displayCat;
+            document.getElementById('editCategoryText').textContent = displayCat;
 
             const dateObj = new Date(record.recordTime);
             const yyyy = dateObj.getFullYear();
@@ -703,13 +969,20 @@
             const dd = String(dateObj.getDate()).padStart(2, '0');
             document.getElementById('editDate').value = `${yyyy}-${mm}-${dd}`;
 
-            const hh = String(dateObj.getHours()).padStart(2, '0');
-            const min = String(dateObj.getMinutes()).padStart(2, '0');
-            document.getElementById('editTime').value = `${hh}:${min}`;
+            const startHH = String(dateObj.getHours()).padStart(2, '0');
+            const startMin = String(dateObj.getMinutes()).padStart(2, '0');
+            document.getElementById('editStartTime').value = `${startHH}:${startMin}`;
+
+            const endObj = new Date(dateObj.getTime() + record.duration * 60000);
+            const endHH = String(endObj.getHours()).padStart(2, '0');
+            const endMin = String(endObj.getMinutes()).padStart(2, '0');
+            document.getElementById('editEndTime').value = `${endHH}:${endMin}`;
 
             const modal = document.getElementById('editModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+            
+            document.getElementById('editModalContainer').scrollTop = 0;
         };
 
         window.closeEditModal = function() {
@@ -725,11 +998,18 @@
 
             const task = document.getElementById('editTaskName').value;
             const category = document.getElementById('editCategory').value;
-            const duration = parseInt(document.getElementById('editDuration').value);
             
             const dateVal = document.getElementById('editDate').value;
-            const timeVal = document.getElementById('editTime').value;
-            const newDate = new Date(`${dateVal}T${timeVal}`);
+            const startVal = document.getElementById('editStartTime').value;
+            const endVal = document.getElementById('editEndTime').value;
+            
+            const duration = calculateDurationMinutes(dateVal, startVal, endVal);
+            const newDate = new Date(`${dateVal}T${startVal}`);
+
+            if (duration <= 0) {
+                alert("結束時間必須晚於開始時間喔！");
+                return;
+            }
 
             const index = records.findIndex(r => r.id === editingRecordId);
             if (index !== -1) {
@@ -752,16 +1032,16 @@
             localStorage.setItem('ambientTimeRecords', JSON.stringify(records));
         }
 
-        // --- Rendering ---
+        // --- DOM Rendering ---
         function renderList(data) {
             const listContainer = document.getElementById('recordList');
             listContainer.innerHTML = '';
             
             if (data.length === 0) {
                 listContainer.innerHTML = `
-                    <div class="text-center py-12 border-2 border-dashed border-brand-sand/50 rounded-xl bg-white/20">
+                    <div class="text-center py-16 border-2 border-dashed border-brand-sand/50 rounded-xl bg-white/20">
                         <p class="text-brand-ink/30 font-serif mb-2 text-lg">No Records Found</p>
-                        <p class="text-xs text-brand-ink/20">在這個時間範圍內還沒有紀錄。</p>
+                        <p class="text-xs text-brand-ink/20">這段時間沒有留下足跡。</p>
                     </div>
                 `;
                 return;
@@ -772,64 +1052,65 @@
             Object.keys(groups).forEach(dateStr => {
                 const groupRecords = groups[dateStr];
                 const dateObj = new Date(groupRecords[0].recordTime);
-                
-                const dateHeader = new Intl.DateTimeFormat('zh-TW', { 
-                    month: 'long', 
-                    day: 'numeric', 
-                    weekday: 'long' 
-                }).format(dateObj);
+                const dateHeader = new Intl.DateTimeFormat('zh-TW', { month: 'long', day: 'numeric', weekday: 'long' }).format(dateObj);
                 
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'animate-slide-up';
-                
                 groupDiv.innerHTML = `
-                    <div class="flex items-center gap-4 mb-3 mt-2">
-                        <h3 class="font-serif font-bold text-brand-ink/80 text-lg border-b-2 border-brand-sage/20 pb-1 px-1">
+                    <div class="flex items-center gap-3 mb-3 mt-4">
+                        <h3 class="font-serif font-bold text-brand-ink/80 text-base md:text-lg border-b-2 border-brand-sage/20 pb-0.5 px-1">
                             ${dateHeader}
                         </h3>
-                        <span class="text-xs text-brand-ink/30 bg-white px-2 py-0.5 rounded-full border border-brand-sand/50">
-                            ${groupRecords.length} 筆紀錄
+                        <span class="text-[10px] text-brand-ink/30 bg-white px-2 py-0.5 rounded-full border border-brand-sand/50">
+                            ${groupRecords.length} 筆
                         </span>
                     </div>
                 `;
                 
                 const itemsContainer = document.createElement('div');
-                itemsContainer.className = 'space-y-3 pl-2';
+                itemsContainer.className = 'space-y-3';
 
                 groupRecords.forEach(record => {
                     const item = document.createElement('div');
-                    item.className = 'bg-white p-4 rounded-xl shadow-card border border-transparent hover:border-brand-sand transition-all duration-300 flex justify-between items-center group relative';
+                    item.className = 'bg-white p-4 md:p-5 rounded-xl shadow-card border border-transparent hover:border-brand-sand transition-all duration-300 flex justify-between items-center group relative';
                     
-                    let badgeColor = 'bg-brand-sand/30 text-brand-ink/70';
-                    if(record.category === '工作') badgeColor = 'bg-blue-50 text-blue-600';
-                    if(record.category === '學習') badgeColor = 'bg-purple-50 text-purple-600';
-                    if(record.category === '休息') badgeColor = 'bg-green-50 text-brand-sage';
-                    if(record.category === '浪費') badgeColor = 'bg-gray-100 text-gray-400 decoration-line-through';
+                    let finalBadgeColor = 'bg-brand-sand/30 text-brand-ink/70';
+                    
+                    if (record.category.includes('浪費') || record.category.includes('Waste')) {
+                        finalBadgeColor = 'bg-gray-100 text-gray-400 decoration-line-through';
+                    } else {
+                        const colorIndex = record.category.charCodeAt(0) % badgeColorList.length;
+                        finalBadgeColor = badgeColorList[colorIndex];
+                    }
 
-                    const timeDisplay = new Date(record.recordTime).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false });
+                    const startDate = new Date(record.recordTime);
+                    const startStr = startDate.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false });
+                    const endDate = new Date(startDate.getTime() + record.duration * 60000);
+                    const endStr = endDate.toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false });
 
                     item.innerHTML = `
-                        <div class="flex items-start gap-4 pointer-events-none">
-                            <div class="flex flex-col items-center min-w-[3rem]">
-                                <span class="text-[10px] text-brand-ink/30 font-mono tracking-tighter">${timeDisplay}</span>
+                        <div class="flex items-start gap-3 md:gap-4 pointer-events-none w-full pr-12 md:pr-16">
+                            <div class="flex flex-col items-center justify-center min-w-[3.5rem] md:min-w-[4rem] mt-0.5 shrink-0">
+                                <span class="text-[11px] md:text-xs text-brand-ink/60 font-mono tracking-tighter">${startStr}</span>
+                                <span class="text-[9px] md:text-[10px] text-brand-ink/30 font-mono tracking-tighter mt-0.5">↓ ${endStr}</span>
                             </div>
-                            <div>
-                                <div class="flex items-center gap-2 mb-1">
-                                    <span class="text-[10px] px-2 py-0.5 rounded-full ${badgeColor} font-bold tracking-wider">${record.category}</span>
-                                    <h3 class="font-medium text-brand-ink text-sm md:text-base">${record.task}</h3>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-2 mb-1 flex-wrap">
+                                    <span class="text-[9px] px-2 py-0.5 rounded-full ${finalBadgeColor} font-bold tracking-wider shrink-0">${record.category}</span>
+                                    <h3 class="font-medium text-brand-ink text-sm md:text-base leading-snug truncate">${record.task}</h3>
                                 </div>
                             </div>
                         </div>
-                        <div class="flex items-center gap-3 pl-4 border-l border-brand-sand/20 z-10">
-                            <span class="font-serif font-bold text-brand-ink text-lg pointer-events-none">${record.duration}<span class="text-xs font-sans font-normal ml-0.5 text-brand-ink/40">m</span></span>
+                        <div class="flex items-center gap-2 pl-3 border-l border-brand-sand/30 z-10 shrink-0 absolute right-4 md:right-5 top-1/2 -translate-y-1/2 bg-white md:bg-transparent">
+                            <span class="font-serif font-bold text-brand-ink text-base md:text-lg pointer-events-none w-10 md:w-12 text-right">${record.duration}<span class="text-[10px] font-sans font-normal ml-0.5 text-brand-ink/40">m</span></span>
                             
                             <!-- Actions -->
-                            <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onclick="openEditModal(${record.id})" class="p-1.5 text-brand-ink/40 hover:text-brand-sage hover:bg-brand-paper rounded-full transition-all cursor-pointer" title="編輯">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            <div class="flex flex-col md:flex-row gap-0.5 md:opacity-0 group-hover:opacity-100 transition-opacity ml-1">
+                                <button onclick="openEditModal(${record.id})" class="p-1.5 md:p-2 text-brand-ink/30 hover:text-brand-sage hover:bg-brand-paper rounded-full transition-all cursor-pointer" title="編輯">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                                 </button>
-                                <button onclick="askDelete(${record.id})" class="p-1.5 text-brand-ink/40 hover:text-brand-clay hover:bg-red-50 rounded-full transition-all cursor-pointer" title="刪除">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                                <button onclick="askDelete(${record.id})" class="p-1.5 md:p-2 text-brand-ink/30 hover:text-brand-clay hover:bg-red-50 rounded-full transition-all cursor-pointer" title="刪除">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
                                 </button>
                             </div>
                         </div>
@@ -842,100 +1123,103 @@
             });
         }
 
+        // 新增總計時數的單位換算
         function updateSummary(data) {
             const totalMinutes = data.reduce((acc, curr) => acc + curr.duration, 0);
-            document.getElementById('totalTimeDisplay').innerText = totalMinutes;
+            const hours = Math.floor(totalMinutes / 60);
+            const mins = totalMinutes % 60;
+
+            let timeHTML = '';
+            if (hours > 0) {
+                timeHTML = `${hours} <span class="text-sm md:text-base font-sans font-normal opacity-60 mx-1">小時</span> ${mins} <span class="text-sm md:text-base font-sans font-normal opacity-60 ml-1">分鐘</span>`;
+            } else {
+                timeHTML = `${totalMinutes} <span class="text-sm md:text-base font-sans font-normal opacity-60 ml-1">分鐘</span>`;
+            }
+
+            document.getElementById('totalTimeDisplay').innerHTML = timeHTML;
             document.getElementById('totalCountDisplay').innerText = data.length;
         }
 
-        function updateCharts(data) {
-            const categories = ['工作', '學習', '休息', '生活', '浪費'];
-            
-            const dataMap = categories.map(cat => {
-                return data
-                    .filter(r => r.category === cat)
-                    .reduce((sum, r) => sum + r.duration, 0);
-            });
+        // 修改：讓圖表可以比較前期與當期
+        function updateCharts() {
+            // 抓取目前的資料與「前一期」的資料
+            const currentData = getFilteredRecords();
+            const prevData = getPreviousFilteredRecords();
 
-            // Radar
+            const dataMap = ambientCategories.map(cat => currentData.filter(r => r.category === cat).reduce((sum, r) => sum + r.duration, 0));
+            const prevDataMap = ambientCategories.map(cat => prevData.filter(r => r.category === cat).reduce((sum, r) => sum + r.duration, 0));
+
+            let currentLabel = currentView === 'day' ? '今日' : (currentView === 'week' ? '本週' : '本月');
+            let prevLabel = currentView === 'day' ? '昨日' : (currentView === 'week' ? '上週' : '上月');
+
+            // --- Radar Chart ---
             const radarCtx = document.getElementById('radarChart').getContext('2d');
             if (radarChartInstance) radarChartInstance.destroy();
-
             radarChartInstance = new Chart(radarCtx, {
                 type: 'radar',
                 data: {
-                    labels: categories,
-                    datasets: [{
-                        label: '時間分佈',
-                        data: dataMap,
-                        backgroundColor: colors.sageTransparent,
-                        borderColor: colors.sage,
-                        pointBackgroundColor: colors.ink,
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: colors.ink,
-                        borderWidth: 2,
-                        pointRadius: 3
-                    }]
+                    labels: ambientCategories,
+                    datasets: [
+                        {
+                            label: currentLabel, 
+                            data: dataMap,
+                            backgroundColor: colors.sageTransparent, borderColor: colors.sage, pointBackgroundColor: colors.ink, pointBorderColor: '#fff',
+                            borderWidth: 2, pointRadius: 3
+                        },
+                        {
+                            label: prevLabel, 
+                            data: prevDataMap,
+                            backgroundColor: 'rgba(230, 226, 221, 0.4)', borderColor: colors.sand, pointBackgroundColor: colors.sand, pointBorderColor: '#fff',
+                            borderWidth: 2, pointRadius: 3
+                        }
+                    ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { color: 'rgba(230, 226, 221, 0.8)' },
-                            grid: { color: 'rgba(230, 226, 221, 0.8)' },
-                            pointLabels: {
-                                font: { family: '"Noto Sans TC"', size: 12, weight: '500' },
-                                color: colors.ink
-                            },
-                            ticks: { display: false, backdropColor: 'transparent' },
-                            suggestedMin: 0
-                        }
-                    },
-                    plugins: { legend: { display: false } }
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { r: { angleLines: { color: 'rgba(230, 226, 221, 0.8)' }, grid: { color: 'rgba(230, 226, 221, 0.8)' }, pointLabels: { font: { family: '"Noto Sans TC"', size: 11, weight: '500' }, color: colors.ink }, ticks: { display: false }, suggestedMin: 0 } },
+                    plugins: { legend: { display: true, position: 'top', labels: { font: { family: '"Noto Sans TC"' }, usePointStyle: true, boxWidth: 6 } } }
                 }
             });
 
-            // Bar
+            // --- Bar Chart ---
             const barCtx = document.getElementById('barChart').getContext('2d');
             if (barChartInstance) barChartInstance.destroy();
-
             barChartInstance = new Chart(barCtx, {
                 type: 'bar',
                 data: {
-                    labels: categories,
-                    datasets: [{
-                        label: '分鐘',
-                        data: dataMap,
-                        backgroundColor: ['#8da399', '#a6b5ad', '#d4a59a', '#e6e2dd', '#4a4a4a'],
-                        borderRadius: 6,
-                        borderSkipped: false,
-                        barThickness: 20
-                    }]
+                    labels: ambientCategories,
+                    datasets: [
+                        { 
+                            label: prevLabel, 
+                            data: prevDataMap, 
+                            backgroundColor: colors.sand, 
+                            borderRadius: 4, 
+                            barThickness: 12 
+                        },
+                        { 
+                            label: currentLabel, 
+                            data: dataMap, 
+                            backgroundColor: colors.sage, 
+                            borderRadius: 4, 
+                            barThickness: 12 
+                        }
+                    ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { display: false },
-                            ticks: { font: { family: '"Noto Serif TC"' }, color: colors.ink }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { font: { family: '"Noto Sans TC"' }, color: colors.ink }
-                        }
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { 
+                        y: { beginAtZero: true, grid: { display: false }, ticks: { font: { family: '"Noto Serif TC"' }, color: colors.ink } }, 
+                        x: { grid: { display: false }, ticks: { font: { family: '"Noto Sans TC"' }, color: colors.ink } } 
                     },
-                    plugins: { legend: { display: false } }
+                    plugins: { 
+                        legend: { display: true, position: 'top', labels: { font: { family: '"Noto Sans TC"' }, color: colors.ink, usePointStyle: true, boxWidth: 6 } },
+                        tooltip: { mode: 'index', intersect: false }
+                    }
                 }
             });
         }
 
-        // Start
         init();
-
     </script>
 </body>
 </html>

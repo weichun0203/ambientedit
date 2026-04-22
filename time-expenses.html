@@ -44,7 +44,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Tailwind 設定 -->
     <script>
         tailwind.config = {
             theme: {
@@ -134,21 +133,6 @@
     </style>
 </head>
 <body class="bg-noise min-h-screen flex flex-col font-sans selection:bg-brand-sage selection:text-white relative">
-
-    <!-- 首頁右上角按鈕 -->
-    <div class="absolute top-4 right-4 md:top-8 md:right-8 z-50">
-        <a href="https://weichun0203.github.io/ambientedit/" 
-           class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
-           aria-label="返回常溫首頁" style="text-decoration: none;">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 md:h-4 md:w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                <polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
-            <span class="ml-1.5 text-[10px] md:text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
-                常溫首頁
-            </span>
-        </a>
-    </div>
 
     <!-- Success Overlay -->
     <div id="successOverlay" class="fixed inset-0 z-[60] hidden flex items-center justify-center bg-brand-paper/80 backdrop-blur-md transition-opacity duration-500 opacity-0">
@@ -299,12 +283,33 @@
     </div>
 
     <!-- Header Section -->
-    <header class="w-full max-w-2xl mx-auto pt-20 md:pt-24 pb-6 px-6 relative z-10">
+    <header class="w-full max-w-2xl mx-auto pt-16 md:pt-20 pb-6 px-4 md:px-6 relative z-10">
         <div class="flex flex-col items-center relative border-b border-brand-sand pb-6 text-center opacity-0 animate-title-enter">
             <p class="text-brand-sage font-bold tracking-[0.2em] text-xs mb-3 uppercase">Ambient Edit Studio</p>
-            <h1 class="text-3xl md:text-4xl font-serif font-bold text-brand-ink mb-3 tracking-wider leading-tight">
-                常溫時光編集
-            </h1>
+            
+            <!-- 標題與按鈕容器：確保標題居中，按鈕絕對定位於最右側 -->
+            <div class="relative w-full flex items-center justify-center mb-3 min-h-[40px]">
+                <h1 class="text-3xl md:text-4xl font-serif font-bold text-brand-ink tracking-wider leading-tight mb-0">
+                    常溫時光編集
+                </h1>
+                
+                <a href="https://weichun0203.github.io/ambientedit/" 
+                   class="absolute right-0 top-1/2 -translate-y-1/2 group inline-flex items-center px-2.5 py-1.5 md:px-4 md:py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+                   aria-label="返回常溫首頁" style="text-decoration: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 md:h-4 md:w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <!-- 手機版縮短文字為「首頁」防重疊，大螢幕顯示「常溫首頁」 -->
+                    <span class="ml-1.5 hidden sm:inline text-[10px] md:text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                        常溫首頁
+                    </span>
+                    <span class="ml-1.5 sm:hidden text-[10px] font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                        首頁
+                    </span>
+                </a>
+            </div>
+            
             <p class="text-brand-ink/60 font-serif italic text-xs md:text-sm tracking-wide">
                 「將時間輕輕摺疊，收藏在日子的扉頁裡。」
             </p>

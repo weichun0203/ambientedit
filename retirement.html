@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常溫退休金投資規劃計算機｜Ambient Retirement Planner</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
+    <!-- Meta Tags -->
+    <meta name="description" content="常溫編集所專屬退休金投資規劃計算機，透過精準數據推演與4%法則，為未來的理想生活勾勒清晰的財務藍圖。">
+    <meta name="keywords" content="常溫編集所, 退休金計算, 財務自由, FIRE, 投資規劃, 4%法則">
+    <meta name="author" content="常溫編集所 Ambient Edit Studio">
+
+    <!-- JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "常溫退休金投資規劃計算機",
+      "url": "https://weichun0203.github.io/ambientedit/",
+      "description": "透過精準的數據推演與4%法則，為未來的理想生活勾勒清晰的財務藍圖。",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "All",
+      "author": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      }
+    }
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js & Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind Config for Brand Identity -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                    },
+                    boxShadow: {
+                        soft: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        innerSoft: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.02)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #fdfbf7;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+            color: #4a4a4a;
+        }
+
+        /* Custom Scrollbar for elegant look */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e6e2dd; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8da399; }
+
+        /* Input specific styles */
+        .brand-input {
+            transition: all 0.3s ease;
+        }
+        .brand-input:focus {
+            border-color: #8da399;
+            box-shadow: 0 0 0 2px rgba(141, 163, 153, 0.2);
+            outline: none;
+        }
+
+        /* Tooltip positioning */
+        .tooltip-content {
+            display: none;
+            position: absolute;
+            z-index: 50;
+            width: max-content;
+            max-width: 280px;
+        }
+        .tooltip-trigger:hover + .tooltip-content,
+        .tooltip-trigger:focus + .tooltip-content,
+        .tooltip-content:hover {
+            display: block;
+            animation: fadeIn 0.2s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tab-btn.active {
+            background-color: white;
+            color: #8da399;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen selection:bg-brand-sage selection:text-white pb-20">
+
+    <header class="max-w-7xl mx-auto px-4 md:px-8 pt-12 pb-6">
+        <!-- Interactive Layout: Centered Title, Right-aligned button -->
+        <div class="relative flex flex-col items-center justify-end border-b border-brand-sand pb-8 mb-8 mt-4 min-h-[120px]">
+            
+            <div class="text-center z-10 w-full px-20">
+                <p class="text-brand-sage text-sm tracking-[0.2em] mb-3 font-sans font-medium uppercase">常溫編集所 Ambient Edit Studio</p>
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-brand-ink mb-4">退休金投資規劃計算機 Pro</h1>
+                <p class="text-brand-ink/70 font-sans text-sm md:text-base tracking-wide max-w-xl mx-auto">透過精準的數據推演，為未來的理想生活勾勒清晰的藍圖。</p>
+            </div>
+
+            <!-- "返回常溫首頁" Button aligned to bottom-right of the title group -->
+            <div class="absolute right-0 bottom-8">
+                <a href="https://weichun0203.github.io/ambientedit/" 
+                   class="group inline-flex items-center px-4 py-2.5 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+                   aria-label="返回常溫首頁"
+                   style="text-decoration: none;">
+                    <i class="ph ph-arrow-u-up-left text-brand-sage group-hover:text-brand-ink transition-colors duration-300 text-lg"></i>
+                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                        常溫首頁
+                    </span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 md:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+            
+            <!-- Left Sidebar (Inputs) -->
+            <div class="lg:col-span-4 xl:col-span-3 space-y-6">
+                <div class="bg-white rounded-2xl shadow-soft border border-brand-sand/50 p-6 sticky top-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
+                    <div class="flex items-center gap-2 mb-6 pb-4 border-b border-brand-sand">
+                        <i class="ph ph-sliders text-xl text-brand-sage"></i>
+                        <h3 class="font-serif font-bold text-lg text-brand-ink tracking-wide">參數設定</h3>
+                    </div>
+
+                    <form id="calculator-form" class="space-y-8">
+                        
+                        <!-- Basic Data -->
+                        <div>
+                            <h4 class="text-xs font-bold text-brand-sage/70 uppercase tracking-widest mb-4">基本資料</h4>
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div class="relative">
+                                    <label class="text-xs font-medium text-brand-ink/80 block mb-1.5">現齡</label>
+                                    <input type="text" id="currentAge" value="22" class="brand-input w-full p-2.5 pr-8 bg-brand-paper border border-brand-sand rounded-xl font-mono text-brand-ink shadow-innerSoft text-sm" data-type="number">
+                                    <span class="absolute right-3 top-8 text-brand-ink/40 text-xs pointer-events-none">歲</span>
+                                </div>
+                                <div class="relative">
+                                    <label class="text-xs font-medium text-brand-ink/80 block mb-1.5">目標退休年齡</label>
+                                    <input type="text" id="retireAge" value="55" class="brand-input w-full p-2.5 pr-8 bg-brand-paper border border-brand-sand rounded-xl font-mono text-brand-ink shadow-innerSoft text-sm" data-type="number">
+                                    <span class="absolute right-3 top-8 text-brand-ink/40 text-xs pointer-events-none">歲</span>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <label class="text-xs font-medium text-brand-ink/80 block mb-1.5">退休後每月支出 (現值)</label>
+                                <input type="text" id="monthlyExpense" value="50000" class="brand-input w-full p-2.5 pl-8 bg-brand-paper border border-brand-sand rounded-xl font-mono text-brand-ink shadow-innerSoft text-sm" data-type="currency">
+                                <span class="absolute left-3 top-8 text-brand-ink/40 text-sm pointer-events-none">$</span>
+                            </div>
+                        </div>
+
+                        <!-- Investment Plan -->
+                        <div>
+                            <h4 class="text-xs font-bold text-brand-sage/70 uppercase tracking-widest mb-4">投資計畫</h4>
+                            <div class="space-y-4">
+                                <div class="relative">
+                                    <label class="text-xs font-medium text-brand-ink/80 block mb-1.5">現有資產</label>
+                                    <input type="text" id="initialPrincipal" value="100000" class="brand-input w-full p-2.5 pl-8 bg-brand-paper border border-brand-sand rounded-xl font-mono text-brand-ink shadow-innerSoft text-sm" data-type="currency">
+                                    <span class="absolute left-3 top-8 text-brand-ink/40 text-sm pointer-events-none">$</span>
+                                </div>
+                                <div class="relative">
+                                    <label class="text-xs font-medium text-brand-ink/80 block mb-1.5">每月初始投資</label>
+                                    <input type="text" id="monthlyInvest" value="5000" class="brand-input w-full p-2.5 pl-8 bg-brand-paper border border-brand-sand rounded-xl font-mono text-brand-ink shadow-innerSoft text-sm" data-type="currency">
+                                    <span class="absolute left-3 top-8 text-brand-ink/40 text-sm pointer-events-none">$</span>
+                                </div>
+                                
+                                <div class="relative">
+                                    <div class="flex items-center gap-1 mb-1.5 relative">
+                                        <label class="text-xs font-medium text-brand-ink/80">年投資增長率</label>
+                                        <i class="ph ph-info text-brand-sage/60 tooltip-trigger cursor-help"></i>
+                                        <div class="tooltip-content bg-white p-3 rounded-lg shadow-lg border border-brand-sand text-xs text-brand-ink/80 mt-6 left-0">
+                                            模擬薪資成長，每年增加投資金額的百分比。例如設定 2%，代表明年每月投資額會變為目前的 1.02 倍。
+                                        </div>
+                                    </div>
+                                    <input type="text" id="investGrowthRate" value="2" class="brand-input w-full p-2.5 pr-8 bg-brand-paper border border-brand-sand rounded-xl font-mono text-brand-ink shadow-innerSoft text-sm" data-type="float">
+                                    <span class="absolute right-3 top-8 text-brand-ink/40 text-xs pointer-events-none">%</span>
+                                </div>
+
+                                <div class="flex items-start gap-3 mt-4 p-3 border border-brand-sand rounded-xl hover:bg-brand-paper transition-colors cursor-pointer" onclick="document.getElementById('continueInvestRetire').click()">
+                                    <div class="pt-0.5 relative">
+                                        <input type="checkbox" id="continueInvestRetire" class="w-4 h-4 text-brand-sage bg-white border-brand-sand rounded focus:ring-brand-sage focus:ring-2 cursor-pointer accent-brand-sage">
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-1">
+                                            <label class="text-xs font-medium text-brand-ink cursor-pointer">退休後繼續投資</label>
+                                            <div class="relative group">
+                                                <i class="ph ph-info text-brand-sage/60 tooltip-trigger cursor-help inline-block"></i>
+                                                <div class="tooltip-content bg-white p-3 rounded-lg shadow-lg border border-brand-sand text-xs text-brand-ink/80 top-full left-0 mt-1 min-w-[200px]">
+                                                    若勾選，系統假設退休後依然維持投資金額。若不勾選，退休後投資金額歸零。
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Market Assumptions -->
+                        <div>
+                            <h4 class="text-xs font-bold text-brand-sage/70 uppercase tracking-widest mb-4">市場假設</h4>
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div class="relative">
+                                    <label class="text-xs font-medium text-brand-ink/80 block mb-1.5">年報酬</label>
+                                    <input type="text" id="annualReturn" value="8" class="brand-input w-full p-2.5 pr-8 bg-brand-paper border border-brand-sand rounded-xl font-mono text-brand-ink shadow-innerSoft text-sm" data-type="float">
+                                    <span class="absolute right-3 top-8 text-brand-ink/40 text-xs pointer-events-none">%</span>
+                                </div>
+                                <div class="relative">
+                                    <label class="text-xs font-medium text-brand-ink/80 block mb-1.5">通膨率</label>
+                                    <input type="text" id="inflationRate" value="3" class="brand-input w-full p-2.5 pr-8 bg-brand-paper border border-brand-sand rounded-xl font-mono text-brand-ink shadow-innerSoft text-sm" data-type="float">
+                                    <span class="absolute right-3 top-8 text-brand-ink/40 text-xs pointer-events-none">%</span>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <div class="flex items-center gap-1 mb-1.5 relative">
+                                    <label class="text-xs font-medium text-brand-ink/80">提領率 (4%法則)</label>
+                                    <i class="ph ph-info text-brand-sage/60 tooltip-trigger cursor-help"></i>
+                                    <div class="tooltip-content bg-white p-3 rounded-lg shadow-lg border border-brand-sand text-xs text-brand-ink/80 mt-6 left-0">
+                                        經驗法則：退休首年提領總資產4%作生活費，後隨通膨調整，高機率維持30年不耗盡。保守可設3%。
+                                    </div>
+                                </div>
+                                <input type="text" id="safeWithdrawalRate" value="4" class="brand-input w-full p-2.5 pr-8 bg-brand-paper border border-brand-sand rounded-xl font-mono text-brand-ink shadow-innerSoft text-sm" data-type="float">
+                                <span class="absolute right-3 top-8 text-brand-ink/40 text-xs pointer-events-none">%</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Content -->
+            <div class="lg:col-span-8 xl:col-span-9 space-y-6">
+                
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                    
+                    <!-- Card 1 -->
+                    <div class="bg-white p-5 rounded-2xl border border-brand-sage/30 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs text-brand-sage font-medium mb-2 tracking-wide" id="lbl-retire-asset">退休時預估資產</div>
+                            <div class="text-2xl font-bold font-mono tracking-tight text-brand-ink" id="val-retire-asset">$0</div>
+                            <div class="text-xs mt-2 text-brand-ink/50" id="sub-retire-asset">本金投入: $0</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="bg-white p-5 rounded-2xl border border-brand-sage/30 shadow-sm flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-16 h-16 bg-brand-sage/5 rounded-bl-full"></div>
+                        <div class="relative z-10">
+                            <div class="text-xs text-brand-sage font-medium mb-2 tracking-wide" id="lbl-retire-target">退休時自由門檻</div>
+                            <div class="text-2xl font-bold font-mono tracking-tight text-brand-ink" id="val-retire-target">$0</div>
+                            <div class="text-xs mt-2 text-brand-ink/50" id="sub-retire-target">含通膨調整</div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div id="card-freedom" class="bg-white p-5 rounded-2xl border shadow-sm flex flex-col justify-between transition-colors duration-300">
+                        <div>
+                            <div class="text-xs text-brand-ink/60 font-medium mb-2 tracking-wide">提早自由年齡</div>
+                            <div class="text-2xl font-bold font-mono tracking-tight" id="val-freedom-age">未達成</div>
+                            <div class="text-xs mt-2 font-medium" id="sub-freedom-age">-</div>
+                        </div>
+                        <div id="extra-freedom" class="hidden mt-4 pt-3 border-t border-brand-sand/50 w-full">
+                            <div class="text-[10px] text-brand-ink/60 mb-1">欲準時達成需月投:</div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-sm font-bold text-brand-sage bg-brand-sage/10 px-1.5 py-0.5 rounded font-mono" id="val-required-invest-freedom">$0</span>
+                                <span class="text-[10px] text-brand-sage/80 font-mono" id="val-diff-invest-freedom">(+$0)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div id="card-depletion" class="bg-white p-5 rounded-2xl border shadow-sm flex flex-col justify-between transition-colors duration-300">
+                        <div>
+                            <div class="text-xs text-brand-ink/60 font-medium mb-2 tracking-wide">資產存續狀況</div>
+                            <div class="text-2xl font-bold font-serif tracking-tight" id="val-depletion-age">永續存續</div>
+                            <div class="text-xs mt-2 font-medium" id="sub-depletion-age">✅ 資產持續成長</div>
+                        </div>
+                        <div id="extra-depletion" class="hidden mt-4 pt-3 border-t border-brand-sand/50 w-full">
+                            <div class="text-[10px] font-bold text-brand-clay mb-1 flex items-center gap-1">
+                                <i class="ph ph-warning-circle"></i> 建議補救月投:
+                            </div>
+                            <div class="flex items-baseline gap-1.5">
+                                <span class="text-sm font-bold text-brand-clay bg-brand-clay/10 px-1.5 py-0.5 rounded font-mono" id="val-required-invest-deplete">$0</span>
+                                <span class="text-[10px] text-brand-clay/80 font-mono" id="val-diff-invest-deplete">(+$0)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visualization Tab & Area -->
+                <div class="bg-white rounded-2xl shadow-soft border border-brand-sand/50 p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+                        <div class="flex items-center gap-2">
+                            <i class="ph ph-trend-up text-xl text-brand-sage" id="view-icon"></i>
+                            <h3 class="font-serif font-bold text-lg text-brand-ink" id="view-title">資產累積推演</h3>
+                        </div>
+                        
+                        <div class="flex items-center gap-3">
+                            <button id="btn-scale-toggle" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all border border-brand-sand text-brand-ink/70 hover:bg-brand-paper">
+                                <i class="ph ph-arrows-out-line-vertical"></i> <span id="lbl-scale">開啟對數</span>
+                            </button>
+                            
+                            <div class="bg-brand-paper p-1 rounded-xl flex border border-brand-sand/50">
+                                <button onclick="switchTab('chart')" id="tab-chart" class="tab-btn active px-4 py-1.5 rounded-lg flex items-center gap-2 text-sm font-medium transition-all">
+                                    <i class="ph ph-chart-line-up"></i> 圖表
+                                </button>
+                                <button onclick="switchTab('table')" id="tab-table" class="tab-btn px-4 py-1.5 rounded-lg flex items-center gap-2 text-sm text-brand-ink/60 font-medium transition-all hover:text-brand-ink">
+                                    <i class="ph ph-table"></i> 數據
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Container -->
+                    <div id="view-chart" class="block">
+                        <div class="h-[400px] w-full relative">
+                            <canvas id="projectionChart"></canvas>
+                        </div>
+                        <div class="mt-6 flex flex-col items-center gap-3 text-xs text-brand-ink/60">
+                            <div class="flex flex-wrap justify-center gap-6">
+                                <span class="flex items-center gap-2"><span class="w-3 h-3 bg-brand-sage/80 rounded-full"></span> 資產累積</span>
+                                <span class="flex items-center gap-2"><span class="w-3 h-3 border border-brand-clay rounded-full relative"><span class="absolute inset-0 bg-brand-clay opacity-20 rounded-full"></span></span> 財務自由門檻</span>
+                                <span class="flex items-center gap-2"><span class="w-3 h-3 bg-brand-ink/20 rounded-full"></span> 本金投入</span>
+                            </div>
+                            <p id="msg-log" class="hidden text-brand-sage bg-brand-sage/10 px-3 py-1.5 rounded-lg font-medium tracking-wide">💡 目前為對數座標模式，Y軸刻度為指數增長，可清晰觀察初期資產變化。</p>
+                        </div>
+                    </div>
+
+                    <!-- Table Container -->
+                    <div id="view-table" class="hidden">
+                        <div class="overflow-x-auto max-h-[450px] border border-brand-sand/50 rounded-xl custom-scrollbar">
+                            <table class="w-full text-sm text-left text-brand-ink/80">
+                                <thead class="text-xs text-brand-ink bg-brand-paper sticky top-0 z-10 shadow-sm">
+                                    <tr>
+                                        <th class="px-4 py-3 font-medium tracking-wider">年齡</th>
+                                        <th class="px-4 py-3 font-medium tracking-wider">狀態</th>
+                                        <th class="px-4 py-3 font-medium tracking-wider text-right">當月投入</th>
+                                        <th class="px-4 py-3 font-medium tracking-wider text-right">本金累計</th>
+                                        <th class="px-4 py-3 font-medium tracking-wider text-right">總資產</th>
+                                        <th class="px-4 py-3 font-medium tracking-wider text-right text-brand-clay">所需門檻</th>
+                                        <th class="px-4 py-3 font-medium tracking-wider text-right">被動收入/月</th>
+                                        <th class="px-4 py-3 font-medium tracking-wider text-right">生活支出/月</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detail-tbody" class="divide-y divide-brand-sand/30 bg-white">
+                                    <!-- JS populated -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Table & Logic -->
+                <div class="bg-white rounded-2xl shadow-soft border border-brand-sand/50 p-6">
+                    <div class="flex items-center gap-2 mb-6">
+                        <i class="ph ph-flag-checkered text-xl text-brand-sage"></i>
+                        <h3 class="font-serif font-bold text-lg text-brand-ink">財務里程碑總覽 (每5年)</h3>
+                    </div>
+                    
+                    <div class="overflow-x-auto rounded-xl border border-brand-sand/50 mb-8">
+                        <table class="w-full text-sm text-left text-brand-ink/80">
+                            <thead class="text-xs text-brand-ink bg-brand-paper">
+                                <tr>
+                                    <th class="px-4 py-3 font-medium tracking-wider whitespace-nowrap">年齡</th>
+                                    <th class="px-4 py-3 font-medium tracking-wider whitespace-nowrap">階段</th>
+                                    <th class="px-4 py-3 font-medium tracking-wider text-right whitespace-nowrap">累積資產</th>
+                                    <th class="px-4 py-3 font-medium tracking-wider text-right whitespace-nowrap">本金投入</th>
+                                    <th class="px-4 py-3 font-medium tracking-wider text-right whitespace-nowrap">被動收入/月</th>
+                                    <th class="px-4 py-3 font-medium tracking-wider text-right whitespace-nowrap">目標支出/月</th>
+                                    <th class="px-4 py-3 font-medium tracking-wider text-center whitespace-nowrap">支出覆蓋率</th>
+                                </tr>
+                            </thead>
+                            <tbody id="milestone-tbody" class="divide-y divide-brand-sand/30 bg-white">
+                                <!-- JS populated -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Logic Explanation -->
+                    <div class="bg-brand-paper/50 p-5 rounded-xl border border-brand-sand">
+                        <div class="flex items-center gap-2 mb-4 border-b border-brand-sand/60 pb-3">
+                            <i class="ph ph-book-open-text text-brand-sage text-lg"></i>
+                            <span class="text-sm font-bold text-brand-ink tracking-wide">常溫編輯室：指標說明與公式邏輯</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm text-brand-ink/70 leading-relaxed">
+                            <div>
+                                <h5 class="font-bold text-brand-ink mb-3 flex items-center gap-1.5"><i class="ph ph-math-operations"></i> 核心定義</h5>
+                                <div class="space-y-4">
+                                    <div>
+                                        <p class="font-medium text-brand-ink mb-1">支出覆蓋率 = (月被動收入 ÷ 通膨後支出) × 100%</p>
+                                        <div class="bg-white p-3 rounded-lg border border-brand-sand/50 text-xs">
+                                            <ul class="space-y-2">
+                                                <li class="flex gap-2"><span class="text-brand-clay font-bold font-mono w-10 text-right">&lt; 100%</span><span>被動收入不足，需消耗本金或工作收入填補。</span></li>
+                                                <li class="flex gap-2"><span class="text-brand-sage font-bold font-mono w-10 text-right">≥ 100%</span><span>達成財務自由，被動收入足以支付生活開銷。</span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-brand-ink mb-1">每月被動收入</p>
+                                        <p class="text-xs">基於 <strong>4% 法則 (或自訂提領率)</strong> 計算：<code class="font-mono bg-white px-1.5 py-0.5 rounded border border-brand-sand">總資產 × (提領率 ÷ 12)</code></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h5 class="font-bold text-brand-ink mb-3 flex items-center gap-1.5"><i class="ph ph-brain"></i> 智能運算邏輯</h5>
+                                <div class="space-y-4 text-xs">
+                                    <p>系統模擬至 <strong>95 歲</strong>。我們不僅計算未來，更提供補救指南：</p>
+                                    <ul class="list-disc pl-4 space-y-2">
+                                        <li>若途中資產歸零，系統會自動反向推算「維持資產不歸零」所需的最低每月投資額。</li>
+                                        <li>若未能在目標退休年齡前達成財務自由，系統會計算「準時達成」所需的每月加碼金額。</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-20 border-t border-brand-sand pt-8 pb-12">
+        <div class="max-w-7xl mx-auto px-4 md:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p class="text-sm font-sans text-brand-ink/60 tracking-wider">
+                &copy; 2026 常溫編集所 Ambient Edit Studio.
+            </p>
+            <div class="flex items-center gap-4">
+                <a href="https://line.me/R/ti/p/@890mvlvl" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-brand-paper border border-brand-sand flex items-center justify-center text-brand-ink/60 hover:text-[#00B900] hover:border-[#00B900] transition-colors shadow-sm">
+                    <i class="ph ph-chat-circle-dots text-xl"></i>
+                </a>
+                <a href="https://www.instagram.com/ambientedit_?igsh=ajJseGdpc3dnaTJw" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-brand-paper border border-brand-sand flex items-center justify-center text-brand-ink/60 hover:text-[#E1306C] hover:border-[#E1306C] transition-colors shadow-sm">
+                    <i class="ph ph-instagram-logo text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- Formatting Utilities ---
+        const formatCurrency = (val) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
+        const parseNum = (str) => { const num = parseFloat(str.replace(/,/g, '').replace(/\$/g, '')); return isNaN(num) ? 0 : num; };
+        
+        // --- State Management ---
+        const STATE_KEY = 'ambient_retirement_planner_state';
+        let state = {
+            currentAge: 22, retireAge: 55, monthlyExpense: 50000, initialPrincipal: 100000,
+            monthlyInvest: 5000, investGrowthRate: 2, continueInvestRetire: false,
+            annualReturn: 8, inflationRate: 3, safeWithdrawalRate: 4
+        };
+        let isLogScale = false;
+        let chartInstance = null;
+
+        // Load from LocalStorage
+        function loadState() {
+            const saved = localStorage.getItem(STATE_KEY);
+            if (saved) {
+                try { Object.assign(state, JSON.parse(saved)); } 
+                catch(e) { console.error("Failed to load state", e); }
+            }
+        }
+        
+        function saveState() {
+            localStorage.setItem(STATE_KEY, JSON.stringify(state));
+        }
+
+        // --- Core Simulation Logic ---
+        function calculateProjection(params) {
+            const { currentAge, retireAge, monthlyExpense, monthlyInvest, initialPrincipal, annualReturn, inflationRate, investGrowthRate, safeWithdrawalRate, continueInvestRetire } = params;
+            
+            let result = [];
+            let currentPortfolio = initialPrincipal;
+            let accumulatedPrincipal = initialPrincipal;
+            let currentMonthlyInvest = monthlyInvest;
+            
+            let freedomAchieved = false;
+            let freedomAge = null;
+            let depletionAge = null;
+
+            for (let age = currentAge; age <= 95; age++) {
+                const yearIndex = age - currentAge;
+                const isRetirementPhase = age >= retireAge;
+                
+                const annualInflationMultiplier = Math.pow(1 + inflationRate / 100, yearIndex);
+                const futureMonthlyExpense = monthlyExpense * annualInflationMultiplier;
+                const futureAnnualExpense = futureMonthlyExpense * 12;
+
+                const fireNumber = futureAnnualExpense / (safeWithdrawalRate / 100);
+
+                if (!freedomAchieved && currentPortfolio >= fireNumber && currentPortfolio > 0) {
+                    freedomAchieved = true;
+                    freedomAge = age;
+                }
+                
+                if (isRetirementPhase && currentPortfolio <= 0 && !depletionAge) {
+                    depletionAge = age;
+                }
+
+                const shouldInvest = !isRetirementPhase || continueInvestRetire;
+                const amountToInvestYearly = shouldInvest ? currentMonthlyInvest * 12 : 0;
+
+                result.push({
+                    age,
+                    portfolio: Math.max(0, Math.round(currentPortfolio)),
+                    invested: Math.round(accumulatedPrincipal),
+                    target: Math.round(fireNumber),
+                    monthlyIncome: Math.round((currentPortfolio * (safeWithdrawalRate/100)) / 12),
+                    monthlyExpenseNeeded: Math.round(futureMonthlyExpense),
+                    monthlyInvestAmount: Math.round(shouldInvest ? currentMonthlyInvest : 0)
+                });
+
+                if (shouldInvest) {
+                    const growthOnPrincipal = currentPortfolio * (annualReturn / 100);
+                    const growthOnContribution = amountToInvestYearly * (annualReturn / 100 / 2);
+                    currentPortfolio = currentPortfolio + growthOnPrincipal + amountToInvestYearly + growthOnContribution;
+                    accumulatedPrincipal += amountToInvestYearly;
+                    currentMonthlyInvest = currentMonthlyInvest * (1 + investGrowthRate / 100);
+                } else {
+                    const growth = currentPortfolio * (annualReturn / 100);
+                    currentPortfolio += growth;
+                }
+
+                if (isRetirementPhase) {
+                    currentPortfolio -= futureAnnualExpense;
+                    if (currentPortfolio < 0) currentPortfolio = 0;
+                }
+            }
+
+            return { data: result, freedomAge, depletionAge };
+        }
+
+        function runSolvers(mainResult) {
+            let reqSol = null;
+            let freeSol = null;
+
+            // Solver 1: Depletion
+            if (mainResult.depletionAge) {
+                let low = state.monthlyInvest, high = state.monthlyInvest * 20;
+                for(let i=0; i<20; i++) {
+                    let mid = (low + high) / 2;
+                    let res = calculateProjection({ ...state, monthlyInvest: mid });
+                    if (!res.depletionAge) { reqSol = mid; high = mid; } 
+                    else { low = mid; }
+                }
+            }
+
+            // Solver 2: Freedom On Time
+            if (!mainResult.freedomAge || mainResult.freedomAge > state.retireAge) {
+                let low = state.monthlyInvest, high = state.monthlyInvest * 50;
+                for(let i=0; i<20; i++) {
+                    let mid = (low + high) / 2;
+                    let res = calculateProjection({ ...state, monthlyInvest: mid });
+                    if (res.freedomAge && res.freedomAge <= state.retireAge) { freeSol = mid; high = mid; } 
+                    else { low = mid; }
+                }
+            }
+            return { reqSol, freeSol };
+        }
+
+        function updateUI() {
+            const res = calculateProjection(state);
+            const solvers = runSolvers(res);
+            
+            // 1. Update Metrics Cards
+            const retSnap = res.data.find(d => d.age === state.retireAge) || {};
+            
+            document.getElementById('lbl-retire-asset').innerText = `${state.retireAge} 歲預估資產`;
+            document.getElementById('val-retire-asset').innerText = formatCurrency(retSnap.portfolio || 0);
+            document.getElementById('sub-retire-asset').innerText = `本金投入: ${formatCurrency(retSnap.invested || 0)}`;
+
+            document.getElementById('lbl-retire-target').innerText = `${state.retireAge} 歲財務自由門檻`;
+            document.getElementById('val-retire-target').innerText = formatCurrency(retSnap.target || 0);
+            document.getElementById('sub-retire-target').innerText = `含 ${state.inflationRate}% 通膨調整`;
+
+            // Freedom Card
+            const cFree = document.getElementById('card-freedom');
+            const vFree = document.getElementById('val-freedom-age');
+            const sFree = document.getElementById('sub-freedom-age');
+            const eFree = document.getElementById('extra-freedom');
+            
+            if (res.freedomAge) {
+                vFree.innerText = `${res.freedomAge} 歲`;
+                const diff = state.retireAge - res.freedomAge;
+                if (diff >= 0) {
+                    sFree.innerText = `比原定提早 ${diff} 年`;
+                    cFree.className = "bg-brand-paper p-5 rounded-2xl border border-brand-sage shadow-sm flex flex-col justify-between transition-colors";
+                    vFree.classList.replace('text-brand-clay', 'text-brand-sage');
+                    vFree.classList.add('text-brand-sage');
+                    sFree.className = "text-xs mt-2 font-medium text-brand-sage";
+                } else {
+                    sFree.innerText = `比原定晚 ${Math.abs(diff)} 年`;
+                    cFree.className = "bg-[#fffafa] p-5 rounded-2xl border border-brand-clay/30 shadow-sm flex flex-col justify-between transition-colors";
+                    vFree.classList.replace('text-brand-sage', 'text-brand-clay');
+                    vFree.classList.add('text-brand-clay');
+                    sFree.className = "text-xs mt-2 font-medium text-brand-clay";
+                }
+            } else {
+                vFree.innerText = "未達成";
+                sFree.innerText = "95歲前未能財務自由";
+                cFree.className = "bg-[#fffafa] p-5 rounded-2xl border border-brand-clay/30 shadow-sm flex flex-col justify-between transition-colors";
+                vFree.classList.replace('text-brand-sage', 'text-brand-clay');
+                vFree.classList.add('text-brand-clay');
+                sFree.className = "text-xs mt-2 font-medium text-brand-clay";
+            }
+
+            if (solvers.freeSol) {
+                eFree.classList.remove('hidden');
+                document.getElementById('val-required-invest-freedom').innerText = formatCurrency(Math.ceil(solvers.freeSol/100)*100);
+                document.getElementById('val-diff-invest-freedom').innerText = `(+${formatCurrency(Math.ceil(solvers.freeSol - state.monthlyInvest))})`;
+            } else {
+                eFree.classList.add('hidden');
+            }
+
+            // Depletion Card
+            const cDep = document.getElementById('card-depletion');
+            const vDep = document.getElementById('val-depletion-age');
+            const sDep = document.getElementById('sub-depletion-age');
+            const eDep = document.getElementById('extra-depletion');
+
+            if (res.depletionAge) {
+                vDep.innerText = `${res.depletionAge} 歲耗盡`;
+                sDep.innerText = "⚠️ 無法支撐至 95 歲";
+                cDep.className = "bg-[#fffafa] p-5 rounded-2xl border border-brand-clay/30 shadow-sm flex flex-col justify-between transition-colors";
+                vDep.classList.add('text-brand-clay');
+                vDep.classList.remove('text-brand-sage');
+                sDep.className = "text-xs mt-2 font-medium text-brand-clay";
+            } else {
+                vDep.innerText = "永續存續";
+                sDep.innerText = "✅ 資產持續成長";
+                cDep.className = "bg-brand-paper p-5 rounded-2xl border border-brand-sage shadow-sm flex flex-col justify-between transition-colors";
+                vDep.classList.add('text-brand-sage');
+                vDep.classList.remove('text-brand-clay');
+                sDep.className = "text-xs mt-2 font-medium text-brand-sage";
+            }
+
+            if (res.depletionAge && solvers.reqSol) {
+                eDep.classList.remove('hidden');
+                document.getElementById('val-required-invest-deplete').innerText = formatCurrency(Math.ceil(solvers.reqSol/100)*100);
+                document.getElementById('val-diff-invest-deplete').innerText = `(+${formatCurrency(Math.ceil(solvers.reqSol - state.monthlyInvest))})`;
+            } else {
+                eDep.classList.add('hidden');
+            }
+
+            // 2. Render Chart
+            renderChart(res.data);
+
+            // 3. Render Detail Table
+            renderDetailTable(res.data, res.freedomAge);
+
+            // 4. Render Milestone Table
+            renderMilestoneTable(res.data, res.freedomAge, res.depletionAge);
+        }
+
+        function renderChart(data) {
+            const ctx = document.getElementById('projectionChart').getContext('2d');
+            
+            const chartData = isLogScale ? data.map(d => ({
+                ...d, 
+                portfolio: d.portfolio <= 0 ? 1 : d.portfolio,
+                target: d.target <= 0 ? 1 : d.target,
+                invested: d.invested <= 0 ? 1 : d.invested
+            })) : data;
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            // Brand Colors
+            const colorSage = '#8da399';
+            const colorClay = '#d4a59a';
+            const colorInk = '#4a4a4a';
+
+            let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(141, 163, 153, 0.6)');
+            gradient.addColorStop(1, 'rgba(141, 163, 153, 0.0)');
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartData.map(d => d.age),
+                    datasets: [
+                        {
+                            label: '總資產',
+                            data: chartData.map(d => d.portfolio),
+                            borderColor: colorSage,
+                            backgroundColor: gradient,
+                            borderWidth: 2,
+                            fill: true,
+                            pointRadius: 0,
+                            pointHitRadius: 10,
+                            tension: 0.4
+                        },
+                        {
+                            label: '財務自由門檻 (含通膨)',
+                            data: chartData.map(d => d.target),
+                            borderColor: colorClay,
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            pointRadius: 0,
+                            pointHitRadius: 10,
+                            tension: 0.4
+                        },
+                        {
+                            label: '本金投入',
+                            data: chartData.map(d => d.invested),
+                            borderColor: 'rgba(74, 74, 74, 0.3)',
+                            borderWidth: 1.5,
+                            borderDash: [3, 3],
+                            fill: false,
+                            pointRadius: 0,
+                            pointHitRadius: 10,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(253, 251, 247, 0.95)',
+                            titleColor: colorInk,
+                            bodyColor: colorInk,
+                            borderColor: '#e6e2dd',
+                            borderWidth: 1,
+                            padding: 12,
+                            titleFont: { family: "'Noto Sans TC', sans-serif", size: 14, weight: 'bold' },
+                            bodyFont: { family: "'ui-monospace', monospace", size: 13 },
+                            callbacks: {
+                                title: (ctx) => `${ctx[0].label} 歲`,
+                                label: (ctx) => {
+                                    return `${ctx.dataset.label}: ${formatCurrency(ctx.raw)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(74,74,74,0.6)', font: {family: "'Noto Sans TC', sans-serif"} }
+                        },
+                        y: {
+                            type: isLogScale ? 'logarithmic' : 'linear',
+                            grid: { color: '#e6e2dd', drawBorder: false },
+                            ticks: {
+                                color: 'rgba(74,74,74,0.6)',
+                                font: {family: "'ui-monospace', monospace"},
+                                callback: function(value) {
+                                    if (value >= 1000000000) return (value/1000000000).toFixed(1) + 'B';
+                                    if (value >= 1000000) return (value/1000000).toFixed(1) + 'M';
+                                    if (value >= 1000) return (value/1000).toFixed(0) + 'k';
+                                    return value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderDetailTable(data, freedomAge) {
+            const tbody = document.getElementById('detail-tbody');
+            let html = '';
+            data.forEach(row => {
+                const isRetire = row.age >= state.retireAge;
+                const isFreedom = row.portfolio >= row.target;
+                
+                let tags = '';
+                if (row.age === state.retireAge) tags += `<span class="ml-2 text-[10px] bg-brand-sand text-brand-ink px-1.5 py-0.5 rounded font-bold">退休</span>`;
+                if (!isRetire && isFreedom && row.age === freedomAge) tags += `<span class="ml-2 text-[10px] bg-brand-sage/20 text-brand-sage px-1.5 py-0.5 rounded font-bold">自由</span>`;
+                
+                const status = isRetire ? (state.continueInvestRetire ? '提領+投入' : '提領中') : '累積中';
+                const pColor = row.portfolio <= 0 ? 'text-brand-clay' : 'text-brand-sage';
+
+                let rowClass = row.age === state.retireAge ? 'bg-brand-paper/80 font-bold' : 'hover:bg-brand-paper/50 transition-colors';
+
+                html += `
+                    <tr class="border-b border-brand-sand/30 last:border-0 ${rowClass}">
+                        <td class="px-4 py-3 font-medium text-brand-ink">${row.age} 歲 ${tags}</td>
+                        <td class="px-4 py-3 text-brand-ink/70 text-xs">${status}</td>
+                        <td class="px-4 py-3 text-right font-mono text-xs">${row.monthlyInvestAmount > 0 ? formatCurrency(row.monthlyInvestAmount) : '-'}</td>
+                        <td class="px-4 py-3 text-right font-mono text-brand-ink/50 text-xs">${formatCurrency(row.invested)}</td>
+                        <td class="px-4 py-3 text-right font-mono font-bold ${pColor} text-sm">${formatCurrency(row.portfolio)}</td>
+                        <td class="px-4 py-3 text-right font-mono text-brand-clay/70 text-xs">${formatCurrency(row.target)}</td>
+                        <td class="px-4 py-3 text-right font-mono text-brand-sage text-xs">${formatCurrency(row.monthlyIncome)}</td>
+                        <td class="px-4 py-3 text-right font-mono text-brand-ink/80 text-xs">${formatCurrency(row.monthlyExpenseNeeded)}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function renderMilestoneTable(data, freedomAge, depletionAge) {
+            const keyAges = new Set([state.currentAge, state.retireAge, 95]);
+            if (freedomAge) keyAges.add(freedomAge);
+            if (depletionAge) keyAges.add(depletionAge);
+
+            for (let age = Math.ceil(state.currentAge / 5) * 5; age <= 95; age += 5) {
+                if (age >= state.currentAge) keyAges.add(age);
+            }
+
+            const msData = Array.from(keyAges)
+                .sort((a, b) => a - b)
+                .map(age => {
+                    const row = data.find(d => d.age === age);
+                    if (!row) return null;
+                    
+                    let status = [];
+                    let rowClass = "hover:bg-brand-paper/50";
+                    
+                    if (age === state.currentAge) status.push("🏁 起始");
+                    if (age === freedomAge) { status.push("🎉 財務自由"); rowClass="bg-brand-sage/10"; }
+                    if (age === state.retireAge) { status.push("🌴 退休"); rowClass="bg-brand-sand/30"; }
+                    if (age === depletionAge) { status.push("⚠️ 耗盡"); rowClass="bg-brand-clay/10"; }
+                    if (age === 95) status.push("🏁 結束");
+
+                    const coverageRatio = (row.monthlyIncome / row.monthlyExpenseNeeded) * 100;
+                    
+                    return {
+                        ...row,
+                        statusLabel: status.length > 0 ? status.join(" / ") : (age < state.retireAge ? "累積期" : "提領期"),
+                        rowClass,
+                        coverageRatio
+                    };
+                }).filter(Boolean);
+
+            const tbody = document.getElementById('milestone-tbody');
+            let html = '';
+            msData.forEach(row => {
+                let badgeClass = row.coverageRatio >= 100 ? 'bg-brand-sage/20 text-brand-sage' :
+                                 row.coverageRatio >= 50 ? 'bg-yellow-100 text-yellow-800' :
+                                 'bg-brand-sand text-brand-ink/70';
+
+                html += `
+                    <tr class="border-b border-brand-sand/30 last:border-0 transition-colors ${row.rowClass}">
+                        <td class="px-4 py-3 font-medium text-brand-ink whitespace-nowrap">${row.age} 歲</td>
+                        <td class="px-4 py-3 font-medium text-xs text-brand-ink/80 whitespace-nowrap">${row.statusLabel}</td>
+                        <td class="px-4 py-3 text-right font-bold font-mono text-brand-ink whitespace-nowrap">${formatCurrency(row.portfolio)}</td>
+                        <td class="px-4 py-3 text-right font-mono text-brand-ink/50 text-xs whitespace-nowrap">${formatCurrency(row.invested)}</td>
+                        <td class="px-4 py-3 text-right font-mono text-brand-sage text-xs whitespace-nowrap">${formatCurrency(row.monthlyIncome)}</td>
+                        <td class="px-4 py-3 text-right font-mono text-brand-clay text-xs whitespace-nowrap">${formatCurrency(row.monthlyExpenseNeeded)}</td>
+                        <td class="px-4 py-3 text-center whitespace-nowrap">
+                            <span class="px-2 py-1 rounded text-[10px] font-bold font-mono tracking-wider ${badgeClass}">
+                                ${row.coverageRatio.toFixed(0)}%
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        // Input handling
+        function formatInput(inputEl) {
+            const val = parseNum(inputEl.value);
+            const type = inputEl.getAttribute('data-type');
+            if (val === 0) { inputEl.value = '0'; return; }
+            if (type === 'currency') inputEl.value = new Intl.NumberFormat('en-US').format(val);
+            else inputEl.value = val;
+        }
+
+        function handleInputFocus(e) {
+            const val = parseNum(e.target.value);
+            e.target.value = val === 0 ? '' : val;
+        }
+
+        function handleInputBlur(e) {
+            let val = parseNum(e.target.value);
+            if (isNaN(val)) val = 0;
+            
+            const id = e.target.id;
+            state[id] = val;
+            
+            // Re-format
+            formatInput(e.target);
+            
+            // Save & Update
+            saveState();
+            updateUI();
+        }
+
+        // Setup
+        function init() {
+            loadState();
+
+            // Setup text inputs
+            document.querySelectorAll('.brand-input').forEach(input => {
+                const id = input.id;
+                if(state[id] !== undefined) {
+                    input.value = state[id];
+                    formatInput(input);
+                }
+                
+                input.addEventListener('focus', handleInputFocus);
+                input.addEventListener('blur', handleInputBlur);
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+                });
+            });
+
+            // Setup checkbox
+            const cb = document.getElementById('continueInvestRetire');
+            cb.checked = state.continueInvestRetire;
+            cb.addEventListener('change', (e) => {
+                state.continueInvestRetire = e.target.checked;
+                saveState();
+                updateUI();
+            });
+
+            // Setup Toggle Scale
+            const btnScale = document.getElementById('btn-scale-toggle');
+            const lblScale = document.getElementById('lbl-scale');
+            const msgLog = document.getElementById('msg-log');
+            btnScale.addEventListener('click', () => {
+                isLogScale = !isLogScale;
+                lblScale.innerText = isLogScale ? '回線性' : '開啟對數';
+                if(isLogScale) {
+                    btnScale.classList.add('bg-brand-sage/10', 'text-brand-sage', 'border-brand-sage/30');
+                    btnScale.classList.remove('text-brand-ink/70', 'hover:bg-brand-paper');
+                    msgLog.classList.remove('hidden');
+                } else {
+                    btnScale.classList.remove('bg-brand-sage/10', 'text-brand-sage', 'border-brand-sage/30');
+                    btnScale.classList.add('text-brand-ink/70', 'hover:bg-brand-paper');
+                    msgLog.classList.add('hidden');
+                }
+                updateUI(); // Re-render chart
+            });
+
+            // Initial render
+            updateUI();
+        }
+
+        function switchTab(tab) {
+            const vChart = document.getElementById('view-chart');
+            const vTable = document.getElementById('view-table');
+            const tChart = document.getElementById('tab-chart');
+            const tTable = document.getElementById('tab-table');
+            
+            if (tab === 'chart') {
+                vChart.classList.remove('hidden');
+                vTable.classList.add('hidden');
+                tChart.classList.add('active');
+                tChart.classList.replace('text-brand-ink/60', 'text-brand-sage');
+                tTable.classList.remove('active');
+                tTable.classList.replace('text-brand-sage', 'text-brand-ink/60');
+                
+                // Re-render to fix dimensions
+                if(chartInstance) updateUI();
+            } else {
+                vChart.classList.add('hidden');
+                vTable.classList.remove('hidden');
+                tTable.classList.add('active');
+                tTable.classList.replace('text-brand-ink/60', 'text-brand-sage');
+                tChart.classList.remove('active');
+                tChart.classList.replace('text-brand-sage', 'text-brand-ink/60');
+            }
+        }
+
+        // Run when DOM is ready
+        document.addEventListener('DOMContentLoaded', init);
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <!-- Google tag (gtag.js) 必須放在 head 的最前面 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常溫A4圖片產生器｜Ambient A4 Poster Generator</title>
+    <meta name="description" content="常溫編集所開發的 A4 文字圖片產生器。自動排版、調整字級並匯出高畫質圖片，讓製作海報或公告變得超級簡單。">
+    <meta name="keywords" content="常溫編集所, A4產生器, 文字圖片, 排版工具, 設計工具">
+    <meta name="author" content="常溫編集所 Ambient Edit Studio">
+
+    <!-- JSON-LD 結構化資料 -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "常溫 A4 文字圖片產生器",
+      "url": "https://weichun0203.github.io/ambientedit/a4-generator",
+      "description": "自動排版、調整字級並匯出高畫質 A4 圖片的線上工具。",
+      "applicationCategory": "DesignApplication",
+      "operatingSystem": "All",
+      "publisher": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio",
+        "url": "https://weichun0203.github.io/ambientedit/"
+      }
+    }
+    </script>
+
+    <!-- 載入 Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        soft: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'inner-soft': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.03)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #fdfbf7;
+            /* 模擬紙張纖維質感的微噪點 SVG */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            color: #4a4a4a;
+        }
+        
+        /* 自訂捲軸樣式 (使用品牌沙色) */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e6e2dd; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4a59a; }
+
+        /* A4 紙張預覽區的陰影與動畫效果 */
+        .a4-preview-container {
+            aspect-ratio: 1 / 1.414;
+            max-height: 75vh;
+            width: auto;
+            max-width: 100%;
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 4px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        /* 隱藏預設 color picker 樣式 */
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 0.375rem; }
+        
+        /* 自訂 Range Slider */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #8da399; /* brand-sage */
+            cursor: pointer;
+            margin-top: -6px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #e6e2dd; /* brand-sand */
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex flex-col overflow-hidden relative selection:bg-brand-sage selection:text-white">
+
+    <!-- 客製化訊息提示框 (取代 alert) -->
+    <div id="toastMessage" class="fixed top-6 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-brand-ink text-brand-paper rounded-full shadow-soft opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-clay" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span id="toastText" class="text-sm font-medium tracking-wide">訊息提示</span>
+    </div>
+
+    <header class="w-full px-6 md:px-12 py-8 border-b border-brand-sand bg-brand-paper/80 backdrop-blur-md flex justify-between items-end shrink-0 z-20">
+        <!-- 主標題群組 (左側對齊) -->
+        <div class="flex flex-col gap-1">
+            <span class="text-brand-sage text-xs font-serif tracking-[0.2em] uppercase font-bold">常溫編集所 Ambient Edit Studio</span>
+            <h1 class="text-2xl md:text-3xl font-serif font-bold text-brand-ink tracking-wide">A4 文字圖片產生器</h1>
+            <p class="text-brand-ink/60 text-sm mt-1 font-light tracking-wide">自動排版、調整字級並匯出高畫質圖片</p>
+        </div>
+        
+        <!-- 返回首頁按鈕 (右側，與標題底部對齊 items-end) -->
+        <a href="https://weichun0203.github.io/ambientedit/" 
+           class="group inline-flex items-center px-5 py-2.5 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm mb-1"
+           aria-label="返回常溫首頁"
+           style="text-decoration: none;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                常溫首頁
+            </span>
+        </a>
+    </header>
+
+    <main class="flex-1 flex flex-col md:flex-row overflow-hidden">
+        
+        <!-- 左側控制面板 -->
+        <aside class="w-full md:w-80 lg:w-96 bg-brand-paper/50 border-r border-brand-sand h-full flex flex-col overflow-y-auto shrink-0 relative z-10">
+            <div class="p-6 md:p-8 flex-1 flex flex-col gap-8">
+                
+                <!-- 文字輸入區 -->
+                <div class="flex flex-col gap-3 flex-1 min-h-[250px]">
+                    <label for="textInput" class="text-sm font-serif font-bold text-brand-ink tracking-widest flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        文字內容
+                    </label>
+                    <textarea id="textInput" class="w-full flex-1 p-4 bg-white border border-brand-sand rounded-xl focus:ring-1 focus:ring-brand-sage focus:border-brand-sage focus:outline-none resize-none transition-shadow shadow-inner-soft text-brand-ink leading-relaxed" placeholder="寫下你的文字..."></textarea>
+                </div>
+
+                <!-- 外觀設定區 -->
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="flex flex-col gap-2">
+                        <label for="bgColor" class="text-xs font-bold text-brand-ink/70 tracking-widest uppercase">背景紙色</label>
+                        <div class="p-1 bg-white border border-brand-sand rounded-lg shadow-sm">
+                            <input type="color" id="bgColor" value="#fdfbf7" class="w-full h-8 cursor-pointer rounded-md">
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <label for="textColor" class="text-xs font-bold text-brand-ink/70 tracking-widest uppercase">油墨顏色</label>
+                        <div class="p-1 bg-white border border-brand-sand rounded-lg shadow-sm">
+                            <input type="color" id="textColor" value="#4a4a4a" class="w-full h-8 cursor-pointer rounded-md">
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-brand-sand border-dashed">
+
+                <!-- 邊距調整區 -->
+                <div class="flex flex-col gap-4">
+                    <div class="flex justify-between items-end">
+                        <label for="paddingSlider" class="text-xs font-bold text-brand-ink/70 tracking-widest uppercase">留白比例</label>
+                        <span id="paddingValue" class="text-xs text-brand-sage font-mono bg-white px-2 py-0.5 rounded border border-brand-sand">10%</span>
+                    </div>
+                    <input type="range" id="paddingSlider" min="2" max="25" value="10" class="w-full appearance-none bg-transparent">
+                </div>
+
+                <!-- 排版設定區 -->
+                <div class="flex flex-col gap-4">
+                    <label class="text-xs font-bold text-brand-ink/70 tracking-widest uppercase">文字對齊</label>
+                    <div class="flex bg-brand-sand/30 p-1 rounded-xl">
+                        <button class="align-btn flex-1 py-2 text-sm rounded-lg transition-all font-serif tracking-widest" data-align="left">靠左</button>
+                        <button class="align-btn flex-1 py-2 text-sm rounded-lg transition-all font-serif tracking-widest" data-align="center">置中</button>
+                        <button class="align-btn flex-1 py-2 text-sm rounded-lg transition-all font-serif tracking-widest" data-align="right">靠右</button>
+                    </div>
+                </div>
+                
+                <!-- 垂直置中開關 -->
+                <div class="flex items-center justify-between p-4 bg-white border border-brand-sand rounded-xl shadow-sm">
+                    <label class="text-sm font-serif font-bold text-brand-ink tracking-widest cursor-pointer" for="vCenterToggle">垂直置中排版</label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="vCenterToggle" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-brand-sand peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-brand-sand after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-sage"></div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 匯出按鈕區 -->
+            <div class="p-6 md:p-8 border-t border-brand-sand bg-brand-paper">
+                <button id="downloadBtn" class="w-full py-4 px-4 bg-brand-ink hover:bg-brand-sage text-brand-paper font-serif font-bold tracking-widest rounded-xl shadow-soft transition-all duration-300 flex justify-center items-center gap-3 group">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    匯出 A4 圖片
+                </button>
+            </div>
+        </aside>
+
+        <section class="flex-1 bg-transparent h-full flex flex-col justify-center items-center p-6 md:p-12 relative overflow-hidden">
+            
+            <!-- 狀態提示 -->
+            <div id="statusBadge" class="absolute top-6 px-4 py-1.5 bg-white/80 border border-brand-sand text-brand-sage text-xs font-bold tracking-widest rounded-full backdrop-blur-sm shadow-sm opacity-0 transition-opacity duration-300 z-20 flex items-center gap-2">
+                <svg class="animate-spin -ml-1 mr-1 h-3 w-3 text-brand-sage" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                排版運算中
+            </div>
+
+            <!-- 畫布容器 -->
+            <div class="relative a4-preview-container flex justify-center items-center overflow-hidden bg-white">
+                <!-- 實際渲染用的內部畫布，保持高解析度 -->
+                <canvas id="renderCanvas" class="w-full h-full object-contain"></canvas>
+            </div>
+            
+            <p class="text-brand-ink/40 text-xs mt-8 text-center tracking-widest font-light">
+                預覽畫面已按比例縮小，匯出將獲得 1240 x 1754 高畫質檔案。
+            </p>
+        </section>
+    </main>
+
+    <footer class="w-full py-4 border-t border-brand-sand bg-brand-paper flex flex-col md:flex-row justify-center md:justify-between items-center px-6 md:px-12 shrink-0 gap-4">
+        <p class="text-xs text-brand-ink/50 font-sans tracking-wider">
+            &copy; 2026 常溫編集所 Ambient Edit Studio.
+        </p>
+        <div class="flex items-center gap-6">
+            <a href="https://line.me/R/ti/p/@890mvlvl" target="_blank" rel="noopener noreferrer" class="text-xs text-brand-ink/60 hover:text-brand-sage transition-colors tracking-widest font-bold">LINE@</a>
+            <a href="https://www.instagram.com/ambientedit_?igsh=ajJseGdpc3dnaTJw" target="_blank" rel="noopener noreferrer" class="text-xs text-brand-ink/60 hover:text-brand-sage transition-colors tracking-widest font-bold">Instagram</a>
+        </div>
+    </footer>
+
+    <script>
+        // 常數設定 (A4 比例，設定為 150 DPI 的像素尺寸)
+        const A4_WIDTH = 1240;
+        const A4_HEIGHT = 1754;
+        // 預設字體：優先使用 Noto Serif TC，若無則降級
+        const FONT_FAMILY = "'Noto Serif TC', 'Noto Sans TC', serif";
+        const LINE_HEIGHT_MULTIPLIER = 1.6; // 增加行距，提升閱讀質感
+
+        // 取得 DOM 元素
+        const canvas = document.getElementById('renderCanvas');
+        const ctx = canvas.getContext('2d');
+        const textInput = document.getElementById('textInput');
+        const bgColorPicker = document.getElementById('bgColor');
+        const textColorPicker = document.getElementById('textColor');
+        const paddingSlider = document.getElementById('paddingSlider');
+        const paddingValueLabel = document.getElementById('paddingValue');
+        const alignBtns = document.querySelectorAll('.align-btn');
+        const vCenterToggle = document.getElementById('vCenterToggle');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusBadge = document.getElementById('statusBadge');
+        const toastMessage = document.getElementById('toastMessage');
+        const toastText = document.getElementById('toastText');
+
+        // 系統狀態 (預設值)
+        let state = {
+            text: "常溫，是一種剛剛好的狀態。\n\n在這裡，我們將文字與設計結合，為品牌注入溫度。這是一個測試用的排版工具，幫助你快速將文字轉化為具有質感的 A4 圖片。\n\n請在左側面板開始編輯。",
+            bgColor: "#fdfbf7",
+            textColor: "#4a4a4a",
+            paddingPercent: 12,
+            align: "left",
+            vCenter: true
+        };
+
+        // 嘗試從 LocalStorage 讀取紀錄
+        function loadStateFromStorage() {
+            try {
+                const savedState = localStorage.getItem('ambientA4GeneratorState');
+                if (savedState) {
+                    const parsedState = JSON.parse(savedState);
+                    // 合併預設值與存檔，避免欄位遺失
+                    state = { ...state, ...parsedState }; 
+                }
+            } catch (e) {
+                console.warn("讀取本地紀錄失敗", e);
+            }
+        }
+
+        // 儲存狀態到 LocalStorage
+        function saveStateToStorage() {
+            try {
+                localStorage.setItem('ambientA4GeneratorState', JSON.stringify(state));
+            } catch (e) {
+                console.warn("寫入本地紀錄失敗", e);
+            }
+        }
+
+        // 初始化畫布尺寸
+        canvas.width = A4_WIDTH;
+        canvas.height = A4_HEIGHT;
+
+        // 自訂提示訊息函數 (取代 alert)
+        function showToast(message, duration = 3000) {
+            toastText.textContent = message;
+            toastMessage.classList.remove('opacity-0', 'translate-y-4');
+            toastMessage.classList.add('opacity-100', 'translate-y-0');
+            
+            setTimeout(() => {
+                toastMessage.classList.remove('opacity-100', 'translate-y-0');
+                toastMessage.classList.add('opacity-0', '-translate-y-4'); // 往上淡出
+            }, duration);
+        }
+
+        // 初始化 UI 數值
+        function syncUIWithState() {
+            textInput.value = state.text;
+            bgColorPicker.value = state.bgColor;
+            textColorPicker.value = state.textColor;
+            paddingSlider.value = state.paddingPercent;
+            paddingValueLabel.textContent = `${state.paddingPercent}%`;
+            vCenterToggle.checked = state.vCenter;
+            updateAlignButtonsUI();
+        }
+
+        // 防抖函數 (Debounce)
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                    statusBadge.classList.remove('opacity-100');
+                    statusBadge.classList.add('opacity-0');
+                };
+                if (!timeout) {
+                    statusBadge.classList.remove('opacity-0');
+                    statusBadge.classList.add('opacity-100');
+                }
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // 畫布文字換行計算
+        function getWrappedLines(ctx, text, maxWidth) {
+            if (!text) return [];
+            const paragraphs = text.split('\n');
+            const lines = [];
+
+            paragraphs.forEach(paragraph => {
+                if (paragraph.trim() === '') {
+                    lines.push(''); 
+                    return;
+                }
+                let currentLine = '';
+                for (let i = 0; i < paragraph.length; i++) {
+                    const char = paragraph[i];
+                    const testLine = currentLine + char;
+                    const metrics = ctx.measureText(testLine);
+                    const testWidth = metrics.width;
+
+                    if (testWidth > maxWidth && i > 0) {
+                        lines.push(currentLine);
+                        currentLine = char;
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                lines.push(currentLine);
+            });
+            return lines;
+        }
+
+        // 自動計算最佳字體大小的核心演算法
+        function calculateOptimalFontSize(ctx, text, availableWidth, availableHeight) {
+            let minSize = 12;
+            let maxSize = 600;
+            let optimalSize = minSize;
+            let bestLines = [];
+
+            while (minSize <= maxSize) {
+                let midSize = Math.floor((minSize + maxSize) / 2);
+                ctx.font = `500 ${midSize}px ${FONT_FAMILY}`; // 使用 500 字重
+                
+                const charWidthExceeded = text.split('').some(char => ctx.measureText(char).width > availableWidth);
+                if(charWidthExceeded) {
+                    maxSize = midSize - 1;
+                    continue;
+                }
+
+                const lines = getWrappedLines(ctx, text, availableWidth);
+                const totalTextHeight = lines.length * (midSize * LINE_HEIGHT_MULTIPLIER);
+
+                if (totalTextHeight <= availableHeight) {
+                    optimalSize = midSize;
+                    bestLines = lines;
+                    minSize = midSize + 1; 
+                } else {
+                    maxSize = midSize - 1; 
+                }
+            }
+
+            ctx.font = `500 ${optimalSize}px ${FONT_FAMILY}`;
+            bestLines = getWrappedLines(ctx, text, availableWidth);
+            
+            return {
+                fontSize: optimalSize,
+                lines: bestLines,
+                totalHeight: bestLines.length * (optimalSize * LINE_HEIGHT_MULTIPLIER)
+            };
+        }
+
+        // 核心繪圖函數
+        function render() {
+            // 清空畫布與繪製背景
+            ctx.fillStyle = state.bgColor;
+            ctx.fillRect(0, 0, A4_WIDTH, A4_HEIGHT);
+
+            if (!state.text.trim()) return;
+
+            // 計算可用範圍
+            const paddingPx = A4_WIDTH * (state.paddingPercent / 100);
+            const availableW = A4_WIDTH - (paddingPx * 2);
+            const availableH = A4_HEIGHT - (paddingPx * 2);
+
+            // 計算最佳字體與換行
+            const { fontSize, lines, totalHeight } = calculateOptimalFontSize(ctx, state.text, availableW, availableH);
+
+            // 設定繪製樣式
+            ctx.fillStyle = state.textColor;
+            ctx.textBaseline = 'top';
+
+            // 計算起始座標
+            let startY = paddingPx;
+            if (state.vCenter) {
+                startY = paddingPx + (availableH - totalHeight) / 2;
+            }
+
+            let startX = paddingPx;
+            if (state.align === 'center') {
+                ctx.textAlign = 'center';
+                startX = A4_WIDTH / 2;
+            } else if (state.align === 'right') {
+                ctx.textAlign = 'right';
+                startX = A4_WIDTH - paddingPx;
+            } else {
+                ctx.textAlign = 'left';
+                startX = paddingPx;
+            }
+
+            // 逐行繪製文字
+            const lineHeight = fontSize * LINE_HEIGHT_MULTIPLIER;
+            lines.forEach((line, index) => {
+                const y = startY + (index * lineHeight);
+                ctx.fillText(line, startX, y);
+            });
+            
+            // 每次渲染完畢後儲存狀態
+            saveStateToStorage();
+        }
+
+        // 更新對齊按鈕的 UI 狀態
+        function updateAlignButtonsUI() {
+            alignBtns.forEach(btn => {
+                if (btn.dataset.align === state.align) {
+                    btn.classList.add('bg-white', 'shadow-sm', 'text-brand-ink');
+                    btn.classList.remove('text-brand-ink/60');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow-sm', 'text-brand-ink');
+                    btn.classList.add('text-brand-ink/60');
+                }
+            });
+        }
+
+        // 防抖包裝的渲染函數
+        const debouncedRender = debounce(() => {
+            state.text = textInput.value;
+            render();
+        }, 300);
+
+        // 綁定事件監聽器
+        textInput.addEventListener('input', debouncedRender);
+
+        bgColorPicker.addEventListener('input', (e) => {
+            state.bgColor = e.target.value;
+            render();
+        });
+
+        textColorPicker.addEventListener('input', (e) => {
+            state.textColor = e.target.value;
+            render();
+        });
+
+        paddingSlider.addEventListener('input', (e) => {
+            state.paddingPercent = parseInt(e.target.value);
+            paddingValueLabel.textContent = `${state.paddingPercent}%`;
+            render();
+        });
+
+        alignBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                state.align = e.target.dataset.align;
+                updateAlignButtonsUI();
+                render();
+            });
+        });
+
+        vCenterToggle.addEventListener('change', (e) => {
+            state.vCenter = e.target.checked;
+            render();
+        });
+
+        // 匯出圖片功能
+        downloadBtn.addEventListener('click', () => {
+            state.text = textInput.value;
+            render();
+
+            try {
+                const dataUrl = canvas.toDataURL('image/png', 1.0);
+                const link = document.createElement('a');
+                const dateString = new Date().toISOString().slice(0,10).replace(/-/g,"");
+                link.download = `Ambient_A4_${dateString}.png`;
+                link.href = dataUrl;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showToast("圖片已成功匯出");
+            } catch (err) {
+                console.error("匯出失敗:", err);
+                showToast("圖片匯出失敗，請檢查瀏覽器權限。");
+            }
+        });
+
+        // 系統初始化流程
+        loadStateFromStorage(); // 1. 讀取本地紀錄
+        syncUIWithState();      // 2. 將紀錄同步至介面
+        render();               // 3. 初次渲染畫布
+
+        // 確保字型載入後重新渲染，避免字型寬度計算誤差
+        document.fonts.ready.then(() => {
+            render();
+        });
+
+    </script>
+</body>
+</html>

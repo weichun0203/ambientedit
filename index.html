@@ -1,433 +1,999 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-2F079YMSFW');
-    </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-2F079YMSFW');
+  </script>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>常溫工具箱｜Ambient Toolbox</title>
-    <!-- 縮圖設定 -->
-    <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
-    <link rel="shortcut icon" href="assets/icons/icon-192.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>常溫工具箱｜Ambient Toolbox</title>
 
-    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="assets/icons/icon-192.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="assets/icons/icon-512.png">
-    <!-- 縮圖設定結束 -->
-    <meta name="description" content="常溫編集所 (Ambient Edit Studio) 線上工具箱。提供運費成本、存股加薪、決策矩陣、曼陀羅思考法等實用工具。致力於將複雜的計算交給程式，將時間留給生活中的美好事物。">
-    <meta name="keywords" content="常溫編集所, Ambient Edit Studio, 運費計算, 存股計算, 複利計算, 決策矩陣, 線上工具, 時間價值">
-    <meta name="author" content="常溫編集所 Ambient Edit Studio">
-    
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="常溫工具箱｜Ambient Toolbox">
-    <meta property="og:description" content="把複雜的計算交給程式，將時間留給生活中的美好事物。">
-    <meta property="og:site_name" content="常溫編集所 Ambient Edit Studio">
-    <meta property="og:locale" content="zh_TW">
-    <!-- PWA設定 -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#d4a59a">
-    <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      "name": "常溫工具箱",
-      "alternateName": "Ambient Toolbox",
-      "description": "常溫編集所開發的線上實用工具集合。",
-      "publisher": {
-        "@type": "Organization",
-        "name": "常溫編集所 Ambient Edit Studio"
-      }
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/icons/icon-512.png">
+  <link rel="shortcut icon" href="assets/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="assets/icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="assets/icons/icon-512.png">
+
+  <meta name="description" content="常溫編集所提供 27 個免費線上工具，涵蓋理財規劃、思考決策、品牌設計與日常生活。把複雜的計算交給程式，將時間留給生活中的美好事物。">
+  <meta name="keywords" content="常溫編集所,Ambient Edit Studio,存股計算,薪資分配,複利計算,退休規劃,決策矩陣,曼陀羅九宮格,線上工具,免費工具">
+  <meta name="author" content="常溫編集所 Ambient Edit Studio">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="常溫工具箱｜Ambient Toolbox">
+  <meta property="og:description" content="把複雜的計算交給程式，將時間留給生活中的美好事物。27 個免費工具，8 大類別。">
+  <meta property="og:site_name" content="常溫編集所 Ambient Edit Studio">
+  <meta property="og:locale" content="zh_TW">
+  <meta property="og:url" content="https://www.ambientedit.com/">
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#d4a59a">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "常溫工具箱",
+    "alternateName": "Ambient Toolbox",
+    "description": "常溫編集所開發的線上實用工具集合。",
+    "url": "https://www.ambientedit.com/",
+    "publisher": {
+      "@type": "Organization",
+      "name": "常溫編集所 Ambient Edit Studio"
     }
-    </script>
+  }
+  </script>
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500&family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'paper': '#fdfbf7',
-                        'ink': '#4a4a4a',
-                        'sage': '#8da399',
-                        'clay': '#d4a59a',
-                        'sand': '#e6e2dd',
-                    },
-                    fontFamily: {
-                        serif: ['"Noto Serif TC"', 'serif'],
-                        sans: ['"Noto Sans TC"', 'sans-serif'],
-                    },
-                    boxShadow: {
-                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
-                        'app': '0 8px 16px -4px rgba(0, 0, 0, 0.08)',
-                    }
-                }
-            }
-        }
-    </script>
+  <style>
+    :root {
+      --cream: #f7f3ee;
+      --cream-dark: #ede7df;
+      --rose: #d4a59a;
+      --rose-light: #e8c4bc;
+      --rose-dark: #b8877b;
+      --charcoal: #2c2826;
+      --charcoal-soft: #4a4240;
+      --gray: #8a8280;
+      --gray-light: #c8c0bc;
+      --card-bg: rgba(255,255,255,0.85);
+      --shadow-md: 0 6px 28px rgba(44,40,38,0.10);
+      --shadow-lg: 0 16px 48px rgba(44,40,38,0.14);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Noto Serif TC', 'Georgia', serif;
+      background: var(--cream);
+      color: var(--charcoal);
+      line-height: 1.7;
+    }
 
-    <style>
-        body {
-            background-color: #fdfbf7;
-            color: #4a4a4a;
-            font-family: 'Noto Sans TC', sans-serif;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
-        }
-        
-        .card-hover {
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-        
-        .card-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px -8px rgba(141, 163, 153, 0.4);
-            border-color: rgba(141, 163, 153, 0.3);
-        }
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(247,243,238,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--cream-dark);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo-mark {
+      width: 32px;
+      height: 32px;
+      background: var(--rose);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Georgia', serif;
+    }
+    .nav-logo-text { font-size: 15px; color: var(--charcoal); letter-spacing: 0.05em; }
+    .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
+    .nav-links a {
+      text-decoration: none;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 13px;
+      color: var(--charcoal-soft);
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--rose-dark); }
+    .nav-cta {
+      background: var(--charcoal);
+      color: var(--cream) !important;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 12px !important;
+      letter-spacing: 0.08em !important;
+      transition: background 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--rose-dark) !important; }
 
-        .decoration-line {
-            width: 1px;
-            height: 24px;
-            background: linear-gradient(to bottom, transparent, #8da399, transparent);
-            margin: 0 auto 1rem auto;
-        }
+    /* HERO */
+    .hero {
+      min-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 80px 40px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-bg-text {
+      position: absolute;
+      font-size: 260px;
+      font-weight: 900;
+      color: rgba(212,165,154,0.06);
+      letter-spacing: -0.05em;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      white-space: nowrap;
+      font-family: 'Georgia', serif;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--rose-light);
+      color: var(--charcoal);
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      font-family: 'Helvetica Neue', sans-serif;
+      margin-bottom: 28px;
+    }
+    .hero-badge::before { content: '✦'; font-size: 9px; color: var(--rose-dark); }
+    .hero h1 {
+      font-size: clamp(42px, 7vw, 80px);
+      font-weight: 400;
+      color: var(--charcoal);
+      letter-spacing: 0.08em;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    .hero h1 em { font-style: normal; color: var(--rose-dark); }
+    .hero-en {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.25em;
+      color: var(--gray);
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+    .hero-divider {
+      width: 1px;
+      height: 40px;
+      background: var(--rose);
+      margin: 0 auto 32px;
+      opacity: 0.5;
+    }
+    .hero-tagline {
+      font-size: 18px;
+      color: var(--charcoal-soft);
+      max-width: 480px;
+      line-height: 1.8;
+      margin-bottom: 12px;
+    }
+    .hero-sub {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 13px;
+      color: var(--gray);
+      margin-bottom: 44px;
+      letter-spacing: 0.02em;
+    }
+    .hero-cta-group {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 60px;
+    }
+    .btn-primary {
+      background: var(--charcoal);
+      color: var(--cream);
+      padding: 14px 32px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      transition: all 0.25s;
+      border: 2px solid var(--charcoal);
+    }
+    .btn-primary:hover { background: var(--rose-dark); border-color: var(--rose-dark); }
+    .btn-secondary {
+      background: transparent;
+      color: var(--charcoal);
+      padding: 14px 32px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      transition: all 0.25s;
+      border: 2px solid var(--charcoal);
+    }
+    .btn-secondary:hover { background: var(--charcoal); color: var(--cream); }
+    .hero-stats { display: flex; gap: 48px; justify-content: center; }
+    .hero-stat { text-align: center; }
+    .hero-stat-num {
+      font-size: 32px;
+      color: var(--charcoal);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+    }
+    .hero-stat-num span { color: var(--rose-dark); }
+    .hero-stat-label {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 11px;
+      color: var(--gray);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
 
-        .btn-hover {
-            transition: all 0.3s ease;
-        }
-        .btn-hover:hover {
-            background-color: #4a4a4a;
-            color: #fdfbf7;
-            border-color: #4a4a4a;
-        }
+    /* PHILOSOPHY */
+    .philosophy {
+      background: var(--charcoal);
+      padding: 80px 40px;
+      text-align: center;
+    }
+    .section-label {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .philosophy .section-label { color: var(--rose-light); margin-bottom: 20px; }
+    .philosophy h2 {
+      font-size: clamp(28px, 4vw, 44px);
+      color: var(--cream);
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      line-height: 1.4;
+      max-width: 640px;
+      margin: 0 auto 24px;
+    }
+    .philosophy > p {
+      font-size: 15px;
+      color: var(--gray-light);
+      max-width: 520px;
+      margin: 0 auto 48px;
+      line-height: 1.9;
+    }
+    .philosophy-values { display: flex; gap: 32px; justify-content: center; flex-wrap: wrap; }
+    .philosophy-value {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      text-align: left;
+      width: 200px;
+    }
+    .philosophy-value .v-icon { font-size: 24px; margin-bottom: 12px; }
+    .philosophy-value h4 { font-size: 15px; color: var(--cream); font-weight: 400; margin-bottom: 6px; }
+    .philosophy-value p { font-size: 12px; color: var(--gray); margin: 0; line-height: 1.6; }
 
-        .filter-btn {
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-        .filter-btn.active {
-            background-color: #4a4a4a;
-            color: #fdfbf7;
-        }
-        .search-input:focus {
-            outline: none;
-            border-color: #8da399;
-        }
+    /* FEATURED */
+    .featured {
+      padding: 80px 40px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 40px;
+    }
+    .section-header-left .section-label { color: var(--rose); margin-bottom: 8px; }
+    .section-header-left h2 { font-size: 28px; font-weight: 400; letter-spacing: 0.04em; }
+    .section-link {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 12px;
+      color: var(--gray);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid var(--gray-light);
+      padding-bottom: 2px;
+      transition: color 0.2s;
+    }
+    .section-link:hover { color: var(--rose-dark); border-color: var(--rose-dark); }
+    .featured-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 20px;
+    }
+    .featured-card {
+      background: var(--card-bg);
+      border: 1px solid var(--cream-dark);
+      border-radius: var(--radius);
+      padding: 32px;
+      transition: all 0.25s;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+    .featured-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--rose-light); }
+    .featured-card.hero-card { background: var(--charcoal); color: var(--cream); border-color: var(--charcoal); }
+    .featured-card.hero-card:hover { border-color: var(--rose); }
+    .card-bg-letter {
+      position: absolute;
+      bottom: -10px;
+      right: -10px;
+      font-size: 100px;
+      font-weight: 900;
+      opacity: 0.06;
+      color: var(--rose);
+      line-height: 1;
+      pointer-events: none;
+      font-family: 'Georgia', serif;
+    }
+    .featured-card.hero-card .card-bg-letter { color: var(--cream); opacity: 0.08; }
+    .card-tag {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--rose);
+      background: rgba(212,165,154,0.15);
+      padding: 3px 10px;
+      border-radius: 10px;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+    .featured-card.hero-card .card-tag { color: var(--rose-light); background: rgba(212,165,154,0.2); }
+    .featured-card h3 { font-size: 22px; font-weight: 400; margin-bottom: 10px; letter-spacing: 0.02em; }
+    .featured-card.small h3 { font-size: 17px; }
+    .featured-card > p { font-size: 13px; color: var(--gray); line-height: 1.7; }
+    .featured-card.hero-card > p { color: var(--gray-light); }
+    .card-arrow {
+      display: inline-block;
+      margin-top: 20px;
+      font-size: 18px;
+      color: var(--rose);
+      transition: transform 0.2s;
+    }
+    .featured-card:hover .card-arrow { transform: translateX(4px); }
+    .featured-card.hero-card .card-arrow { color: var(--rose-light); }
+    .featured-side { display: flex; flex-direction: column; gap: 20px; }
 
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+    /* TOOLS SECTION */
+    .tools-section {
+      padding: 0 40px 80px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .tools-sticky-bar {
+      position: sticky;
+      top: 60px;
+      z-index: 90;
+      background: rgba(247,243,238,0.96);
+      backdrop-filter: blur(12px);
+      padding: 16px 0 0;
+      margin-bottom: 24px;
+    }
+    .search-wrap { position: relative; margin-bottom: 14px; }
+    .search-input {
+      width: 100%;
+      padding: 10px 16px 10px 42px;
+      background: white;
+      border: 1px solid var(--cream-dark);
+      border-radius: 24px;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 13px;
+      color: var(--charcoal);
+      letter-spacing: 0.03em;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-input::placeholder { color: var(--gray-light); }
+    .search-input:focus { outline: none; border-color: var(--rose); box-shadow: 0 0 0 3px rgba(212,165,154,0.15); }
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+      font-size: 16px;
+      pointer-events: none;
+    }
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--cream-dark);
+      scrollbar-width: none;
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+    .filter-btn {
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--cream-dark);
+      background: transparent;
+      color: var(--charcoal-soft);
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--charcoal);
+      color: var(--cream);
+      border-color: var(--charcoal);
+    }
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+      gap: 16px;
+    }
+    .tool-card {
+      background: var(--card-bg);
+      border: 1px solid var(--cream-dark);
+      border-radius: var(--radius-sm);
+      padding: 20px 18px;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      animation: fadeIn 0.35s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .tool-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--rose-light); }
+    .tool-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .tool-card-icon { font-size: 17px; color: var(--rose); flex-shrink: 0; }
+    .tool-card-tag {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+    .tool-card h4 { font-size: 14px; font-weight: 400; margin-bottom: 5px; letter-spacing: 0.02em; }
+    .tool-card p { font-size: 11px; color: var(--gray); line-height: 1.6; }
+    .tool-card-bg {
+      position: absolute;
+      bottom: -8px;
+      right: -4px;
+      font-size: 60px;
+      font-weight: 900;
+      opacity: 0.04;
+      color: var(--charcoal);
+      line-height: 1;
+      font-family: 'Georgia', serif;
+      pointer-events: none;
+    }
+    .empty-state {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--gray);
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+    }
+    .empty-state i { font-size: 40px; color: var(--gray-light); display: block; margin-bottom: 16px; }
 
-        .no-scroll {
-            overflow: hidden;
-        }
-        @keyframes splashFadeIn {
-            0% { opacity: 0; transform: translateY(15px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        .splash-text-animate {
-            animation: splashFadeIn 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-        }
-    </style>
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, var(--rose) 0%, var(--rose-dark) 100%);
+      padding: 80px 40px;
+      text-align: center;
+    }
+    .cta-section h2 {
+      font-size: clamp(24px, 4vw, 40px);
+      color: white;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      margin-bottom: 12px;
+    }
+    .cta-section > p { color: rgba(255,255,255,0.8); font-size: 15px; margin-bottom: 36px; }
+    .cta-group { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-white {
+      background: white;
+      color: var(--rose-dark);
+      padding: 13px 28px;
+      border-radius: 26px;
+      text-decoration: none;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+    .btn-outline-white {
+      border: 2px solid rgba(255,255,255,0.6);
+      color: white;
+      padding: 13px 28px;
+      border-radius: 26px;
+      text-decoration: none;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      transition: all 0.2s;
+    }
+    .btn-outline-white:hover { background: rgba(255,255,255,0.15); }
+
+    /* ABOUT */
+    .about-section {
+      padding: 80px 40px;
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .about-image-placeholder {
+      aspect-ratio: 1;
+      background: var(--cream-dark);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .about-image-placeholder::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(212,165,154,0.2) 0%, transparent 60%);
+    }
+    .about-text .section-label { color: var(--rose); margin-bottom: 16px; display: block; }
+    .about-text h2 { font-size: 28px; font-weight: 400; letter-spacing: 0.04em; margin-bottom: 20px; line-height: 1.4; }
+    .about-text p { font-size: 14px; color: var(--charcoal-soft); line-height: 1.9; margin-bottom: 16px; }
+    .about-links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: 1px solid var(--cream-dark);
+      border-radius: 20px;
+      text-decoration: none;
+      color: var(--charcoal);
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      transition: all 0.2s;
+    }
+    .social-link:hover { background: var(--charcoal); color: var(--cream); border-color: var(--charcoal); }
+    .social-link i { font-size: 15px; }
+
+    /* FOOTER */
+    footer { background: var(--charcoal); color: var(--gray-light); padding: 48px 40px 32px; }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    .footer-brand h3 { font-size: 16px; color: var(--cream); font-weight: 400; letter-spacing: 0.06em; margin-bottom: 10px; }
+    .footer-brand p { font-size: 12px; line-height: 1.8; font-family: 'Helvetica Neue', sans-serif; }
+    .footer-col h4 {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 14px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 8px; }
+    .footer-col a {
+      text-decoration: none;
+      color: var(--gray-light);
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--rose-light); }
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-bottom p { font-family: 'Helvetica Neue', sans-serif; font-size: 12px; color: var(--gray); }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero { padding: 60px 24px 40px; min-height: 85vh; }
+      .hero-bg-text { font-size: 130px; }
+      .hero-stats { gap: 24px; }
+      .philosophy { padding: 60px 24px; }
+      .featured { padding: 60px 20px; }
+      .featured-grid { grid-template-columns: 1fr; }
+      .tools-section { padding-left: 20px; padding-right: 20px; }
+      .tools-sticky-bar { top: 56px; }
+      .tools-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+      .about-section { grid-template-columns: 1fr; padding: 60px 24px; gap: 40px; }
+      .about-image-placeholder { max-width: 200px; margin: 0 auto; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .hero-stats { gap: 16px; }
+      .hero-cta-group { flex-direction: column; align-items: center; }
+      .footer-inner { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between selection:bg-sage selection:text-white no-scroll">
+<body>
 
-    <!-- 開場動畫 (Splash Screen) -->
-    <div id="splash-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-paper transition-all duration-500 ease-in-out">
-        <div class="text-center splash-text-animate opacity-0 transform -translate-y-4">
-            <h1 class="text-3xl md:text-5xl font-serif font-semibold tracking-widest text-ink mb-6">
-                常溫工具箱
-            </h1>
-            <div class="w-[1px] h-12 bg-gradient-to-b from-transparent via-sage to-transparent mx-auto mb-6 opacity-60"></div>
-            <p class="text-gray-500 font-light leading-loose text-sm tracking-widest">
-                把複雜的計算交給程式，<br>
-                將時間留給生活中的美好事物。
-            </p>
-        </div>
+<nav>
+  <a href="#home" class="nav-logo">
+    <div class="nav-logo-mark">A</div>
+    <span class="nav-logo-text">常溫工具箱</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#featured">精選工具</a></li>
+    <li><a href="#tools">全部工具</a></li>
+    <li><a href="#about">關於我</a></li>
+    <li><a href="https://www.instagram.com/ambientedit_" target="_blank" rel="noopener" class="nav-cta">追蹤 IG ↗</a></li>
+  </ul>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-bg-text">常溫</div>
+  <div class="hero-badge">27 個實用工具 · 8 大類別</div>
+  <h1>常溫<em>工具箱</em></h1>
+  <p class="hero-en">Ambient Toolbox · Ambient Edit Studio</p>
+  <div class="hero-divider"></div>
+  <p class="hero-tagline">把複雜的計算交給程式，<br>將時間留給生活中的美好事物。</p>
+  <p class="hero-sub">理財規劃 · 思考工具 · 品牌設計 · 日常生活</p>
+  <div class="hero-cta-group">
+    <a href="#featured" class="btn-primary">探索工具箱</a>
+    <a href="#about" class="btn-secondary">認識常溫</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-num">27<span>+</span></div>
+      <div class="hero-stat-label">實用工具</div>
     </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">8</div>
+      <div class="hero-stat-label">工具類別</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">100<span>%</span></div>
+      <div class="hero-stat-label">完全免費</div>
+    </div>
+  </div>
+</section>
 
-    <header class="pt-8 md:pt-10 pb-4 px-6 text-center">
-        <h1 class="text-2xl md:text-4xl font-serif font-semibold tracking-widest text-ink mb-2">
-            常溫工具箱
-        </h1>
-        <p class="text-gray-500 font-serif text-[10px] md:text-sm tracking-widest mb-4 uppercase">
-            Ambient Toolbox
-        </p>
-        <div class="decoration-line"></div>
-        <p class="max-w-md mx-auto text-gray-600 font-light leading-relaxed text-xs md:text-sm">
-            把複雜的計算交給程式，<br>
-            將時間留給生活中的美好事物。
-        </p>
-    </header>
+<section class="philosophy">
+  <p class="section-label">Brand Philosophy</p>
+  <h2>常溫，是一種剛剛好的生活溫度</h2>
+  <p>不過熱、不過冷——常溫是我們面對生活複雜性時的態度。用設計過的工具處理繁瑣的計算，讓你的心思得以停留在真正重要的事情上。</p>
+  <div class="philosophy-values">
+    <div class="philosophy-value">
+      <div class="v-icon">🧮</div>
+      <h4>化繁為簡</h4>
+      <p>複雜的財務計算，一個工具搞定</p>
+    </div>
+    <div class="philosophy-value">
+      <div class="v-icon">🎯</div>
+      <h4>有溫度的設計</h4>
+      <p>工具不只是冷冰冰的數字，而是生活決策的夥伴</p>
+    </div>
+    <div class="philosophy-value">
+      <div class="v-icon">✨</div>
+      <h4>持續探索</h4>
+      <p>每一個工具，都是一次對生活的觀察與思考</p>
+    </div>
+  </div>
+</section>
 
-    <main class="flex-grow w-full max-w-6xl mx-auto px-4 md:px-6 pb-20">
-        
-        <!-- 搜尋與篩選列 -->
-        <div class="sticky top-0 z-40 bg-paper/90 backdrop-blur-md pt-4 md:pt-6 mb-6 md:mb-8 flex flex-col gap-4 border-b border-sand pb-4 md:pb-6 -mx-4 px-4 md:-mx-6 md:px-6">
-            
-            <!-- 搜尋框 -->
-            <div class="relative w-full">
-                <i class="ph-magnifying-glass absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-400 pl-2"></i>
-                <input type="text" id="search-input" placeholder="搜尋工具..." 
-                    class="search-input w-full pl-9 pr-4 py-2 bg-transparent border-b border-gray-200 text-ink placeholder-gray-400 text-sm tracking-wide focus:border-sage transition-colors">
-            </div>
+<section class="featured" id="featured">
+  <div class="section-header">
+    <div class="section-header-left">
+      <p class="section-label">Featured Tools</p>
+      <h2>精選工具</h2>
+    </div>
+    <a href="#tools" class="section-link">查看全部 →</a>
+  </div>
+  <div class="featured-grid">
+    <a href="dividend-investing.html" class="featured-card hero-card">
+      <span class="card-tag">INVEST · 熱門</span>
+      <h3>存股加薪計算</h3>
+      <p>預見未來的被動收入，規劃屬於你的財富藍圖。輸入每月存股金額與目標股息率，立即看見財務自由的時間線。</p>
+      <span class="card-arrow">→</span>
+      <div class="card-bg-letter">I</div>
+    </a>
+    <div class="featured-side">
+      <a href="decision-matrix-analysis.html" class="featured-card small">
+        <span class="card-tag">PLANNING</span>
+        <h3>決策矩陣分析</h3>
+        <p>透過理性權重梳理，輔助感性的選擇，找出最佳決策。</p>
+        <span class="card-arrow">→</span>
+        <div class="card-bg-letter">P</div>
+      </a>
+      <a href="retirement.html" class="featured-card small">
+        <span class="card-tag">INVEST</span>
+        <h3>退休規劃計算機</h3>
+        <p>為理想退休生活勾勒清晰的財務藍圖。</p>
+        <span class="card-arrow">→</span>
+        <div class="card-bg-letter">I</div>
+      </a>
+    </div>
+  </div>
+</section>
 
-            <!-- 分類按鈕 -->
-            <div id="filter-buttons" class="flex overflow-x-auto no-scrollbar gap-2 pb-2 md:pb-0 md:flex-wrap md:justify-center">
-                <button onclick="filterTools('all')" class="filter-btn active px-4 py-1.5 rounded-full text-[13px] md:text-sm tracking-wide bg-ink text-paper border border-ink flex-shrink-0">
-                    全部
-                </button>
-            </div>
-            
+<section class="tools-section" id="tools">
+  <div class="section-header">
+    <div class="section-header-left">
+      <p class="section-label">All Tools</p>
+      <h2>全部工具</h2>
+    </div>
+  </div>
+  <div class="tools-sticky-bar">
+    <div class="search-wrap">
+      <i class="ph ph-magnifying-glass search-icon"></i>
+      <input type="search" id="search-input" class="search-input" placeholder="搜尋工具名稱…" autocomplete="off">
+    </div>
+    <div class="filter-bar" id="filter-buttons">
+      <button class="filter-btn active" data-filter="all">全部</button>
+    </div>
+  </div>
+  <div id="tool-container" class="tools-grid"></div>
+  <div id="empty-state" class="empty-state">
+    <i class="ph ph-coffee"></i>
+    沒有找到相關工具
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>與常溫一起，慢慢找到生活的節奏</h2>
+  <p>追蹤 Instagram，第一時間收到新工具上線通知</p>
+  <div class="cta-group">
+    <a href="https://www.instagram.com/ambientedit_" target="_blank" rel="noopener" class="btn-white">📷 追蹤 Instagram</a>
+    <a href="https://line.me/R/ti/p/@890mvlvl" target="_blank" rel="noopener" class="btn-outline-white">💬 加入 Line@</a>
+    <a href="mailto:weichun0203@gmail.com" class="btn-outline-white">✉ 聯絡我</a>
+  </div>
+</section>
+
+<section class="about-section" id="about">
+  <div class="about-image-placeholder">🌿</div>
+  <div class="about-text">
+    <span class="section-label">About · 關於我</span>
+    <h2>在這裡找到更多<br>關於我的故事與分享</h2>
+    <p>常溫編集所（Ambient Edit Studio）是一個以「溫度剛好」為核心的創作品牌。我相信好的工具應該是隱形的——它在背後默默運算，讓你的思緒得以專注在真正重要的選擇上。</p>
+    <p>這裡的每一個工具，都源自生活中真實遇到的問題：怎麼分配薪水？退休需要多少錢？今天要吃什麼？把這些問題交給工具，把時間還給你自己。</p>
+    <div class="about-links">
+      <a href="https://www.instagram.com/ambientedit_" target="_blank" rel="noopener" class="social-link">
+        <i class="ph ph-instagram-logo"></i> Instagram
+      </a>
+      <a href="https://line.me/R/ti/p/@890mvlvl" target="_blank" rel="noopener" class="social-link">
+        <i class="ph ph-line-logo"></i> Line@
+      </a>
+      <a href="https://myship.7-11.com.tw/general/detail/GM2601131963313" target="_blank" rel="noopener" class="social-link">
+        <i class="ph ph-storefront"></i> 賣貨便
+      </a>
+      <a href="mailto:weichun0203@gmail.com" class="social-link">
+        <i class="ph ph-envelope-simple"></i> 聯絡我
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <h3>常溫編集所<br>Ambient Edit Studio</h3>
+      <p>把複雜的計算交給程式，<br>將時間留給生活中的美好事物。</p>
+    </div>
+    <div class="footer-col">
+      <h4>理財工具</h4>
+      <ul>
+        <li><a href="dividend-investing.html">存股加薪計算</a></li>
+        <li><a href="daily-budget.html">薪資分配計算</a></li>
+        <li><a href="compound-interest.html">複利股價計算</a></li>
+        <li><a href="retirement.html">退休規劃計算機</a></li>
+        <li><a href="cashflow-quadrant.html">現金流四象限</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>思考規劃</h4>
+      <ul>
+        <li><a href="decision-matrix-analysis.html">決策矩陣分析</a></li>
+        <li><a href="mandala-chart.html">曼陀羅九宮格</a></li>
+        <li><a href="career-exploration.html">職涯探索羅盤</a></li>
+        <li><a href="logo-design.html">LOGO 設計思考</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>關於</h4>
+      <ul>
+        <li><a href="#about">品牌故事</a></li>
+        <li><a href="https://www.instagram.com/ambientedit_" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="https://line.me/R/ti/p/@890mvlvl" target="_blank" rel="noopener">Line@</a></li>
+        <li><a href="https://myship.7-11.com.tw/general/detail/GM2601131963313" target="_blank" rel="noopener">賣貨便</a></li>
+        <li><a href="mailto:weichun0203@gmail.com">聯絡我</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 常溫編集所 Ambient Edit Studio. All Rights Reserved.</p>
+    <p>Hosted on GitHub Pages · Designed with ♡</p>
+  </div>
+</footer>
+
+<script>
+  const tagOrder = ['Invest','Planning','Product','Growth','Daily','Design','Tool','Business'];
+
+  const toolsData = [
+    { title: '運費成本報價',      desc: '精算跨境物流開銷，掌握每一分成本與利潤。',   link: 'shipping-fee-calculator.html',  tag: 'Business', icon: 'ph-truck' },
+    { title: '存股加薪計算',      desc: '預見未來的被動收入，規劃溫柔的財富藍圖。',   link: 'dividend-investing.html',       tag: 'Invest',   icon: 'ph-plant' },
+    { title: '薪資分配計算',      desc: '或是儲蓄或是享受，找到收支的完美平衡。',     link: 'daily-budget.html',             tag: 'Invest',   icon: 'ph-wallet' },
+    { title: '複利股價計算',      desc: '時間是投資最好的朋友，見證複利的力量。',     link: 'compound-interest.html',        tag: 'Invest',   icon: 'ph-chart-line-up' },
+    { title: '時間價值換算',      desc: '每筆支出，都是一段生命的交換。',             link: 'time-value-of-money.html',      tag: 'Invest',   icon: 'ph-clock' },
+    { title: '決策矩陣分析',      desc: '透過理性權重梳理，輔助感性的選擇。',         link: 'decision-matrix-analysis.html', tag: 'Planning', icon: 'ph-table' },
+    { title: '曼陀羅九宮格',      desc: '分析問題核心、完整思考，讓理想落地。',       link: 'mandala-chart.html',            tag: 'Planning', icon: 'ph-squares-four' },
+    { title: 'LOGO 設計思考',     desc: '建立基礎 LOGO 設計認知，開始打造品牌。',   link: 'logo-design.html',              tag: 'Design',   icon: 'ph-pen-nib' },
+    { title: '職涯探索羅盤',      desc: '透過喜好與耐心，記錄你的天賦熱情。',       link: 'career-exploration.html',       tag: 'Growth',   icon: 'ph-compass' },
+    { title: '食間・菜單',        desc: '解決選擇障礙，今天要吃什麼？',             link: 'taiwanese-food.html',           tag: 'Daily',    icon: 'ph-fork-knife' },
+    { title: '愛的基礎原型',      desc: '愛的六色輪，探索情感基礎理論。',           link: 'love-style.html',               tag: 'Growth',   icon: 'ph-heart' },
+    { title: '理財金字塔',        desc: '建立完整基礎的財務知識結構。',             link: 'money-stack.html',              tag: 'Invest',   icon: 'ph-chart-bar' },
+    { title: '生活任務小卡',      desc: '讓簡單的任務重整生活的平靜。',             link: 'daily-task.html',               tag: 'Daily',    icon: 'ph-list-checks' },
+    { title: '病人照護 APP',      desc: '醫院照顧紀錄使用，照護不遺漏。',           link: 'patient-care-log.html',         tag: 'Product',  icon: 'ph-first-aid-kit' },
+    { title: '時間記帳 APP',      desc: '覺察與分析日常的時間流。',                 link: 'time-expenses.html',            tag: 'Product',  icon: 'ph-hourglass' },
+    { title: '貼心票卷產生',      desc: '讓生活儀式感充滿活力。',                   link: 'love-coupon.html',              tag: 'Tool',     icon: 'ph-ticket' },
+    { title: '任務懸賞產生',      desc: '活潑的方式解決日常任務。',                 link: 'task-generator.html',           tag: 'Tool',     icon: 'ph-trophy' },
+    { title: '愛的六種方式',      desc: '愛的實際行動與表達形式。',                 link: 'love-language.html',            tag: 'Growth',   icon: 'ph-hand-heart' },
+    { title: '定期定額成本',      desc: '為資產穩定增值，訂下策略資產增值。',       link: 'stock-analysis.html',           tag: 'Invest',   icon: 'ph-trend-up' },
+    { title: 'QR-code 產生',      desc: '即時生成 QR Code，一鍵下載無需等待。',    link: 'qr-code.html',                  tag: 'Tool',     icon: 'ph-qr-code' },
+    { title: '朋友圈 APP',        desc: '管理你的交友圈，時時維繫重要的人。',       link: 'friend-zone.html',              tag: 'Product',  icon: 'ph-users-three' },
+    { title: '訂購單 APP',        desc: '建立訂購單，快速產生專業印象。',           link: 'shipping-order.html',           tag: 'Business', icon: 'ph-clipboard-text' },
+    { title: '現金流四象限',      desc: '數字中看見隱藏的時間成本與自由路徑。',     link: 'cashflow-quadrant.html',        tag: 'Invest',   icon: 'ph-arrows-in' },
+    { title: '時光記帳 APP',      desc: '透過時間分配認識自己的生活。',             link: 'time-tracker.html',             tag: 'Product',  icon: 'ph-timer' },
+    { title: 'DJI NEO2 購買決策', desc: '精算金額找到自己的方案。',                link: 'neo-dji.html',                  tag: 'Planning', icon: 'ph-video-camera' },
+    { title: 'A4 圖片產生器',     desc: '簡化文字容易閱讀。',                       link: 'text-poster.html',              tag: 'Tool',     icon: 'ph-image' },
+    { title: '退休規劃計算機',    desc: '為理想退休生活勾勒清晰的財務藍圖。',       link: 'retirement.html',               tag: 'Invest',   icon: 'ph-umbrella' },
+  ];
+
+  let currentFilter = 'all';
+  let currentSearch = '';
+
+  const container   = document.getElementById('tool-container');
+  const emptyState  = document.getElementById('empty-state');
+  const searchInput = document.getElementById('search-input');
+  const filterBar   = document.getElementById('filter-buttons');
+
+  function initFilterButtons() {
+    const tags = [...new Set(toolsData.map(t => t.tag))].sort((a, b) => {
+      const ia = tagOrder.indexOf(a), ib = tagOrder.indexOf(b);
+      return (ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib);
+    });
+    tags.forEach(tag => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn';
+      btn.dataset.filter = tag;
+      btn.textContent = tag;
+      btn.addEventListener('click', () => setFilter(tag));
+      filterBar.appendChild(btn);
+    });
+  }
+
+  function setFilter(tag) {
+    currentFilter = tag;
+    document.querySelectorAll('.filter-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.filter === tag)
+    );
+    renderTools();
+  }
+
+  document.querySelector('.filter-btn[data-filter="all"]')
+    .addEventListener('click', () => setFilter('all'));
+
+  searchInput.addEventListener('input', e => {
+    currentSearch = e.target.value.toLowerCase().trim();
+    renderTools();
+  });
+
+  function renderTools() {
+    const q = currentSearch;
+    const filtered = toolsData.filter(t => {
+      const matchTag    = currentFilter === 'all' || t.tag === currentFilter;
+      const matchSearch = !q || t.title.toLowerCase().includes(q) || t.desc.toLowerCase().includes(q);
+      return matchTag && matchSearch;
+    });
+
+    container.innerHTML = '';
+
+    if (filtered.length === 0) {
+      container.style.display = 'none';
+      emptyState.style.display = 'block';
+      return;
+    }
+    container.style.display = 'grid';
+    emptyState.style.display = 'none';
+
+    filtered.forEach(tool => {
+      const a = document.createElement('a');
+      a.href = tool.link;
+      a.className = 'tool-card';
+      a.innerHTML = `
+        <div class="tool-card-header">
+          <i class="ph ${tool.icon} tool-card-icon"></i>
+          <span class="tool-card-tag">${tool.tag}</span>
         </div>
-        
-        <!-- 網格容器 -->
-        <div id="tool-container" class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6 mb-20">
-        </div>
+        <h4>${tool.title}</h4>
+        <p>${tool.desc}</p>
+        <div class="tool-card-bg">${tool.tag.charAt(0)}</div>
+      `;
+      container.appendChild(a);
+    });
+  }
 
-        <div id="empty-state" class="hidden text-center py-20 text-gray-400 font-light">
-            <i class="ph-coffee text-4xl mb-4 text-gray-300 block"></i>
-            沒有找到相關工具
-        </div>
+  initFilterButtons();
+  renderTools();
+</script>
 
-        <div class="relative border-t border-sand pt-12 mt-12">
-            <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-paper px-4 text-gray-400 font-serif tracking-widest text-xs">
-                CONNECT
-            </div>
-            
-            <div class="text-center w-full max-w-4xl mx-auto">
-                <h3 class="text-xl font-serif text-ink mb-2 tracking-widest">關於我</h3>
-                <p class="text-gray-500 text-sm font-light mb-6">在這裡找到更多關於我的故事與分享</p>
-                
-                <!-- 修改：手機版設定為 flex-wrap 並置中 -->
-                <div id="social-container" class="flex flex-wrap justify-center gap-2 md:gap-4 px-4 pb-4">
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <footer class="border-t border-sand py-8 text-center text-[10px] md:text-xs text-gray-400 font-light tracking-wider">
-        <p>&copy; 2026 常溫編集所 Ambient Edit Studio. All Rights Reserved.</p>
-    </footer>
-
-    <script>
-        // ==========================================
-        // 0. 開場動畫邏輯
-        // ==========================================
-        window.addEventListener('load', () => {
-            const splash = document.getElementById('splash-screen');
-            setTimeout(() => {
-                splash.classList.add('opacity-0', 'pointer-events-none');
-                setTimeout(() => {
-                    splash.remove();
-                    document.body.classList.remove('no-scroll');
-                }, 500);
-            }, 800);
-        });
-
-        // ==========================================
-        // 1. 工具列表與排序設定
-        // ==========================================
-        
-        const tagOrder = [
-            "Invest", "Planning", "Product", "Growth", "Daily", "Design", "Tool", "Business"
-        ];
-
-        const toolsData = [
-            { title: "運費成本報價", desc: "精算跨境物流開銷，掌握每一分成本與利潤。", link: "shipping-fee-calculator.html",     tag: "Business", icon: "ph-truck" },          //1
-            { title: "存股加薪計算", desc: "預見未來的被動收入，規劃溫柔的財富藍圖。", link: "dividend-investing.html",          tag: "Invest", icon: "ph-plant" },            //2
-            { title: "薪資分配計算", desc: "或是儲蓄或是享受，找到收支的完美平衡。"  , link: "daily-budget.html",                tag: "Invest", icon: "ph-wallet" },           //3
-            { title: "複利股價計算", desc: "時間是投資最好的朋友，見證複利的力量。"  , link: "compound-interest.html",           tag: "Invest", icon: "ph-trend-up" },         //4
-            { title: "時間價值換算", desc: "每筆支出，都是一段生命的交換。"         , link: "time-value-of-money.html",         tag: "Invest", icon: "ph-clock" },            //5
-            { title: "決策矩陣分析", desc: "透過理性權重梳理，輔助感性的選擇。"     , link: "decision-matrix-analysis.html",     tag: "Planning", icon: "ph-matrix-logo" },    //6
-            { title: "曼陀羅九宮格", desc: "分析問題核心、完整思考，讓理想落地。"   , link: "mandala-chart.html",                tag: "Planning", icon: "ph-squares-four" },    //7
-            { title: "LOGO設計思考", desc: "建立基礎LOGO設計認知，開始打造品牌。"  , link: "logo-design.html",                  tag: "Design", icon: "ph-pen-nib" },           //8
-            { title: "職涯探索羅盤", desc: "透過喜好與耐心，記錄你的天賦熱情。"     , link: "career-exploration.html",           tag: "Growth", icon: "ph-compass" },           //9
-            { title: "食間・菜單"  , desc: "解決選擇障礙，今天要吃什麼？"          , link: "taiwanese-food.html",               tag: "Daily", icon: "ph-bowl-food" },          //10
-            { title: "愛的基礎原型", desc: "愛的六色輪 - 探索情感基礎理論。"       , link: "love-style.html",                   tag: "Growth", icon: "ph-heart" },              //11
-            { title: "理財金字塔"  , desc: "建立完整基礎的財務知識結構。"          , link: "money-stack.html",                  tag: "Invest", icon: "ph-pyramid" },            //12
-            { title: "生活任務小卡", desc: "讓簡單的任務重整生活的平靜。"          , link: "daily-task.html",                   tag: "Daily", icon: "ph-check-square-offset" },  //13
-            { title: "病人照護APP" , desc: "醫院照顧紀錄使用"                     , link: "patient-care-log.html",             tag: "Product", icon: "ph-bed" },               //14
-            { title: "時間記帳APP" , desc: "覺察與分析日常的時間流"                , link: "time-expenses.html",               tag: "Product", icon: "ph-hourglass" },           //15
-            { title: "貼心票卷產生", desc: "讓生活儀式感充滿活力"                  , link: "love-coupon.html",                 tag: "Tool", icon: "ph-ticket" },               //16
-            { title: "任務懸賞產生", desc: "活潑的方式解決日常任務"                , link: "task-generator.html",              tag: "Tool", icon: "ph-scroll" },               //17  
-            { title: "愛的六種方式", desc: "愛的實際行動與表達形式"                , link: "love-language.html",               tag: "Growth", icon: "ph-hand-heart" },            //18
-            { title: "定期定額成本", desc: "為資產穩定增值，訂下策略資產增值"       , link: "stock-analysis.html",              tag: "Invest", icon: "ph-chart-line-up" },         //19
-            { title: "QR-code產生", desc: "即時生成 QR Code，一鍵下載無需等待。"   , link: "qr-code.html",                     tag: "Tool", icon: "ph-qr-code" },                 //20
-            { title: "朋友圈APP"  , desc: "管理你的交友圈，時時維繫重要的人"        , link: "friend-zone.html",                 tag: "Product", icon: "ph-users-three" },          //21
-            { title: "訂購單APP"  , desc: "建立訂購單，快速產生專業印象"            , link: "shipping-order.html",              tag: "Business", icon: "ph-receipt" },              //22
-            { title: "現金流四象限"  , desc: "數字中看見隱藏的時間成本與自由路徑。"  , link: "cashflow-quadrant.html",           tag: "Invest", icon: "ph-receipt" },              //23
-            { title: "時光記帳APP"  , desc: "透過時間分配認識自己的生活"            , link: "time-tracker.html",                tag: "Product", icon: "ph-receipt" },              //24
-            { title: "DJI NEO2購買決策"  , desc: "精算金額找到自己的方案"            , link: "neo-dji.html",                    tag: "Planning", icon: "ph-receipt" },              //25
-            { title: "A4圖片產生器"  , desc: "簡化文字容易閱讀"                    , link: "text-poster.html",                 tag: "Tool", icon: "ph-receipt" },              //26
-            { title: "退休規劃計算機"  , desc: "為理想勾勒清晰的財務藍圖"              , link: "retirement.html",                 tag: "Invest", icon: "ph-receipt" },              //27
-
-        ];
-        
-        const socialData = [
-            { title: "Instagram", link: "https://www.instagram.com/ambientedit_", icon: "ph-instagram-logo" },
-            //{ title: "Facebook", link: "https://www.facebook.com/weichun0203/?locale=zh_TW", icon: "ph-facebook-logo" },
-            { title: "Line@", link: "https://line.me/R/ti/p/@890mvlvl", icon: "ph-line-logo"},
-            { title: "聯絡我", link: "mailto:weichun0203@gmail.com", icon: "ph-envelope-simple" },
-            { title: "賣貨便", link: "https://myship.7-11.com.tw/general/detail/GM2601131963313", icon: "ph-storefront" }
-        ];
-
-        // ==========================================
-        // 3. 核心邏輯
-        // ==========================================
-        
-        const container = document.getElementById('tool-container');
-        const emptyState = document.getElementById('empty-state');
-        const searchInput = document.getElementById('search-input');
-        const filterBtnContainer = document.getElementById('filter-buttons');
-
-        let currentFilter = 'all';
-        let currentSearch = '';
-
-        function initFilterButtons() {
-            const availableTags = [...new Set(toolsData.map(item => item.tag))];
-            const sortedTags = availableTags.sort((a, b) => {
-                let indexA = tagOrder.indexOf(a);
-                let indexB = tagOrder.indexOf(b);
-                if (indexA === -1) indexA = 999;
-                if (indexB === -1) indexB = 999;
-                return indexA - indexB;
-            });
-            
-            sortedTags.forEach(tag => {
-                const btn = document.createElement('button');
-                btn.className = `filter-btn flex-shrink-0 px-4 py-1.5 rounded-full text-[13px] md:text-sm tracking-wide bg-transparent text-gray-500 border border-transparent hover:bg-gray-100 hover:text-ink`;
-                btn.textContent = tag;
-                btn.onclick = () => filterTools(tag, btn);
-                filterBtnContainer.appendChild(btn);
-            });
-        }
-
-        function filterTools(tag, btnElement = null) {
-            if (tag) currentFilter = tag;
-            const allBtns = document.querySelectorAll('.filter-btn');
-            allBtns.forEach(b => {
-                b.classList.remove('active', 'bg-ink', 'text-paper', 'border-ink');
-                b.classList.add('bg-transparent', 'text-gray-500', 'border-transparent');
-            });
-            const activeBtn = btnElement || document.querySelector('.filter-btn');
-            activeBtn.classList.remove('bg-transparent', 'text-gray-500', 'border-transparent');
-            activeBtn.classList.add('active', 'bg-ink', 'text-paper', 'border-ink');
-            renderTools();
-            const mainElement = document.querySelector('main');
-            if (mainElement && window.scrollY > mainElement.offsetTop) {
-                window.scrollTo({ top: mainElement.offsetTop - 20, behavior: 'smooth' });
-            }
-        }
-
-        searchInput.addEventListener('input', (e) => {
-            currentSearch = e.target.value.toLowerCase();
-            renderTools();
-        });
-
-        function renderTools() {
-            container.innerHTML = '';
-            const filteredData = toolsData.filter(tool => {
-                const matchTag = currentFilter === 'all' || tool.tag === currentFilter;
-                const matchSearch = tool.title.toLowerCase().includes(currentSearch);
-                return matchTag && matchSearch;
-            });
-
-            if (filteredData.length === 0) {
-                container.classList.add('hidden');
-                emptyState.classList.remove('hidden');
-            } else {
-                container.classList.remove('hidden');
-                emptyState.classList.add('hidden');
-                filteredData.forEach(tool => {
-                    const card = document.createElement('a');
-                    card.href = tool.link;
-                    card.className = `
-                        group flex flex-col items-center justify-center bg-white p-4 md:p-6 border border-sand/50
-                        rounded-2xl md:rounded-3xl shadow-soft card-hover relative overflow-hidden
-                        cursor-pointer text-center min-h-[6.5rem] md:min-h-[9rem] h-full
-                    `;
-                    card.style.animation = "fadeIn 0.5s ease-out forwards";
-                    card.innerHTML = `
-                        <div class="absolute -right-2 -bottom-4 md:-right-4 md:-bottom-6 text-7xl md:text-9xl text-sand opacity-40 group-hover:opacity-70 group-hover:scale-110 transition-all duration-500 pointer-events-none select-none font-serif font-bold z-0">
-                            ${tool.tag.charAt(0)}
-                        </div>
-                        <div class="relative z-10 w-full flex flex-col items-center">
-                            <div class="text-[9px] md:text-[10px] tracking-[0.2em] uppercase text-gray-400 mb-1.5 md:mb-2.5 font-sans transition-colors duration-300 group-hover:text-sage/70">
-                                ${tool.tag}
-                            </div>
-                            <h2 class="text-[12px] md:text-[15px] font-sans md:font-serif font-medium text-ink/90 group-hover:text-sage transition-colors duration-300 line-clamp-2 leading-snug w-full px-1">
-                                ${tool.title}
-                            </h2>
-                            <p class="hidden md:block text-[11px] md:text-xs text-gray-400 mt-2 line-clamp-2 font-light leading-relaxed px-2">
-                                ${tool.desc}
-                            </p>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-            }
-        }
-
-        // E. 渲染社群連結 (修正對齊問題)
-        function initSocial() {
-            const socialContainer = document.getElementById('social-container');
-            socialData.forEach(item => {
-                const btn = document.createElement('a');
-                btn.href = item.link;
-                btn.target = "_blank";
-                // 修正：移除 tracking-widest，改為內部的文字置中處理，並確保 gap 均衡
-                btn.className = `
-                    btn-hover flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2.5 p-3 sm:px-6 sm:py-3.5 
-                    border border-gray-200 rounded-2xl text-gray-600
-                    bg-white shadow-sm transition-all duration-300 w-[calc(32%-0.25rem)] sm:w-auto
-                `;
-                btn.innerHTML = `
-                    <i class="${item.icon} text-lg md:text-xl flex-shrink-0"></i>
-                    <span class="text-[10px] sm:text-sm tracking-wide text-center font-medium leading-tight">${item.title}</span>
-                `;
-                socialContainer.appendChild(btn);
-            });
-        }
-
-        initFilterButtons();
-        renderTools();
-        initSocial();
-
-        const styleSheet = document.createElement("style");
-        styleSheet.textContent = `
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(10px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-        `;
-        document.head.appendChild(styleSheet);
-    </script>
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));
-        });
-      }
-    </script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script>
 </body>
 </html>

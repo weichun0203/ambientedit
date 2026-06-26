@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <!-- ================================================
+         效能優先：DNS 預解析 & 預連接
+    ================================================ -->
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- ================================================
+         基礎 Meta
+    ================================================ -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="author" content="常溫編集所 Ambient Edit Studio">
+    <meta name="theme-color" content="#fdfbf7">
+
+    <!-- Apple / PWA -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="常溫流程圖">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://weichun0203.github.io/ambientedit/flowchart/">
+
+    <!-- Favicon（請依實際路徑替換） -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- ================================================
+         Page Title & Core SEO Meta
+    ================================================ -->
+    <title>常溫流程圖設計工具｜免費線上繪製與匯出 PNG｜Ambient Edit Studio</title>
+
+    <meta name="description" content="常溫編集所免費線上流程圖工具。支援開始點、執行步驟、判斷條件、結束點四大節點，直覺拖曳連線，一鍵匯出高解析度 PNG 圖片，適合內容創作者、UX 設計師與企劃人員快速梳理邏輯流程。">
+    <meta name="keywords" content="流程圖工具,免費流程圖,線上流程圖,flowchart,常溫編集所,Ambient Edit Studio,拖曳流程圖,流程圖匯出,流程圖設計,UX流程圖">
+
+    <!-- ================================================
+         Open Graph（社群分享）
+    ================================================ -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="常溫編集所 Ambient Edit Studio">
+    <meta property="og:url" content="https://weichun0203.github.io/ambientedit/flowchart/">
+    <meta property="og:title" content="常溫流程圖設計工具｜免費線上繪製與匯出 PNG">
+    <meta property="og:description" content="常溫編集所免費線上流程圖工具，支援拖曳節點、自動連線與一鍵匯出高解析度 PNG，快速繪製具品牌質感的邏輯流程圖。">
+    <!-- 請將下方 og:image 替換為實際預覽圖 URL（建議 1200×630px） -->
+    <meta property="og:image" content="https://weichun0203.github.io/ambientedit/assets/og-flowchart.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="常溫流程圖設計工具介面預覽，展示拖曳節點與品牌配色">
+    <meta property="og:locale" content="zh_TW">
+
+    <!-- ================================================
+         Twitter Card
+    ================================================ -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@ambientedit">
+    <meta name="twitter:creator" content="@ambientedit">
+    <meta name="twitter:title" content="常溫流程圖設計工具｜免費線上繪製與匯出 PNG">
+    <meta name="twitter:description" content="常溫編集所免費線上流程圖工具，拖曳連線、一鍵匯出 PNG，快速繪製具品牌質感的邏輯圖。">
+    <meta name="twitter:image" content="https://weichun0203.github.io/ambientedit/assets/og-flowchart.png">
+    <meta name="twitter:image:alt" content="常溫流程圖設計工具介面預覽">
+
+    <!-- ================================================
+         JSON-LD 結構化資料
+    ================================================ -->
+
+    <!-- 1. SoftwareApplication（主工具） -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "常溫流程圖設計工具",
+      "alternateName": "Ambient Flowchart Editor",
+      "url": "https://weichun0203.github.io/ambientedit/flowchart/",
+      "description": "常溫編集所免費線上流程圖工具。支援開始點、執行步驟、判斷條件、結束點四大節點，直覺拖曳連線，一鍵匯出高解析度 PNG 圖片。",
+      "applicationCategory": "DesignApplication",
+      "applicationSubCategory": "Flowchart Tool",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires JavaScript",
+      "inLanguage": ["zh-TW", "en"],
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "TWD",
+        "availability": "https://schema.org/InStock"
+      },
+      "featureList": [
+        "拖曳式流程節點編輯",
+        "四種節點類型：開始點、執行步驟、判斷條件、結束點",
+        "貝茲曲線自動連線",
+        "連線文字標籤",
+        "畫布縮放與平移",
+        "一鍵匯出高解析度 PNG",
+        "自動儲存至本機",
+        "品牌專屬配色 Sage / Clay / Sand"
+      ],
+      "screenshot": "https://weichun0203.github.io/ambientedit/assets/og-flowchart.png",
+      "creator": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio",
+        "url": "https://weichun0203.github.io/ambientedit/",
+        "sameAs": [
+          "https://www.instagram.com/ambientedit_/",
+          "https://line.me/R/ti/p/@890mvlvl"
+        ]
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio",
+        "url": "https://weichun0203.github.io/ambientedit/"
+      }
+    }
+    </script>
+
+    <!-- 2. BreadcrumbList（麵包屑） -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "常溫編集所",
+          "item": "https://weichun0203.github.io/ambientedit/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "設計工具",
+          "item": "https://weichun0203.github.io/ambientedit/#tools"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "流程圖設計工具",
+          "item": "https://weichun0203.github.io/ambientedit/flowchart/"
+        }
+      ]
+    }
+    </script>
+
+    <!-- 3. Organization（品牌識別） -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "常溫編集所 Ambient Edit Studio",
+      "url": "https://weichun0203.github.io/ambientedit/",
+      "logo": "https://weichun0203.github.io/ambientedit/assets/logo.png",
+      "description": "常溫編集所提供簡約優雅的品牌設計工具，協助創作者與企劃人員高效率整理與呈現工作成果。",
+      "sameAs": [
+        "https://www.instagram.com/ambientedit_/",
+        "https://line.me/R/ti/p/@890mvlvl"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "availableLanguage": ["zh-TW"]
+      }
+    }
+    </script>
+
+    <!-- 4. FAQPage（常見問題，有助於取得 FAQ 富摘要） -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "常溫流程圖工具需要付費嗎？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "完全免費，無需註冊，開啟網頁即可直接使用。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "如何匯出流程圖？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "點擊右上角「儲存圖片」按鈕，即可將整張流程圖匯出為高解析度 PNG 檔案到您的裝置。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "我的流程圖資料會儲存在哪裡？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "所有資料皆儲存於您瀏覽器的本機 LocalStorage，不會上傳至任何伺服器，確保您的隱私安全。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "支援哪些節點類型？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "目前支援四種節點：開始點（圓形）、執行步驟（矩形）、判斷條件（菱形）、結束點（圓形），可透過左側工具列點擊新增。"
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- ================================================
+         Google Analytics
+    ================================================ -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW', {
+        'page_title': '常溫流程圖設計工具',
+        'page_location': 'https://weichun0203.github.io/ambientedit/flowchart/'
+      });
+    </script>
+
+    <!-- ================================================
+         外部資源（字型 & 函式庫）
+    ================================================ -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        soft: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #fdfbf7;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+        #workspace {
+            background-color: transparent;
+            overflow: auto;
+            position: relative;
+            cursor: grab;
+        }
+        #workspace:active {
+            cursor: grabbing;
+        }
+        #workspace.is-panning {
+            cursor: grabbing !important;
+            user-select: none;
+        }
+
+        .canvas-board {
+            position: relative;
+            background-color: transparent;
+            background-image: radial-gradient(circle, #e6e2dd 1px, transparent 1px);
+            background-size: 20px 20px;
+            transform-origin: 0 0;
+            transition: transform 0.15s ease-out;
+            min-width: 100%;
+            min-height: 100%;
+        }
+
+        .exporting .canvas-board {
+            background-image: none;
+            transition: none !important;
+        }
+
+        .node {
+            position: absolute;
+            z-index: 10;
+            min-width: 120px;
+            cursor: move;
+            user-select: none;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .node:hover {
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
+        }
+
+        .node-text {
+            cursor: pointer;
+            outline: none;
+            min-height: 24px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px dashed transparent;
+            transition: background-color 0.2s, border-color 0.2s;
+            font-family: 'Noto Sans TC', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        .node-text:hover {
+            border-color: rgba(74, 74, 74, 0.1);
+        }
+
+        .node-text[contenteditable="true"] {
+            cursor: text;
+            border-color: #8da399;
+            background-color: rgba(253, 251, 247, 0.9);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .port {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: #8da399;
+            border: 2px solid #fdfbf7;
+            border-radius: 50%;
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.1s, background-color 0.1s, opacity 0.2s;
+        }
+        .node:hover .port {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .port:hover { background-color: #4a4a4a; }
+
+        .port-t { top: -6px; left: 50%; transform: translateX(-50%); cursor: ns-resize; }
+        .port-b { bottom: -6px; left: 50%; transform: translateX(-50%); cursor: ns-resize; }
+        .port-l { left: -6px; top: 50%; transform: translateY(-50%); cursor: ew-resize; }
+        .port-r { right: -6px; top: 50%; transform: translateY(-50%); cursor: ew-resize; }
+
+        .port-t:hover { transform: translateX(-50%) scale(1.3); }
+        .port-b:hover { transform: translateX(-50%) scale(1.3); }
+        .port-l:hover { transform: translateY(-50%) scale(1.3); }
+        .port-r:hover { transform: translateY(-50%) scale(1.3); }
+
+        .delete-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 22px;
+            height: 22px;
+            background-color: #d4a59a;
+            color: #fdfbf7;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            cursor: pointer;
+            z-index: 20;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .node:hover .delete-btn {
+            display: flex;
+        }
+
+        #svg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .edge-path {
+            pointer-events: stroke;
+            cursor: pointer;
+            transition: stroke 0.2s, stroke-width 0.2s;
+        }
+        .edge-path:hover {
+            stroke: #d4a59a;
+            stroke-width: 4;
+        }
+
+        .edge-label {
+            position: absolute;
+            z-index: 15;
+            background: rgba(253, 251, 247, 0.95);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-family: 'Noto Sans TC', sans-serif;
+            color: #4a4a4a;
+            border: 1px dashed transparent;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            min-width: 24px;
+            min-height: 20px;
+            text-align: center;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .edge-label:empty {
+            background: transparent;
+            box-shadow: none;
+        }
+        .edge-label:empty::after {
+            content: "＋";
+            color: transparent;
+            transition: color 0.2s;
+        }
+
+        .edge-label:empty:hover {
+            background: rgba(253, 251, 247, 0.95);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            border-color: #e6e2dd;
+        }
+        .edge-label:empty:hover::after {
+            color: #8da399;
+        }
+
+        .edge-label:not(:empty):hover {
+            border-color: #8da399;
+            background: #fdfbf7;
+            z-index: 25;
+        }
+        .edge-label[contenteditable="true"] {
+            border-style: solid;
+            border-color: #8da399;
+            background: #fdfbf7;
+            cursor: text;
+            z-index: 25;
+            outline: none;
+        }
+        .edge-label[contenteditable="true"]:empty::after {
+            color: #d4a59a;
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 60px;
+            right: 24px;
+            background-color: rgba(74, 74, 74, 0.95);
+            color: #fdfbf7;
+            padding: 10px 24px;
+            border-radius: 9999px;
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 0.05em;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 100;
+            pointer-events: none;
+            font-family: 'Noto Sans TC', sans-serif;
+        }
+        #toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e6e2dd; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8da399; }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden font-sans text-brand-ink selection:bg-brand-sage selection:text-white">
+
+    <!-- ================================================
+         語義化 Header + Nav
+    ================================================ -->
+    <header role="banner" class="px-8 pt-8 pb-4 relative z-20 flex-shrink-0">
+        <div class="max-w-full mx-auto w-full flex flex-col md:flex-row justify-between items-start md:items-end border-b border-brand-sand pb-4 gap-4">
+            <div class="flex flex-col">
+                <p class="text-xs font-bold tracking-widest text-brand-sage mb-2 uppercase" aria-label="品牌名稱">
+                    常溫編集所｜Ambient Edit Studio
+                </p>
+                <h1 class="text-3xl font-serif font-bold text-brand-ink tracking-wide">
+                    流程圖設計工具
+                </h1>
+            </div>
+
+            <!-- 語義化導覽列 -->
+            <nav aria-label="網站導覽">
+                <a href="https://weichun0203.github.io/ambientedit/"
+                   class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+                   aria-label="返回常溫編集所首頁"
+                   style="text-decoration: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                        常溫首頁
+                    </span>
+                </a>
+            </nav>
+        </div>
+        <p class="text-brand-ink/70 mt-3 text-sm tracking-wide max-w-2xl font-sans" role="doc-subtitle">
+            延續常溫品牌的簡約優雅，透過直覺的拖曳操作與專屬配色，為您的專案規劃繪製出清晰且具高質感的邏輯圖表。
+        </p>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+        <!-- 語義化左側工具列 -->
+        <aside aria-label="節點工具列" class="w-64 bg-white/40 backdrop-blur-md border-r border-brand-sand p-6 flex flex-col gap-5 z-20 shadow-soft">
+
+            <div class="flex gap-2 w-full mb-2" role="group" aria-label="畫布操作">
+                <button
+                    onclick="clearAll()"
+                    class="flex-1 py-2 bg-transparent border border-brand-sand hover:border-brand-clay text-brand-ink hover:text-brand-clay rounded-md text-xs font-medium tracking-wider transition-colors duration-300"
+                    aria-label="清除所有節點與連線">
+                    清除畫布
+                </button>
+                <button
+                    onclick="exportImage()"
+                    class="flex-1 py-2 bg-brand-ink hover:bg-brand-sage text-brand-paper rounded-md text-xs font-medium tracking-wider shadow-sm hover:shadow-soft transition-all duration-300 flex items-center justify-center gap-1"
+                    aria-label="將流程圖儲存為 PNG 圖片">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    儲存圖片
+                </button>
+            </div>
+
+            <h2 class="text-[10px] font-bold text-brand-ink/50 uppercase tracking-[0.2em] mb-1" id="node-panel-label">
+                節點元件（點擊加入畫布）
+            </h2>
+
+            <div role="group" aria-labelledby="node-panel-label" class="flex flex-col gap-3">
+                <button
+                    onclick="addNode('start')"
+                    class="group flex flex-col items-center justify-center py-4 border border-brand-sage/50 bg-brand-sage/10 rounded-full hover:bg-brand-sage hover:text-brand-paper transition-all duration-300 shadow-sm"
+                    aria-label="新增開始點節點">
+                    <span class="text-sm font-medium tracking-widest text-brand-ink group-hover:text-brand-paper transition-colors">開始點</span>
+                </button>
+
+                <button
+                    onclick="addNode('process')"
+                    class="group flex flex-col items-center justify-center py-4 border border-brand-sand bg-white rounded-md hover:bg-brand-sand/30 transition-all duration-300 shadow-sm"
+                    aria-label="新增執行步驟節點">
+                    <span class="text-sm font-medium tracking-widest text-brand-ink">執行步驟</span>
+                </button>
+
+                <button
+                    onclick="addNode('decision')"
+                    class="group flex flex-col items-center justify-center py-4 relative transition-all duration-300"
+                    aria-label="新增判斷條件節點（菱形）">
+                    <svg class="absolute inset-0 w-full h-full drop-shadow-sm group-hover:drop-shadow-md transition-all" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                        <polygon points="50,2 98,50 50,98 2,50" fill="#fdfbf7" stroke="#d4a59a" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="text-sm font-medium tracking-widest text-brand-clay relative z-10">判斷條件</span>
+                </button>
+
+                <button
+                    onclick="addNode('end')"
+                    class="group flex flex-col items-center justify-center py-4 border border-brand-ink/30 bg-brand-ink/5 rounded-full hover:bg-brand-ink hover:text-brand-paper transition-all duration-300 shadow-sm"
+                    aria-label="新增結束點節點">
+                    <span class="text-sm font-medium tracking-widest text-brand-ink group-hover:text-brand-paper transition-colors">結束點</span>
+                </button>
+            </div>
+
+            <div class="mt-auto pt-4 border-t border-brand-sand">
+                <p class="text-[11px] text-brand-ink/60 leading-relaxed tracking-wide font-sans" role="note" aria-label="操作說明">
+                    <span class="text-brand-sage font-bold block mb-1">操作說明</span>
+                    • 拖曳空白處可平移畫布視角<br>
+                    • 拖曳節點可移動位置<br>
+                    • 雙擊文字進入編輯模式<br>
+                    • 由節點邊緣圓點拖曳產生連線<br>
+                    • 點擊連線即可直接移除<br>
+                    • 支援 Ctrl + 滾輪縮放畫布
+                </p>
+            </div>
+        </aside>
+
+        <!-- 語義化主畫布區 -->
+        <main id="workspace" role="main" aria-label="流程圖繪製畫布" class="flex-1 w-full h-full shadow-inner relative overflow-auto">
+
+            <!-- 縮放控制列 -->
+            <div id="zoom-controls" class="fixed bottom-6 left-72 z-50 flex items-center bg-white/80 backdrop-blur-md border border-brand-sand rounded-full shadow-soft p-1 gap-1" role="group" aria-label="畫布縮放控制">
+                <button onclick="changeZoom(-0.1)" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-brand-sand text-brand-ink transition-colors font-bold" title="縮小畫布" aria-label="縮小">－</button>
+                <span id="zoom-display" class="text-xs font-bold text-brand-ink min-w-[3rem] text-center cursor-pointer tracking-wider" onclick="resetZoom()" title="點擊重設為 100%" role="button" aria-label="目前縮放比例，點擊重設">100%</span>
+                <button onclick="changeZoom(0.1)" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-brand-sand text-brand-ink transition-colors font-bold" title="放大畫布" aria-label="放大">＋</button>
+            </div>
+
+            <!-- 可縮放的內部畫布 -->
+            <div id="canvas-board" class="canvas-board" role="application" aria-label="流程圖節點畫布">
+                <svg id="svg-layer" aria-hidden="true" focusable="false">
+                    <defs>
+                        <marker id="arrowhead" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#8da399" />
+                        </marker>
+                        <marker id="arrowhead-hover" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#d4a59a" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </main>
+    </div>
+
+    <!-- 語義化 Footer -->
+    <footer role="contentinfo" class="border-t border-brand-sand bg-brand-paper px-8 py-3 flex justify-between items-center text-[10px] text-brand-ink/60 tracking-wider flex-shrink-0 z-20">
+        <p>
+            <small>&copy; 2026 常溫編集所 Ambient Edit Studio. All rights reserved.</small>
+        </p>
+        <nav aria-label="社群連結">
+            <ul class="flex gap-4 list-none m-0 p-0">
+                <li>
+                    <a href="https://line.me/R/ti/p/@890mvlvl" target="_blank" rel="noopener noreferrer" class="hover:text-brand-sage transition-colors" aria-label="前往常溫編集所 LINE 官方帳號">LINE Official</a>
+                </li>
+                <li>
+                    <a href="https://www.instagram.com/ambientedit_?igsh=ajJseGdpc3dnaTJw" target="_blank" rel="noopener noreferrer" class="hover:text-brand-sage transition-colors" aria-label="前往常溫編集所 Instagram 頁面">Instagram</a>
+                </li>
+            </ul>
+        </nav>
+    </footer>
+
+    <!-- 狀態提示（Toast） -->
+    <div id="toast" role="status" aria-live="polite" aria-atomic="true">狀態已更新</div>
+
+    <script>
+        const workspace = document.getElementById('workspace');
+        const canvasBoard = document.getElementById('canvas-board');
+        const svgLayer = document.getElementById('svg-layer');
+
+        let nodes = {};
+        let edges = [];
+        let nodeIdCounter = 0;
+        let zoomLevel = 1;
+
+        let draggedNode = null;
+        let isDragging = false;
+        let dragOffset = { x: 0, y: 0 };
+
+        let isConnecting = false;
+        let connectionStartNodeId = null;
+        let connectionStartPort = null;
+        let tempLine = null;
+        let toastTimeout = null;
+
+        let isPanning = false;
+        let startPanX = 0;
+        let startPanY = 0;
+        let startScrollLeft = 0;
+        let startScrollTop = 0;
+
+        const nodeStyles = {
+            start: { shape: 'round', class: 'bg-brand-sage/10 border-brand-sage/50 text-brand-ink rounded-full border border-solid p-3 text-center shadow-sm hover:shadow-soft transition-all backdrop-blur-sm', defaultText: '開始點' },
+            process: { shape: 'rect', class: 'bg-white border-brand-sand text-brand-ink rounded-md border border-solid p-4 text-center shadow-sm hover:shadow-soft transition-all', defaultText: '執行步驟' },
+            decision: { shape: 'diamond', class: 'text-brand-clay text-center transition-all hover:drop-shadow-md', defaultText: '判斷條件' },
+            end: { shape: 'round', class: 'bg-brand-ink/5 border-brand-ink/30 text-brand-ink rounded-full border border-solid p-3 text-center shadow-sm hover:shadow-soft transition-all backdrop-blur-sm', defaultText: '結束點' }
+        };
+
+        function showToast(msg = '狀態已更新') {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        function changeZoom(delta) {
+            zoomLevel += delta;
+            zoomLevel = Math.max(0.3, Math.min(zoomLevel, 2));
+            updateZoomDisplay();
+        }
+
+        function resetZoom() {
+            zoomLevel = 1;
+            updateZoomDisplay();
+        }
+
+        function updateZoomDisplay() {
+            document.getElementById('zoom-display').innerText = Math.round(zoomLevel * 100) + '%';
+            canvasBoard.style.transform = `scale(${zoomLevel})`;
+            updateSvgSize();
+        }
+
+        workspace.addEventListener('wheel', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                changeZoom(e.deltaY > 0 ? -0.1 : 0.1);
+            }
+        }, { passive: false });
+
+        function saveState() {
+            if (document.body.classList.contains('exporting')) return;
+            const state = {
+                nodes: Object.values(nodes).map(n => ({
+                    id: n.id,
+                    type: n.type,
+                    x: parseInt(n.el.style.left),
+                    y: parseInt(n.el.style.top),
+                    text: n.el.querySelector('.node-text').innerText
+                })),
+                edges: edges.map(e => ({ from: e.from, fromPort: e.fromPort, to: e.to, toPort: e.toPort, text: e.labelEl.innerText }))
+            };
+            localStorage.setItem('ambient_flowchart_data', JSON.stringify(state));
+            showToast('已為您自動儲存進度');
+        }
+
+        function loadState() {
+            const data = localStorage.getItem('ambient_flowchart_data');
+            if (data) {
+                try {
+                    const state = JSON.parse(data);
+                    Object.values(nodes).forEach(n => canvasBoard.removeChild(n.el));
+                    nodes = {};
+                    edges.forEach(e => {
+                        if (e.pathEl && e.pathEl.parentNode) svgLayer.removeChild(e.pathEl);
+                        if (e.labelEl && e.labelEl.parentNode) canvasBoard.removeChild(e.labelEl);
+                    });
+                    edges = [];
+                    nodeIdCounter = 0;
+
+                    state.nodes.forEach(n => addNode(n.type, n.x, n.y, n.id, n.text));
+                    state.edges.forEach(e => {
+                        connectionStartNodeId = e.from;
+                        connectionStartPort = e.fromPort || 'r';
+                        finishConnection(e.to, e.toPort || 'l', true, e.text);
+                    });
+
+                    updateEdges();
+                    updateSvgSize();
+                    showToast('已載入上次的編輯記錄');
+                    return true;
+                } catch(e) {
+                    console.error("記錄載入失敗", e);
+                }
+            }
+            return false;
+        }
+
+        function addNode(type, x = null, y = null, savedId = null, savedText = null) {
+            const id = savedId || `node-${++nodeIdCounter}`;
+            if (savedId) {
+                const num = parseInt(savedId.split('-')[1]);
+                if (num >= nodeIdCounter) nodeIdCounter = num;
+            }
+
+            let finalX = x;
+            let finalY = y;
+
+            if (x === null || y === null) {
+                const boardRect = canvasBoard.getBoundingClientRect();
+                finalX = (workspace.offsetWidth / 2 - boardRect.left) / zoomLevel - 60;
+                finalY = (workspace.offsetHeight / 2 - boardRect.top) / zoomLevel - 30;
+            }
+
+            finalX = Math.round(finalX / 20) * 20;
+            finalY = Math.round(finalY / 20) * 20;
+
+            const style = nodeStyles[type];
+            const textContent = savedText || style.defaultText;
+
+            const nodeEl = document.createElement('div');
+            nodeEl.id = id;
+            nodeEl.style.left = `${finalX}px`;
+            nodeEl.style.top = `${finalY}px`;
+
+            // 節點 ARIA 屬性
+            nodeEl.setAttribute('role', 'figure');
+            nodeEl.setAttribute('aria-label', `${textContent}（${type} 節點）`);
+
+            let shapeHTML = '';
+            if (style.shape === 'diamond') {
+                nodeEl.className = `node flex items-center justify-center z-10 ${style.class}`;
+                nodeEl.style.width = '120px';
+                nodeEl.style.height = '100px';
+                shapeHTML = `
+                    <svg class="absolute inset-0 w-full h-full -z-10" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                        <polygon points="50,2 98,50 50,98 2,50" fill="#fdfbf7" stroke="#d4a59a" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                `;
+            } else {
+                nodeEl.className = `node flex items-center justify-center ${style.class}`;
+            }
+
+            nodeEl.innerHTML = `
+                ${shapeHTML}
+                <button class="delete-btn z-20" onclick="removeNode('${id}')" title="移除此節點" aria-label="移除節點">✕</button>
+                <div class="node-text font-medium relative z-10 px-2 tracking-widest text-sm" title="雙擊進行文字編輯" role="textbox" aria-label="節點文字">${textContent}</div>
+                <div class="port port-t" data-port="t" onmousedown="startConnection(event, '${id}', 't')" title="從頂部連出" aria-label="頂部連接點" role="button"></div>
+                <div class="port port-r" data-port="r" onmousedown="startConnection(event, '${id}', 'r')" title="從右側連出" aria-label="右側連接點" role="button"></div>
+                <div class="port port-b" data-port="b" onmousedown="startConnection(event, '${id}', 'b')" title="從底部連出" aria-label="底部連接點" role="button"></div>
+                <div class="port port-l" data-port="l" onmousedown="startConnection(event, '${id}', 'l')" title="從左側連出" aria-label="左側連接點" role="button"></div>
+            `;
+
+            const textEl = nodeEl.querySelector('.node-text');
+            textEl.addEventListener('dblclick', (e) => {
+                e.stopPropagation();
+                textEl.contentEditable = "true";
+                textEl.focus();
+                document.execCommand('selectAll', false, null);
+            });
+            textEl.addEventListener('blur', () => {
+                textEl.contentEditable = "false";
+                nodeEl.setAttribute('aria-label', `${textEl.innerText}（${type} 節點）`);
+                saveState();
+            });
+            textEl.addEventListener('mousedown', (e) => {
+                if (textEl.contentEditable !== "true") {
+                    e.preventDefault();
+                    startDragNode(e, id);
+                } else {
+                    e.stopPropagation();
+                }
+            });
+
+            nodeEl.addEventListener('mousedown', (e) => {
+                if (e.target.classList.contains('port') || e.target.classList.contains('delete-btn')) return;
+                startDragNode(e, id);
+            });
+
+            nodeEl.addEventListener('mouseup', (e) => {
+                if (isConnecting && connectionStartNodeId !== id) {
+                    let targetPort = 'l';
+                    if (e.target.classList.contains('port')) {
+                        targetPort = e.target.dataset.port;
+                    } else {
+                        const rect = nodeEl.getBoundingClientRect();
+                        const centerX = rect.left + rect.width / 2;
+                        const centerY = rect.top + rect.height / 2;
+                        const dx = e.clientX - centerX;
+                        const dy = e.clientY - centerY;
+                        if (Math.abs(dx) > Math.abs(dy)) {
+                            targetPort = dx > 0 ? 'r' : 'l';
+                        } else {
+                            targetPort = dy > 0 ? 'b' : 't';
+                        }
+                    }
+                    finishConnection(id, targetPort);
+                }
+            });
+
+            canvasBoard.appendChild(nodeEl);
+            nodes[id] = { id, type, el: nodeEl };
+
+            updateSvgSize();
+            if(!savedId) saveState();
+        }
+
+        function removeNode(id) {
+            if (nodes[id]) {
+                canvasBoard.removeChild(nodes[id].el);
+                delete nodes[id];
+            }
+            edges = edges.filter(edge => {
+                if (edge.from === id || edge.to === id) {
+                    if (edge.pathEl) svgLayer.removeChild(edge.pathEl);
+                    if (edge.labelEl) canvasBoard.removeChild(edge.labelEl);
+                    return false;
+                }
+                return true;
+            });
+            updateEdges();
+            saveState();
+        }
+
+        function clearAll() {
+            Object.keys(nodes).forEach(id => removeNode(id));
+            nodeIdCounter = 0;
+            localStorage.removeItem('ambient_flowchart_data');
+            showToast('畫布已全數清除，可重新開始編排。');
+        }
+
+        workspace.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.node') || e.target.closest('.edge-label') || e.target.closest('#zoom-controls')) {
+                return;
+            }
+            isPanning = true;
+            workspace.classList.add('is-panning');
+            startPanX = e.clientX;
+            startPanY = e.clientY;
+            startScrollLeft = workspace.scrollLeft;
+            startScrollTop = workspace.scrollTop;
+        });
+
+        function startDragNode(e, id) {
+            draggedNode = nodes[id];
+            isDragging = false;
+            const rect = draggedNode.el.getBoundingClientRect();
+
+            dragOffset.x = (e.clientX - rect.left) / zoomLevel;
+            dragOffset.y = (e.clientY - rect.top) / zoomLevel;
+
+            draggedNode.el.style.zIndex = 100;
+        }
+
+        function startConnection(e, id, port) {
+            e.stopPropagation();
+            isConnecting = true;
+            connectionStartNodeId = id;
+            connectionStartPort = port;
+
+            tempLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            tempLine.setAttribute('stroke', '#8da399');
+            tempLine.setAttribute('stroke-width', '2');
+            tempLine.setAttribute('fill', 'none');
+            tempLine.setAttribute('stroke-dasharray', '4,4');
+            tempLine.setAttribute('marker-end', 'url(#arrowhead)');
+            svgLayer.appendChild(tempLine);
+        }
+
+        function finishConnection(targetId, targetPort, skipSave = false, savedText = '') {
+            const exists = edges.some(e => e.from === connectionStartNodeId && e.to === targetId && e.fromPort === connectionStartPort && e.toPort === targetPort);
+            if (!exists) {
+                const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                pathEl.setAttribute('stroke', '#8da399');
+                pathEl.setAttribute('stroke-width', '1.5');
+                pathEl.setAttribute('fill', 'none');
+                pathEl.setAttribute('marker-end', 'url(#arrowhead)');
+                pathEl.setAttribute('class', 'edge-path');
+
+                const labelEl = document.createElement('div');
+                labelEl.className = 'edge-label tracking-widest';
+                labelEl.title = "雙擊新增連線說明文字";
+                labelEl.setAttribute('role', 'button');
+                labelEl.setAttribute('aria-label', '連線標籤，雙擊編輯');
+                labelEl.innerText = savedText;
+
+                labelEl.addEventListener('dblclick', (e) => {
+                    e.stopPropagation();
+                    labelEl.contentEditable = "true";
+                    labelEl.focus();
+                    document.execCommand('selectAll', false, null);
+                });
+                labelEl.addEventListener('blur', () => {
+                    labelEl.contentEditable = "false";
+                    saveState();
+                });
+                labelEl.addEventListener('mousedown', (e) => e.stopPropagation());
+
+                pathEl.addEventListener('click', () => {
+                    svgLayer.removeChild(pathEl);
+                    canvasBoard.removeChild(labelEl);
+                    edges = edges.filter(e => e.pathEl !== pathEl);
+                    saveState();
+                    showToast('已移除連線');
+                });
+
+                pathEl.addEventListener('mouseenter', () => pathEl.setAttribute('marker-end', 'url(#arrowhead-hover)'));
+                pathEl.addEventListener('mouseleave', () => pathEl.setAttribute('marker-end', 'url(#arrowhead)'));
+
+                svgLayer.appendChild(pathEl);
+                canvasBoard.appendChild(labelEl);
+
+                edges.push({
+                    from: connectionStartNodeId,
+                    fromPort: connectionStartPort,
+                    to: targetId,
+                    toPort: targetPort,
+                    pathEl: pathEl,
+                    labelEl: labelEl
+                });
+            }
+            cleanupConnection();
+            updateEdges();
+            if(!skipSave) saveState();
+        }
+
+        function cleanupConnection() {
+            isConnecting = false;
+            connectionStartNodeId = null;
+            connectionStartPort = null;
+            if (tempLine) {
+                svgLayer.removeChild(tempLine);
+                tempLine = null;
+            }
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            if (isPanning) {
+                e.preventDefault();
+                const dx = e.clientX - startPanX;
+                const dy = e.clientY - startPanY;
+                workspace.scrollLeft = startScrollLeft - dx;
+                workspace.scrollTop = startScrollTop - dy;
+                return;
+            }
+
+            if (draggedNode) {
+                isDragging = true;
+                const boardRect = canvasBoard.getBoundingClientRect();
+
+                let newX = (e.clientX - boardRect.left) / zoomLevel - dragOffset.x;
+                let newY = (e.clientY - boardRect.top) / zoomLevel - dragOffset.y;
+
+                newX = Math.max(0, newX);
+                newY = Math.max(0, newY);
+                newX = Math.round(newX / 20) * 20;
+                newY = Math.round(newY / 20) * 20;
+
+                draggedNode.el.style.left = `${newX}px`;
+                draggedNode.el.style.top = `${newY}px`;
+
+                updateEdges();
+                updateSvgSize();
+            }
+
+            if (isConnecting && tempLine) {
+                const startCoords = getPortCoords(connectionStartNodeId, connectionStartPort);
+                const boardRect = canvasBoard.getBoundingClientRect();
+
+                const endX = (e.clientX - boardRect.left) / zoomLevel;
+                const endY = (e.clientY - boardRect.top) / zoomLevel;
+
+                const dist = Math.max(Math.abs(endX - startCoords.x), Math.abs(endY - startCoords.y)) / 2;
+                const curveOffset = Math.max(dist, 40);
+
+                let cx1 = startCoords.x, cy1 = startCoords.y;
+                if (connectionStartPort === 't') cy1 -= curveOffset;
+                if (connectionStartPort === 'b') cy1 += curveOffset;
+                if (connectionStartPort === 'l') cx1 -= curveOffset;
+                if (connectionStartPort === 'r') cx1 += curveOffset;
+
+                tempLine.setAttribute('d', `M ${startCoords.x} ${startCoords.y} Q ${cx1} ${cy1} ${endX} ${endY}`);
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (isPanning) {
+                isPanning = false;
+                workspace.classList.remove('is-panning');
+            }
+
+            if (draggedNode) {
+                draggedNode.el.style.zIndex = 10;
+                draggedNode = null;
+                if(isDragging) {
+                    saveState();
+                    isDragging = false;
+                }
+            }
+            if (isConnecting) {
+                cleanupConnection();
+            }
+        });
+
+        function getPortCoords(nodeId, port) {
+            const nodeEl = nodes[nodeId].el;
+            const rect = nodeEl.getBoundingClientRect();
+            const boardRect = canvasBoard.getBoundingClientRect();
+
+            let x, y;
+            const offset = 4 * zoomLevel;
+
+            if (port === 't') { x = rect.left + rect.width / 2; y = rect.top - offset; }
+            else if (port === 'b') { x = rect.left + rect.width / 2; y = rect.bottom + offset; }
+            else if (port === 'l') { x = rect.left - offset; y = rect.top + rect.height / 2; }
+            else if (port === 'r') { x = rect.right + offset; y = rect.top + rect.height / 2; }
+
+            return {
+                x: (x - boardRect.left) / zoomLevel,
+                y: (y - boardRect.top) / zoomLevel
+            };
+        }
+
+        function updateEdges() {
+            edges.forEach(edge => {
+                const fromCoords = getPortCoords(edge.from, edge.fromPort);
+                const toCoords = getPortCoords(edge.to, edge.toPort);
+
+                const curveData = calculateAdvancedBezier(fromCoords.x, fromCoords.y, edge.fromPort, toCoords.x, toCoords.y, edge.toPort);
+                edge.pathEl.setAttribute('d', curveData.path);
+
+                const { x1, y1, cx1, cy1, cx2, cy2, x2, y2 } = curveData.points;
+                const midX = 0.125*x1 + 0.375*cx1 + 0.375*cx2 + 0.125*x2;
+                const midY = 0.125*y1 + 0.375*cy1 + 0.375*cy2 + 0.125*y2;
+
+                edge.labelEl.style.left = `${midX}px`;
+                edge.labelEl.style.top = `${midY}px`;
+            });
+        }
+
+        function calculateAdvancedBezier(x1, y1, p1, x2, y2, p2) {
+            const dist = Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1)) / 2;
+            const curveOffset = Math.max(dist, 40);
+
+            let cx1 = x1, cy1 = y1;
+            if (p1 === 't') cy1 -= curveOffset;
+            if (p1 === 'b') cy1 += curveOffset;
+            if (p1 === 'l') cx1 -= curveOffset;
+            if (p1 === 'r') cx1 += curveOffset;
+
+            let cx2 = x2, cy2 = y2;
+            if (p2 === 't') cy2 -= curveOffset;
+            if (p2 === 'b') cy2 += curveOffset;
+            if (p2 === 'l') cx2 -= curveOffset;
+            if (p2 === 'r') cx2 += curveOffset;
+
+            return {
+                path: `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`,
+                points: { x1, y1, cx1, cy1, cx2, cy2, x2, y2 }
+            };
+        }
+
+        function updateSvgSize() {
+            let maxX = workspace.clientWidth / zoomLevel;
+            let maxY = workspace.clientHeight / zoomLevel;
+
+            Object.values(nodes).forEach(n => {
+                const left = parseInt(n.el.style.left);
+                const top = parseInt(n.el.style.top);
+                const width = n.el.offsetWidth;
+                const height = n.el.offsetHeight;
+
+                if (left + width > maxX) maxX = left + width;
+                if (top + height > maxY) maxY = top + height;
+            });
+
+            canvasBoard.style.width = `${maxX + 100}px`;
+            canvasBoard.style.height = `${maxY + 100}px`;
+        }
+
+        function exportImage() {
+            document.body.classList.add('exporting');
+            showToast('圖片匯出準備中...');
+
+            // GA 事件追蹤：匯出行為
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'export_image', {
+                    'event_category': 'tool_interaction',
+                    'event_label': 'flowchart_png_export'
+                });
+            }
+
+            const originalZoom = zoomLevel;
+            if (zoomLevel !== 1) {
+                zoomLevel = 1;
+                canvasBoard.style.transform = `scale(1)`;
+            }
+
+            const originalScrollLeft = workspace.scrollLeft;
+            const originalScrollTop = workspace.scrollTop;
+
+            let maxX = 0;
+            let maxY = 0;
+
+            Object.values(nodes).forEach(n => {
+                const left = parseInt(n.el.style.left);
+                const top = parseInt(n.el.style.top);
+                const width = n.el.offsetWidth;
+                const height = n.el.offsetHeight;
+
+                if (left + width > maxX) maxX = left + width;
+                if (top + height > maxY) maxY = top + height;
+            });
+
+            const contentWidth = Math.max(workspace.clientWidth, maxX + 100);
+            const contentHeight = Math.max(workspace.clientHeight, maxY + 100);
+
+            const originalPosition = canvasBoard.style.position;
+            const originalWidth = canvasBoard.style.width;
+            const originalHeight = canvasBoard.style.height;
+
+            canvasBoard.style.position = 'absolute';
+            canvasBoard.style.width = `${contentWidth}px`;
+            canvasBoard.style.height = `${contentHeight}px`;
+
+            workspace.scrollLeft = 0;
+            workspace.scrollTop = 0;
+
+            setTimeout(() => {
+                html2canvas(canvasBoard, {
+                    width: contentWidth,
+                    height: contentHeight,
+                    scrollX: 0,
+                    scrollY: 0,
+                    windowWidth: contentWidth,
+                    windowHeight: contentHeight,
+                    backgroundColor: '#fdfbf7',
+                    scale: 2
+                }).then(canvas => {
+                    canvasBoard.style.position = originalPosition;
+                    canvasBoard.style.width = originalWidth;
+                    canvasBoard.style.height = originalHeight;
+
+                    if (originalZoom !== 1) {
+                        zoomLevel = originalZoom;
+                        canvasBoard.style.transform = `scale(${zoomLevel})`;
+                    }
+
+                    workspace.scrollLeft = originalScrollLeft;
+                    workspace.scrollTop = originalScrollTop;
+                    document.body.classList.remove('exporting');
+
+                    const link = document.createElement('a');
+                    link.download = `Ambient_Flowchart_${new Date().getTime()}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    showToast('流程圖已成功匯出');
+                }).catch(err => {
+                    console.error("匯出失敗:", err);
+                    canvasBoard.style.position = originalPosition;
+                    canvasBoard.style.width = originalWidth;
+                    canvasBoard.style.height = originalHeight;
+
+                    if (originalZoom !== 1) {
+                        zoomLevel = originalZoom;
+                        canvasBoard.style.transform = `scale(${zoomLevel})`;
+                    }
+
+                    workspace.scrollLeft = originalScrollLeft;
+                    workspace.scrollTop = originalScrollTop;
+                    showToast("匯出處理中發生異常，請稍後再試。");
+                    document.body.classList.remove('exporting');
+                });
+            }, 300);
+        }
+
+        // 初始化
+        window.onload = () => {
+            setTimeout(() => {
+                const isLoaded = loadState();
+                if (!isLoaded) {
+                    addNode('start', 100, 160);
+                    addNode('process', 360, 160);
+                }
+            }, 100);
+
+            window.addEventListener('resize', () => {
+                updateEdges();
+                updateSvgSize();
+            });
+
+            workspace.addEventListener('scroll', updateEdges);
+        };
+    </script>
+</body>
+</html>

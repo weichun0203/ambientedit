@@ -138,10 +138,17 @@
             </div>
 
             <!-- "返回常溫首頁" Button aligned to bottom-right of the title group -->
-           <div class="flex items-center gap-4 w-full md:w-auto justify-center md:justify-end">
-                <a href="https://weichun0203.github.io/ambientedit/" class="text-sm font-medium text-brand-sage hover:text-brand-ink transition-colors flex items-center gap-1.5 group px-4 py-2 rounded-full border border-transparent hover:border-brand-sand hover:bg-white/50">
-                    <i data-lucide="home" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> 常溫首頁
+            <div class="absolute right-0 bottom-8">
+                <a href="https://weichun0203.github.io/ambientedit/" 
+                   class="group inline-flex items-center px-4 py-2.5 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+                   aria-label="返回常溫首頁"
+                   style="text-decoration: none;">
+                    <i class="ph ph-arrow-u-up-left text-brand-sage group-hover:text-brand-ink transition-colors duration-300 text-lg"></i>
+                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                        常溫首頁
+                    </span>
                 </a>
+            </div>
         </div>
     </header>
 

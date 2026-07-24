@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常溫專案進度管理｜Ambient Project Tracker</title>
+    <meta name="description" content="常溫編集所專屬專案進度管理系統，透過系統化的拖曳介面，掌握每一個品牌專案的生命週期與任務細節。">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
+    <!-- Json-ld 結構化資料 -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "常溫專案進度管理｜Ambient Project Tracker",
+      "description": "常溫編集所專屬專案進度管理系統，掌握品牌專案生命週期。",
+      "applicationCategory": "BusinessApplication",
+      "provider": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio",
+        "url": "https://weichun0203.github.io/ambientedit/"
+      }
+    }
+    </script>
+
+    <!-- 載入 Tailwind CSS & 品牌字型 & 圖示庫 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Noto Serif TC"', 'serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            /* 模擬紙張纖維質感的微噪點 SVG 背景 */
+            background-color: #fdfbf7;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #e6e2dd;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background-color: #d4a59a;
+        }
+        
+        [contenteditable="true"]:hover {
+            background-color: rgba(230, 226, 221, 0.3);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="text-brand-ink font-sans h-screen overflow-hidden flex flex-col selection:bg-brand-sage selection:text-white">
+
+    <!-- 系統主畫面 -->
+    <div class="flex h-screen overflow-hidden relative backdrop-blur-[2px]">
+        
+        <!-- 側邊欄 (專案列表) -->
+        <aside class="w-full md:w-72 bg-white/70 border-r border-brand-sand flex flex-col shrink-0 shadow-soft z-10">
+            <div class="p-6 border-b border-brand-sand flex items-center gap-3">
+                <div class="bg-brand-sage p-2 rounded-lg shadow-sm">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-white"></i>
+                </div>
+                <!-- 可編輯的側邊欄標題 -->
+                <h2 id="sidebar-title" class="text-lg font-serif font-bold text-brand-ink outline-none focus:border-b border-brand-sage transition-all" contenteditable="true" spellcheck="false" title="點擊修改列表名稱">品牌專案列表</h2>
+            </div>
+
+            <div class="flex-1 overflow-y-auto custom-scrollbar">
+                <!-- 專案項目 -->
+                <div id="project-list" class="p-4 space-y-2"></div>
+
+                <!-- 新增專案表單 -->
+                <div class="px-4 pb-6 pt-2">
+                    <form id="add-project-form" class="flex flex-col gap-2">
+                        <input type="text" id="new-project-input" placeholder="輸入新專案名稱..." class="w-full px-3 py-2 border border-brand-sand rounded-xl focus:outline-none focus:border-brand-sage focus:ring-1 focus:ring-brand-sage text-sm bg-white shadow-sm transition-all" autocomplete="off">
+                        <button type="submit" class="w-full flex items-center justify-center gap-2 px-4 py-2 border border-brand-sand bg-brand-paper text-brand-ink rounded-xl hover:bg-brand-sage hover:text-white hover:border-brand-sage transition-colors text-sm font-bold shadow-sm">
+                            <i data-lucide="plus" class="w-4 h-4"></i> 新增專案
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主要工作區 -->
+        <main class="flex-1 flex flex-col overflow-hidden bg-transparent">
+            
+            <!-- 頂部標題列 -->
+            <header class="bg-white/80 backdrop-blur-md border-b border-brand-sand p-8 shadow-sm shrink-0 z-10">
+                <div class="max-w-6xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    
+                    <!-- 主視覺群組：標題、副標題、引言與返回首頁按鈕 -->
+                    <div class="flex-1 flex flex-col md:flex-row md:items-end justify-between gap-4">
+                        
+                        <!-- 左側：標題文字資訊 -->
+                        <div id="header-text-container" class="flex flex-col">
+                            <!-- 副標題 -->
+                            <div class="flex items-center gap-2 text-xs font-bold tracking-widest text-brand-ink/50 mb-2">
+                                常溫編集所 AMBIENT EDIT STUDIO
+                                <span class="text-brand-sand">/</span>
+                                <span class="text-brand-sage">進度管理系統</span>
+                            </div>
+                            
+                            <!-- 專案主標題區 -->
+                            <div id="project-header-display" class="group flex items-center gap-3">
+                                <h2 id="project-title-display" class="text-3xl font-serif font-bold text-brand-ink">選擇或建立一個專案</h2>
+                                <button id="edit-project-btn" class="text-brand-sand hover:text-brand-sage opacity-0 group-hover:opacity-100 transition-all p-1.5 rounded-lg hover:bg-brand-sage/10 hidden" title="編輯專案資訊">
+                                    <i data-lucide="edit-2" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- 引言 (描述) 放在標題下方 -->
+                            <p id="project-desc-display" class="text-brand-ink/60 mt-3 text-sm font-medium leading-relaxed max-w-2xl"></p>
+                            
+                            <!-- 專案資訊編輯表單 (預設隱藏) -->
+                            <div id="project-edit-form" class="hidden flex flex-col gap-3 mt-2 max-w-lg">
+                                <input type="text" id="edit-title-input" class="text-3xl font-serif font-bold text-brand-ink px-3 py-2 border border-brand-sage rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-sage/50 bg-white" placeholder="專案名稱">
+                                <textarea id="edit-desc-input" class="text-brand-ink/70 px-3 py-2 border border-brand-sand rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-sage/50 resize-none h-20 bg-white font-medium" placeholder="專案描述（選填）"></textarea>
+                                <div class="flex gap-2 mt-1">
+                                    <button id="save-project-btn" class="flex items-center gap-1.5 px-4 py-2 bg-brand-sage text-white rounded-lg hover:opacity-90 text-sm font-bold transition-opacity shadow-sm">
+                                        <i data-lucide="save" class="w-4 h-4"></i> 儲存變更
+                                    </button>
+                                    <button id="cancel-edit-btn" class="flex items-center gap-1.5 px-4 py-2 bg-white border border-brand-sand text-brand-ink rounded-lg hover:bg-brand-paper text-sm font-bold transition-colors">
+                                        <i data-lucide="x" class="w-4 h-4"></i> 取消
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 右側：返回首頁按鈕 (與標題底部對齊) -->
+                        <a href="https://weichun0203.github.io/ambientedit/" 
+                           class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm shrink-0 mb-1"
+                           aria-label="返回常溫首頁"
+                           style="text-decoration: none;"> 
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                <polyline points="9 22 9 12 15 12 15 22"/>
+                            </svg>
+                            <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                                常溫首頁
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </header>
+
+            <div id="workspace-content" class="flex-1 overflow-y-auto p-8 custom-scrollbar hidden">
+                <div class="max-w-6xl mx-auto space-y-8">
+                    
+                    <!-- 專案完成度大數字區塊 (移動至內容區塊上方) -->
+                    <div class="flex items-center justify-between gap-6 bg-white/80 backdrop-blur px-6 py-6 rounded-2xl border border-brand-sand shadow-soft">
+                        <div>
+                            <p class="text-sm font-bold tracking-wider text-brand-ink/50 mb-1">專案完成度</p>
+                            <div class="flex items-baseline gap-2">
+                                <span id="project-progress-text" class="text-5xl font-serif font-black text-brand-ink">0%</span>
+                            </div>
+                        </div>
+                        <div class="w-20 h-20 relative flex items-center justify-center">
+                            <svg class="w-full h-full transform -rotate-90 drop-shadow-sm" viewBox="0 0 36 36">
+                                <path class="text-brand-sand" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path id="project-progress-circle" class="text-brand-sage transition-all duration-1000 ease-out" stroke-dasharray="0, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- 專案執行階段 (水平拖曳區塊) -->
+                    <div class="bg-white/80 backdrop-blur p-6 rounded-2xl border border-brand-sand shadow-soft">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 border-b border-brand-sand pb-4">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="git-merge" class="w-5 h-5 text-brand-clay"></i>
+                                <h3 class="text-lg font-bold text-brand-ink tracking-wide">專案執行階段</h3>
+                            </div>
+                            <form id="add-phase-form" class="flex gap-2">
+                                <input type="text" id="new-phase-input" placeholder="自訂新階段名稱..." class="px-3 py-1.5 border border-brand-sand rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-brand-sage bg-brand-paper shadow-inner w-48">
+                                <button type="submit" class="px-4 py-1.5 bg-brand-sage text-white rounded-lg hover:opacity-90 text-sm font-bold transition-opacity shadow-sm whitespace-nowrap">新增階段</button>
+                            </form>
+                        </div>
+                        <div id="phases-container" class="flex items-center gap-3 overflow-x-auto pb-4 custom-scrollbar">
+                            <!-- 階段區塊由 JS 動態生成 -->
+                        </div>
+                    </div>
+
+                    <!-- 任務清單區塊 -->
+                    <div class="bg-white/80 backdrop-blur rounded-2xl border border-brand-sand shadow-soft overflow-hidden">
+                        <div class="p-6 border-b border-brand-sand flex items-center justify-between bg-brand-paper/50">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="list-todo" class="w-5 h-5 text-brand-sage"></i>
+                                <h3 id="task-list-title" class="text-xl font-bold text-brand-ink tracking-wide">任務清單</h3>
+                            </div>
+                            <span id="task-count" class="bg-white border border-brand-sand text-brand-ink/70 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
+                                共 0 項
+                            </span>
+                        </div>
+                        
+                        <div class="p-6">
+                            <!-- 新增任務表單 -->
+                            <form id="add-task-form" class="mb-8 flex flex-col sm:flex-row gap-3">
+                                <select id="new-task-phase-select" class="px-4 py-3 border border-brand-sand rounded-xl focus:outline-none focus:ring-1 focus:ring-brand-sage bg-brand-paper focus:bg-white text-brand-ink font-bold min-w-[150px] shadow-sm">
+                                </select>
+                                <input type="text" id="new-task-input" placeholder="輸入新的代辦事項..." class="flex-1 px-4 py-3 border border-brand-sand rounded-xl focus:outline-none focus:ring-1 focus:ring-brand-sage transition-all bg-brand-paper focus:bg-white shadow-sm font-medium">
+                                <button type="submit" class="px-6 py-3 bg-brand-ink text-white rounded-xl hover:bg-brand-ink/80 transition-colors font-bold flex items-center justify-center gap-2 shadow-sm whitespace-nowrap">
+                                    <i data-lucide="plus" class="w-5 h-5"></i>
+                                    新增任務
+                                </button>
+                            </form>
+
+                            <!-- 任務列表容器 -->
+                            <div id="tasks-container" class="space-y-3">
+                                <!-- 任務由 JS 動態生成 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 頁尾版權與社群 -->
+            <footer class="mt-auto py-6 border-t border-brand-sand/50 text-center text-xs text-brand-ink/50 flex flex-col md:flex-row items-center justify-center gap-6 bg-brand-paper/50 backdrop-blur shrink-0">
+                <span class="font-medium">2026 常溫編集所 Ambient Edit Studio.</span>
+                <div class="flex items-center gap-4">
+                    <a href="https://line.me/R/ti/p/@890mvlvl" target="_blank" rel="noopener noreferrer" class="hover:text-brand-sage transition-colors flex items-center gap-1 font-medium">
+                        <i data-lucide="message-circle" class="w-4 h-4"></i> LINE@
+                    </a>
+                    <a href="https://www.instagram.com/ambientedit_?igsh=ajJseGdpc3dnaTJw" target="_blank" rel="noopener noreferrer" class="hover:text-brand-sage transition-colors flex items-center gap-1 font-medium">
+                        <i data-lucide="instagram" class="w-4 h-4"></i> Instagram
+                    </a>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        // --- 狀態定義與初始化 ---
+        const STORAGE_KEY = 'ambient_edit_projects_data';
+        const SIDEBAR_TITLE_KEY = 'ambient_edit_sidebar_title';
+        
+        const STATUS_CONFIG = {
+            'todo': { label: '待處理', color: '#a8a29e', icon: 'circle', cardClass: 'bg-white border-brand-sand hover:border-brand-ink/30' },
+            'in-progress': { label: '進行中', color: '#d4a59a', icon: 'clock', cardClass: 'bg-[#fcf7f6] border-brand-clay hover:shadow-md' },
+            'done': { label: '已完成', color: '#8da399', icon: 'check-circle-2', cardClass: 'bg-[#f4f7f6] border-brand-sage opacity-90' }
+        };
+
+        const NOW = Date.now();
+        const DAY = 24 * 60 * 60 * 1000;
+
+        // 預設資料
+        const INITIAL_PROJECTS = [
+            { id: 1, name: '開始你的第一個專案', description: '這是預設的專案範本。你可以點擊右上方編輯圖示修改名稱，或在左側建立新的專案。', phases: [
+                { id: 101, name: '前期企劃' },
+                { id: 102, name: '設計與執行' },
+                { id: 103, name: '結案追蹤' }
+            ]}
+        ];
+
+        const INITIAL_TASKS = [
+            { id: 1, projectId: 1, phaseId: 101, title: '確認專案目標與時程', status: 'done', createdAt: NOW - 2*DAY, completedAt: NOW - 1*DAY },
+            { id: 2, projectId: 1, phaseId: 102, title: '設計品牌視覺草圖', status: 'in-progress', createdAt: NOW - 1*DAY, completedAt: null },
+            { id: 3, projectId: 1, phaseId: 103, title: '整理結案數據報告', status: 'todo', createdAt: NOW, completedAt: null },
+        ];
+
+        let projects = [];
+        let tasks = [];
+        let activeProjectId = null;
+        let activePhaseId = null;
+        let draggedPhaseId = null;
+        let dragOverPhaseId = null;
+
+        // --- 輔助工具 ---
+        const formatDate = (ts) => {
+            if (!ts) return '';
+            const d = new Date(ts);
+            return `${d.getFullYear()}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getDate().toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+        };
+
+        const getDurationText = (start, end) => {
+            if (!start || !end) return '';
+            const diffMs = end - start;
+            if (diffMs < 0) return '不到 1 小時';
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            
+            if (diffDays > 0 && diffHours > 0) return `${diffDays} 天 ${diffHours} 小時`;
+            if (diffDays > 0) return `${diffDays} 天`;
+            if (diffHours > 0) return `${diffHours} 小時`;
+            return '不到 1 小時';
+        };
+
+        const saveToLocalStorage = () => {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ projects, tasks }));
+        };
+
+        // --- 渲染函式 ---
+        function renderSidebar() {
+            const list = document.getElementById('project-list');
+            list.innerHTML = projects.map(project => `
+                <button
+                    onclick="setActiveProject(${project.id})"
+                    class="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-300 font-medium ${
+                        activeProjectId === project.id 
+                            ? 'bg-white text-brand-ink shadow-sm border border-brand-sand relative overflow-hidden' 
+                            : 'text-brand-ink/60 hover:bg-white hover:text-brand-ink border border-transparent'
+                    }"
+                >
+                    ${activeProjectId === project.id ? '<div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-sage"></div>' : ''}
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <i data-lucide="briefcase" class="w-5 h-5 flex-shrink-0 ${activeProjectId === project.id ? 'text-brand-sage' : 'text-brand-ink/40'}"></i>
+                        <span class="truncate text-sm tracking-wide">${project.name}</span>
+                    </div>
+                    ${activeProjectId === project.id ? '<i data-lucide="chevron-right" class="w-4 h-4 text-brand-sage"></i>' : ''}
+                </button>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function renderMainArea() {
+            const workspace = document.getElementById('workspace-content');
+            const project = projects.find(p => p.id === activeProjectId);
+
+            if (!project) {
+                workspace.classList.add('hidden');
+                document.getElementById('project-title-display').textContent = '選擇或建立一個專案';
+                document.getElementById('project-desc-display').textContent = '';
+                document.getElementById('edit-project-btn').classList.add('hidden');
+                document.getElementById('project-progress-text').textContent = '0%';
+                document.getElementById('project-progress-circle').setAttribute('stroke-dasharray', '0, 100');
+                return;
+            }
+
+            workspace.classList.remove('hidden');
+            
+            // 標題與描述
+            document.getElementById('project-title-display').textContent = project.name;
+            document.getElementById('project-desc-display').textContent = project.description || '';
+            document.getElementById('edit-project-btn').classList.remove('hidden');
+
+            // 總進度
+            const projectTasks = tasks.filter(t => t.projectId === project.id);
+            const total = projectTasks.length;
+            const done = projectTasks.filter(t => t.status === 'done').length;
+            const progress = total === 0 ? 0 : Math.round((done / total) * 100);
+            
+            document.getElementById('project-progress-text').textContent = `${progress}%`;
+            document.getElementById('project-progress-circle').setAttribute('stroke-dasharray', `${progress}, 100`);
+
+            // 更新任務表單的階段選單
+            const phaseSelect = document.getElementById('new-task-phase-select');
+            phaseSelect.innerHTML = (project.phases || []).map(p => 
+                `<option value="${p.id}" ${p.id === activePhaseId ? 'selected' : ''}>${p.name}</option>`
+            ).join('');
+
+            renderPhases(project);
+            renderTasks(project);
+        }
+
+        function renderPhases(project) {
+            const container = document.getElementById('phases-container');
+            const projectTasks = tasks.filter(t => t.projectId === project.id);
+            
+            const phaseStats = (project.phases || []).map(phase => {
+                const pTasks = projectTasks.filter(t => t.phaseId === phase.id);
+                const total = pTasks.length;
+                const done = pTasks.filter(t => t.status === 'done').length;
+                const progress = total === 0 ? 0 : Math.round((done / total) * 100);
+                return { ...phase, total, done, progress };
+            });
+
+            const allTasksBtn = `
+                <button
+                    onclick="setActivePhase(null)"
+                    class="flex-shrink-0 px-5 py-3 rounded-xl border-2 transition-all h-20 shadow-sm ${
+                        activePhaseId === null 
+                            ? 'border-brand-sage bg-white text-brand-sage' 
+                            : 'border-brand-sand bg-brand-paper text-brand-ink/60 hover:border-brand-sage/40 hover:bg-white'
+                    }"
+                >
+                    <div class="font-bold mb-1">全部任務</div>
+                    <div class="text-xs opacity-80 font-medium">專案總覽</div>
+                </button>
+            `;
+
+            const phasesHtml = phaseStats.map(phase => `
+                <div class="flex-shrink-0 text-brand-sand flex items-center">
+                    <i data-lucide="chevron-right" class="w-6 h-6"></i>
+                </div>
+                <div
+                    draggable="true"
+                    ondragstart="handlePhaseDragStart(event, ${phase.id})"
+                    ondragover="handlePhaseDragOver(event)"
+                    ondragenter="handlePhaseDragEnter(event, ${phase.id})"
+                    ondragleave="handlePhaseDragLeave(event)"
+                    ondrop="handlePhaseDrop(event, ${phase.id})"
+                    ondragend="handlePhaseDragEnd()"
+                    onclick="setActivePhase(${phase.id})"
+                    class="flex-shrink-0 min-w-[200px] p-4 rounded-xl border-2 transition-all text-left relative overflow-hidden h-20 flex flex-col justify-between cursor-pointer group shadow-sm ${
+                        draggedPhaseId === phase.id ? 'opacity-40 scale-95 border-dashed' : ''
+                    } ${
+                        dragOverPhaseId === phase.id ? 'border-brand-sage bg-brand-sage/10 shadow-lg scale-105' : 
+                        activePhaseId === phase.id ? 'border-brand-sage bg-white shadow-md' : 'border-brand-sand bg-brand-paper hover:border-brand-sage/50 hover:bg-white'
+                    }"
+                >
+                    <div class="flex justify-between items-center relative z-10">
+                        <span class="font-bold truncate pr-6 tracking-wide ${activePhaseId === phase.id ? 'text-brand-sage' : 'text-brand-ink'}">
+                            ${phase.name}
+                        </span>
+                        <div class="absolute right-0 top-0 text-brand-sand opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing">
+                            <i data-lucide="grip-horizontal" class="w-4 h-4"></i>
+                        </div>
+                        <span class="text-xs font-bold px-2 py-0.5 rounded-md bg-white border border-brand-sand text-brand-ink/60 flex-shrink-0 ml-1">
+                            ${phase.done}/${phase.total}
+                        </span>
+                    </div>
+                    <div class="w-full bg-brand-sand h-1.5 rounded-full overflow-hidden relative z-10 mt-2 pointer-events-none">
+                        <div 
+                            class="h-full rounded-full transition-all duration-500 ${phase.progress === 100 ? 'bg-brand-sage' : 'bg-brand-clay'}"
+                            style="width: ${phase.progress}%"
+                        ></div>
+                    </div>
+                    ${activePhaseId === phase.id ? `
+                        <div class="absolute -right-3 -bottom-3 opacity-5 pointer-events-none">
+                            <i data-lucide="git-commit" class="w-16 h-16"></i>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+
+            container.innerHTML = allTasksBtn + phasesHtml;
+            lucide.createIcons();
+        }
+
+        function renderTasks(project) {
+            const container = document.getElementById('tasks-container');
+            let displayTasks = tasks.filter(t => t.projectId === project.id);
+            
+            if (activePhaseId) {
+                displayTasks = displayTasks.filter(t => t.phaseId === activePhaseId);
+                const phaseName = project.phases.find(p => p.id === activePhaseId)?.name;
+                document.getElementById('task-list-title').textContent = `任務清單：${phaseName}`;
+                document.getElementById('task-count').textContent = `共 ${displayTasks.length} 項`;
+            } else {
+                document.getElementById('task-list-title').textContent = '全部任務';
+                document.getElementById('task-count').textContent = `共 ${displayTasks.length} 項`;
+            }
+
+            if (displayTasks.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-brand-ink/40 border-2 border-dashed border-brand-sand rounded-xl bg-white/50 backdrop-blur-sm">
+                        <i data-lucide="list-todo" class="w-12 h-12 mx-auto text-brand-sand mb-3"></i>
+                        <p class="text-sm font-medium tracking-wide">此階段還沒有任務，開始規劃吧！</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            // 安全拼接字串，避免遺漏括號導致報錯
+            container.innerHTML = displayTasks.sort((a,b) => b.createdAt - a.createdAt).map(task => {
+                const phaseName = project.phases.find(p => p.id === task.phaseId)?.name || '未分類';
+                const isDone = task.status === 'done';
+                const durationText = (isDone && task.completedAt) 
+                    ? getDurationText(task.createdAt, task.completedAt) 
+                    : getDurationText(task.createdAt, Date.now());
+
+                const statusButtonsHtml = Object.entries(STATUS_CONFIG).map(([key, config]) => {
+                    const isActive = task.status === key;
+                    return `
+                        <button
+                            onclick="updateTaskStatus(${task.id}, '${key}')"
+                            class="p-1.5 rounded-md transition-all ${isActive ? 'bg-white shadow-sm' : 'hover:bg-brand-sand/50 text-brand-ink/40'}"
+                            title="設為${config.label}"
+                        >
+                            <i data-lucide="${config.icon}" class="w-4 h-4" style="color: ${isActive ? config.color : 'currentColor'}"></i>
+                        </button>
+                    `;
+                }).join('');
+
+                return `
+                <div class="group flex flex-col md:flex-row md:items-center justify-between p-4 rounded-xl border transition-all shadow-sm ${STATUS_CONFIG[task.status].cardClass}">
+                    <div class="flex flex-col md:flex-row md:items-center gap-4 flex-1">
+                        <!-- 狀態切換按鈕群組 -->
+                        <div class="flex bg-white/60 backdrop-blur-sm rounded-lg p-1 border border-brand-sand inline-flex w-max">
+                            ${statusButtonsHtml}
+                        </div>
+                        
+                        <div class="flex flex-col gap-1.5">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <span class="text-base font-bold tracking-wide transition-all ${isDone ? 'text-brand-ink/40 line-through' : 'text-brand-ink'}">
+                                    ${task.title}
+                                </span>
+                                ${!activePhaseId ? `<span class="inline-flex items-center px-2 py-0.5 border border-brand-sand rounded text-xs text-brand-ink/60 bg-white font-medium shadow-sm whitespace-nowrap">${phaseName}</span>` : ''}
+                            </div>
+                            
+                            <div class="flex flex-wrap items-center gap-2 text-xs font-medium text-brand-ink/50">
+                                <span class="flex items-center gap-1">
+                                    <i data-lucide="calendar" class="w-3 h-3"></i>
+                                    建立於 ${formatDate(task.createdAt)}
+                                </span>
+                                ${isDone && task.completedAt ? `
+                                    <span class="text-brand-sand">•</span>
+                                    <span class="flex items-center gap-1 text-brand-sage/90">
+                                        <i data-lucide="check-circle-2" class="w-3 h-3"></i>
+                                        完成於 ${formatDate(task.completedAt)}
+                                    </span>
+                                    <span class="text-brand-sand">•</span>
+                                    <span class="text-brand-ink/70 bg-white border border-brand-sand px-1.5 py-0.5 rounded shadow-sm">
+                                        歷時 ${durationText}
+                                    </span>
+                                ` : `
+                                    <span class="text-brand-sand">•</span>
+                                    <span>已進行 ${durationText}</span>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4 flex-shrink-0 mt-4 md:mt-0">
+                        <span class="px-3 py-1.5 rounded-full text-xs font-bold tracking-widest" style="background-color: ${STATUS_CONFIG[task.status].color}15; color: ${STATUS_CONFIG[task.status].color}; border: 1px solid ${STATUS_CONFIG[task.status].color}30;">
+                            ${STATUS_CONFIG[task.status].label}
+                        </span>
+                        <button onclick="confirmDeleteTask(${task.id})" class="text-brand-sand hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all p-2 rounded-lg hover:bg-red-50" title="刪除任務">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        // --- 互動邏輯 ---
+        function setActiveProject(id) {
+            activeProjectId = id;
+            activePhaseId = null;
+            renderSidebar();
+            renderMainArea();
+        }
+
+        function setActivePhase(id) {
+            activePhaseId = id;
+            renderMainArea();
+        }
+
+        function updateTaskStatus(taskId, newStatus) {
+            tasks = tasks.map(task => {
+                if (task.id === taskId) {
+                    const isNowDone = newStatus === 'done';
+                    const wasDone = task.status === 'done';
+                    let newCompletedAt = task.completedAt;
+                    
+                    if (isNowDone && !wasDone) newCompletedAt = Date.now();
+                    if (!isNowDone) newCompletedAt = null;
+
+                    return { ...task, status: newStatus, completedAt: newCompletedAt };
+                }
+                return task;
+            });
+            saveToLocalStorage();
+            renderMainArea();
+        }
+
+        function confirmDeleteTask(taskId) {
+            if(confirm('確定要刪除這項任務嗎？刪除後無法復原。')) {
+                tasks = tasks.filter(task => task.id !== taskId);
+                saveToLocalStorage();
+                renderMainArea();
+            }
+        }
+
+        // --- 拖曳邏輯 ---
+        function handlePhaseDragStart(e, phaseId) {
+            draggedPhaseId = phaseId;
+            e.dataTransfer.effectAllowed = 'move';
+        }
+        function handlePhaseDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+        function handlePhaseDragEnter(e, phaseId) {
+            e.preventDefault();
+            if (phaseId !== draggedPhaseId) {
+                dragOverPhaseId = phaseId;
+                renderMainArea();
+            }
+        }
+        function handlePhaseDragLeave(e) {
+            e.preventDefault();
+        }
+        function handlePhaseDrop(e, targetPhaseId) {
+            e.preventDefault();
+            if (!draggedPhaseId || draggedPhaseId === targetPhaseId) {
+                handlePhaseDragEnd();
+                return;
+            }
+
+            projects = projects.map(p => {
+                if (p.id === activeProjectId) {
+                    const newPhases = [...p.phases];
+                    const draggedIndex = newPhases.findIndex(ph => ph.id === draggedPhaseId);
+                    const targetIndex = newPhases.findIndex(ph => ph.id === targetPhaseId);
+                    const [draggedItem] = newPhases.splice(draggedIndex, 1);
+                    newPhases.splice(targetIndex, 0, draggedItem);
+                    return { ...p, phases: newPhases };
+                }
+                return p;
+            });
+
+            saveToLocalStorage();
+            handlePhaseDragEnd();
+        }
+        function handlePhaseDragEnd() {
+            draggedPhaseId = null;
+            dragOverPhaseId = null;
+            renderMainArea();
+        }
+
+        // --- 初始化與事件綁定 ---
+        function setupEventListeners() {
+            // 側邊欄標題本地儲存
+            const sidebarTitleEl = document.getElementById('sidebar-title');
+            const savedSidebarTitle = localStorage.getItem(SIDEBAR_TITLE_KEY);
+            if (savedSidebarTitle) {
+                sidebarTitleEl.textContent = savedSidebarTitle;
+            }
+            sidebarTitleEl.addEventListener('blur', (e) => {
+                localStorage.setItem(SIDEBAR_TITLE_KEY, e.target.textContent);
+            });
+            sidebarTitleEl.addEventListener('keydown', (e) => {
+                if(e.key === 'Enter') {
+                    e.preventDefault();
+                    sidebarTitleEl.blur();
+                }
+            });
+
+            // 新增專案
+            document.getElementById('add-project-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const input = document.getElementById('new-project-input');
+                const name = input.value.trim();
+                if (!name) return;
+                
+                const newProject = {
+                    id: Date.now(),
+                    name: name,
+                    description: '這是一個新建立的專案，點擊右上角編輯圖示以修改詳細資訊。',
+                    phases: [
+                        { id: Date.now() + 1, name: '企劃' },
+                        { id: Date.now() + 2, name: '執行' }
+                    ]
+                };
+                projects.push(newProject);
+                activeProjectId = newProject.id;
+                saveToLocalStorage();
+                input.value = '';
+                renderSidebar();
+                renderMainArea();
+            });
+
+            // 編輯專案資訊
+            const editBtn = document.getElementById('edit-project-btn');
+            const headerDisplay = document.getElementById('project-header-display');
+            const descDisplay = document.getElementById('project-desc-display');
+            const editForm = document.getElementById('project-edit-form');
+            const titleInput = document.getElementById('edit-title-input');
+            const descInput = document.getElementById('edit-desc-input');
+
+            editBtn.addEventListener('click', () => {
+                const project = projects.find(p => p.id === activeProjectId);
+                titleInput.value = project.name;
+                descInput.value = project.description || '';
+                headerDisplay.classList.add('hidden');
+                descDisplay.classList.add('hidden');
+                editForm.classList.remove('hidden');
+            });
+
+            document.getElementById('cancel-edit-btn').addEventListener('click', () => {
+                headerDisplay.classList.remove('hidden');
+                descDisplay.classList.remove('hidden');
+                editForm.classList.add('hidden');
+            });
+
+            document.getElementById('save-project-btn').addEventListener('click', () => {
+                const newName = titleInput.value.trim();
+                if (!newName) return;
+                
+                projects = projects.map(p => 
+                    p.id === activeProjectId 
+                        ? { ...p, name: newName, description: descInput.value.trim() } 
+                        : p
+                );
+                saveToLocalStorage();
+                
+                headerDisplay.classList.remove('hidden');
+                descDisplay.classList.remove('hidden');
+                editForm.classList.add('hidden');
+                renderSidebar();
+                renderMainArea();
+            });
+
+            // 新增階段
+            document.getElementById('add-phase-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const input = document.getElementById('new-phase-input');
+                const name = input.value.trim();
+                if (!name || !activeProjectId) return;
+
+                projects = projects.map(p => {
+                    if (p.id === activeProjectId) {
+                        return { ...p, phases: [...(p.phases || []), { id: Date.now(), name: name }] };
+                    }
+                    return p;
+                });
+                saveToLocalStorage();
+                input.value = '';
+                renderMainArea();
+            });
+
+            // 新增任務
+            document.getElementById('add-task-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const input = document.getElementById('new-task-input');
+                const phaseSelect = document.getElementById('new-task-phase-select');
+                const title = input.value.trim();
+                const phaseId = Number(phaseSelect.value);
+                
+                if (!title || !activeProjectId || !phaseId) return;
+
+                const newTask = {
+                    id: Date.now(),
+                    projectId: activeProjectId,
+                    phaseId: phaseId,
+                    title: title,
+                    status: 'todo',
+                    createdAt: Date.now(),
+                    completedAt: null
+                };
+                
+                tasks.push(newTask);
+                saveToLocalStorage();
+                input.value = '';
+                renderMainArea();
+            });
+        }
+
+        function init() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                try {
+                    const parsed = JSON.parse(savedData);
+                    projects = parsed.projects || INITIAL_PROJECTS;
+                    tasks = parsed.tasks || INITIAL_TASKS;
+                } catch (e) {
+                    projects = INITIAL_PROJECTS;
+                    tasks = INITIAL_TASKS;
+                }
+            } else {
+                projects = INITIAL_PROJECTS;
+                tasks = INITIAL_TASKS;
+            }
+
+            if (projects.length > 0) {
+                activeProjectId = projects[0].id;
+            }
+
+            setupEventListeners();
+            renderSidebar();
+            renderMainArea();
+            lucide.createIcons();
+        }
+
+        // 啟動系統
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

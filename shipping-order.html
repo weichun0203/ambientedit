@@ -11,18 +11,19 @@
     </script>
 
     <meta charset="UTF-8">
+    <!-- 加入 maximum-scale=1.0 與 user-scalable=no 徹底鎖定手機版縮放與滑動 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>常溫訂購單小幫手｜Ambient Order Helper</title>
-    <meta name="description" content="常溫編集所專屬訂購單小幫手，快速勾選顏色與數量，一鍵產生可複製的訂單文字。">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Tailwind Configuration -->
     <script>
         tailwind.config = {
             theme: {
@@ -42,294 +43,209 @@
                     },
                     boxShadow: {
                         soft: '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
-                        up: '0 -4px 20px -2px rgba(0, 0, 0, 0.08)',
                     }
                 }
             }
         }
     </script>
 
+    <!-- Custom Styles -->
     <style>
-        body {
-            background-color: #e5e5e5; /* 外圍底色，凸顯中央 App 畫面 */
+        /* 徹底鎖定畫面，防止手機下拉回彈或滾動 */
+        html, body {
+            overflow: hidden;
+            touch-action: manipulation;
+            background-color: #fdfbf7;
             color: #4a4a4a;
-            /* 避免 iOS Safari 彈性捲動問題 */
-            overscroll-behavior-y: none; 
+            height: 100%;
         }
         .bg-noise {
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            background-attachment: fixed;
         }
-        
-        /* 隱藏捲軸但保持可捲動 (App-like feel) */
-        .no-scrollbar::-webkit-scrollbar {
+        /* 隱藏卷軸 (以防萬一) */
+        ::-webkit-scrollbar {
             display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
-
-        /* 隱藏預設數字箭頭 */
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type="number"] { -moz-appearance: textfield; }
-        
-        /* Safe area padding for iOS */
-        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 1rem); }
-
-        /* 減少按鈕彈出動畫 */
-        @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        /* 鎖定網頁，防止手機端上下滑動與回彈 */
-        html, body {
-            height: 100%;
-            overflow: hidden; 
-            touch-action: manipulation;
         }
     </style>
 </head>
+<body class="bg-noise font-sans selection:bg-brand-sage selection:text-white">
 
-<body class="font-sans selection:bg-brand-sage selection:text-white flex items-center justify-center h-[100dvh] overflow-hidden">
-
-    <!-- 手機版 App 容器設計 -->
-    <main class="w-full max-w-md h-full bg-brand-paper bg-noise flex flex-col shadow-2xl relative overflow-hidden sm:h-[90vh] sm:rounded-[2rem] sm:border-8 sm:border-white">
+    <!-- 使用 100dvh 適應手機瀏覽器高度，限制最大寬度讓電腦版也好看 -->
+    <main class="flex flex-col h-[100dvh] max-w-md mx-auto p-3 relative">
         
-        <!-- Header (Fixed Top) -->
-        <header class="flex-none px-5 pt-6 pb-4 border-b border-brand-sand bg-brand-paper/90 backdrop-blur-md z-10">
-            <div class="flex justify-between items-center">
-                <div>
-                    <div class="text-[10px] tracking-widest text-brand-sage font-bold uppercase mb-1">Ambient Edit</div>
-                    <h1 class="text-xl font-bold font-serif text-brand-ink flex items-center gap-2">
-                        訂購單小幫手
-                    </h1>
+        <!-- Header -->
+        <header class="flex justify-between items-end shrink-0 mb-3 border-b border-brand-sand pb-2">
+            <div>
+                <div class="text-brand-sage font-serif tracking-widest text-[10px] mb-1 opacity-80">
+                    常溫編集所 Ambient Edit
                 </div>
-                <!-- 右上角按鈕群組 -->
-                <div class="flex items-center gap-2">
-                    <button onclick="resetOrder()" class="w-8 h-8 flex items-center justify-center rounded-full bg-brand-sand/30 text-brand-ink hover:bg-brand-clay hover:text-white transition-all duration-300" aria-label="重置訂單" id="reset-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-500"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                    </button>
-                    <a href="https://weichun0203.github.io/ambientedit/" class="w-8 h-8 flex items-center justify-center rounded-full bg-brand-sand/50 text-brand-ink hover:bg-brand-sage hover:text-white transition-colors" aria-label="返回首頁">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                    </a>
-                </div>
+                <h1 class="text-xl font-bold font-serif text-brand-ink flex items-center gap-2">
+                    訂購單小幫手
+                </h1>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <!-- 重置按鈕 -->
+                <button onclick="resetOrder()" class="p-2 rounded-full border border-brand-sand bg-white/70 text-brand-clay hover:bg-brand-clay hover:text-white transition-all shadow-sm active:scale-95" aria-label="重置訂單">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="reset-icon"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                </button>
+                <!-- 返回首頁 -->
+                <a href="https://weichun0203.github.io/ambientedit/" class="p-2 rounded-full border border-brand-sand bg-white/70 text-brand-sage hover:bg-brand-sage hover:text-white transition-all shadow-sm active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </a>
             </div>
         </header>
 
-        <!-- Content Area (調整佈局順序以防止展開時推擠畫面) -->
-        <div class="flex-1 overflow-hidden px-4 py-4 flex flex-col justify-start gap-4">
+        <!-- 商品選擇區 (緊湊網格) -->
+        <section class="shrink-0 bg-white/80 p-3 rounded-2xl shadow-soft border border-brand-sand mb-3">
+            <div class="flex justify-between items-end mb-2">
+                <h2 class="text-sm font-bold text-brand-ink flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-clay"><path d="M12 2v20"/><path d="m4.93 10.93 14.14-14.14"/><path d="m2 22 14.14-14.14"/><path d="m13.07 19.07 5.05-5.05"/></svg>
+                    點擊選擇商品
+                </h2>
+                <span class="text-[10px] text-brand-ink/50">直接點擊卡片增加數量</span>
+            </div>
+            <!-- 商品網格：3欄排列，間距緊湊 -->
+            <div id="items-grid" class="grid grid-cols-3 gap-1.5">
+                <!-- JS 動態生成 -->
+            </div>
+        </section>
+
+        <!-- 運送方式區塊 -->
+        <section class="shrink-0 bg-white/80 p-3 rounded-2xl shadow-soft border border-brand-sand mb-3">
+            <div class="flex gap-2">
+                <label class="delivery-label flex-1 flex items-center justify-center p-2 rounded-xl cursor-pointer transition-all duration-300 border">
+                    <input type="radio" name="delivery" value="711" class="hidden">
+                    <span class="text-xs font-medium text-brand-ink text-center">
+                        7-11 寄送<br><span class="text-[10px] opacity-60">Shipping (+$38)</span>
+                    </span>
+                </label>
+                <label class="delivery-label flex-1 flex items-center justify-center p-2 rounded-xl cursor-pointer transition-all duration-300 border">
+                    <input type="radio" name="delivery" value="in-person" class="hidden">
+                    <span class="text-xs font-medium text-brand-ink text-center">
+                        面交<br><span class="text-[10px] opacity-60">In-person (免運)</span>
+                    </span>
+                </label>
+            </div>
             
-            <!-- 1. 領帶與卷軸網格 (移至上方) -->
-            <section class="flex-none flex flex-col">
-                <div class="flex items-end justify-between mb-2 px-1 flex-none">
-                    <h2 class="text-sm font-bold text-brand-ink flex items-center gap-1.5">
-                        <span class="w-1.5 h-4 bg-brand-clay rounded-full"></span> 選擇商品
-                    </h2>
-                    <span class="text-[10px] text-brand-ink/70 bg-brand-sand/40 px-2 py-0.5 rounded-full shadow-sm">💡 點選方塊 +1</span>
-                </div>
-                
-                <!-- JS 動態產生內容的容器 (3欄) -->
-                <div id="products-grid" class="grid grid-cols-3 gap-y-1.5 gap-x-2">
-                    <!-- 商品卡片由 JS 注入 -->
-                </div>
-            </section>
-
-            <!-- 2. 運送方式 (移至下方) -->
-            <section class="flex-none">
-                <div class="bg-brand-sand/30 p-1 rounded-xl flex relative">
-                    <label class="flex-1 text-center cursor-pointer relative z-10">
-                        <input type="radio" name="delivery" value="711" checked class="peer sr-only">
-                        <div class="py-2 text-sm rounded-lg peer-checked:bg-white peer-checked:shadow-sm peer-checked:text-brand-sage peer-checked:font-bold font-medium text-brand-ink/60 transition-all duration-300">
-                            7-11 寄送 <span class="text-[10px] font-normal opacity-70">($38)</span>
-                        </div>
-                    </label>
-                    <label class="flex-1 text-center cursor-pointer relative z-10">
-                        <input type="radio" name="delivery" value="in-person" class="peer sr-only">
-                        <div class="py-2 text-sm rounded-lg peer-checked:bg-white peer-checked:shadow-sm peer-checked:text-brand-sage peer-checked:font-bold font-medium text-brand-ink/60 transition-all duration-300">
-                            面交 <span class="text-[10px] font-normal opacity-70">(免運)</span>
-                        </div>
-                    </label>
-                </div>
-                
-                <!-- 面交細節 (向下展開，不會推擠上方商品區) -->
-                <div id="in-person-details" class="hidden mt-3 space-y-2 animate-[fadeIn_0.3s_ease-out]">
-                    <button type="button" onclick="setMeetupLocation('金華街 Jin Hua Chapel')" class="w-full py-1.5 text-xs bg-white text-brand-ink border border-brand-sand rounded-lg hover:border-brand-sage hover:text-brand-sage transition-all shadow-sm">
-                        📍 點擊快速帶入：金華街 Jin Hua Chapel
+            <!-- 面交地點輸入 -->
+            <div id="in-person-details" class="hidden mt-2 transition-all duration-300">
+                <div class="flex gap-2">
+                    <button type="button" onclick="setMeetupLocation('金華街 Jin Hua Chapel')" class="px-2 py-1.5 text-[10px] bg-brand-paper text-brand-ink border border-brand-sand rounded-lg hover:border-brand-sage hover:text-brand-sage active:scale-95 transition-all whitespace-nowrap">
+                        📍 金華街
                     </button>
-                    <input type="text" id="meetup-location" placeholder="或手動輸入面交地點..." class="w-full p-2 bg-white border border-brand-sand rounded-lg focus:ring-1 focus:ring-brand-sage focus:border-brand-sage outline-none text-sm transition-all text-brand-ink placeholder:text-brand-ink/40 text-center shadow-inner">
-                </div>
-            </section>
-        </div>
-
-        <!-- Footer Actions (Fixed Bottom) -->
-        <footer class="flex-none bg-white border-t border-brand-sand px-5 pt-3 pb-safe shadow-up z-20">
-            <div class="flex items-center justify-between gap-4 mb-2">
-                <div class="flex flex-col">
-                    <span class="text-[10px] font-bold text-brand-ink/40 tracking-wider">總計 TOTAL</span>
-                    <span class="text-2xl font-bold font-serif text-brand-clay leading-none mt-0.5" id="total-price">$0</span>
-                </div>
-                <div class="flex gap-2 flex-1 justify-end">
-                    <button onclick="togglePreview()" class="px-4 py-3.5 rounded-xl border border-brand-sand text-brand-ink text-sm font-bold hover:bg-brand-paper transition-colors flex-shrink-0">
-                        預覽
-                    </button>
-                    <button id="copy-btn" onclick="copyToClipboard()" disabled class="flex-1 max-w-[160px] py-3.5 rounded-xl bg-brand-sand text-brand-ink/40 text-sm font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-not-allowed">
-                        <svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                        <span id="copy-text">複製訂單</span>
-                    </button>
+                    <input type="text" id="meetup-location" placeholder="輸入面交地點..." class="w-full p-1.5 bg-white border border-brand-sand rounded-lg focus:ring-1 focus:ring-brand-sage focus:border-brand-sage outline-none text-xs transition-all text-brand-ink">
                 </div>
             </div>
-        </footer>
+        </section>
 
-        <!-- 訂單預覽 Modal (隱藏) -->
-        <div id="preview-modal" class="absolute inset-0 z-50 bg-brand-ink/40 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-6">
-            <div class="bg-brand-paper w-full max-w-sm rounded-2xl shadow-2xl border border-brand-sand overflow-hidden transform scale-95 transition-transform duration-300" id="preview-content-box">
-                <div class="px-5 py-4 border-b border-brand-sand flex justify-between items-center bg-white">
-                    <h3 class="font-bold text-brand-ink flex items-center gap-2 text-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-brand-sage"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
-                        訂單文字預覽
-                    </h3>
-                    <button onclick="togglePreview()" class="w-8 h-8 flex items-center justify-center rounded-full bg-brand-paper text-brand-ink hover:bg-brand-sand transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                    </button>
-                </div>
-                <div class="p-5">
-                    <div id="order-preview-text" class="font-mono text-[13px] text-brand-ink whitespace-pre-wrap leading-relaxed min-h-[150px] bg-white p-3 rounded-lg border border-brand-sand/50">尚未選擇商品</div>
-                </div>
-                <div class="p-4 bg-white border-t border-brand-sand">
-                    <button onclick="copyFromModal()" class="w-full py-3 rounded-xl bg-brand-sage text-white text-sm font-bold shadow-soft hover:bg-brand-ink transition-colors flex items-center justify-center gap-2">
-                        直接複製並關閉
-                    </button>
-                </div>
+        <!-- 預覽與結帳 (填滿剩餘高度) -->
+        <section class="flex flex-col flex-1 bg-white/90 p-4 rounded-2xl shadow-soft border border-brand-sand justify-between overflow-hidden">
+            <!-- 預覽文字區，若過長內部可微小滾動 -->
+            <div id="order-preview" class="bg-brand-paper rounded-xl p-3 font-mono text-[11px] text-brand-ink whitespace-pre-wrap flex-1 border border-brand-sand leading-relaxed overflow-y-auto mb-3">
+                尚未選擇商品
             </div>
-        </div>
 
+            <div class="shrink-0 border-t border-brand-sand pt-3">
+                <div class="flex justify-between items-end mb-3">
+                    <span class="text-brand-ink/70 font-medium text-xs">總計金額 Total</span>
+                    <span class="text-2xl font-bold font-serif text-brand-clay leading-none" id="total-price">$0</span>
+                </div>
+                
+                <button id="copy-btn" onclick="copyToClipboard()" disabled
+                    class="w-full py-3 px-4 rounded-xl flex items-center justify-center gap-2 font-bold text-sm tracking-widest transition-all duration-300 bg-brand-sand/50 text-brand-ink/40 cursor-not-allowed">
+                    <svg id="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    <span id="copy-text">一鍵複製訂單</span>
+                </button>
+            </div>
+        </section>
     </main>
 
     <!-- Application Logic -->
     <script>
-        // 設定資料
-        const tieColors = [
-            { id: 'Red', name: '紅 Red' },
-            { id: 'Purple', name: '紫 Purple' },
-            { id: 'Pink', name: '粉 Pink' },
-            { id: 'Yellow', name: '黃 Yellow' },
-            { id: 'LightBlue', name: '淺藍 L.Blue' },
-            { id: 'NavyBlue', name: '深藍 N.Blue' },
-            { id: 'Grey', name: '灰 Grey' },
-            { id: 'White', name: '白 White' },
-            { id: 'Black', name: '黑 Black' }
-        ];
-        
-        const TIE_PRICE = 350;
-        const SCROLL_PRICE = 650;
-        const EMBROIDERY_PRICE = 800;
-        const CARD_HOLDER_PRICE = 150;
         const SHIPPING_PRICE = 38;
+        
+        // 統一管理所有商品資料
+        const itemsData = [
+            // 領帶 Ties ($350)
+            { id: 'tie_red', name: '紅 Red', shortName: '紅 Red', type: 'tie', price: 350 },
+            { id: 'tie_purple', name: '紫 Purple', shortName: '紫 Purple', type: 'tie', price: 350 },
+            { id: 'tie_pink', name: '粉 Pink', shortName: '粉 Pink', type: 'tie', price: 350 },
+            { id: 'tie_yellow', name: '黃 Yellow', shortName: '黃 Yellow', type: 'tie', price: 350 },
+            { id: 'tie_lightblue', name: '淺藍 Light Blue', shortName: '淺藍 Light Blue', type: 'tie', price: 350 },
+            { id: 'tie_navy', name: '深藍 Navy Blue', shortName: '深藍 Navy Blue', type: 'tie', price: 350 },
+            { id: 'tie_grey', name: '灰 Grey', shortName: '灰 Grey', type: 'tie', price: 350 },
+            { id: 'tie_white', name: '白 White', shortName: '白 White', type: 'tie', price: 350 },
+            { id: 'tie_black', name: '黑 Black', shortName: '黑 Black', type: 'tie', price: 350 },
+            // 其他 Others
+            { id: 'scroll', name: '卷軸 Scrolls', shortName: '📜 卷軸', type: 'other', price: 650 },
+            { id: 'embroidery', name: '電繡 TempleEmbroidery', shortName: '🧵 電繡', type: 'other', price: 800 },
+            { id: 'card_taipei', name: '卡套(台北聖殿) Card Holder', shortName: '🪪 卡套(台北)', type: 'other', price: 150 },
+            { id: 'card_kaohsiung', name: '卡套(高雄聖殿) Card Holder', shortName: '🪪 卡套(高雄)', type: 'other', price: 150 }
+        ];
 
         // 狀態管理
         let state = {
-            ties: {},
-            scrolls: 0,
-            embroidery: 0,
-            cardHolderTaipei: 0,
-            cardHolderKaohsiung: 0,
+            items: {}, // 存放每個 id 的數量
             delivery: '711',
             location: ''
         };
 
-        tieColors.forEach(c => state.ties[c.id] = 0);
+        // 初始化所有商品數量為 0
+        itemsData.forEach(item => state.items[item.id] = 0);
 
-        const STORAGE_KEY = 'ambient_order_app_state_v2'; // 更新 Key 避免與舊結構衝突
+        const STORAGE_KEY = 'ambient_order_state_v2';
         
         function loadState() {
             try {
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if (saved) {
                     const parsed = JSON.parse(saved);
-                    state.scrolls = parsed.scrolls || 0;
-                    state.embroidery = parsed.embroidery || 0;
-                    state.cardHolderTaipei = parsed.cardHolderTaipei || 0;
-                    state.cardHolderKaohsiung = parsed.cardHolderKaohsiung || 0;
                     state.delivery = parsed.delivery || '711';
                     state.location = parsed.location || '';
-                    if (parsed.ties) {
-                        tieColors.forEach(c => {
-                            state.ties[c.id] = parsed.ties[c.id] || 0;
+                    if (parsed.items) {
+                        itemsData.forEach(item => {
+                            state.items[item.id] = parsed.items[item.id] || 0;
                         });
                     }
                 }
             } catch (e) {
-                console.error("Load error", e);
+                console.error("Local storage load error", e);
             }
         }
 
         function saveState() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-            } catch (e) {}
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         }
 
-        // DOM 生成：建立商品網格 (Ties + Scrolls + Others)
-        function renderProducts() {
-            const container = document.getElementById('products-grid');
-            container.innerHTML = '';
+        // 重置訂單
+        function resetOrder() {
+            // 圖示旋轉動畫
+            const icon = document.getElementById('reset-icon');
+            icon.style.transition = 'transform 0.5s ease';
+            icon.style.transform = 'rotate(-360deg)';
             
-            // Render Ties
-            tieColors.forEach(color => {
-                container.innerHTML += createProductCard(color.id, color.name, state.ties[color.id], 'updateTie');
-            });
-
-            // Render Others
-            container.innerHTML += createProductCard('scroll', '📜 卷軸', state.scrolls, 'updateOther');
-            container.innerHTML += createProductCard('embroidery', '🧵 電繡', state.embroidery, 'updateOther');
-            container.innerHTML += createProductCard('cardHolderTaipei', '🪪 卡套(台北)', state.cardHolderTaipei, 'updateOther');
-            container.innerHTML += createProductCard('cardHolderKaohsiung', '🪪 卡套(高雄)', state.cardHolderKaohsiung, 'updateOther');
-        }
-
-        // 重新設計的極簡商品卡片 (適應 3 欄大小)
-        function createProductCard(id, label, value, updateFunc) {
-            const isSelected = value > 0;
-            const bgClass = isSelected ? 'bg-brand-sage/10 border-brand-sage ring-1 ring-brand-sage/50' : 'bg-white border-brand-sand';
-            const textClass = isSelected ? 'text-brand-ink font-bold' : 'text-brand-ink/70 font-medium';
+            // 歸零
+            itemsData.forEach(item => state.items[item.id] = 0);
+            state.delivery = '711';
+            state.location = '';
             
-            // 為了適應 3 欄，字體改為 11px 並設定緊湊行高
-            const displayLabel = isSelected ? 
-                `<div class="flex flex-col items-center leading-tight"><span class="text-[11px] text-center">${label}</span><span class="text-brand-sage font-black text-[13px] mt-0.5">x${value}</span></div>` : 
-                `<span class="text-[11px] leading-tight text-center break-words">${label}</span>`;
-
-            // 縮小一點的減號按鈕，適應 3 欄卡片
-            const minusBtn = isSelected ? `
-                <button onclick="event.stopPropagation(); ${updateFunc}('${id}', -1)" class="absolute -top-1.5 -right-1.5 w-[22px] h-[22px] bg-brand-clay text-white rounded-full flex items-center justify-center shadow-md active:scale-75 transition-transform z-10 animate-[popIn_0.2s_ease-out]">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
-                </button>
-            ` : '';
-
-            // 整塊卡片高度微調為 42px 節省空間
-            return `
-                <div onclick="${updateFunc}('${id}', 1)" class="relative h-[42px] rounded-xl border ${bgClass} flex items-center justify-center cursor-pointer select-none active:scale-95 transition-all duration-200 shadow-sm px-1">
-                    ${minusBtn}
-                    <div class="${textClass} tracking-tight pointer-events-none flex items-center justify-center w-full">
-                        ${displayLabel}
-                    </div>
-                </div>
-            `;
-        }
-
-        function updateTie(id, delta) {
-            let newVal = state.ties[id] + delta;
-            state.ties[id] = Math.max(0, newVal);
             saveState();
             updateUI();
+
+            // 動畫復原
+            setTimeout(() => {
+                icon.style.transition = 'none';
+                icon.style.transform = 'rotate(0deg)';
+            }, 500);
         }
 
-        function updateOther(id, delta) {
-            let newVal = state[id] + delta;
-            state[id] = Math.max(0, newVal);
+        // 更新單一商品數量 (+1 或 -1)
+        function updateItem(id, delta) {
+            let newVal = (state.items[id] || 0) + delta;
+            if (newVal < 0) newVal = 0;
+            state.items[id] = newVal;
             saveState();
             updateUI();
         }
@@ -356,121 +272,126 @@
             updateUI();
         });
 
+        // 渲染商品網格 UI (點擊卡片+1，出現減號可-1)
+        function renderItemsGrid() {
+            const container = document.getElementById('items-grid');
+            container.innerHTML = '';
+            
+            itemsData.forEach(item => {
+                const count = state.items[item.id];
+                const isActive = count > 0;
+                
+                const div = document.createElement('div');
+                div.className = `relative flex flex-col items-center justify-center p-1 rounded-xl h-[42px] cursor-pointer transition-all duration-200 select-none ${isActive ? 'bg-brand-sage text-white shadow-soft' : 'bg-brand-paper/50 border border-brand-sand text-brand-ink hover:bg-brand-sand/50'}`;
+                
+                // 點擊卡片任何地方 = +1
+                div.onclick = () => updateItem(item.id, 1);
+
+                // 如果有數量，右上角顯示小減號 (StopPropagation 避免觸發 +1)
+                let minusBtn = '';
+                if (isActive) {
+                    minusBtn = `<button onclick="event.stopPropagation(); updateItem('${item.id}', -1)" class="absolute -top-1.5 -right-1.5 w-[22px] h-[22px] flex items-center justify-center bg-[#d4a59a] border-2 border-white text-white rounded-full text-sm font-bold shadow-sm hover:scale-110 active:scale-95 transition-transform z-10">&minus;</button>`;
+                }
+
+                div.innerHTML = `
+                    ${minusBtn}
+                    <span class="text-[11px] font-medium leading-tight text-center tracking-tight truncate w-full px-1">${item.shortName}</span>
+                    ${isActive ? `<span class="text-[10px] font-bold mt-0.5 bg-white/20 px-2 rounded-full leading-none py-0.5">${count}</span>` : ''}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // 主畫面更新邏輯
         let currentOrderText = '';
 
         function updateUI() {
-            // 重新渲染商品區塊
-            renderProducts();
-            
-            // 處理運送方式輸入框顯示/隱藏
-            const inPersonDetails = document.getElementById('in-person-details');
+            // 1. 渲染網格
+            renderItemsGrid();
             document.getElementById('meetup-location').value = state.location;
-            
+
+            // 2. 更新運送 UI
+            document.querySelectorAll('input[name="delivery"]').forEach(radio => {
+                const label = radio.closest('label');
+                if (radio.value === state.delivery) {
+                    radio.checked = true;
+                    label.classList.add('bg-brand-paper', 'border-brand-sage/50', 'ring-1', 'ring-brand-sage/30');
+                    label.classList.remove('border-brand-sand', 'bg-white');
+                } else {
+                    label.classList.remove('bg-brand-paper', 'border-brand-sage/50', 'ring-1', 'ring-brand-sage/30');
+                    label.classList.add('border-brand-sand', 'bg-white');
+                }
+            });
+
+            const inPersonDetails = document.getElementById('in-person-details');
             if (state.delivery === 'in-person') {
                 inPersonDetails.classList.remove('hidden');
             } else {
                 inPersonDetails.classList.add('hidden');
             }
 
-            // 計算與產生文字
-            let tiesCount = 0;
+            // 3. 計算文字與金額
+            let total = 0;
             const activeTies = [];
+            const activeOthers = [];
+            let hasAnyItem = false;
             
-            tieColors.forEach(c => {
-                if (state.ties[c.id] > 0) {
-                    tiesCount += state.ties[c.id];
-                    let fullName = c.name.replace('L.Blue', 'Light Blue').replace('N.Blue', 'Navy Blue');
-                    activeTies.push(`${fullName}*${state.ties[c.id]}`);
+            itemsData.forEach(item => {
+                const count = state.items[item.id];
+                if (count > 0) {
+                    hasAnyItem = true;
+                    total += count * item.price;
+                    if (item.type === 'tie') {
+                        activeTies.push(`${item.name}*${count}`);
+                    } else {
+                        activeOthers.push(`${item.name}*${count}`);
+                    }
                 }
             });
 
             const shippingCost = state.delivery === '711' ? SHIPPING_PRICE : 0;
-            const total = (tiesCount * TIE_PRICE) + 
-                          (state.scrolls * SCROLL_PRICE) + 
-                          (state.embroidery * EMBROIDERY_PRICE) + 
-                          (state.cardHolderTaipei * CARD_HOLDER_PRICE) + 
-                          (state.cardHolderKaohsiung * CARD_HOLDER_PRICE) + 
-                          shippingCost;
+            total += shippingCost;
             
             document.getElementById('total-price').innerText = `$${total}`;
 
             const parts = [];
             if (activeTies.length > 0) parts.push(`【領帶 Ties】\n${activeTies.join(', ')}`);
-            if (state.scrolls > 0) parts.push(`【卷軸 Scrolls】\n${state.scrolls}個`);
-            if (state.embroidery > 0) parts.push(`【電繡 TempleEmbroidery】\n${state.embroidery}個`);
-            if (state.cardHolderTaipei > 0) parts.push(`【卡套(台北) Card Holder】\n${state.cardHolderTaipei}個`);
-            if (state.cardHolderKaohsiung > 0) parts.push(`【卡套(高雄) Card Holder】\n${state.cardHolderKaohsiung}個`);
+            if (activeOthers.length > 0) parts.push(`【其他 Others】\n${activeOthers.join('\n')}`);
             
             if (state.delivery === '711') {
-                parts.push(`【運送 Delivery】\n7-11 (+${SHIPPING_PRICE})`);
+                parts.push(`【運送 Delivery】7-11 (+${SHIPPING_PRICE})`);
             } else {
-                parts.push(`【運送 Delivery】\n面交 In-person`);
-                if (state.location.trim()) parts.push(`【地點 Location】\n${state.location.trim()}`);
+                parts.push(`【運送 Delivery】面交 In-person`);
+                if (state.location.trim()) {
+                    parts.push(`【地點 Location】${state.location.trim()}`);
+                }
             }
             
-            parts.push(`------------------`);
-            parts.push(`【總計 Total】$${total}`);
+            parts.push(`------------------\n【總計 Total】$${total}`);
 
+            const previewEl = document.getElementById('order-preview');
             const copyBtn = document.getElementById('copy-btn');
-            const previewTextEl = document.getElementById('order-preview-text');
 
-            // 判斷是否全空
-            if (activeTies.length === 0 && state.scrolls === 0 && state.embroidery === 0 && state.cardHolderTaipei === 0 && state.cardHolderKaohsiung === 0) {
+            if (!hasAnyItem) {
                 currentOrderText = '尚未選擇商品';
-                previewTextEl.innerText = currentOrderText;
-                previewTextEl.classList.add('text-brand-ink/40', 'flex', 'items-center', 'justify-center');
+                previewEl.innerText = currentOrderText;
+                previewEl.classList.add('text-brand-ink/50', 'justify-center', 'items-center');
                 
                 copyBtn.disabled = true;
-                copyBtn.className = "flex-1 max-w-[160px] py-3.5 rounded-xl bg-brand-sand text-brand-ink/40 text-sm font-bold transition-all duration-300 flex items-center justify-center gap-1.5 cursor-not-allowed";
+                copyBtn.className = "w-full py-3 px-4 rounded-xl flex items-center justify-center gap-2 font-bold text-sm tracking-widest transition-all duration-300 bg-brand-sand/50 text-brand-ink/40 cursor-not-allowed";
             } else {
-                currentOrderText = parts.join('\n\n'); 
-                previewTextEl.innerText = currentOrderText;
-                previewTextEl.classList.remove('text-brand-ink/40', 'flex', 'items-center', 'justify-center');
+                currentOrderText = parts.join('\n\n'); // 增加換行讓閱讀更舒服
+                previewEl.innerText = currentOrderText;
+                previewEl.classList.remove('text-brand-ink/50', 'justify-center', 'items-center');
                 
                 copyBtn.disabled = false;
-                copyBtn.className = "flex-1 max-w-[160px] py-3.5 rounded-xl bg-brand-sage text-white text-sm font-bold shadow-soft hover:bg-brand-ink active:scale-95 transition-all duration-300 flex items-center justify-center gap-1.5";
-            }
-            
-            // 同步 radio 狀態
-            document.querySelector(`input[value="${state.delivery}"]`).checked = true;
-        }
-
-        // 預覽彈窗邏輯
-        const modal = document.getElementById('preview-modal');
-        const modalBox = document.getElementById('preview-content-box');
-        let modalOpen = false;
-
-        function togglePreview() {
-            if (!modalOpen) {
-                modal.classList.remove('hidden');
-                // 觸發重繪以執行過渡動畫
-                void modal.offsetWidth;
-                modal.classList.remove('opacity-0');
-                modalBox.classList.remove('scale-95');
-                modalOpen = true;
-            } else {
-                modal.classList.add('opacity-0');
-                modalBox.classList.add('scale-95');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    modalOpen = false;
-                }, 300);
+                copyBtn.className = "w-full py-3 px-4 rounded-xl flex items-center justify-center gap-2 font-bold text-sm tracking-widest transition-all duration-300 bg-brand-sage text-white hover:bg-brand-ink hover:shadow-soft active:scale-[0.98] cursor-pointer";
             }
         }
 
-        // 複製邏輯
+        // 複製功能
         function copyToClipboard() {
             if (currentOrderText === '尚未選擇商品') return;
-            executeCopy(document.getElementById('copy-btn'), document.getElementById('copy-text'), document.getElementById('copy-icon'));
-        }
-
-        function copyFromModal() {
-            if (currentOrderText === '尚未選擇商品') return togglePreview();
-            executeCopy(document.getElementById('copy-btn'), document.getElementById('copy-text'), document.getElementById('copy-icon'));
-            togglePreview();
-        }
-
-        function executeCopy(btn, textEl, iconEl) {
             const textArea = document.createElement("textarea");
             textArea.value = currentOrderText;
             document.body.appendChild(textArea);
@@ -478,54 +399,24 @@
             
             try {
                 document.execCommand('copy');
+                const copyBtn = document.getElementById('copy-btn');
+                const copyText = document.getElementById('copy-text');
+                const copyIcon = document.getElementById('copy-icon');
                 
-                // 動態效果回饋
-                btn.className = "flex-1 max-w-[160px] py-3.5 rounded-xl bg-brand-clay text-white text-sm font-bold shadow-soft transition-all duration-300 flex items-center justify-center gap-1.5";
-                textEl.innerText = "已複製！";
-                iconEl.innerHTML = `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>`;
+                copyBtn.className = "w-full py-3 px-4 rounded-xl flex items-center justify-center gap-2 font-bold text-sm tracking-widest transition-all duration-300 bg-brand-clay text-white shadow-soft";
+                copyText.innerText = "已複製到剪貼簿！";
+                copyIcon.innerHTML = `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>`;
 
                 setTimeout(() => {
-                    updateUI(); // 重新整理 UI 狀態恢復預設按鈕外觀
-                    textEl.innerText = "複製訂單";
-                    iconEl.innerHTML = `<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>`;
+                    updateUI(); 
+                    copyText.innerText = "一鍵複製訂單";
+                    copyIcon.innerHTML = `<rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>`;
                 }, 2000);
-
             } catch (err) {
-                textEl.innerText = "複製失敗";
-                setTimeout(() => textEl.innerText = "複製訂單", 2000);
+                console.error('複製失敗', err);
             } finally {
                 document.body.removeChild(textArea);
             }
-        }
-
-        // 訂單重置邏輯
-        function resetOrder() {
-            // 添加圖示旋轉動畫
-            const btn = document.getElementById('reset-btn');
-            const icon = btn.querySelector('svg');
-            icon.style.transform = 'rotate(-360deg)';
-            
-            // 重置所有數值至預設狀態
-            tieColors.forEach(c => state.ties[c.id] = 0);
-            state.scrolls = 0;
-            state.embroidery = 0;
-            state.cardHolderTaipei = 0;
-            state.cardHolderKaohsiung = 0;
-            state.delivery = '711';
-            state.location = '';
-            
-            // 儲存並更新畫面
-            saveState();
-            updateUI();
-
-            // 動畫結束後移除 transform 屬性以便下次觸發
-            setTimeout(() => {
-                icon.style.transition = 'none';
-                icon.style.transform = 'none';
-                // 強制重繪
-                void icon.offsetWidth;
-                icon.style.transition = '';
-            }, 500);
         }
 
         // 頁面載入初始化

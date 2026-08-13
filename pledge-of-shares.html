@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2F079YMSFW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2F079YMSFW');
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>常溫股票質押計算機｜Ambient Stock Pledge Calculator</title>
+    <meta name="description" content="常溫編集所提供之免費線上股票質押計算機，以溫潤清晰的介面，輕鬆試算維持率、追繳斷頭價與可承受跌幅，助您在市場波動中安穩控管風險。">
+    <meta name="keywords" content="股票質押, 維持率計算, 追繳斷頭價, 股票貸款, 133%維持率, 斷頭, 常溫編集所, 財務試算">
+    <meta property="og:title" content="常溫股票質押計算機｜在波動中尋找安穩的刻度">
+    <meta property="og:description" content="免費線上試算股票質押維持率、追繳斷頭價與可承受跌幅，並提供還款情境模擬，助您掌握借款安全水位。">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="常溫編集所 Ambient Edit Studio">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "常溫股票質押計算機",
+      "description": "免費線上試算股票質押維持率、追繳斷頭價與可承受跌幅的實用工具。",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "All",
+      "inLanguage": "zh-TW",
+      "publisher": {
+        "@type": "Organization",
+        "name": "常溫編集所 Ambient Edit Studio"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "什麼是股票質押的133%維持率？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "維持率是衡量股票借款安全性的指標。台灣法規明定最低維持率為133%，計算方式為（股票總市值 ÷ 借款金額） × 100%。若低於133%，券商就會發出追繳令。"
+        }
+      }, {
+        "@type": "Question",
+        "name": "股票質押可以零股辦理嗎？",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "通常不行。實務上券商大多不接受零股作為初次質押的擔保品，必須以「整張（1,000股）」為單位進行申辦。"
+        }
+      }]
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            paper: '#fdfbf7',
+                            ink: '#4a4a4a',
+                            sage: '#8da399',
+                            clay: '#d4a59a',
+                            sand: '#e6e2dd',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            /* 模擬紙張纖維質感的微噪點 SVG + 品牌底色 */
+            background-color: #fdfbf7;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            color: #4a4a4a;
+        }
+        /* 隱藏數字輸入框的上下箭頭以求美觀 */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .transition-all {
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 300ms;
+        }
+    </style>
+</head>
+<body class="font-sans min-h-screen flex flex-col pt-10 pb-16 px-4 md:px-8 selection:bg-brand-sage selection:text-white">
+
+    <main class="max-w-4xl w-full mx-auto flex-grow flex flex-col gap-10">
+        
+        <!-- 因為是專業性強的標題，採用左對齊，回首頁按鈕置右 -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-brand-sand pb-6 gap-4">
+            <div class="flex flex-col">
+                <span class="text-brand-sage text-sm font-bold tracking-widest mb-2 font-serif">常溫編集所 Ambient Edit Studio</span>
+                <h1 class="text-3xl md:text-4xl font-bold font-serif text-brand-ink tracking-wide">
+                    股票質押計算機
+                </h1>
+                <p class="text-brand-ink/70 mt-3 text-sm md:text-base">
+                    在市場的波動中，為您的資產尋找最安穩的刻度。
+                </p>
+            </div>
+            
+            <div class="shrink-0">
+                <a href="https://weichun0203.github.io/ambientedit/" 
+                   class="group inline-flex items-center px-4 py-2 rounded-full border border-brand-sand hover:border-brand-sage hover:bg-white transition-all duration-300 shadow-sm hover:shadow-soft bg-white/50 backdrop-blur-sm"
+                   aria-label="返回常溫首頁"
+                   style="text-decoration: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-brand-sage group-hover:text-brand-ink transition-colors duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    <span class="ml-2 text-xs font-bold tracking-widest text-brand-sage group-hover:text-brand-ink transition-colors duration-300">
+                        常溫首頁
+                    </span>
+                </a>
+            </div>
+        </header>
+
+        <article class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 md:p-8 shadow-soft border border-white/50">
+            <h2 class="text-xl font-serif font-bold text-brand-ink mb-6 pb-4 border-b border-brand-sand/50">
+                為何需要精算股票質押的維持率？
+            </h2>
+            <div class="space-y-6 text-brand-ink/80 text-sm md:text-base leading-relaxed">
+                <section>
+                    <h3 class="font-bold text-brand-sage mb-2 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-brand-sage"></span>
+                        認識股票質押與 133% 警戒線
+                    </h3>
+                    <p>
+                        「股票質押」能讓您在不賣出股票的情況下，活化資產取得現金流。然而，機會伴隨著風險，台灣法規明定股票質押的最低維持率為 <strong class="text-brand-ink">133%</strong>。維持率的計算公式為：<span class="bg-brand-sand/30 px-2 py-1 rounded">（股票總市值 ÷ 借款金額） × 100%</span>。一旦股價下跌導致維持率低於此標準，券商便會發出追繳令。
+                    </p>
+                </section>
+                <section>
+                    <h3 class="font-bold text-brand-sage mb-2 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-brand-sage"></span>
+                        防範斷頭風險的策略
+                    </h3>
+                    <p>
+                        若未能在規定期限內補足保證金，將面臨股票被強制以市價賣出的「斷頭」命運。常溫建議您：<strong class="text-brand-ink">避免借滿最高成數（6成）</strong>，保留資金彈性；隨時利用下方計算機檢視「追繳斷頭價」，並預留緊急預備金。當面臨極端行情時，提早償還部分本金是瞬間拉高維持率最有效的方式。
+                    </p>
+                </section>
+            </div>
+        </article>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <!-- 左側：輸入參數 -->
+            <div class="w-full lg:w-5/12 space-y-6 bg-white rounded-2xl p-6 md:p-8 shadow-soft border border-white/50">
+                <h3 class="text-lg font-serif font-bold text-brand-ink border-b border-brand-sand pb-3">設定您的質押參數</h3>
+                
+                <div class="space-y-5">
+                    <div>
+                        <label for="stockPrice" class="block text-sm font-bold text-brand-ink/80 mb-2">目前股價 (元)</label>
+                        <input type="number" id="stockPrice" placeholder="例如: 244.4" step="0.1" 
+                               class="w-full px-4 py-3 rounded-lg border border-brand-sand bg-brand-paper/50 focus:bg-white focus:ring-2 focus:ring-brand-sage/50 focus:border-brand-sage outline-none transition-all text-brand-ink font-bold">
+                    </div>
+
+                    <div>
+                        <label for="lots" class="block text-sm font-bold text-brand-ink/80 mb-2">質押張數 <span class="text-xs font-normal text-brand-ink/60">(以整張千股為單位)</span></label>
+                        <input type="number" id="lots" placeholder="例如: 10" min="1" step="1" 
+                               class="w-full px-4 py-3 rounded-lg border border-brand-sand bg-brand-paper/50 focus:bg-white focus:ring-2 focus:ring-brand-sage/50 focus:border-brand-sage outline-none transition-all text-brand-ink font-bold">
+                    </div>
+
+                    <div>
+                        <label for="borrowAmount" class="block text-sm font-bold text-brand-ink/80 mb-2">預計/目前借款金額 (元)</label>
+                        <input type="number" id="borrowAmount" placeholder="例如: 150000" step="1000" 
+                               class="w-full px-4 py-3 rounded-lg border border-brand-sand bg-brand-paper/50 focus:bg-white focus:ring-2 focus:ring-brand-sage/50 focus:border-brand-sage outline-none transition-all text-brand-ink font-bold">
+                    </div>
+
+                    <div class="pt-5 border-t border-brand-sand/50">
+                        <label for="repayAmount" class="block text-sm font-bold text-brand-sage mb-2">情境模擬：若提前償還本金 (元)</label>
+                        <p class="text-xs text-brand-ink/50 mb-3">選填。在市場波動大時，試算還款後能爭取多少安全空間。</p>
+                        <input type="number" id="repayAmount" placeholder="例如: 50000" step="1000" 
+                               class="w-full px-4 py-3 rounded-lg border border-brand-sage/30 bg-brand-sage/5 focus:bg-white focus:ring-2 focus:ring-brand-sage/50 focus:border-brand-sage outline-none transition-all text-brand-sage font-bold">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右側：數據輸出 -->
+            <div class="w-full lg:w-7/12 flex flex-col gap-6">
+                
+                <!-- 基礎資產價值 -->
+                <div class="bg-white rounded-2xl p-6 shadow-soft border border-white/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <p class="text-sm font-bold text-brand-ink/60 mb-1">股票總市值</p>
+                        <p class="text-3xl font-sans font-bold text-brand-ink" id="outTotalValue">$0</p>
+                    </div>
+                    <div class="sm:text-right w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-t-0 border-brand-sand sm:border-l sm:pl-6">
+                        <p class="text-xs text-brand-ink/60 mb-1">最高可質押額度 (6成)</p>
+                        <p class="text-lg font-bold text-brand-sage" id="outMaxBorrow">$0</p>
+                    </div>
+                </div>
+
+                <!-- 目前風險評估 -->
+                <div class="bg-white rounded-2xl p-6 shadow-soft border-l-4 border-l-brand-clay border-y border-r border-y-white/50 border-r-white/50 relative overflow-hidden">
+                    <h3 class="text-lg font-serif font-bold text-brand-ink mb-5">現狀風險評估</h3>
+                    
+                    <div class="grid grid-cols-2 gap-6 mb-5">
+                        <div>
+                            <p class="text-sm font-bold text-brand-ink/60 mb-1">目前維持率</p>
+                            <p class="text-2xl font-bold transition-colors duration-300" id="outMarginRatio">0%</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-brand-ink/60 mb-1">追繳斷頭價 <span class="text-xs font-normal">(133%)</span></p>
+                            <p class="text-2xl font-bold text-brand-clay" id="outCallPrice">$0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-brand-paper rounded-lg p-4 text-sm text-brand-ink/80 leading-relaxed">
+                        從目前股價 <span class="font-bold text-brand-ink" id="txtCurrentPrice">0</span> 
+                        跌至 <span class="font-bold text-brand-clay" id="txtCallPrice">0</span>，
+                        您的資產可承受的跌幅為 <span class="font-bold text-brand-sage" id="outDropBuffer">0%</span>。
+                    </div>
+                </div>
+
+                <!-- 壓力測試 (還款後) -->
+                <div class="bg-brand-sage/10 rounded-2xl p-6 shadow-soft border border-brand-sage/20">
+                    <h3 class="text-lg font-serif font-bold text-brand-ink mb-5 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-sage" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        還款情境模擬 (安全性提升)
+                    </h3>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div>
+                            <p class="text-xs font-bold text-brand-ink/60 mb-1">剩餘借款</p>
+                            <p class="text-base font-bold text-brand-ink" id="outNewBorrow">$0</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-brand-ink/60 mb-1">新維持率</p>
+                            <p class="text-base font-bold text-brand-sage" id="outNewMarginRatio">0%</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-brand-ink/60 mb-1">新斷頭價</p>
+                            <p class="text-base font-bold text-brand-ink/80" id="outNewCallPrice">$0</p>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-brand-ink/60 mb-1">新可承受跌幅</p>
+                            <p class="text-base font-bold text-brand-sage" id="outNewDropBuffer">0%</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="mt-16 pt-8 border-t border-brand-sand flex flex-col items-center gap-4">
+        <div class="flex gap-4">
+            <a href="https://line.me/R/ti/p/@890mvlvl" target="_blank" class="text-brand-sage hover:text-brand-ink transition-colors" aria-label="LINE@">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.122.301.079.771.038 1.085l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.967 1.739-1.907 2.548-3.842 2.548-5.983zm-16.095 2.529h-3.418c-.378 0-.687-.308-.687-.687 0-.378.309-.687.687-.687h2.731v-2.905c0-.379.309-.688.687-.688.379 0 .688.309.688.688v3.592c0 .378-.309.687-.688.687zm4.316 0h-1.375c-.378 0-.687-.308-.687-.687v-3.592c0-.379.309-.688.687-.688.379 0 .688.309.688.688v3.592c0 .378-.309.687-.687.687zm4.619 0h-3.045c-.378 0-.687-.308-.687-.687 0-.378.309-.687.687-.687h2.358v-1.127h-2.358c-.378 0-.687-.309-.687-.688 0-.379.309-.688.687-.688h3.045c.379 0 .688.309.688.688 0 .379-.309.687-.688.687h-2.358v1.127h2.358c.379 0 .688.309.688.688 0 .378-.309.687-.688.687zm4.567-2.128l-2.071 2.016c-.141.139-.333.208-.526.208-.182 0-.363-.065-.506-.196-.289-.267-.306-.717-.039-1.006l1.625-1.758-1.579-1.636c-.279-.289-.271-.741.018-1.019.289-.279.741-.271 1.019.018l2.062 2.138c.135.139.208.324.204.512-.005.187-.085.367-.207.512z"/>
+                </svg>
+            </a>
+            <a href="https://www.instagram.com/ambientedit_?igsh=ajJseGdpc3dnaTJw" target="_blank" class="text-brand-sage hover:text-brand-ink transition-colors" aria-label="Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+            </a>
+        </div>
+        <p class="text-xs text-brand-ink/50 font-serif tracking-widest">
+            2026 常溫編集所 Ambient Edit Studio.
+        </p>
+    </footer>
+
+    <script>
+        // 金額與百分比格式化工具
+        const currencyFormatter = new Intl.NumberFormat('zh-TW', {
+            style: 'currency',
+            currency: 'TWD',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 1
+        });
+
+        const percentFormatter = new Intl.NumberFormat('zh-TW', {
+            style: 'percent',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+        // 綁定 DOM 元素
+        const elStockPrice = document.getElementById('stockPrice');
+        const elLots = document.getElementById('lots');
+        const elBorrowAmount = document.getElementById('borrowAmount');
+        const elRepayAmount = document.getElementById('repayAmount');
+
+        // 初始化：讀取本地儲存 (Local Storage)
+        function loadFromLocalStorage() {
+            if(localStorage.getItem('aes_stockPrice')) elStockPrice.value = localStorage.getItem('aes_stockPrice');
+            if(localStorage.getItem('aes_lots')) elLots.value = localStorage.getItem('aes_lots');
+            if(localStorage.getItem('aes_borrowAmount')) elBorrowAmount.value = localStorage.getItem('aes_borrowAmount');
+            if(localStorage.getItem('aes_repayAmount')) elRepayAmount.value = localStorage.getItem('aes_repayAmount');
+        }
+
+        // 儲存至本地 (Local Storage)
+        function saveToLocalStorage() {
+            localStorage.setItem('aes_stockPrice', elStockPrice.value);
+            localStorage.setItem('aes_lots', elLots.value);
+            localStorage.setItem('aes_borrowAmount', elBorrowAmount.value);
+            localStorage.setItem('aes_repayAmount', elRepayAmount.value);
+        }
+
+        // 核心計算邏輯
+        function calculate() {
+            // 儲存當前輸入狀態
+            saveToLocalStorage();
+
+            const price = parseFloat(elStockPrice.value) || 0;
+            const lots = parseFloat(elLots.value) || 0;
+            const shares = lots * 1000; 
+            const borrow = parseFloat(elBorrowAmount.value) || 0;
+            const repay = parseFloat(elRepayAmount.value) || 0;
+
+            // 1. 基礎資產計算
+            const totalValue = price * shares;
+            const maxBorrow = totalValue * 0.6;
+
+            document.getElementById('outTotalValue').textContent = totalValue > 0 ? currencyFormatter.format(totalValue) : '$0';
+            document.getElementById('outMaxBorrow').textContent = maxBorrow > 0 ? currencyFormatter.format(maxBorrow) : '$0';
+
+            // 2. 目前風險計算
+            let marginRatio = 0;
+            let callPrice = 0;
+            let dropBuffer = 0;
+
+            if (borrow > 0 && shares > 0) {
+                marginRatio = totalValue / borrow;
+                callPrice = (borrow * 1.33) / shares;
+                if (price > callPrice) {
+                    dropBuffer = (price - callPrice) / price;
+                }
+            }
+
+            // 更新介面狀態 (顏色視覺提示符合品牌設定)
+            const marginRatioEl = document.getElementById('outMarginRatio');
+            marginRatioEl.textContent = borrow > 0 ? percentFormatter.format(marginRatio) : '尚未借款';
+            
+            // 安全：常溫綠 (sage), 警告：陶土紅 (clay)
+            if (borrow === 0) {
+                marginRatioEl.className = "text-2xl font-bold text-brand-ink/50";
+            } else if (marginRatio >= 1.66) {
+                marginRatioEl.className = "text-2xl font-bold text-brand-sage";
+            } else if (marginRatio >= 1.33) {
+                marginRatioEl.className = "text-2xl font-bold text-yellow-600";
+            } else {
+                marginRatioEl.className = "text-2xl font-bold text-brand-clay";
+            }
+
+            document.getElementById('outCallPrice').textContent = borrow > 0 ? currencyFormatter.format(callPrice) : '$0';
+            document.getElementById('txtCurrentPrice').textContent = price > 0 ? price : '0';
+            document.getElementById('txtCallPrice').textContent = borrow > 0 ? callPrice.toFixed(1) : '0';
+            document.getElementById('outDropBuffer').textContent = borrow > 0 ? percentFormatter.format(dropBuffer) : '0%';
+
+            // 3. 還款情境壓力測試
+            const newBorrow = Math.max(0, borrow - repay);
+            let newMarginRatio = 0;
+            let newCallPrice = 0;
+            let newDropBuffer = 0;
+
+            if (newBorrow > 0 && shares > 0) {
+                newMarginRatio = totalValue / newBorrow;
+                newCallPrice = (newBorrow * 1.33) / shares;
+                if (price > newCallPrice) {
+                    newDropBuffer = (price - newCallPrice) / price;
+                }
+            }
+
+            document.getElementById('outNewBorrow').textContent = (borrow > 0 && repay > 0) ? currencyFormatter.format(newBorrow) : '-';
+            
+            if (borrow > 0 && repay > 0 && newBorrow === 0) {
+                document.getElementById('outNewMarginRatio').textContent = '已清償';
+                document.getElementById('outNewCallPrice').textContent = '-';
+                document.getElementById('outNewDropBuffer').textContent = '-';
+            } else if (borrow > 0 && repay > 0) {
+                document.getElementById('outNewMarginRatio').textContent = percentFormatter.format(newMarginRatio);
+                document.getElementById('outNewCallPrice').textContent = currencyFormatter.format(newCallPrice);
+                document.getElementById('outNewDropBuffer').textContent = percentFormatter.format(newDropBuffer);
+            } else {
+                document.getElementById('outNewMarginRatio').textContent = '-';
+                document.getElementById('outNewCallPrice').textContent = '-';
+                document.getElementById('outNewDropBuffer').textContent = '-';
+            }
+        }
+
+        // 綁定事件監聽器
+        [elStockPrice, elLots, elBorrowAmount, elRepayAmount].forEach(input => {
+            input.addEventListener('input', calculate);
+        });
+
+        // 頁面載入時執行
+        window.addEventListener('DOMContentLoaded', () => {
+            loadFromLocalStorage();
+            calculate();
+        });
+    </script>
+</body>
+</html>

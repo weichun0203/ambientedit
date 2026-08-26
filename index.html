@@ -105,16 +105,13 @@
     .nav-logo-mark {
       width: 32px;
       height: 32px;
-      background: var(--rose);
       border-radius: 8px;
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-size: 14px;
-      font-weight: 700;
-      font-family: 'Georgia', serif;
     }
+    .nav-logo-mark img { width: 100%; height: 100%; object-fit: contain; display: block; }
     .nav-logo-text { font-size: 15px; color: var(--charcoal); letter-spacing: 0.05em; }
     .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
     .nav-links a {
@@ -175,7 +172,7 @@
       font-family: 'Helvetica Neue', sans-serif;
       margin-bottom: 28px;
     }
-    .hero-badge::before { content: '✦'; font-size: 9px; color: var(--rose-dark); }
+    .hero-badge::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--rose-dark); }
     .hero h1 {
       font-size: clamp(42px, 7vw, 80px);
       font-weight: 400;
@@ -216,24 +213,27 @@
     }
     .hero-cta-group {
       display: flex;
+      align-items: center;
       gap: 14px;
       flex-wrap: wrap;
       justify-content: center;
       margin-bottom: 60px;
     }
-    .btn-primary {
-      background: var(--charcoal);
+    .btn-highlight {
+      background: var(--rose-dark);
       color: var(--cream);
-      padding: 14px 32px;
+      padding: 16px 38px;
       border-radius: 30px;
       text-decoration: none;
       font-family: 'Helvetica Neue', sans-serif;
-      font-size: 13px;
+      font-size: 14px;
+      font-weight: 700;
       letter-spacing: 0.1em;
       transition: all 0.25s;
-      border: 2px solid var(--charcoal);
+      border: 2px solid var(--rose-dark);
+      box-shadow: 0 8px 24px rgba(184,135,123,0.35);
     }
-    .btn-primary:hover { background: var(--rose-dark); border-color: var(--rose-dark); }
+    .btn-highlight:hover { background: var(--charcoal); border-color: var(--charcoal); transform: translateY(-2px); box-shadow: 0 12px 28px rgba(44,40,38,0.25); }
     .btn-secondary {
       background: transparent;
       color: var(--charcoal);
@@ -303,7 +303,7 @@
       text-align: left;
       width: 200px;
     }
-    .philosophy-value .v-icon { font-size: 24px; margin-bottom: 12px; }
+    .philosophy-value .v-icon { font-size: 24px; margin-bottom: 12px; color: var(--rose-light); display: block; }
     .philosophy-value h4 { font-size: 15px; color: var(--cream); font-weight: 400; margin-bottom: 6px; }
     .philosophy-value p { font-size: 12px; color: var(--gray); margin: 0; line-height: 1.6; }
 
@@ -537,6 +537,7 @@
     }
     .cta-section > p { color: rgba(255,255,255,0.8); font-size: 15px; margin-bottom: 36px; }
     .cta-group { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-white, .btn-outline-white { display: inline-flex; align-items: center; gap: 6px; }
     .btn-white {
       background: white;
       color: var(--rose-dark);
@@ -681,12 +682,13 @@
 
 <nav>
   <a href="#home" class="nav-logo">
-    <div class="nav-logo-mark">🌳</div>
+    <div class="nav-logo-mark"><img src="assets/icons/icon-192.png" alt="常溫編集所 Logo"></div>
     <span class="nav-logo-text">常溫編集所</span>
   </a>
   <ul class="nav-links">
     <li><a href="#featured">精選工具</a></li>
     <li><a href="#tools">全部工具</a></li>
+    <li><a href="#lessons">教學專區</a></li>
     <li><a href="#about">關於我</a></li>
     <li><a href="https://www.instagram.com/ambientedit_" target="_blank" rel="noopener" class="nav-cta">追蹤 IG ↗</a></li>
   </ul>
@@ -701,7 +703,8 @@
   <p class="hero-tagline">把複雜的計算交給程式，<br>將時間留給生活中的美好事物。</p>
   <p class="hero-sub">理財規劃 · 思考工具 · 品牌設計 · 日常生活</p>
   <div class="hero-cta-group">
-    <a href="#featured" class="btn-primary">探索工具箱</a>
+    <a href="#lessons" class="btn-highlight">教學專區</a>
+    <a href="#featured" class="btn-secondary">探索工具箱</a>
     <a href="#about" class="btn-secondary">認識常溫</a>
   </div>
   <div class="hero-stats">
@@ -726,19 +729,54 @@
   <p>不過熱、不過冷——常溫是我們面對生活複雜性時的態度。用設計過的工具處理繁瑣的計算，讓你的心思得以停留在真正重要的事情上。</p>
   <div class="philosophy-values">
     <div class="philosophy-value">
-      <div class="v-icon">🧮</div>
+      <i class="ph ph-calculator v-icon"></i>
       <h4>化繁為簡</h4>
       <p>複雜的財務計算，一個工具搞定</p>
     </div>
     <div class="philosophy-value">
-      <div class="v-icon">🎯</div>
+      <i class="ph ph-target v-icon"></i>
       <h4>有溫度的設計</h4>
       <p>工具不只是冷冰冰的數字，而是生活決策的夥伴</p>
     </div>
     <div class="philosophy-value">
-      <div class="v-icon">✨</div>
+      <i class="ph ph-sparkle v-icon"></i>
       <h4>持續探索</h4>
       <p>每一個工具，都是一次對生活的觀察與思考</p>
+    </div>
+  </div>
+</section>
+
+<section class="featured" id="lessons">
+  <div class="section-header">
+    <div class="section-header-left">
+      <p class="section-label">Learning Hub</p>
+      <h2>教學專區</h2>
+    </div>
+    <a href="https://weichun0203.github.io/lesson/" target="_blank" rel="noopener" class="section-link">查看全部 19 篇 →</a>
+  </div>
+  <div class="featured-grid">
+    <a href="https://weichun0203.github.io/lesson/stock-technical-analysis-course.html" target="_blank" rel="noopener" class="featured-card hero-card">
+      <span class="card-tag">投資理財 · 教學</span>
+      <h3>股票技術分析入門課程</h3>
+      <p>從零開始學看盤，拆解K線、均線、成交量等元素，教你「讀圖」而非「看熱鬧」，並附真實走勢圖完整演練。</p>
+      <span class="card-arrow">→</span>
+      <div class="card-bg-letter">課</div>
+    </a>
+    <div class="featured-side">
+      <a href="https://weichun0203.github.io/lesson/marketing-plan-guide.html" target="_blank" rel="noopener" class="featured-card small">
+        <span class="card-tag">行銷內容 · 教學</span>
+        <h3>行銷企劃書指南</h3>
+        <p>如何撰寫一份完整且具說服力的行銷企劃書。</p>
+        <span class="card-arrow">→</span>
+        <div class="card-bg-letter">課</div>
+      </a>
+      <a href="https://weichun0203.github.io/lesson/video-editing-complete-guide.html" target="_blank" rel="noopener" class="featured-card small">
+        <span class="card-tag">影音創作 · 教學</span>
+        <h3>影片剪輯完全指南</h3>
+        <p>拆解文字、聲音、字幕、顏色、節奏、敘事六大核心面向，附具體秒數公式，不再只靠感覺剪片。</p>
+        <span class="card-arrow">→</span>
+        <div class="card-bg-letter">課</div>
+      </a>
     </div>
   </div>
 </section>
@@ -805,14 +843,14 @@
   <h2>與常溫一起，慢慢找到生活的節奏</h2>
   <p>追蹤 Instagram，第一時間收到新工具上線通知</p>
   <div class="cta-group">
-    <a href="https://www.instagram.com/ambientedit_" target="_blank" rel="noopener" class="btn-white">📷 追蹤 Instagram</a>
-    <a href="https://line.me/R/ti/p/@890mvlvl" target="_blank" rel="noopener" class="btn-outline-white">💬 加入 Line@</a>
-    <a href="mailto:weichun0203@gmail.com" class="btn-outline-white">✉ 聯絡我</a>
+    <a href="https://www.instagram.com/ambientedit_" target="_blank" rel="noopener" class="btn-white"><i class="ph ph-instagram-logo"></i> 追蹤 Instagram</a>
+    <a href="https://line.me/R/ti/p/@890mvlvl" target="_blank" rel="noopener" class="btn-outline-white"><i class="ph ph-line-logo"></i> 加入 Line@</a>
+    <a href="mailto:weichun0203@gmail.com" class="btn-outline-white"><i class="ph ph-envelope-simple"></i> 聯絡我</a>
   </div>
 </section>
 
 <section class="about-section" id="about">
-  <div class="about-image-placeholder">🌿</div>
+  <div class="about-image-placeholder"><i class="ph ph-leaf"></i></div>
   <div class="about-text">
     <span class="section-label">About · 關於我</span>
     <h2>在這裡找到更多<br>關於我的故事與分享</h2>
@@ -873,7 +911,7 @@
   </div>
   <div class="footer-bottom">
     <p>© 2026 常溫編集所 Ambient Edit Studio. All Rights Reserved.</p>
-    <p>Hosted on GitHub Pages · Designed with ♡</p>
+    <p>Hosted on GitHub Pages · Designed with care</p>
   </div>
 </footer>
 

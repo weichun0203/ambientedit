@@ -264,19 +264,10 @@
                     </h2>
                     
                     <div class="space-y-6">
-                        <!-- 借款金額 -->
-                        <div>
-                            <label class="block text-sm font-bold text-brand-ink/80 mb-2">預計/目前借款金額</label>
-                            <div class="relative flex items-center">
-                                <span class="absolute left-4 text-brand-ink/40 font-bold">$</span>
-                                <input type="number" id="inpLoanAmount" min="0" placeholder="例如: 1000000" class="w-full pl-8 pr-4 py-3 bg-brand-paper/50 border border-brand-sand rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-sage/50 focus:border-brand-sage outline-none transition-all font-bold text-brand-ink text-lg tabular-nums">
-                            </div>
-                        </div>
-
                         <!-- 股票數量 (雙欄排版) -->
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-bold text-brand-ink/80 mb-2 text-center">張數 <span class="text-xs font-normal text-brand-ink/50">(千股)</span></label>
+                                <label class="block text-sm font-bold text-brand-ink/80 mb-2 text-center">質押張數 <span class="text-xs font-normal text-brand-ink/50">(千股)</span></label>
                                 <input type="number" id="inpLots" min="0" placeholder="例如: 20" class="w-full px-4 py-3 bg-brand-paper/50 border border-brand-sand rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-sage/50 focus:border-brand-sage outline-none transition-all font-bold text-brand-ink text-center text-lg">
                             </div>
                             <div>
@@ -288,7 +279,7 @@
                         <!-- 目前股價 -->
                         <div>
                             <label class="block text-sm font-bold text-brand-ink/80 mb-2 flex justify-between items-center">
-                                目前股價
+                                質押股票目前股價
                                 <span id="badgeSimulating" class="hidden text-[10px] bg-brand-clay/10 text-brand-clay px-2 py-0.5 rounded-full font-bold flex items-center gap-1 animate-pulse border border-brand-clay/20">
                                     <i data-lucide="activity" class="w-3 h-3"></i> 壓力模擬中
                                 </span>
@@ -299,6 +290,15 @@
                                 <button id="btnRestorePrice" class="hidden absolute right-2 text-xs bg-brand-sand/50 hover:bg-brand-sand text-brand-ink px-3 py-1.5 rounded-lg transition-colors font-bold" title="恢復實際股價">
                                     重設
                                 </button>
+                            </div>
+                        </div>
+
+                        <!-- 借款金額 -->
+                        <div>
+                            <label class="block text-sm font-bold text-brand-ink/80 mb-2">預計/目前借款金額</label>
+                            <div class="relative flex items-center">
+                                <span class="absolute left-4 text-brand-ink/40 font-bold">$</span>
+                                <input type="number" id="inpLoanAmount" min="0" placeholder="例如: 1000000" class="w-full pl-8 pr-4 py-3 bg-brand-paper/50 border border-brand-sand rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-sage/50 focus:border-brand-sage outline-none transition-all font-bold text-brand-ink text-lg tabular-nums">
                             </div>
                         </div>
                         
@@ -328,16 +328,21 @@
                         資金成本估算
                     </h2>
                     
-                    <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="grid grid-cols-2 gap-4 mb-3">
                         <div>
                             <label class="block text-sm font-bold text-brand-ink/80 mb-2">年利率 <span class="text-xs font-normal text-brand-ink/50">(%)</span></label>
-                            <input type="number" id="inpInterestRate" min="0" step="0.1" placeholder="2.5" class="w-full px-3 py-2.5 bg-brand-paper/50 border border-brand-sand rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-sage/50 focus:border-brand-sage outline-none transition-all text-center font-bold text-brand-ink">
+                            <input type="number" id="inpInterestRate" min="0" step="0.1" value="6" placeholder="6" class="w-full px-3 py-2.5 bg-brand-paper/50 border border-brand-sand rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-sage/50 focus:border-brand-sage outline-none transition-all text-center font-bold text-brand-ink">
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-brand-ink/80 mb-2">借款天數</label>
-                            <input type="number" id="inpLoanDays" min="1" placeholder="180" class="w-full px-3 py-2.5 bg-brand-paper/50 border border-brand-sand rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-sage/50 focus:border-brand-sage outline-none transition-all text-center font-bold text-brand-ink">
+                            <label class="block text-sm font-bold text-brand-ink/80 mb-2">借款期間 <span class="text-xs font-normal text-brand-ink/50">(個月)</span></label>
+                            <input type="number" id="inpLoanMonths" min="1" value="12" placeholder="12" class="w-full px-3 py-2.5 bg-brand-paper/50 border border-brand-sand rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-sage/50 focus:border-brand-sage outline-none transition-all text-center font-bold text-brand-ink">
                         </div>
                     </div>
+                    
+                    <p class="text-xs text-brand-ink/50 mb-5 flex items-start gap-1.5 bg-brand-paper/50 p-3 rounded-xl border border-brand-sand/50">
+                        <i data-lucide="info" class="w-4 h-4 shrink-0 text-brand-sage"></i>
+                        依規定股票質押期限通常為半年，期滿可申請展延。此處預設以年化(12個月)進行利息估算。
+                    </p>
                     
                     <div class="bg-brand-sage/5 p-4 rounded-xl flex justify-between items-center border border-brand-sage/20">
                         <span class="text-sm font-bold text-brand-sage flex items-center gap-1.5">
@@ -360,43 +365,49 @@
                         <h2 class="text-lg font-serif font-bold text-brand-ink flex items-center gap-2">
                             <i data-lucide="gauge" class="w-5 h-5 text-brand-sage"></i>
                             壓力測試
-                            <span class="text-xs font-sans font-normal text-brand-ink/40 ml-1">(拖曳模擬股價)</span>
+                            <span class="text-xs font-sans font-normal text-brand-ink/40 ml-1">(編輯數字連動)</span>
                         </h2>
-                        <div class="bg-brand-ink text-brand-paper px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm flex items-center gap-1">
-                            $ <span id="txtSimulatedPrice" class="tabular-nums text-lg">0.00</span>
+                        <div class="bg-brand-ink text-brand-paper pl-4 pr-2 py-1.5 rounded-lg shadow-sm flex items-center gap-2">
+                            <span class="text-sm font-bold">$</span>
+                            <input type="number" id="inpSimulatedPrice" step="0.1" placeholder="輸入模擬股價" class="w-24 bg-transparent border-none text-lg font-bold text-brand-paper outline-none text-right tabular-nums">
                         </div>
                     </div>
                     
-                    <div class="px-3 pb-2">
-                        <div class="relative w-full h-8 flex items-center mb-4">
-                            <!-- 滑桿軌道 -->
-                            <div class="absolute left-0 right-0 h-2 bg-brand-sand/50 rounded-full overflow-hidden shadow-inner">
-                                <!-- 危險區段標示 (斷頭價以下) -->
-                                <div id="trackDangerZone" class="absolute top-0 bottom-0 left-0 bg-brand-clay/40 transition-all duration-300" style="width: 30%;"></div>
+                    <div class="px-2 sm:px-4 pt-8 pb-10">
+                        <div class="relative w-full h-8 flex items-center">
+                            <!-- 能量軌道底色 -->
+                            <div class="absolute left-0 right-0 h-3 bg-brand-sand/30 rounded-full overflow-hidden shadow-inner"></div>
+                            
+                            <!-- 危險區段重疊 (斷頭價以下) -->
+                            <div id="barDangerZone" class="absolute top-0 bottom-0 left-0 bg-brand-clay/30 rounded-l-full pointer-events-none border-r border-brand-clay/50 transition-all duration-500" style="width: 30%;"></div>
+                            
+                            <!-- 能量條填滿區塊 (動態變色) -->
+                            <div id="barEnergyFill" class="absolute top-0 bottom-0 left-0 bg-brand-sage transition-all duration-500 rounded-full shadow-sm" style="width: 100%;">
+                                <!-- 模擬現價標記與金額 (浮動於上方，跟隨數值條尾端) -->
+                                <div class="absolute right-0 top-1/2 transform translate-x-1/2 -translate-y-1/2 z-30 flex flex-col items-center -mt-10">
+                                    <span class="text-[10px] text-brand-ink/50 mb-0.5 whitespace-nowrap bg-white/80 px-1 rounded backdrop-blur-sm font-bold">模擬現價</span>
+                                    <div class="relative">
+                                        <span id="txtBarCurrent" class="tabular-nums text-brand-ink text-sm bg-white px-2 py-0.5 rounded shadow-sm border border-brand-sand font-bold whitespace-nowrap inline-block">$0.00</span>
+                                        <!-- 下方小三角形指示器 -->
+                                        <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white border-b border-r border-brand-sand rotate-45"></div>
+                                    </div>
+                                </div>
                             </div>
                             
-                            <!-- 實際 Input -->
-                            <input type="range" id="sliderPrice" step="0.1" class="absolute w-full h-full opacity-0 cursor-pointer z-20" aria-label="調整模擬股價">
+                            <!-- 斷頭價標記 -->
+                            <div id="markerMarginCall" class="absolute top-[-4px] bottom-[-4px] w-0.5 bg-brand-clay transform -translate-x-1/2 z-20 transition-all duration-500">
+                                <div class="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+                                    <span class="text-[10px] font-bold text-brand-clay whitespace-nowrap mb-0.5 bg-brand-paper px-1.5 py-0.5 rounded shadow-sm border border-brand-clay/10 flex items-center gap-0.5"><i data-lucide="skull" class="w-3 h-3"></i> 斷頭</span>
+                                    <span id="txtBarMarginCall" class="tabular-nums text-brand-clay text-xs font-bold whitespace-nowrap bg-white px-1.5 py-0.5 rounded shadow-sm border border-brand-clay/20">$0.00</span>
+                                </div>
+                            </div>
                             
-                            <!-- 客製化滑塊 -->
-                            <div id="customThumb" class="absolute h-7 w-7 bg-white border-2 border-brand-sage rounded-full shadow-md z-10 pointer-events-none transform -translate-x-1/2 flex items-center justify-center transition-transform group-hover:scale-110">
-                                <div class="w-2 h-2 bg-brand-sage rounded-full"></div>
-                            </div>
-                        </div>
-                        
-                        <!-- 刻度標示 -->
-                        <div class="flex justify-between text-xs font-bold px-1 mt-4">
-                            <div class="text-brand-clay flex flex-col items-start gap-1.5">
-                                <span class="flex items-center gap-1 opacity-80"><i data-lucide="skull" class="w-3 h-3"></i> 斷頭價</span>
-                                <span id="txtSliderMin" class="tabular-nums bg-brand-clay/10 px-2 py-0.5 rounded border border-brand-clay/20">$0.00</span>
-                            </div>
-                            <div class="text-brand-ink/60 flex flex-col items-center gap-1.5">
-                                <span>目前設定</span>
-                                <span id="txtSliderCurrent" class="tabular-nums text-brand-ink text-sm">$0.00</span>
-                            </div>
-                            <div class="text-brand-sage flex flex-col items-end gap-1.5">
-                                <span class="flex items-center gap-1 opacity-80">166% 安全價 <i data-lucide="shield-check" class="w-3 h-3"></i></span>
-                                <span id="txtSliderSafe" class="tabular-nums bg-brand-sage/10 px-2 py-0.5 rounded border border-brand-sage/20">$0.00</span>
+                            <!-- 安全價標記 -->
+                            <div id="markerSafe" class="absolute top-[-4px] bottom-[-4px] w-0.5 bg-brand-sage transform -translate-x-1/2 z-10 transition-all duration-500">
+                                <div class="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+                                    <span class="text-[10px] font-bold text-brand-sage whitespace-nowrap mb-0.5 bg-brand-paper px-1.5 py-0.5 rounded shadow-sm border border-brand-sage/10 flex items-center gap-0.5"><i data-lucide="shield-check" class="w-3 h-3"></i> 安全</span>
+                                    <span id="txtBarSafe" class="tabular-nums text-brand-sage text-xs font-bold whitespace-nowrap bg-white px-1.5 py-0.5 rounded shadow-sm border border-brand-sage/20">$0.00</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -464,7 +475,7 @@
                     <div class="flex flex-col sm:flex-row gap-8 items-center">
                         <div class="w-full sm:w-1/3 space-y-4">
                             <label class="block text-sm font-bold text-brand-ink/80">設定預期目標 (%)</label>
-                            <input type="number" id="inpTargetRatio" min="100" placeholder="166" class="w-full px-4 py-3 bg-brand-paper/50 border border-brand-sand rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-sage/50 focus:border-brand-sage outline-none transition-colors text-xl font-bold text-brand-ink text-center tabular-nums">
+                            <input type="number" id="inpTargetRatio" min="100" value="166" placeholder="166" class="w-full px-4 py-3 bg-brand-paper/50 border border-brand-sand rounded-xl focus:bg-white focus:ring-2 focus:ring-brand-sage/50 focus:border-brand-sage outline-none transition-colors text-xl font-bold text-brand-ink text-center tabular-nums">
                             
                             <div class="flex flex-wrap gap-2">
                                 <button onclick="setTargetRatio(166)" class="flex-1 py-2 text-xs font-bold text-brand-ink/60 bg-brand-paper hover:bg-white hover:text-brand-sage rounded-lg transition-colors border border-brand-sand shadow-sm hover:border-brand-sage/50">166%</button>
@@ -535,13 +546,11 @@
                 stockPrice: document.getElementById('inpStockPrice'),
                 threshold: document.getElementById('inpThreshold'),
                 interestRate: document.getElementById('inpInterestRate'),
-                loanDays: document.getElementById('inpLoanDays'),
+                loanMonths: document.getElementById('inpLoanMonths'), // 改為月數
                 targetRatio: document.getElementById('inpTargetRatio'),
-                recoveryRatio: document.getElementById('inpRecoveryRatio')
+                recoveryRatio: document.getElementById('inpRecoveryRatio'),
+                simulatedPrice: document.getElementById('inpSimulatedPrice') // 新增能量條數字輸入
             },
-            slider: document.getElementById('sliderPrice'),
-            customThumb: document.getElementById('customThumb'),
-            trackDangerZone: document.getElementById('trackDangerZone'),
             btnRestorePrice: document.getElementById('btnRestorePrice'),
             badgeSimulating: document.getElementById('badgeSimulating'),
             panelMain: document.getElementById('panelMain'),
@@ -557,7 +566,6 @@
         function loadFromLocalStorage() {
             Object.keys(els.inputs).forEach(key => {
                 const savedValue = localStorage.getItem(STORAGE_PREFIX + key);
-                // 恢復儲存的值，若無則保留 HTML 預設值（placeholder 提示）
                 if (savedValue !== null && savedValue !== "") {
                     els.inputs[key].value = savedValue;
                 }
@@ -574,7 +582,7 @@
         function calculate() {
             saveToLocalStorage();
 
-            // 1. 取得輸入值 (加入防呆，未輸入視為0或預設)
+            // 1. 取得輸入值
             const getVal = (el, defaultVal = 0) => {
                 const val = parseFloat(el.value);
                 return isNaN(val) ? defaultVal : Math.max(0, val);
@@ -584,15 +592,16 @@
             const lots = getVal(els.inputs.lots);
             const oddShares = getVal(els.inputs.oddShares);
             const inputStockPrice = getVal(els.inputs.stockPrice);
-            const threshold = Math.max(100, getVal(els.inputs.threshold, 130)); // 預設 130
-            const interestRate = getVal(els.inputs.interestRate, 2.5);
-            const loanDays = getVal(els.inputs.loanDays, 180);
+            const threshold = Math.max(100, getVal(els.inputs.threshold, 130));
+            const interestRate = getVal(els.inputs.interestRate, 6);
+            const loanMonths = getVal(els.inputs.loanMonths, 12); // 固定以月數計算
+            
             const targetRatio = getVal(els.inputs.targetRatio, 166);
             const recoveryTargetRatio = getVal(els.inputs.recoveryRatio, 166);
 
             const totalShares = (lots * 1000) + oddShares;
             
-            // 2. 決定當前股價 (實際輸入 vs 滑桿模擬)
+            // 2. 決定當前股價 (實際輸入 vs 數字欄位模擬)
             if (!isSimulating) {
                 simulatedPrice = inputStockPrice;
             }
@@ -603,7 +612,6 @@
             const maintenanceRatio = loanAmount > 0 ? (totalValue / loanAmount) * 100 : 0;
             const marginCallPrice = totalShares > 0 ? (loanAmount * (threshold / 100)) / totalShares : 0;
             
-            // 距追繳跌幅
             let dropToMarginCall = 0;
             let isMarginCalled = false;
             
@@ -615,20 +623,17 @@
                 }
             }
 
-            // LTV 與利息
             const loanToValue = totalValue > 0 ? (loanAmount / totalValue) * 100 : 0;
-            const interestExpense = loanAmount * (interestRate / 100) * (loanDays / 365);
+            // 利息統一使用「個月」換算
+            const interestExpense = loanAmount * (interestRate / 100) * (loanMonths / 12);
 
-            // 目標試算
             const targetTotalValue = loanAmount * (targetRatio / 100);
             const targetStockPrice = totalShares > 0 ? targetTotalValue / totalShares : 0;
 
-            // 補繳救援試算
             let cashToRepay = 0;
             let stockValueToAdd = 0;
             const targetRecRatio = recoveryTargetRatio / 100;
             
-            // 只有在已借款，且維持率跌破我們設定的救援目標時才計算
             if (maintenanceRatio > 0 && maintenanceRatio < recoveryTargetRatio && loanAmount > 0) {
                 cashToRepay = Math.max(0, loanAmount - (totalValue / targetRecRatio));
                 stockValueToAdd = Math.max(0, (loanAmount * targetRecRatio) - totalValue);
@@ -643,35 +648,29 @@
             });
         }
 
-        // UI 渲染邏輯 (結合品牌顏色 CIS)
+        // UI 渲染邏輯
         function updateUI(data) {
-            // A. 更新主狀態燈號與顏色 (採用品牌色)
             const safeThreshold = 166;
             let theme = {};
             
             if (data.loanAmount === 0 || data.totalShares === 0) {
-                // 未設定完整參數 (Neutral - Sand/Ink)
                 theme = { border: 'border-brand-sand', text: 'text-brand-ink/30', badge: 'bg-brand-paper text-brand-ink/50 border-brand-sand', line: 'bg-brand-sand' };
                 els.txtStatusText.textContent = '等待輸入';
                 els.statusIcon.setAttribute('data-lucide', 'help-circle');
             } else if (data.maintenanceRatio >= safeThreshold) {
-                // 安全 (Safe - Sage)
                 theme = { border: 'border-brand-sage/30 shadow-[0_10px_30px_-5px_rgba(141,163,153,0.15)]', text: 'text-brand-sage', badge: 'bg-brand-sage/10 text-brand-sage border-brand-sage/20', line: 'bg-brand-sage' };
                 els.txtStatusText.textContent = '安穩水位';
                 els.statusIcon.setAttribute('data-lucide', 'shield-check');
             } else if (data.maintenanceRatio >= data.threshold) {
-                // 警戒 (Warning - Ink/Yellowish)
                 theme = { border: 'border-yellow-500/30 shadow-[0_10px_30px_-5px_rgba(234,179,8,0.1)]', text: 'text-yellow-600', badge: 'bg-yellow-50 text-yellow-600 border-yellow-200', line: 'bg-yellow-500' };
                 els.txtStatusText.textContent = '警戒範圍';
                 els.statusIcon.setAttribute('data-lucide', 'alert-triangle');
             } else {
-                // 危險/斷頭 (Danger - Clay)
                 theme = { border: 'border-brand-clay/50 shadow-[0_10px_30px_-5px_rgba(212,165,154,0.2)]', text: 'text-brand-clay', badge: 'bg-brand-clay/10 text-brand-clay border-brand-clay/30 animate-pulse', line: 'bg-brand-clay' };
                 els.txtStatusText.textContent = '跌破門檻';
                 els.statusIcon.setAttribute('data-lucide', 'skull');
             }
 
-            // 應用主題 CSS 類別
             els.panelMain.className = `rounded-2xl shadow-float border transition-all duration-500 bg-white overflow-hidden relative ${theme.border}`;
             els.txtMaintenanceRatio.className = `text-5xl sm:text-7xl font-sans font-black tabular-nums tracking-tight transition-colors duration-300 ${theme.text}`;
             els.statusBadge.className = `inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold shadow-sm transition-colors duration-300 border ${theme.badge}`;
@@ -679,7 +678,6 @@
             
             lucide.createIcons({ nameAttr: 'data-lucide', attrs: { class: "w-4 h-4" } });
 
-            // B. 更新純文字數據
             els.txtMaintenanceRatio.textContent = data.loanAmount > 0 ? formatPercent(data.maintenanceRatio) : '0.00%';
             document.getElementById('txtTotalValue').textContent = '$' + formatCurrency(data.totalValue);
             document.getElementById('txtTotalShares').textContent = formatCurrency(data.totalShares);
@@ -688,7 +686,6 @@
             document.getElementById('txtTargetTotalValue').textContent = '$' + formatCurrency(data.targetTotalValue);
             document.getElementById('txtTargetStockPrice').textContent = '$' + formatPrice(data.targetStockPrice);
             
-            // 距追繳跌幅
             const elDrop = document.getElementById('txtDropToMarginCall');
             if (data.isMarginCalled && data.maintenanceRatio > 0) {
                 elDrop.textContent = '已觸及門檻';
@@ -698,7 +695,6 @@
                 elDrop.className = "text-xl sm:text-2xl font-bold tabular-nums text-brand-ink";
             }
 
-            // C. LTV 進度條
             const barLTV = document.getElementById('barLTV');
             const txtLTV = document.getElementById('txtLTV');
             const msgLTVWarning = document.getElementById('msgLTVWarning');
@@ -717,43 +713,38 @@
                 msgLTVWarning.classList.add('hidden');
             }
 
-            // D. 壓力測試滑桿設定
-            const minSlider = Math.max(0.1, data.marginCallPrice * 0.3);
-            const maxSlider = Math.max(data.inputStockPrice * 1.5, data.marginCallPrice * 2, data.inputStockPrice + 10);
+            // D. 壓力測試能量條設定 (動態視覺邊界)
+            if (!isSimulating && document.activeElement !== els.inputs.simulatedPrice) {
+                els.inputs.simulatedPrice.value = data.activePrice > 0 ? Number(data.activePrice).toFixed(2) : '';
+            }
+
+            const safePrice = data.marginCallPrice * (safeThreshold / data.threshold);
             
-            els.slider.min = minSlider;
-            els.slider.max = maxSlider;
+            // 動態邊界：以現價、安全價中最高者的 1.2倍 作為能量條極大值 (確保不會破圖)
+            const maxBarValue = Math.max(data.activePrice, safePrice) * 1.2 || 1;
             
-            if (!isSimulating) {
-                els.slider.value = data.inputStockPrice;
-            }
+            const pctEnergy = Math.min(100, (data.activePrice / maxBarValue) * 100);
+            const pctDanger = Math.min(100, (data.marginCallPrice / maxBarValue) * 100);
+            const pctSafe = Math.min(100, (safePrice / maxBarValue) * 100);
 
-            document.getElementById('txtSimulatedPrice').textContent = formatPrice(data.activePrice);
-            document.getElementById('txtSliderMin').textContent = '$' + formatPrice(data.marginCallPrice);
-            document.getElementById('txtSliderCurrent').textContent = '$' + formatPrice(data.activePrice);
-            document.getElementById('txtSliderSafe').textContent = '$' + formatPrice(data.marginCallPrice * (safeThreshold/data.threshold));
+            // 更新能量條寬度與切線位置
+            const barEnergyFill = document.getElementById('barEnergyFill');
+            barEnergyFill.style.width = `${pctEnergy}%`;
+            barEnergyFill.className = `absolute top-0 bottom-0 left-0 transition-all duration-500 rounded-full ${theme.line}`; // 使用主狀態的品牌顏色
+            
+            document.getElementById('barDangerZone').style.width = `${pctDanger}%`;
+            document.getElementById('markerMarginCall').style.left = `${pctDanger}%`;
+            document.getElementById('markerSafe').style.left = `${pctSafe}%`;
 
-            // 滑塊位置與危險區段比例
-            const sliderRange = maxSlider - minSlider;
-            let percent = 0;
-            if (sliderRange > 0) {
-                percent = ((data.activePrice - minSlider) / sliderRange) * 100;
-                percent = Math.max(0, Math.min(100, percent));
-            }
-            els.customThumb.style.left = `${percent}%`;
+            // 更新下方刻度文字
+            document.getElementById('txtBarMarginCall').textContent = '$' + formatPrice(data.marginCallPrice);
+            document.getElementById('txtBarSafe').textContent = '$' + formatPrice(safePrice);
+            document.getElementById('txtBarCurrent').textContent = '$' + formatPrice(data.activePrice);
 
-            if (sliderRange > 0 && data.marginCallPrice > minSlider) {
-                const dangerPercent = ((Math.min(data.marginCallPrice, maxSlider) - minSlider) / sliderRange) * 100;
-                els.trackDangerZone.style.width = `${Math.max(0, dangerPercent)}%`;
-            } else {
-                els.trackDangerZone.style.width = '0%';
-            }
-
-            // 處理模擬狀態的 UI 樣式切換
+            // 處理模擬狀態 UI 樣式
             if (isSimulating) {
                 els.badgeSimulating.classList.remove('hidden');
                 els.btnRestorePrice.classList.remove('hidden');
-                els.inputs.stockPrice.value = Number(data.activePrice).toFixed(2);
                 els.inputs.stockPrice.classList.add('text-brand-clay', 'bg-brand-clay/5');
             } else {
                 els.badgeSimulating.classList.add('hidden');
@@ -761,7 +752,6 @@
                 els.inputs.stockPrice.classList.remove('text-brand-clay', 'bg-brand-clay/5');
             }
 
-            // E. 補繳救援面板動畫
             if (data.maintenanceRatio > 0 && data.maintenanceRatio < data.recoveryTargetRatio && data.loanAmount > 0) {
                 document.getElementById('txtCurrentRatioWarning').textContent = formatPercent(data.maintenanceRatio);
                 document.getElementById('txtCashToRepay').textContent = '$' + formatCurrency(data.cashToRepay);
@@ -782,28 +772,32 @@
             }
         }
 
+        // 基本輸入框事件
         Object.values(els.inputs).forEach(input => {
-            input.addEventListener('input', (e) => {
-                if (e.target === els.inputs.stockPrice) {
-                    isSimulating = false; // 手動改股價時解除模擬
-                }
+            if(input !== els.inputs.simulatedPrice) {
+                input.addEventListener('input', (e) => {
+                    if (e.target === els.inputs.stockPrice) {
+                        isSimulating = false; 
+                    }
+                    calculate();
+                });
+            }
+            input.addEventListener('focus', function() { this.select(); });
+        });
+
+        // 壓力測試數字連動事件
+        els.inputs.simulatedPrice.addEventListener('input', (e) => {
+            if(e.target.value !== "") {
+                isSimulating = true;
+                simulatedPrice = Number(e.target.value);
                 calculate();
-            });
-            input.addEventListener('focus', function() {
-                this.select();
-            });
+            }
         });
 
-        els.slider.addEventListener('input', (e) => {
-            isSimulating = true;
-            simulatedPrice = Number(e.target.value);
-            calculate();
-        });
-
+        // 恢復真實股價按鈕
         els.btnRestorePrice.addEventListener('click', (e) => {
             e.preventDefault();
             isSimulating = false;
-            // 從 LocalStorage 抓回原本使用者輸入的股價，若無則重置為 100
             const savedRealPrice = localStorage.getItem(STORAGE_PREFIX + 'stockPrice');
             els.inputs.stockPrice.value = savedRealPrice ? savedRealPrice : 100;
             calculate();
@@ -814,10 +808,9 @@
             calculate();
         };
 
-        // 頁面載入時執行
         window.addEventListener('DOMContentLoaded', () => {
             loadFromLocalStorage();
-            calculate(); // 觸發初始計算與渲染
+            calculate();
         });
 
     </script>
